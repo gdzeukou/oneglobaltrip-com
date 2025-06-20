@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Search, MapPin, Calendar, Users, Plane, Camera, Mountain, Waves, Building, Star, Heart, ArrowRight } from 'lucide-react';
+import { Search, MapPin, Calendar, Users, Plane, Camera, Mountain, Waves, Building, Star, Heart, ArrowRight, FileText, Clock, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -66,6 +65,39 @@ const Index = () => {
     }
   ];
 
+  const visaServices = [
+    {
+      id: 1,
+      name: 'Schengen Visa',
+      description: 'Travel to 26 European countries with a single visa',
+      processingTime: '15-20 days',
+      price: 'From $99',
+      countries: '26 countries',
+      image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&h=300&fit=crop',
+      features: ['Multiple entry', 'Up to 90 days', 'Tourism & Business']
+    },
+    {
+      id: 2,
+      name: 'UK Visa',
+      description: 'Visit the United Kingdom for tourism or business',
+      processingTime: '3-8 weeks',
+      price: 'From $149',
+      countries: '1 country',
+      image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&h=300&fit=crop',
+      features: ['6 months validity', 'Tourism & Business', 'Fast-track available']
+    },
+    {
+      id: 3,
+      name: 'Brazil Visa',
+      description: 'Explore the vibrant culture and nature of Brazil',
+      processingTime: '5-15 days',
+      price: 'From $79',
+      countries: '1 country',
+      image: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=400&h=300&fit=crop',
+      features: ['90 days stay', 'Tourism & Business', 'Electronic visa available']
+    }
+  ];
+
   const categories = [
     { id: 'all', name: 'All Destinations', icon: Plane },
     { id: 'beach', name: 'Beach', icon: Waves },
@@ -93,6 +125,7 @@ const Index = () => {
               <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">Destinations</a>
               <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">Hotels</a>
               <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">Flights</a>
+              <a href="#visas" className="text-gray-700 hover:text-blue-600 transition-colors">Visas</a>
               <a href="#" className="text-gray-700 hover:text-blue-600 transition-colors">About</a>
               <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
                 Sign In
@@ -214,6 +247,65 @@ const Index = () => {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </section>
+
+      {/* Visa Services Section */}
+      <section id="visas" className="py-20 bg-gradient-to-r from-gray-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Visa Services</h2>
+            <p className="text-xl text-gray-600">Get your travel documents sorted with our expert visa assistance</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {visaServices.map((visa) => (
+              <Card key={visa.id} className="group hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden border-0 bg-white/90 backdrop-blur-sm">
+                <div className="relative">
+                  <img 
+                    src={visa.image} 
+                    alt={visa.name}
+                    className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    {visa.countries}
+                  </div>
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{visa.name}</h3>
+                  <p className="text-gray-600 mb-4">{visa.description}</p>
+                  
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <Clock className="h-4 w-4 text-blue-600" />
+                      <span>Processing: {visa.processingTime}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span>Starting {visa.price}</span>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <h4 className="font-semibold text-gray-900 mb-2">Features:</h4>
+                    <ul className="space-y-1">
+                      {visa.features.map((feature, index) => (
+                        <li key={index} className="flex items-center space-x-2 text-sm text-gray-600">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+                    Apply Now
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
 
