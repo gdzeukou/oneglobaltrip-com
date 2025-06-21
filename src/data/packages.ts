@@ -1,226 +1,385 @@
 
+import { Package, PackageCategory } from '@/types/package';
 
-import { Package, Category } from '@/types/package';
+export const categories: PackageCategory[] = [
+  { id: 'all', name: 'All Packages', icon: 'Globe' },
+  { id: 'europe', name: 'Europe', icon: 'MapPin' },
+  { id: 'asia', name: 'Asia', icon: 'MapPin' },
+  { id: 'americas', name: 'Americas', icon: 'MapPin' },
+  { id: 'africa', name: 'Africa', icon: 'MapPin' },
+  { id: 'oceania', name: 'Oceania', icon: 'MapPin' },
+  { id: 'business', name: 'Business Travel', icon: 'Briefcase' },
+  { id: 'luxury', name: 'Luxury', icon: 'Crown' },
+  { id: 'budget', name: 'Budget', icon: 'DollarSign' }
+];
 
 export const packages: Package[] = [
+  // Europe Packages
   {
-    id: 1,
-    title: "Wine & Gastronomy Tour | France 🇫🇷",
-    country: "France",
-    category: "luxury",
-    duration: "6 days / 5 nights",
-    price: 3299,
-    image: "/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png",
-    description: "Sip, savor & stroll through Bordeaux and Dordogne",
-    highlights: ["Premier Grand Cru tastings in Médoc & Saint-Émilion", "Truffle-hunting with farm-to-table lunch", "Hands-on Paris pastry workshop"],
-    specialFeatures: ["Chef-led market tour", "Michelin dinner upgrade"],
-    visasRequired: ["Schengen"],
+    id: 'schengen-explorer',
+    title: 'Schengen Explorer Package',
+    description: 'Visit 27 European countries with one visa. Includes visa processing, flights, and accommodation recommendations.',
+    price: 1299,
+    originalPrice: 1599,
+    duration: '2-3 weeks',
+    countries: ['Germany', 'France', 'Italy', 'Spain', 'Netherlands'],
+    features: [
+      'Schengen visa processing',
+      'Multi-city flight bookings',
+      'Hotel recommendations',
+      'Travel insurance',
+      '24/7 support'
+    ],
+    image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
     rating: 4.9,
-    reviews: 87
+    reviews: 234,
+    category: 'europe',
+    tags: ['Multi-Country', 'Popular', 'Cultural']
   },
   {
-    id: 2,
-    title: "Tulips, Canals & Windmills | Netherlands 🇳🇱",
-    country: "Netherlands",
-    category: "cultural",
-    duration: "5 days / 4 nights",
-    price: 2599,
-    image: "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description: "Iconic Dutch spring escape",
-    highlights: ["Early-access Keukenhof Gardens", "Private Amsterdam canal cruise at sunset", "Zaanse Schans windmill & clog demo"],
-    specialFeatures: ["Bicycle photo shoot", "Gouda cheese farm visit"],
-    visasRequired: ["Schengen"],
+    id: 'uk-business',
+    title: 'UK Business Traveler',
+    description: 'Complete UK business visa package with fast-track processing and premium accommodations.',
+    price: 899,
+    originalPrice: 1099,
+    duration: '1-2 weeks',
+    countries: ['United Kingdom'],
+    features: [
+      'UK business visa',
+      'Business class flights',
+      'Central London hotels',
+      'Airport transfers',
+      'Meeting room bookings'
+    ],
+    image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
     rating: 4.8,
-    reviews: 112
+    reviews: 189,
+    category: 'europe',
+    tags: ['Business', 'Premium', 'Fast-Track']
   },
   {
-    id: 3,
-    title: "Icy Adventures | Iceland 🇮🇸",
-    country: "Iceland",
-    category: "adventure",
-    duration: "6 days / 5 nights",
-    price: 3799,
-    image: "/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png",
-    description: "Glaciers, geysers & Northern Lights magic",
-    highlights: ["Golden Circle super-jeep safari", "Glacier hike & crystal ice-cave tour", "Blue Lagoon twilight entry"],
-    specialFeatures: ["Northern Lights photo guide", "Silfra snorkel"],
-    visasRequired: ["Schengen"],
+    id: 'portugal-residency',
+    title: 'Portugal Golden Visa',
+    description: 'Complete Portugal residency package including investment guidance and legal support.',
+    price: 2999,
+    originalPrice: 3499,
+    duration: '6-12 months',
+    countries: ['Portugal'],
+    features: [
+      'Investment visa processing',
+      'Legal consultation',
+      'Property viewing tours',
+      'Banking assistance',
+      'Residency card processing'
+    ],
+    image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
     rating: 4.9,
-    reviews: 156
+    reviews: 156,
+    category: 'europe',
+    tags: ['Residency', 'Investment', 'Premium']
   },
   {
-    id: 4,
-    title: "Alpine Peaks & Lakes | Switzerland 🇨🇭",
-    country: "Switzerland",
-    category: "luxury",
-    duration: "7 days / 6 nights",
-    price: 4299,
-    image: "/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png",
-    description: "Scenic rails to sky-high vistas",
-    highlights: ["Glacier Express panoramic train", "Jungfraujoch 'Top of Europe' excursion", "Lake Lucerne vintage steamboat cruise"],
-    specialFeatures: ["First-class Swiss Travel Pass", "Interlaken paragliding"],
-    visasRequired: ["Schengen"],
-    rating: 5.0,
-    reviews: 89
-  },
-  {
-    id: 5,
-    title: "Baroque Treasures & Belgian Delights | Belgium 🇧🇪",
-    country: "Belgium",
-    category: "cultural",
-    duration: "4 days / 3 nights",
-    price: 2199,
-    image: "/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png",
-    description: "Gothic grandeur, artisan chocolate & abbey ales",
-    highlights: ["Private Bruges UNESCO heritage tour", "Master chocolatier hands-on workshop", "Brussels Grand-Place evening illumination"],
-    specialFeatures: ["Trappist monastery brewery visit", "Belgian waffle masterclass"],
-    visasRequired: ["Schengen"],
-    rating: 4.7,
-    reviews: 134
-  },
-  {
-    id: 6,
-    title: "Romantic Mediterranean Escape | Spain 🇪🇸",
-    country: "Spain",
-    category: "romantic",
-    duration: "6 days / 5 nights",
-    price: 2899,
-    image: "https://images.unsplash.com/photo-1543785734-4b6e564642f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description: "Sunsets, sangría & seaside strolls",
-    highlights: ["Barcelona rooftop cava tasting", "Yacht day-cruise on the Costa Brava", "Couples' flamenco night in El Born"],
-    specialFeatures: ["Private photographer", "Suite upgrade with sea view"],
-    visasRequired: ["Schengen"],
-    rating: 4.8,
-    reviews: 92
-  },
-  {
-    id: 7,
-    title: "Andalusia Cultural Circuit | Spain 🇪🇸",
-    country: "Spain",
-    category: "cultural",
-    duration: "7 days / 6 nights",
-    price: 3199,
-    image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description: "Moorish palaces & flamenco nights",
-    highlights: ["Alhambra after-hours visit in Granada", "Mezquita-Cathedral & tapas crawl in Córdoba", "Horse-carriage tour through Seville's Alcázar gardens"],
-    specialFeatures: ["Olive-oil estate tasting", "Flamenco masterclass"],
-    visasRequired: ["Schengen"],
-    rating: 4.9,
-    reviews: 78
-  },
-  {
-    id: 8,
-    title: "La Dolce Vita | Italy 🇮🇹",
-    country: "Italy",
-    category: "luxury",
-    duration: "7 days / 6 nights",
-    price: 3899,
-    image: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description: "Art, pasta & gondolas",
-    highlights: ["VIP Colosseum underground tour", "Tuscan cooking class & winery lunch", "Gondola serenade at sunset in Venice"],
-    specialFeatures: ["Vespa rental in Rome", "Fast-train business-class seat"],
-    visasRequired: ["Schengen"],
-    rating: 4.9,
-    reviews: 145
-  },
-  {
-    id: 9,
-    title: "Grand Southern Europe Trio | Multi-Country 🇫🇷🇪🇸🇮🇹",
-    country: "France, Spain, Italy",
-    category: "luxury",
-    duration: "10 days / 9 nights",
-    price: 5499,
-    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description: "Eiffel Tower to Colosseum in one epic loop",
-    highlights: ["Paris icons express tour", "Barcelona Sagrada Familia & Gothic Quarter", "Rome Vatican Museums early entry"],
-    specialFeatures: ["Business-class rail segments", "Mediterranean cruise add-on"],
-    visasRequired: ["Schengen"],
-    rating: 5.0,
-    reviews: 67
-  },
-  {
-    id: 10,
-    title: "Dutch Modern Cities & Islands | Netherlands 🇳🇱",
-    country: "Netherlands",
-    category: "cultural",
-    duration: "6 days / 5 nights",
-    price: 2799,
-    image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    description: "Eco-design, art & watery villages",
-    highlights: ["Rotterdam skyline architecture cruise", "Giethoorn whisper-boat & thatched-roof lunch", "Van Gogh Museum private opening in Amsterdam"],
-    specialFeatures: ["Electric bike upgrade", "Texel Wadden-Sea sandbank tour"],
-    visasRequired: ["Schengen"],
-    rating: 4.7,
-    reviews: 89
-  },
-  // Adding the featured packages from home page
-  {
-    id: 11,
-    title: "Paris + Santorini Escape | Multi-Country 🇫🇷🇬🇷",
-    country: "France, Greece",
-    category: "romantic",
-    duration: "10 days / 9 nights",
-    price: 2499,
-    image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=800&h=600&fit=crop",
-    description: "Romance in the City of Light, then Greek island bliss",
-    highlights: ["Private Eiffel Tower dinner", "Louvre after-hours tour", "Santorini sunset cruise with wine tasting"],
-    specialFeatures: ["Helicopter transfer to Santorini", "Couples photography session"],
-    visasRequired: ["Schengen"],
-    rating: 4.9,
-    reviews: 134
-  },
-  {
-    id: 12,
-    title: "London-Amsterdam Rail Adventure | Multi-Country 🇬🇧🇳🇱",
-    country: "United Kingdom, Netherlands",
-    category: "cultural",
-    duration: "8 days / 7 nights",
+    id: 'norway-work',
+    title: 'Norway Work Permit Package',
+    description: 'Complete work permit processing with job search assistance and relocation support.',
     price: 1899,
-    image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop",
-    description: "Royal London meets Dutch charm via scenic railways",
-    highlights: ["Tower of London private tour", "Eurostar first-class journey", "Amsterdam canal house stay"],
-    specialFeatures: ["Royal afternoon tea", "Dutch bike tour upgrade"],
-    visasRequired: ["UK Visitor", "Schengen"],
-    rating: 4.8,
-    reviews: 98
+    originalPrice: 2299,
+    duration: '3-6 months',
+    countries: ['Norway'],
+    features: [
+      'Work permit processing',
+      'Job search assistance',
+      'Accommodation finding',
+      'Bank account setup',
+      'Integration courses'
+    ],
+    image: '/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png',
+    rating: 4.7,
+    reviews: 143,
+    category: 'europe',
+    tags: ['Work Permit', 'Relocation', 'Support']
   },
   {
-    id: 13,
-    title: "Mediterranean Grand Tour | Multi-Country 🇪🇸🇫🇷🇮🇹",
-    country: "Spain, France, Italy",
-    category: "luxury",
-    duration: "14 days / 13 nights",
-    price: 3299,
-    image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&h=600&fit=crop",
-    description: "Spain, France, Italy - the ultimate coastal journey",
-    highlights: ["Barcelona Gaudí architecture tour", "French Riviera yacht charter", "Amalfi Coast helicopter ride"],
-    specialFeatures: ["High-speed rail connections", "Michelin restaurant reservations"],
-    visasRequired: ["Schengen"],
-    rating: 5.0,
-    reviews: 76
+    id: 'france-student',
+    title: 'France Student Visa Package',
+    description: 'Complete student visa package with university applications and accommodation.',
+    price: 1599,
+    originalPrice: 1899,
+    duration: '1-4 years',
+    countries: ['France'],
+    features: [
+      'Student visa processing',
+      'University application support',
+      'Student accommodation',
+      'Health insurance',
+      'Orientation program'
+    ],
+    image: '/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png',
+    rating: 4.8,
+    reviews: 167,
+    category: 'europe',
+    tags: ['Student', 'Education', 'Long-term']
+  },
+
+  // Asia Packages
+  {
+    id: 'japan-tourist',
+    title: 'Japan Discovery Package',
+    description: 'Complete Japan tourist package with cultural experiences and guided tours.',
+    price: 2199,
+    originalPrice: 2599,
+    duration: '2-3 weeks',
+    countries: ['Japan'],
+    features: [
+      'Tourist visa processing',
+      'Round-trip flights',
+      'Traditional ryokan stays',
+      'Cultural experiences',
+      'English-speaking guides'
+    ],
+    image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
+    rating: 4.9,
+    reviews: 298,
+    category: 'asia',
+    tags: ['Cultural', 'Premium', 'Guided']
   },
   {
-    id: 14,
-    title: "Swiss Alps & Bavaria | Multi-Country 🇨🇭🇩🇪",
-    country: "Switzerland, Germany",
-    category: "adventure",
-    duration: "12 days / 11 nights",
-    price: 2799,
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
-    description: "Mountain peaks, fairy-tale castles, alpine luxury",
-    highlights: ["Matterhorn helicopter tour", "Neuschwanstein Castle visit", "Alpine spa treatments"],
-    specialFeatures: ["Cable car adventures", "Bavarian brewery tour"],
-    visasRequired: ["Schengen"],
+    id: 'india-business',
+    title: 'India Business Package',
+    description: 'Comprehensive India business visa with trade mission support and networking.',
+    price: 799,
+    originalPrice: 999,
+    duration: '1-4 weeks',
+    countries: ['India'],
+    features: [
+      'Business visa processing',
+      'Trade mission support',
+      'Business hotel bookings',
+      'Local business networking',
+      'Cultural orientation'
+    ],
+    image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
+    rating: 4.6,
+    reviews: 201,
+    category: 'asia',
+    tags: ['Business', 'Networking', 'Cultural']
+  },
+  {
+    id: 'singapore-stopover',
+    title: 'Singapore Stopover Special',
+    description: 'Perfect for layovers and short business trips to Singapore.',
+    price: 599,
+    originalPrice: 799,
+    duration: '2-7 days',
+    countries: ['Singapore'],
+    features: [
+      'Transit visa assistance',
+      'Airport hotel bookings',
+      'City tour options',
+      'Business center access',
+      'Fast immigration support'
+    ],
+    image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
+    rating: 4.7,
+    reviews: 134,
+    category: 'asia',
+    tags: ['Transit', 'Business', 'Short-term']
+  },
+
+  // Americas Packages
+  {
+    id: 'usa-tourist',
+    title: 'USA Coast to Coast',
+    description: 'Epic American road trip package with visa, flights, and rental car.',
+    price: 2499,
+    originalPrice: 2999,
+    duration: '3-4 weeks',
+    countries: ['United States'],
+    features: [
+      'B1/B2 visa processing',
+      'Multi-city flights included',
+      'Rental car bookings',
+      'Hotel reservations',
+      'Travel insurance'
+    ],
+    image: '/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png',
     rating: 4.8,
-    reviews: 112
+    reviews: 267,
+    category: 'americas',
+    tags: ['Road Trip', 'Adventure', 'Multi-City']
+  },
+  {
+    id: 'canada-immigration',
+    title: 'Canada Express Entry',
+    description: 'Complete Canada immigration package with Express Entry processing.',
+    price: 3499,
+    originalPrice: 3999,
+    duration: '12-18 months',
+    countries: ['Canada'],
+    features: [
+      'Express Entry processing',
+      'Language test preparation',
+      'Credential evaluation',
+      'Job search assistance',
+      'Settlement services'
+    ],
+    image: '/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png',
+    rating: 4.9,
+    reviews: 178,
+    category: 'americas',
+    tags: ['Immigration', 'Permanent', 'Professional']
+  },
+  {
+    id: 'brazil-carnival',
+    title: 'Brazil Carnival Experience',
+    description: 'Experience Rio Carnival with visa, accommodation, and exclusive access.',
+    price: 1899,
+    originalPrice: 2399,
+    duration: '1-2 weeks',
+    countries: ['Brazil'],
+    features: [
+      'Tourist visa processing',
+      'Carnival tickets included',
+      'Beachfront accommodation',
+      'Local guide services',
+      'Cultural workshops'
+    ],
+    image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
+    rating: 4.8,
+    reviews: 189,
+    category: 'americas',
+    tags: ['Festival', 'Cultural', 'Premium']
+  },
+
+  // Africa & Middle East Packages
+  {
+    id: 'uae-business',
+    title: 'UAE Business Hub',
+    description: 'Dubai and Abu Dhabi business package with networking and trade support.',
+    price: 1299,
+    originalPrice: 1599,
+    duration: '1-2 weeks',
+    countries: ['United Arab Emirates'],
+    features: [
+      'Business visa processing',
+      '5-star hotel bookings',
+      'Business lounge access',
+      'Trade show tickets',
+      'Local business introductions'
+    ],
+    image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
+    rating: 4.7,
+    reviews: 156,
+    category: 'africa',
+    tags: ['Business', 'Luxury', 'Networking']
+  },
+  {
+    id: 'south-africa-safari',
+    title: 'South Africa Safari Adventure',
+    description: 'Complete safari package with visa, accommodation, and guided tours.',
+    price: 2199,
+    originalPrice: 2699,
+    duration: '2-3 weeks',
+    countries: ['South Africa'],
+    features: [
+      'Tourist visa processing',
+      'Safari lodge bookings',
+      'Game drive experiences',
+      'Cultural village visits',
+      'Photography workshops'
+    ],
+    image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
+    rating: 4.9,
+    reviews: 234,
+    category: 'africa',
+    tags: ['Safari', 'Adventure', 'Wildlife']
+  },
+
+  // Oceania Packages
+  {
+    id: 'australia-working-holiday',
+    title: 'Australia Working Holiday',
+    description: 'Complete working holiday visa package with job placement assistance.',
+    price: 1799,
+    originalPrice: 2199,
+    duration: '12 months',
+    countries: ['Australia'],
+    features: [
+      'Working holiday visa',
+      'Job placement assistance',
+      'Accommodation booking',
+      'Bank account setup',
+      'Tax file number application'
+    ],
+    image: '/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png',
+    rating: 4.8,
+    reviews: 167,
+    category: 'oceania',
+    tags: ['Working Holiday', 'Adventure', 'Long-term']
+  },
+  {
+    id: 'new-zealand-adventure',
+    title: 'New Zealand Adventure Package',
+    description: 'Complete New Zealand adventure with visa, accommodation, and activities.',
+    price: 2299,
+    originalPrice: 2799,
+    duration: '3-4 weeks',
+    countries: ['New Zealand'],
+    features: [
+      'Tourist visa processing',
+      'Adventure activity bookings',
+      'Scenic accommodation',
+      'Rental car included',
+      'Travel insurance'
+    ],
+    image: '/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png',
+    rating: 4.9,
+    reviews: 145,
+    category: 'oceania',
+    tags: ['Adventure', 'Nature', 'Activities']
+  },
+
+  // Budget Options
+  {
+    id: 'budget-europe',
+    title: 'Budget European Backpacker',
+    description: 'Affordable European adventure with hostels and budget airlines.',
+    price: 799,
+    originalPrice: 999,
+    duration: '2-4 weeks',
+    countries: ['Multiple European Countries'],
+    features: [
+      'Schengen visa processing',
+      'Budget airline tickets',
+      'Hostel bookings',
+      'Eurail pass included',
+      'Travel insurance'
+    ],
+    image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
+    rating: 4.5,
+    reviews: 189,
+    category: 'budget',
+    tags: ['Budget', 'Backpacking', 'Multi-Country']
+  },
+  {
+    id: 'budget-asia',
+    title: 'Southeast Asia Explorer',
+    description: 'Budget-friendly Southeast Asia tour with visa support.',
+    price: 899,
+    originalPrice: 1199,
+    duration: '3-4 weeks',
+    countries: ['Thailand', 'Vietnam', 'Cambodia'],
+    features: [
+      'Multi-country visa support',
+      'Budget accommodation',
+      'Local transportation',
+      'Street food tours',
+      'Cultural experiences'
+    ],
+    image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
+    rating: 4.6,
+    reviews: 223,
+    category: 'budget',
+    tags: ['Budget', 'Cultural', 'Adventure']
   }
 ];
-
-export const categories: Category[] = [
-  { id: 'all', name: 'All Packages' },
-  { id: 'romantic', name: 'Romantic' },
-  { id: 'cultural', name: 'Cultural' },
-  { id: 'luxury', name: 'Luxury' },
-  { id: 'adventure', name: 'Adventure' }
-];
-
