@@ -22,14 +22,17 @@ export const packages: Package[] = [
     price: 1299,
     originalPrice: 1599,
     duration: '2-3 weeks',
+    country: 'Multiple European Countries',
     countries: ['Germany', 'France', 'Italy', 'Spain', 'Netherlands'],
-    features: [
+    highlights: [
       'Schengen visa processing',
       'Multi-city flight bookings',
       'Hotel recommendations',
       'Travel insurance',
       '24/7 support'
     ],
+    specialFeatures: ['Multi-Country Access', 'Flexible Itinerary'],
+    visasRequired: ['Schengen Visa'],
     image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
     rating: 4.9,
     reviews: 234,
@@ -43,14 +46,16 @@ export const packages: Package[] = [
     price: 899,
     originalPrice: 1099,
     duration: '1-2 weeks',
-    countries: ['United Kingdom'],
-    features: [
+    country: 'United Kingdom',
+    highlights: [
       'UK business visa',
       'Business class flights',
       'Central London hotels',
       'Airport transfers',
       'Meeting room bookings'
     ],
+    specialFeatures: ['Fast-Track Processing', 'Premium Service'],
+    visasRequired: ['UK Business Visa'],
     image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
     rating: 4.8,
     reviews: 189,
@@ -64,14 +69,16 @@ export const packages: Package[] = [
     price: 2999,
     originalPrice: 3499,
     duration: '6-12 months',
-    countries: ['Portugal'],
-    features: [
+    country: 'Portugal',
+    highlights: [
       'Investment visa processing',
       'Legal consultation',
       'Property viewing tours',
       'Banking assistance',
       'Residency card processing'
     ],
+    specialFeatures: ['Investment Opportunity', 'Permanent Residency Path'],
+    visasRequired: ['Portugal Golden Visa'],
     image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
     rating: 4.9,
     reviews: 156,
@@ -85,14 +92,16 @@ export const packages: Package[] = [
     price: 1899,
     originalPrice: 2299,
     duration: '3-6 months',
-    countries: ['Norway'],
-    features: [
+    country: 'Norway',
+    highlights: [
       'Work permit processing',
       'Job search assistance',
       'Accommodation finding',
       'Bank account setup',
       'Integration courses'
     ],
+    specialFeatures: ['Job Placement Assistance', 'Full Relocation Support'],
+    visasRequired: ['Norway Work Permit'],
     image: '/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png',
     rating: 4.7,
     reviews: 143,
@@ -106,14 +115,16 @@ export const packages: Package[] = [
     price: 1599,
     originalPrice: 1899,
     duration: '1-4 years',
-    countries: ['France'],
-    features: [
+    country: 'France',
+    highlights: [
       'Student visa processing',
       'University application support',
       'Student accommodation',
       'Health insurance',
       'Orientation program'
     ],
+    specialFeatures: ['University Application Support', 'Student Community Access'],
+    visasRequired: ['France Student Visa'],
     image: '/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png',
     rating: 4.8,
     reviews: 167,
@@ -129,14 +140,16 @@ export const packages: Package[] = [
     price: 2199,
     originalPrice: 2599,
     duration: '2-3 weeks',
-    countries: ['Japan'],
-    features: [
+    country: 'Japan',
+    highlights: [
       'Tourist visa processing',
       'Round-trip flights',
       'Traditional ryokan stays',
       'Cultural experiences',
       'English-speaking guides'
     ],
+    specialFeatures: ['Cultural Immersion', 'Traditional Accommodation'],
+    visasRequired: ['Japan Tourist Visa'],
     image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
     rating: 4.9,
     reviews: 298,
@@ -150,14 +163,16 @@ export const packages: Package[] = [
     price: 799,
     originalPrice: 999,
     duration: '1-4 weeks',
-    countries: ['India'],
-    features: [
+    country: 'India',
+    highlights: [
       'Business visa processing',
       'Trade mission support',
       'Business hotel bookings',
       'Local business networking',
       'Cultural orientation'
     ],
+    specialFeatures: ['Business Networking', 'Trade Mission Access'],
+    visasRequired: ['India Business Visa'],
     image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
     rating: 4.6,
     reviews: 201,
@@ -171,14 +186,16 @@ export const packages: Package[] = [
     price: 599,
     originalPrice: 799,
     duration: '2-7 days',
-    countries: ['Singapore'],
-    features: [
+    country: 'Singapore',
+    highlights: [
       'Transit visa assistance',
       'Airport hotel bookings',
       'City tour options',
       'Business center access',
       'Fast immigration support'
     ],
+    specialFeatures: ['Transit Convenience', 'Quick Processing'],
+    visasRequired: ['Singapore Transit Visa'],
     image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
     rating: 4.7,
     reviews: 134,
@@ -194,14 +211,16 @@ export const packages: Package[] = [
     price: 2499,
     originalPrice: 2999,
     duration: '3-4 weeks',
-    countries: ['United States'],
-    features: [
+    country: 'United States',
+    highlights: [
       'B1/B2 visa processing',
       'Multi-city flights included',
       'Rental car bookings',
       'Hotel reservations',
       'Travel insurance'
     ],
+    specialFeatures: ['Road Trip Adventure', 'Multi-City Experience'],
+    visasRequired: ['USA Tourist Visa (B1/B2)'],
     image: '/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png',
     rating: 4.8,
     reviews: 267,
@@ -215,14 +234,16 @@ export const packages: Package[] = [
     price: 3499,
     originalPrice: 3999,
     duration: '12-18 months',
-    countries: ['Canada'],
-    features: [
+    country: 'Canada',
+    highlights: [
       'Express Entry processing',
       'Language test preparation',
       'Credential evaluation',
       'Job search assistance',
       'Settlement services'
     ],
+    specialFeatures: ['Permanent Residency', 'Job Placement Support'],
+    visasRequired: ['Canada Express Entry'],
     image: '/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png',
     rating: 4.9,
     reviews: 178,
@@ -236,14 +257,16 @@ export const packages: Package[] = [
     price: 1899,
     originalPrice: 2399,
     duration: '1-2 weeks',
-    countries: ['Brazil'],
-    features: [
+    country: 'Brazil',
+    highlights: [
       'Tourist visa processing',
       'Carnival tickets included',
       'Beachfront accommodation',
       'Local guide services',
       'Cultural workshops'
     ],
+    specialFeatures: ['Carnival Access', 'Cultural Experience'],
+    visasRequired: ['Brazil Tourist Visa'],
     image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
     rating: 4.8,
     reviews: 189,
@@ -259,14 +282,16 @@ export const packages: Package[] = [
     price: 1299,
     originalPrice: 1599,
     duration: '1-2 weeks',
-    countries: ['United Arab Emirates'],
-    features: [
+    country: 'United Arab Emirates',
+    highlights: [
       'Business visa processing',
       '5-star hotel bookings',
       'Business lounge access',
       'Trade show tickets',
       'Local business introductions'
     ],
+    specialFeatures: ['Luxury Business Travel', 'Trade Show Access'],
+    visasRequired: ['UAE Business Visa'],
     image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
     rating: 4.7,
     reviews: 156,
@@ -280,14 +305,16 @@ export const packages: Package[] = [
     price: 2199,
     originalPrice: 2699,
     duration: '2-3 weeks',
-    countries: ['South Africa'],
-    features: [
+    country: 'South Africa',
+    highlights: [
       'Tourist visa processing',
       'Safari lodge bookings',
       'Game drive experiences',
       'Cultural village visits',
       'Photography workshops'
     ],
+    specialFeatures: ['Wildlife Safari', 'Photography Workshops'],
+    visasRequired: ['South Africa Tourist Visa'],
     image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
     rating: 4.9,
     reviews: 234,
@@ -303,14 +330,16 @@ export const packages: Package[] = [
     price: 1799,
     originalPrice: 2199,
     duration: '12 months',
-    countries: ['Australia'],
-    features: [
+    country: 'Australia',
+    highlights: [
       'Working holiday visa',
       'Job placement assistance',
       'Accommodation booking',
       'Bank account setup',
       'Tax file number application'
     ],
+    specialFeatures: ['Working Holiday Experience', 'Job Placement'],
+    visasRequired: ['Australia Working Holiday Visa'],
     image: '/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png',
     rating: 4.8,
     reviews: 167,
@@ -324,14 +353,16 @@ export const packages: Package[] = [
     price: 2299,
     originalPrice: 2799,
     duration: '3-4 weeks',
-    countries: ['New Zealand'],
-    features: [
+    country: 'New Zealand',
+    highlights: [
       'Tourist visa processing',
       'Adventure activity bookings',
       'Scenic accommodation',
       'Rental car included',
       'Travel insurance'
     ],
+    specialFeatures: ['Adventure Activities', 'Scenic Tours'],
+    visasRequired: ['New Zealand Tourist Visa'],
     image: '/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png',
     rating: 4.9,
     reviews: 145,
@@ -347,14 +378,16 @@ export const packages: Package[] = [
     price: 799,
     originalPrice: 999,
     duration: '2-4 weeks',
-    countries: ['Multiple European Countries'],
-    features: [
+    country: 'Multiple European Countries',
+    highlights: [
       'Schengen visa processing',
       'Budget airline tickets',
       'Hostel bookings',
       'Eurail pass included',
       'Travel insurance'
     ],
+    specialFeatures: ['Budget-Friendly', 'Backpacker Experience'],
+    visasRequired: ['Schengen Visa'],
     image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
     rating: 4.5,
     reviews: 189,
@@ -368,14 +401,17 @@ export const packages: Package[] = [
     price: 899,
     originalPrice: 1199,
     duration: '3-4 weeks',
+    country: 'Multiple Asian Countries',
     countries: ['Thailand', 'Vietnam', 'Cambodia'],
-    features: [
+    highlights: [
       'Multi-country visa support',
       'Budget accommodation',
       'Local transportation',
       'Street food tours',
       'Cultural experiences'
     ],
+    specialFeatures: ['Multi-Country Tour', 'Cultural Immersion'],
+    visasRequired: ['Thailand Visa', 'Vietnam Visa', 'Cambodia Visa'],
     image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
     rating: 4.6,
     reviews: 223,
