@@ -53,7 +53,7 @@ const NorwayLongStay = () => {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">Norway Long-Stay Visa</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Experience Norway's high standard of living with premium medical insurance compliance. Our experts navigate Norway's strict healthcare requirements.
+            Complete travel assistance for your Norway adventure. We handle your visa, secure the best flight deals, book premium hotels, and arrange unforgettable activities - all in one seamless package.
           </p>
           <Button 
             onClick={scrollToForm}

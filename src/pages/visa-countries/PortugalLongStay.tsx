@@ -54,7 +54,7 @@ const PortugalLongStay = () => {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">Portugal Long-Stay Visa</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Live, work, or retire in Portugal with comprehensive medical insurance compliance. Our experts ensure your health coverage meets all Portuguese requirements.
+            Complete Portuguese travel assistance package. We handle visa processing, secure budget-friendly flights, book charming accommodations, and organize authentic cultural experiences and wine tours.
           </p>
           <Button 
             onClick={scrollToForm}

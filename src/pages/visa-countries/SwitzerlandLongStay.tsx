@@ -53,7 +53,7 @@ const SwitzerlandLongStay = () => {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">Switzerland Long-Stay Visa</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Experience Swiss excellence with premium medical insurance compliance. Navigate Switzerland's world-leading healthcare system with expert guidance.
+            Premium Swiss travel experience with full-service assistance. We secure your visa, find exceptional flight deals, book Alpine luxury hotels, and arrange exclusive mountain adventures.
           </p>
           <Button 
             onClick={scrollToForm}

@@ -53,7 +53,7 @@ const DenmarkLongStay = () => {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">Denmark Long-Stay Visa</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Embrace Danish hygge with comprehensive medical insurance compliance. Navigate Denmark's healthcare system with expert guidance.
+            Your complete Denmark travel solution. From visa processing to exclusive flight deals, luxury accommodations, and curated cultural experiences - we make your Danish journey effortless.
           </p>
           <Button 
             onClick={scrollToForm}

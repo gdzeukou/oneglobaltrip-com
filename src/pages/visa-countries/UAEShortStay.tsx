@@ -54,7 +54,7 @@ const UAEShortStay = () => {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">UAE Tourist Visa</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Experience the perfect blend of tradition and innovation in the UAE. From Dubai's towering skyscrapers to Abu Dhabi's cultural treasures, discover luxury and adventure.
+            Luxury UAE travel experience made simple. We handle visa processing, secure premium flight deals, book world-class hotels, and arrange exclusive desert safaris and shopping experiences.
           </p>
           <Button 
             onClick={scrollToForm}

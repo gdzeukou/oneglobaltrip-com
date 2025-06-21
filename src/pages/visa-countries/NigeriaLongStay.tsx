@@ -54,7 +54,7 @@ const NigeriaLongStay = () => {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">Nigeria Long-Stay Visa</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Experience Nigeria's dynamic economy with comprehensive medical insurance for tropical conditions. Expert guidance for healthcare compliance.
+            Full-service Nigeria travel package. We process your visa, find the best flight deals, secure comfortable hotels, and arrange exciting cultural activities including Nollywood tours and music festivals.
           </p>
           <Button 
             onClick={scrollToForm}

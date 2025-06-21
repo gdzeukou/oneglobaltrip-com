@@ -54,7 +54,7 @@ const UKShortStay = () => {
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">UK Standard Visitor Visa</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Experience royal heritage, stunning landscapes, and rich culture. From London's iconic landmarks to Scotland's highlands, the UK awaits.
+            Complete UK travel assistance from visa to vacation. We process your application, find competitive flights, book historic accommodations, and arrange royal tours and cultural experiences.
           </p>
           <Button 
             onClick={scrollToForm}
