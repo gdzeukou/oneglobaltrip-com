@@ -19,6 +19,7 @@ const Packages = () => {
     {
       id: 1,
       title: "Wine & Gastronomy Tour | France 🇫🇷",
+      country: "France",
       category: "luxury",
       duration: "6 days / 5 nights",
       price: 3299,
@@ -33,6 +34,7 @@ const Packages = () => {
     {
       id: 2,
       title: "Tulips, Canals & Windmills | Netherlands 🇳🇱",
+      country: "Netherlands",
       category: "cultural",
       duration: "5 days / 4 nights",
       price: 2599,
@@ -47,10 +49,11 @@ const Packages = () => {
     {
       id: 3,
       title: "Fire & Ice Adventure | Iceland 🇮🇸",
+      country: "Iceland",
       category: "adventure",
       duration: "6 days / 5 nights",
       price: 3799,
-      image: "https://images.unsplash.com/photo-1539066436817-0c3c2c1c8e4c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       description: "Glaciers, geysers & geothermal bliss",
       highlights: ["Golden Circle super-jeep safari", "Glacier hike & crystal ice-cave tour", "Blue Lagoon twilight entry"],
       specialFeatures: ["Northern Lights photo guide", "Silfra snorkel"],
@@ -61,10 +64,11 @@ const Packages = () => {
     {
       id: 4,
       title: "Alpine Peaks & Lakes | Switzerland 🇨🇭",
+      country: "Switzerland",
       category: "luxury",
       duration: "7 days / 6 nights",
       price: 4299,
-      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "https://images.unsplash.com/photo-1458668383970-8ddd3927deed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       description: "Scenic rails to sky-high vistas",
       highlights: ["Glacier Express panoramic train", "Jungfraujoch 'Top of Europe' excursion", "Lake Lucerne vintage steamboat cruise"],
       specialFeatures: ["First-class Swiss Travel Pass", "Interlaken paragliding"],
@@ -75,16 +79,92 @@ const Packages = () => {
     {
       id: 5,
       title: "Medieval Cities & Chocolate | Belgium 🇧🇪",
+      country: "Belgium",
       category: "cultural",
       duration: "4 days / 3 nights",
       price: 2199,
-      image: "https://images.unsplash.com/photo-1515940175183-6798529cb860?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       description: "Cobblestones, craft beer & cocoa",
       highlights: ["Private Bruges & Ghent day-trip", "Hands-on master chocolatier workshop", "UNESCO Grand-Place night tour"],
       specialFeatures: ["Trappist abbey beer tasting", "Art-Nouveau bike ride"],
       visasRequired: ["Schengen"],
       rating: 4.7,
       reviews: 134
+    },
+    {
+      id: 6,
+      title: "Romantic Mediterranean Escape | Spain 🇪🇸",
+      country: "Spain",
+      category: "romantic",
+      duration: "6 days / 5 nights",
+      price: 2899,
+      image: "https://images.unsplash.com/photo-1543785734-4b6e564642f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Sunsets, sangría & seaside strolls",
+      highlights: ["Barcelona rooftop cava tasting", "Yacht day-cruise on the Costa Brava", "Couples' flamenco night in El Born"],
+      specialFeatures: ["Private photographer", "Suite upgrade with sea view"],
+      visasRequired: ["Schengen"],
+      rating: 4.8,
+      reviews: 92
+    },
+    {
+      id: 7,
+      title: "Andalusia Cultural Circuit | Spain 🇪🇸",
+      country: "Spain",
+      category: "cultural",
+      duration: "7 days / 6 nights",
+      price: 3199,
+      image: "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Moorish palaces & flamenco nights",
+      highlights: ["Alhambra after-hours visit in Granada", "Mezquita-Cathedral & tapas crawl in Córdoba", "Horse-carriage tour through Seville's Alcázar gardens"],
+      specialFeatures: ["Olive-oil estate tasting", "Flamenco masterclass"],
+      visasRequired: ["Schengen"],
+      rating: 4.9,
+      reviews: 78
+    },
+    {
+      id: 8,
+      title: "La Dolce Vita | Italy 🇮🇹",
+      country: "Italy",
+      category: "luxury",
+      duration: "7 days / 6 nights",
+      price: 3899,
+      image: "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Art, pasta & gondolas",
+      highlights: ["VIP Colosseum underground tour", "Tuscan cooking class & winery lunch", "Gondola serenade at sunset in Venice"],
+      specialFeatures: ["Vespa rental in Rome", "Fast-train business-class seat"],
+      visasRequired: ["Schengen"],
+      rating: 4.9,
+      reviews: 145
+    },
+    {
+      id: 9,
+      title: "Grand Southern Europe Trio | Multi-Country 🇫🇷🇪🇸🇮🇹",
+      country: "France, Spain, Italy",
+      category: "luxury",
+      duration: "10 days / 9 nights",
+      price: 5499,
+      image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Eiffel Tower to Colosseum in one epic loop",
+      highlights: ["Paris icons express tour", "Barcelona Sagrada Familia & Gothic Quarter", "Rome Vatican Museums early entry"],
+      specialFeatures: ["Business-class rail segments", "Mediterranean cruise add-on"],
+      visasRequired: ["Schengen"],
+      rating: 5.0,
+      reviews: 67
+    },
+    {
+      id: 10,
+      title: "Dutch Modern Cities & Islands | Netherlands 🇳🇱",
+      country: "Netherlands",
+      category: "cultural",
+      duration: "6 days / 5 nights",
+      price: 2799,
+      image: "https://images.unsplash.com/photo-1587845112994-c3e8b4e30d84?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Eco-design, art & watery villages",
+      highlights: ["Rotterdam skyline architecture cruise", "Giethoorn whisper-boat & thatched-roof lunch", "Van Gogh Museum private opening in Amsterdam"],
+      specialFeatures: ["Electric bike upgrade", "Texel Wadden-Sea sandbank tour"],
+      visasRequired: ["Schengen"],
+      rating: 4.7,
+      reviews: 89
     }
   ];
 
@@ -98,7 +178,8 @@ const Packages = () => {
 
   const filteredPackages = packages.filter(pkg => {
     const matchesSearch = pkg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         pkg.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         pkg.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         pkg.country.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || pkg.category === selectedCategory;
     const matchesPrice = priceRange === 'all' || 
                         (priceRange === 'under-3000' && pkg.price < 3000) ||
@@ -208,6 +289,10 @@ const Packages = () => {
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-600">
                       <MapPin className="h-4 w-4" />
+                      <span>{pkg.country}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                      <Users className="h-4 w-4" />
                       <span>Visas: {pkg.visasRequired.join(', ')}</span>
                     </div>
                   </div>
