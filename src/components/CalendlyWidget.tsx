@@ -23,16 +23,18 @@ const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
         text={buttonText}
         textColor="#ffffff"
         color="#1e3a8a"
-        render={({ onClick }) => (
-          <Button 
-            onClick={onClick}
-            className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
-          >
-            <Calendar className="h-5 w-5" />
-            <span>{buttonText}</span>
-          </Button>
-        )}
       />
+      <Button 
+        onClick={() => {
+          // Trigger Calendly popup programmatically
+          const calendlyButton = document.querySelector('[data-calendly-url]') as HTMLElement;
+          if (calendlyButton) calendlyButton.click();
+        }}
+        className="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
+      >
+        <Calendar className="h-5 w-5" />
+        <span>{buttonText}</span>
+      </Button>
     </div>
   );
 };
