@@ -1,14 +1,15 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { getFilteredNationalities } from '@/utils/visaRequirements';
 
 interface MultiStepFormProps {
   type: 'short-stay' | 'long-stay';
@@ -19,6 +20,7 @@ interface MultiStepFormProps {
 const MultiStepForm = ({ type, preSelectedCountry, onComplete }: MultiStepFormProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availableNationalities, setAvailableNationalities] = useState<string[]>([]);
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
@@ -55,6 +57,26 @@ const MultiStepForm = ({ type, preSelectedCountry, onComplete }: MultiStepFormPr
     'Spain', 'Italy', 'Netherlands', 'Portugal', 'Norway', 'Denmark', 'Finland',
     'Switzerland', 'Brazil', 'Nigeria', 'India', 'UAE', 'Schengen Area'
   ];
+
+  // Update available nationalities when destination changes
+  useEffect(() => {
+    if (formData.destinationCountry) {
+      const filteredNationalities = getFilteredNationalities(formData.destinationCountry, type);
+      setAvailableNationalities(filteredNationalities);
+      console.log(`Updated nationalities for ${formData.destinationCountry}:`, filteredNationalities.length);
+      
+      // Reset nationality if it's no longer available
+      if (formData.nationality && !filteredNationalities.includes(formData.nationality)) {
+        setFormData(prev => ({ ...prev, nationality: '' }));
+      }
+    }
+  }, [formData.destinationCountry, type]);
+
+  // Set initial nationalities on component mount
+  useEffect(() => {
+    const initialNationalities = getFilteredNationalities(formData.destinationCountry || '', type);
+    setAvailableNationalities(initialNationalities);
+  }, [type, formData.destinationCountry]);
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -119,6 +141,22 @@ const MultiStepForm = ({ type, preSelectedCountry, onComplete }: MultiStepFormPr
     }
   };
 
+  const getStepInfo = () => {
+    if (currentStep === 3 && formData.destinationCountry === 'Schengen Area' && type === 'short-stay') {
+      return (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+          <div className="flex items-start space-x-2">
+            <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-blue-800">
+              Only showing nationalities that require a Schengen visa. Citizens of Schengen countries and visa-exempt countries (US, UK, Canada, etc.) don't need short-stay visas.
+            </p>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
@@ -178,6 +216,7 @@ const MultiStepForm = ({ type, preSelectedCountry, onComplete }: MultiStepFormPr
         {currentStep === 3 && (
           <div className="space-y-4">
             <Label className="text-lg font-semibold">Nationality</Label>
+            {getStepInfo()}
             <Select
               value={formData.nationality}
               onValueChange={(value) => setFormData({ ...formData, nationality: value })}
@@ -185,8 +224,8 @@ const MultiStepForm = ({ type, preSelectedCountry, onComplete }: MultiStepFormPr
               <SelectTrigger>
                 <SelectValue placeholder="Select your nationality" />
               </SelectTrigger>
-              <SelectContent>
-                {countries.map((country) => (
+              <SelectContent className="max-h-60">
+                {availableNationalities.map((country) => (
                   <SelectItem key={country} value={country}>{country}</SelectItem>
                 ))}
               </SelectContent>

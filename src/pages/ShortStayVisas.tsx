@@ -110,7 +110,7 @@ const ShortStayVisas = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
             <p className="mb-4">Book a 15-minute call with our visa experts to discuss your application.</p>
-            <CalendlyWidget />
+            <CalendlyWidget url="https://calendly.com/oneglobaltrip/visa-consultation" />
             <Button 
               variant="outline" 
               onClick={() => setShowCalendly(false)}
