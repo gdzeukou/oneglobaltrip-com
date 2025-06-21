@@ -1,4 +1,3 @@
-
 import { Package, Category } from '@/types/package';
 
 export const packages: Package[] = [
@@ -9,7 +8,7 @@ export const packages: Package[] = [
     category: "luxury",
     duration: "6 days / 5 nights",
     price: 3299,
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png",
     description: "Sip, savor & stroll through Bordeaux and Dordogne",
     highlights: ["Premier Grand Cru tastings in Médoc & Saint-Émilion", "Truffle-hunting with farm-to-table lunch", "Hands-on Paris pastry workshop"],
     specialFeatures: ["Chef-led market tour", "Michelin dinner upgrade"],
@@ -39,7 +38,7 @@ export const packages: Package[] = [
     category: "adventure",
     duration: "6 days / 5 nights",
     price: 3799,
-    image: "https://images.unsplash.com/photo-1539650116574-75c0c6d5ff90?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png",
     description: "Glaciers, geysers & Northern Lights magic",
     highlights: ["Golden Circle super-jeep safari", "Glacier hike & crystal ice-cave tour", "Blue Lagoon twilight entry"],
     specialFeatures: ["Northern Lights photo guide", "Silfra snorkel"],
