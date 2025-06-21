@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Search, MapPin, Calendar, Users, Star, Heart, ArrowRight, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,55 +18,73 @@ const Packages = () => {
   const packages = [
     {
       id: 1,
-      title: "Paris + Santorini Escape",
-      category: "romantic",
-      duration: "7 days",
-      price: 2499,
-      image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      description: "Romantic getaway combining the charm of Paris with the beauty of Santorini",
-      highlights: ["Eiffel Tower dinner", "Santorini sunset cruise", "5-star hotels"],
+      title: "Wine & Gastronomy Tour | France 🇫🇷",
+      category: "luxury",
+      duration: "6 days / 5 nights",
+      price: 3299,
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Sip, savor & stroll through Bordeaux and Dordogne",
+      highlights: ["Premier Grand Cru tastings in Médoc & Saint-Émilion", "Truffle-hunting with farm-to-table lunch", "Hands-on Paris pastry workshop"],
+      specialFeatures: ["Chef-led market tour", "Michelin dinner upgrade"],
       visasRequired: ["Schengen"],
       rating: 4.9,
-      reviews: 127
+      reviews: 87
     },
     {
       id: 2,
-      title: "London-Amsterdam Rail Adventure",
+      title: "Tulips, Canals & Windmills | Netherlands 🇳🇱",
       category: "cultural",
-      duration: "10 days",
-      price: 3299,
-      image: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      description: "Explore two iconic cities via scenic rail routes",
-      highlights: ["Royal Palace tours", "Canal boat cruise", "West End show"],
-      visasRequired: ["UK", "Schengen"],
+      duration: "5 days / 4 nights",
+      price: 2599,
+      image: "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Iconic Dutch spring escape",
+      highlights: ["Early-access Keukenhof Gardens", "Private Amsterdam canal cruise at sunset", "Zaanse Schans windmill & clog demo"],
+      specialFeatures: ["Bicycle photo shoot", "Gouda cheese farm visit"],
+      visasRequired: ["Schengen"],
       rating: 4.8,
-      reviews: 89
+      reviews: 112
     },
     {
       id: 3,
-      title: "Swiss Alps Luxury Retreat",
-      category: "luxury",
-      duration: "5 days",
-      price: 4299,
-      image: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      description: "Ultimate luxury experience in the heart of the Swiss Alps",
-      highlights: ["Helicopter tours", "Michelin dining", "Spa treatments"],
+      title: "Fire & Ice Adventure | Iceland 🇮🇸",
+      category: "adventure",
+      duration: "6 days / 5 nights",
+      price: 3799,
+      image: "https://images.unsplash.com/photo-1539066436817-0c3c2c1c8e4c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Glaciers, geysers & geothermal bliss",
+      highlights: ["Golden Circle super-jeep safari", "Glacier hike & crystal ice-cave tour", "Blue Lagoon twilight entry"],
+      specialFeatures: ["Northern Lights photo guide", "Silfra snorkel"],
       visasRequired: ["Schengen"],
-      rating: 5.0,
-      reviews: 45
+      rating: 4.9,
+      reviews: 156
     },
     {
       id: 4,
-      title: "Mediterranean Coast Explorer",
-      category: "adventure",
-      duration: "14 days",
-      price: 3899,
-      image: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      description: "Multi-country coastal adventure through Spain, France, and Italy",
-      highlights: ["Beach hopping", "Wine tastings", "Coastal hiking"],
+      title: "Alpine Peaks & Lakes | Switzerland 🇨🇭",
+      category: "luxury",
+      duration: "7 days / 6 nights",
+      price: 4299,
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Scenic rails to sky-high vistas",
+      highlights: ["Glacier Express panoramic train", "Jungfraujoch 'Top of Europe' excursion", "Lake Lucerne vintage steamboat cruise"],
+      specialFeatures: ["First-class Swiss Travel Pass", "Interlaken paragliding"],
+      visasRequired: ["Schengen"],
+      rating: 5.0,
+      reviews: 89
+    },
+    {
+      id: 5,
+      title: "Medieval Cities & Chocolate | Belgium 🇧🇪",
+      category: "cultural",
+      duration: "4 days / 3 nights",
+      price: 2199,
+      image: "https://images.unsplash.com/photo-1515940175183-6798529cb860?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      description: "Cobblestones, craft beer & cocoa",
+      highlights: ["Private Bruges & Ghent day-trip", "Hands-on master chocolatier workshop", "UNESCO Grand-Place night tour"],
+      specialFeatures: ["Trappist abbey beer tasting", "Art-Nouveau bike ride"],
       visasRequired: ["Schengen"],
       rating: 4.7,
-      reviews: 156
+      reviews: 134
     }
   ];
 
@@ -172,7 +191,7 @@ const Packages = () => {
                 
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xl font-bold text-gray-900">{pkg.title}</h3>
+                    <h3 className="text-xl font-bold text-gray-900">{pkg.title.split(' | ')[0]}</h3>
                     <div className="flex items-center space-x-1">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                       <span className="text-sm font-medium">{pkg.rating}</span>
@@ -193,11 +212,19 @@ const Packages = () => {
                     </div>
                   </div>
                   
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="space-y-2 mb-4">
+                    <p className="text-sm font-medium text-gray-900">Included:</p>
                     {pkg.highlights.slice(0, 2).map((highlight, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {highlight}
-                      </Badge>
+                      <div key={index} className="flex items-start space-x-2 text-sm text-gray-600">
+                        <span className="text-green-600 font-bold">✓</span>
+                        <span>{highlight}</span>
+                      </div>
+                    ))}
+                    {pkg.specialFeatures.slice(0, 1).map((feature, index) => (
+                      <div key={index} className="flex items-start space-x-2 text-sm text-gray-600">
+                        <span className="text-yellow-500 font-bold">★</span>
+                        <span>{feature}</span>
+                      </div>
                     ))}
                   </div>
                   
