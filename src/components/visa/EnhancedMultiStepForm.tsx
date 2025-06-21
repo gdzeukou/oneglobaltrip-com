@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,11 +30,13 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
     departureCity: '',
     nationality: '',
     additionalNeeds: [] as string[],
+    firstName: '',
+    lastName: '',
     email: '',
     phone: ''
   });
 
-  const totalSteps = 7;
+  const totalSteps = 8;
 
   const shortStayPurposes = [
     'Tourism',
@@ -126,6 +127,8 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
             departure_city: formData.departureCity,
             nationality: formData.nationality,
             destination_country: formData.destinationCountry,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
             email: formData.email,
             phone: formData.phone
           }
@@ -159,7 +162,8 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
       case 4: return formData.departureCity.length > 0;
       case 5: return formData.nationality.length > 0;
       case 6: return true; // Additional needs is optional
-      case 7: return formData.email.length > 0 && formData.phone.length > 0;
+      case 7: return formData.firstName.length > 0 && formData.lastName.length > 0;
+      case 8: return formData.email.length > 0 && formData.phone.length > 0;
       default: return false;
     }
   };
@@ -310,8 +314,35 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
           </div>
         )}
 
-        {/* Step 7: Contact Information */}
+        {/* Step 7: Name Information */}
         {currentStep === 7 && (
+          <div className="space-y-4">
+            <Label className="text-lg font-semibold">Your Name</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  placeholder="First name"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  placeholder="Last name"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 8: Contact Information */}
+        {currentStep === 8 && (
           <div className="space-y-4">
             <Label className="text-lg font-semibold">Contact Information</Label>
             <div className="space-y-4">

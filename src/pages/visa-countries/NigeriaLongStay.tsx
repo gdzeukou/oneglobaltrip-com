@@ -7,7 +7,7 @@ import EnhancedMultiStepForm from '@/components/visa/EnhancedMultiStepForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, Heart, AlertTriangle, FileText, Clock, Zap } from 'lucide-react';
+import { Shield, AlertTriangle, FileText, Clock, Zap } from 'lucide-react';
 import CalendlyWidget from '@/components/CalendlyWidget';
 
 const NigeriaLongStay = () => {
@@ -18,51 +18,24 @@ const NigeriaLongStay = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const insuranceRequirements = [
-    {
-      icon: Zap,
-      title: 'Comprehensive Coverage',
-      detail: '$50,000+ medical coverage',
-      description: 'International health insurance with minimum $50,000 coverage for all medical emergencies and treatments'
-    },
-    {
-      icon: Shield,
-      title: 'Tropical Medicine',
-      detail: 'Endemic disease coverage',
-      description: 'Must include coverage for tropical diseases, malaria treatment, and vaccination requirements'
-    },
-    {
-      icon: Heart,
-      title: 'Evacuation Coverage',
-      detail: 'Medical evacuation included',
-      description: 'Emergency medical evacuation to home country or nearest adequate medical facility'
-    },
-    {
-      icon: AlertTriangle,
-      title: 'Local Healthcare',
-      detail: 'Private facility access',
-      description: 'Insurance must provide access to private healthcare facilities and international standard care'
-    }
-  ];
-
   const cities = [
     {
       name: 'Lagos',
       image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
-      description: 'Economic hub with international healthcare facilities and comprehensive insurance networks',
-      highlights: ['Lagos University Hospital', 'International Insurance', 'Private Healthcare', 'Medical Tourism']
+      description: 'Nigeria\'s vibrant megacity famous for Afrobeats music, Nollywood films, and dynamic street culture',
+      highlights: ['Jollof Rice', 'Afrobeats Music', 'Lagos Carnival', 'Art Galleries']
     },
     {
       name: 'Abuja',
       image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
-      description: 'Federal capital with government healthcare infrastructure and diplomatic medical services',
-      highlights: ['National Hospital Abuja', 'Diplomatic Healthcare', 'Government Insurance', 'Specialist Care']
+      description: 'Modern capital city known for its planned architecture, cultural festivals, and diverse cuisine',
+      highlights: ['Suya Grills', 'Abuja Carnival', 'National Mosque', 'Cultural Festivals']
     },
     {
-      name: 'Port Harcourt',
+      name: 'Kano',
       image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
-      description: 'Oil industry center with international standard medical facilities and expatriate healthcare',
-      highlights: ['University of Port Harcourt Hospital', 'Expat Healthcare', 'Oil Industry Medical', 'Emergency Services']
+      description: 'Ancient trading city famous for traditional crafts, Hausa culture, and the historic Kurmi Market',
+      highlights: ['Fura da Nono', 'Durbar Festival', 'Ancient City Walls', 'Traditional Crafts']
     }
   ];
 
@@ -94,39 +67,49 @@ const NigeriaLongStay = () => {
 
       <TrustBadges />
 
-      <section className="py-16 bg-green-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">
-            🚨 Critical: Tropical Medicine Insurance Requirements
+      <section className="py-12 bg-green-50">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
+            🚨 Critical: Tropical Medicine Insurance Required
           </h2>
-          <div className="bg-green-100 border-l-4 border-green-500 p-6 mb-8 max-w-4xl mx-auto">
+          <div className="bg-green-100 border-l-4 border-green-500 p-4 mb-6 max-w-3xl mx-auto">
             <div className="flex">
-              <AlertTriangle className="h-6 w-6 text-green-500 mr-3 flex-shrink-0" />
+              <AlertTriangle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-bold text-green-800 mb-2">Specialized Tropical Coverage Required</h3>
-                <p className="text-green-700">
-                  Nigeria requires minimum $50,000 medical insurance with specific coverage for tropical diseases, malaria treatment, 
-                  yellow fever vaccination, and emergency evacuation. Standard insurance is insufficient for visa approval.
+                <h3 className="font-bold text-green-800 mb-1">$50,000+ Coverage Mandatory</h3>
+                <p className="text-green-700 text-sm">
+                  Nigeria requires specialized tropical disease coverage, malaria treatment, 
+                  yellow fever vaccination, and emergency evacuation. Standard insurance is insufficient.
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {insuranceRequirements.map((req, index) => (
-              <Card key={index} className="border-2 hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <req.icon className="h-8 w-8 text-green-600 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-lg mb-1">{req.title}</h3>
-                      <p className="text-green-600 font-semibold mb-2">{req.detail}</p>
-                      <p className="text-gray-600 text-sm">{req.description}</p>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Shield className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Tropical Coverage</h3>
+                    <p className="text-green-600 font-semibold text-sm mb-1">Endemic disease protection</p>
+                    <p className="text-gray-600 text-xs">Malaria, yellow fever, and tropical disease treatment coverage required</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Zap className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Emergency Evacuation</h3>
+                    <p className="text-green-600 font-semibold text-sm mb-1">Medical evacuation included</p>
+                    <p className="text-gray-600 text-xs">Emergency transport to home country or nearest adequate facility</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -134,7 +117,7 @@ const NigeriaLongStay = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Healthcare Excellence in Nigerian Cities
+            Cultural Richness of Nigerian Cities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cities.map((city) => (
