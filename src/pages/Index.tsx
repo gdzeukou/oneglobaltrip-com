@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Search, MapPin, Calendar, Users, Plane, Camera, Mountain, Waves, Building, Star, Heart, ArrowRight, FileText, Clock, CheckCircle, Shield, Award, Headphones, ChevronDown, ChevronUp, Play, Phone, Mail, MapPin as Location, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -62,21 +63,21 @@ const Index = () => {
       location: "Austin, TX",
       rating: 5,
       text: "One Global Trip made our European honeymoon absolutely perfect. The visa process was seamless and every detail was handled beautifully.",
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop"
     },
     {
       name: "Jennifer Chen",
       location: "San Francisco, CA", 
       rating: 5,
       text: "I was stressed about getting my Schengen visa, but their team guided me through everything. Highly recommend their services!",
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop"
     },
     {
       name: "David Rodriguez",
       location: "Miami, FL",
       rating: 5,
       text: "The $0 down payment option was exactly what we needed. Professional service from start to finish.",
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop"
     }
   ];
 
@@ -108,28 +109,28 @@ const Index = () => {
       title: "Paris + Santorini Escape",
       description: "Romance meets Mediterranean beauty",
       price: "From $2,499",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=800&h=600&fit=crop",
       duration: "7 days"
     },
     {
       title: "London-Amsterdam Rail Adventure", 
       description: "Two iconic cities, scenic rail journey",
       price: "From $3,299",
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop",
       duration: "10 days"
     },
     {
       title: "Swiss Alps Luxury Retreat",
       description: "Ultimate alpine luxury experience",
       price: "From $4,299", 
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
       duration: "5 days"
     },
     {
       title: "Mediterranean Coast Explorer",
       description: "Multi-country coastal adventure",
       price: "From $3,899",
-      image: "/placeholder.svg", 
+      image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&h=600&fit=crop", 
       duration: "14 days"
     }
   ];
@@ -149,7 +150,7 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-20">
-          <img src="/placeholder.svg" alt="European landscape" className="w-full h-full object-cover" />
+          <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1920&h=1080&fit=crop" alt="European mountain landscape" className="w-full h-full object-cover" />
         </div>
         
         <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
