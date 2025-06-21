@@ -1,3 +1,4 @@
+
 import { Package, Category } from '@/types/package';
 
 export const packages: Package[] = [
@@ -53,7 +54,7 @@ export const packages: Package[] = [
     category: "luxury",
     duration: "7 days / 6 nights",
     price: 4299,
-    image: "https://images.unsplash.com/photo-1458668383970-8ddd3927deed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png",
     description: "Scenic rails to sky-high vistas",
     highlights: ["Glacier Express panoramic train", "Jungfraujoch 'Top of Europe' excursion", "Lake Lucerne vintage steamboat cruise"],
     specialFeatures: ["First-class Swiss Travel Pass", "Interlaken paragliding"],
@@ -68,7 +69,7 @@ export const packages: Package[] = [
     category: "cultural",
     duration: "4 days / 3 nights",
     price: 2199,
-    image: "https://images.unsplash.com/photo-1558294559-1985-4b7d-9af3-1b7d5f1f4b8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png",
     description: "Gothic grandeur, artisan chocolate & abbey ales",
     highlights: ["Private Bruges UNESCO heritage tour", "Master chocolatier hands-on workshop", "Brussels Grand-Place evening illumination"],
     specialFeatures: ["Trappist monastery brewery visit", "Belgian waffle masterclass"],
