@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -7,7 +6,7 @@ import MultiStepForm from '@/components/visa/MultiStepForm';
 import CountryTile from '@/components/visa/CountryTile';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
-import { CalendlyWidget } from '@/components/CalendlyWidget';
+import CalendlyWidget from '@/components/CalendlyWidget';
 
 const LongStayVisas = () => {
   const [searchParams] = useSearchParams();
