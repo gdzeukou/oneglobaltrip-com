@@ -1,168 +1,153 @@
 
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Menu, X, ChevronDown } from 'lucide-react';
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Menu, X, User, LogOut, LayoutDashboard } from 'lucide-react';
 
 const Navigation = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Packages', path: '/packages' },
-    { name: 'Get Started', path: '/get-started' }
-  ];
-
-  const isVisaPath = location.pathname.startsWith('/visas');
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'nav-scrolled py-2' : 'bg-white/95 backdrop-blur-sm py-4'
-    }`}>
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3">
-            <img 
-              src="/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png" 
-              alt="One Global Trip" 
-              className="h-10 w-auto"
-            />
-            <span className="font-bold text-xl text-blue-900">One Global Trip</span>
-          </Link>
+    <nav className="bg-white shadow-lg fixed w-full top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex-shrink-0 flex items-center">
+              <span className="text-2xl font-bold text-blue-900">One Global Trip</span>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
-                className={`font-medium transition-colors hover:border-b-2 hover:border-yellow-500 ${
-                  location.pathname === link.path
-                    ? 'text-blue-900 border-b-2 border-yellow-500'
-                    : 'text-gray-700 hover:text-blue-900'
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
-            
-            {/* Visa Dropdown */}
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className={`bg-transparent hover:bg-transparent focus:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent font-medium transition-colors hover:border-b-2 hover:border-yellow-500 ${
-                    isVisaPath
-                      ? 'text-blue-900 border-b-2 border-yellow-500'
-                      : 'text-gray-700 hover:text-blue-900'
-                  }`}>
-                    Visas
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-white border shadow-lg">
-                    <div className="w-64 p-4">
-                      <NavigationMenuLink asChild>
-                        <Link
-                          to="/visas/short-stay" 
-                          className="block p-3 rounded-md hover:bg-blue-50 transition-colors"
-                        >
-                          <div className="font-medium text-blue-900">Short-Stay Visas</div>
-                          <div className="text-sm text-gray-600">Tourism, business, quick visits</div>
-                        </Link>
-                      </NavigationMenuLink>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          to="/visas/long-stay" 
-                          className="block p-3 rounded-md hover:bg-blue-50 transition-colors"
-                        >
-                          <div className="font-medium text-blue-900">Long-Stay Visas</div>
-                          <div className="text-sm text-gray-600">Work, study, residency</div>
-                        </Link>
-                      </NavigationMenuLink>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+            <Link to="/packages" className="text-gray-700 hover:text-blue-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Packages
+            </Link>
+            <Link to="/visas" className="text-gray-700 hover:text-blue-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+              Visas
+            </Link>
 
-            <Button 
-              asChild
-              className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold"
-            >
-              <Link to="/booking">Book Now</Link>
-            </Button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-4 pt-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={`font-medium transition-colors ${
-                    location.pathname === link.path
-                      ? 'text-blue-900'
-                      : 'text-gray-700 hover:text-blue-900'
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="space-y-2">
-                <Link
-                  to="/visas/short-stay"
-                  className="block text-gray-700 hover:text-blue-900 pl-4"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Short-Stay Visas
-                </Link>
-                <Link
-                  to="/visas/long-stay"
-                  className="block text-gray-700 hover:text-blue-900 pl-4"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Long-Stay Visas
-                </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-blue-600 text-white">
+                        {user.email?.charAt(0)?.toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="flex items-center space-x-4">
+                <Button variant="outline" onClick={() => navigate('/auth')}>
+                  Sign In
+                </Button>
+                <Button onClick={() => navigate('/auth')}>
+                  Get Started
+                </Button>
               </div>
-              <Button 
-                asChild
-                className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold w-fit"
-              >
-                <Link to="/booking" onClick={() => setIsMobileMenuOpen(false)}>Book Now</Link>
-              </Button>
-            </div>
+            )}
           </div>
-        )}
+
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+            >
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <div className="md:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+            <Link
+              to="/packages"
+              className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Packages
+            </Link>
+            <Link
+              to="/visas"
+              className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              Visas
+            </Link>
+            
+            {user ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <LayoutDashboard className="inline mr-2 h-4 w-4" />
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    setIsOpen(false);
+                  }}
+                  className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium w-full text-left"
+                >
+                  <LogOut className="inline mr-2 h-4 w-4" />
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <div className="px-3 py-2 space-y-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => {
+                    navigate('/auth');
+                    setIsOpen(false);
+                  }}
+                >
+                  Sign In
+                </Button>
+                <Button 
+                  className="w-full"
+                  onClick={() => {
+                    navigate('/auth');
+                    setIsOpen(false);
+                  }}
+                >
+                  Get Started
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

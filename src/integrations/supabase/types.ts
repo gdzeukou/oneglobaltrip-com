@@ -9,6 +9,68 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          booking_date: string | null
+          booking_details: Json | null
+          booking_reference: string | null
+          booking_type: string
+          check_in_date: string | null
+          check_out_date: string | null
+          cost: number | null
+          created_at: string
+          description: string | null
+          id: string
+          location: string | null
+          provider: string | null
+          status: string | null
+          trip_id: string
+          user_id: string
+        }
+        Insert: {
+          booking_date?: string | null
+          booking_details?: Json | null
+          booking_reference?: string | null
+          booking_type: string
+          check_in_date?: string | null
+          check_out_date?: string | null
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          provider?: string | null
+          status?: string | null
+          trip_id: string
+          user_id: string
+        }
+        Update: {
+          booking_date?: string | null
+          booking_details?: Json | null
+          booking_reference?: string | null
+          booking_type?: string
+          check_in_date?: string | null
+          check_out_date?: string | null
+          cost?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          location?: string | null
+          provider?: string | null
+          status?: string | null
+          trip_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultation_requests: {
         Row: {
           budget: string | null
@@ -48,6 +110,50 @@ export type Database = {
         }
         Relationships: []
       }
+      documents: {
+        Row: {
+          application_id: string | null
+          created_at: string
+          document_type: string
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          mime_type: string | null
+          user_id: string
+        }
+        Insert: {
+          application_id?: string | null
+          created_at?: string
+          document_type: string
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          mime_type?: string | null
+          user_id: string
+        }
+        Update: {
+          application_id?: string | null
+          created_at?: string
+          document_type?: string
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          mime_type?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "visa_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       long_visas_leads: {
         Row: {
           created_at: string
@@ -78,6 +184,45 @@ export type Database = {
           nationality?: string
           phone?: string
           visa_category?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          date_of_birth: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          nationality: string | null
+          passport_expiry: string | null
+          passport_number: string | null
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date_of_birth?: string | null
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          nationality?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date_of_birth?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          nationality?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -114,44 +259,101 @@ export type Database = {
         }
         Relationships: []
       }
+      trips: {
+        Row: {
+          created_at: string
+          departure_city: string | null
+          departure_date: string | null
+          destination_country: string
+          id: string
+          return_date: string | null
+          status: string | null
+          total_budget: number | null
+          trip_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          departure_city?: string | null
+          departure_date?: string | null
+          destination_country: string
+          id?: string
+          return_date?: string | null
+          status?: string | null
+          total_budget?: number | null
+          trip_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          departure_city?: string | null
+          departure_date?: string | null
+          destination_country?: string
+          id?: string
+          return_date?: string | null
+          status?: string | null
+          total_budget?: number | null
+          trip_type?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       visa_applications: {
         Row: {
+          application_reference: string | null
           created_at: string
           departure_date: string | null
           email: string
           id: string
+          last_updated: string | null
           name: string
           nationality: string
           previous_visas: string | null
           return_date: string | null
           special_circumstances: string | null
+          status: string | null
+          submitted_at: string | null
           travel_purpose: string
+          user_id: string | null
           visa_type: string
         }
         Insert: {
+          application_reference?: string | null
           created_at?: string
           departure_date?: string | null
           email: string
           id?: string
+          last_updated?: string | null
           name: string
           nationality: string
           previous_visas?: string | null
           return_date?: string | null
           special_circumstances?: string | null
+          status?: string | null
+          submitted_at?: string | null
           travel_purpose?: string
+          user_id?: string | null
           visa_type: string
         }
         Update: {
+          application_reference?: string | null
           created_at?: string
           departure_date?: string | null
           email?: string
           id?: string
+          last_updated?: string | null
           name?: string
           nationality?: string
           previous_visas?: string | null
           return_date?: string | null
           special_circumstances?: string | null
+          status?: string | null
+          submitted_at?: string | null
           travel_purpose?: string
+          user_id?: string | null
           visa_type?: string
         }
         Relationships: []
