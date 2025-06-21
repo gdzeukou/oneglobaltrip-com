@@ -22,6 +22,16 @@ import NigeriaShortStay from "./pages/visa-countries/NigeriaShortStay";
 import IndiaShortStay from "./pages/visa-countries/IndiaShortStay";
 import UAEShortStay from "./pages/visa-countries/UAEShortStay";
 
+// Long-stay country pages
+import PortugalLongStay from "./pages/visa-countries/PortugalLongStay";
+import NorwayLongStay from "./pages/visa-countries/NorwayLongStay";
+import DenmarkLongStay from "./pages/visa-countries/DenmarkLongStay";
+import FinlandLongStay from "./pages/visa-countries/FinlandLongStay";
+import NigeriaLongStay from "./pages/visa-countries/NigeriaLongStay";
+import FranceLongStay from "./pages/visa-countries/FranceLongStay";
+import GermanyLongStay from "./pages/visa-countries/GermanyLongStay";
+import SwitzerlandLongStay from "./pages/visa-countries/SwitzerlandLongStay";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -45,6 +55,16 @@ const App = () => (
           <Route path="/visas/short-stay/nigeria" element={<NigeriaShortStay />} />
           <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
           <Route path="/visas/short-stay/uae" element={<UAEShortStay />} />
+          
+          {/* Long-stay country pages */}
+          <Route path="/visas/long-stay/portugal" element={<PortugalLongStay />} />
+          <Route path="/visas/long-stay/norway" element={<NorwayLongStay />} />
+          <Route path="/visas/long-stay/denmark" element={<DenmarkLongStay />} />
+          <Route path="/visas/long-stay/finland" element={<FinlandLongStay />} />
+          <Route path="/visas/long-stay/nigeria" element={<NigeriaLongStay />} />
+          <Route path="/visas/long-stay/france" element={<FranceLongStay />} />
+          <Route path="/visas/long-stay/germany" element={<GermanyLongStay />} />
+          <Route path="/visas/long-stay/switzerland" element={<SwitzerlandLongStay />} />
           
           <Route path="/booking" element={<Booking />} />
           <Route path="/get-started" element={<GetStarted />} />
