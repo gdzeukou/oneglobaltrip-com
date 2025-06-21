@@ -2,7 +2,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -20,9 +28,10 @@ const Navigation = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Packages', path: '/packages' },
-    { name: 'Visas', path: '/visas' },
     { name: 'Get Started', path: '/get-started' }
   ];
+
+  const isVisaPath = location.pathname.startsWith('/visas');
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -46,7 +55,7 @@ const Navigation = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`font-medium transition-colors ${
+                className={`font-medium transition-colors hover:border-b-2 hover:border-yellow-500 ${
                   location.pathname === link.path
                     ? 'text-blue-900 border-b-2 border-yellow-500'
                     : 'text-gray-700 hover:text-blue-900'
@@ -55,6 +64,44 @@ const Navigation = () => {
                 {link.name}
               </Link>
             ))}
+            
+            {/* Visa Dropdown */}
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className={`bg-transparent hover:bg-transparent focus:bg-transparent data-[active]:bg-transparent data-[state=open]:bg-transparent font-medium transition-colors hover:border-b-2 hover:border-yellow-500 ${
+                    isVisaPath
+                      ? 'text-blue-900 border-b-2 border-yellow-500'
+                      : 'text-gray-700 hover:text-blue-900'
+                  }`}>
+                    Visas
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="bg-white border shadow-lg">
+                    <div className="w-64 p-4">
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/visas/short-stay" 
+                          className="block p-3 rounded-md hover:bg-blue-50 transition-colors"
+                        >
+                          <div className="font-medium text-blue-900">Short-Stay Visas</div>
+                          <div className="text-sm text-gray-600">Tourism, business, quick visits</div>
+                        </Link>
+                      </NavigationMenuLink>
+                      <NavigationMenuLink asChild>
+                        <Link
+                          to="/visas/long-stay" 
+                          className="block p-3 rounded-md hover:bg-blue-50 transition-colors"
+                        >
+                          <div className="font-medium text-blue-900">Long-Stay Visas</div>
+                          <div className="text-sm text-gray-600">Work, study, residency</div>
+                        </Link>
+                      </NavigationMenuLink>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+
             <Button 
               asChild
               className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold"
@@ -90,6 +137,22 @@ const Navigation = () => {
                   {link.name}
                 </Link>
               ))}
+              <div className="space-y-2">
+                <Link
+                  to="/visas/short-stay"
+                  className="block text-gray-700 hover:text-blue-900 pl-4"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Short-Stay Visas
+                </Link>
+                <Link
+                  to="/visas/long-stay"
+                  className="block text-gray-700 hover:text-blue-900 pl-4"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Long-Stay Visas
+                </Link>
+              </div>
               <Button 
                 asChild
                 className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold w-fit"
