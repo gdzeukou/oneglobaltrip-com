@@ -2,6 +2,7 @@
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import PackagesHero from '@/components/packages/PackagesHero';
+import FeaturedPackages from '@/components/packages/FeaturedPackages';
 import PackagesFilters from '@/components/packages/PackagesFilters';
 import PackagesGrid from '@/components/packages/PackagesGrid';
 import { packages, categories } from '@/data/packages';
@@ -27,6 +28,8 @@ const Packages = () => {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
       />
+
+      <FeaturedPackages packages={packages} />
 
       <PackagesFilters
         categories={categories}

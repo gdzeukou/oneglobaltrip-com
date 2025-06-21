@@ -1,4 +1,5 @@
 
+
 import { Package, Category } from '@/types/package';
 
 export const packages: Package[] = [
@@ -151,6 +152,67 @@ export const packages: Package[] = [
     visasRequired: ["Schengen"],
     rating: 4.7,
     reviews: 89
+  },
+  // Adding the featured packages from home page
+  {
+    id: 11,
+    title: "Paris + Santorini Escape | Multi-Country 🇫🇷🇬🇷",
+    country: "France, Greece",
+    category: "romantic",
+    duration: "10 days / 9 nights",
+    price: 2499,
+    image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=800&h=600&fit=crop",
+    description: "Romance in the City of Light, then Greek island bliss",
+    highlights: ["Private Eiffel Tower dinner", "Louvre after-hours tour", "Santorini sunset cruise with wine tasting"],
+    specialFeatures: ["Helicopter transfer to Santorini", "Couples photography session"],
+    visasRequired: ["Schengen"],
+    rating: 4.9,
+    reviews: 134
+  },
+  {
+    id: 12,
+    title: "London-Amsterdam Rail Adventure | Multi-Country 🇬🇧🇳🇱",
+    country: "United Kingdom, Netherlands",
+    category: "cultural",
+    duration: "8 days / 7 nights",
+    price: 1899,
+    image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop",
+    description: "Royal London meets Dutch charm via scenic railways",
+    highlights: ["Tower of London private tour", "Eurostar first-class journey", "Amsterdam canal house stay"],
+    specialFeatures: ["Royal afternoon tea", "Dutch bike tour upgrade"],
+    visasRequired: ["UK Visitor", "Schengen"],
+    rating: 4.8,
+    reviews: 98
+  },
+  {
+    id: 13,
+    title: "Mediterranean Grand Tour | Multi-Country 🇪🇸🇫🇷🇮🇹",
+    country: "Spain, France, Italy",
+    category: "luxury",
+    duration: "14 days / 13 nights",
+    price: 3299,
+    image: "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&h=600&fit=crop",
+    description: "Spain, France, Italy - the ultimate coastal journey",
+    highlights: ["Barcelona Gaudí architecture tour", "French Riviera yacht charter", "Amalfi Coast helicopter ride"],
+    specialFeatures: ["High-speed rail connections", "Michelin restaurant reservations"],
+    visasRequired: ["Schengen"],
+    rating: 5.0,
+    reviews: 76
+  },
+  {
+    id: 14,
+    title: "Swiss Alps & Bavaria | Multi-Country 🇨🇭🇩🇪",
+    country: "Switzerland, Germany",
+    category: "adventure",
+    duration: "12 days / 11 nights",
+    price: 2799,
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+    description: "Mountain peaks, fairy-tale castles, alpine luxury",
+    highlights: ["Matterhorn helicopter tour", "Neuschwanstein Castle visit", "Alpine spa treatments"],
+    specialFeatures: ["Cable car adventures", "Bavarian brewery tour"],
+    visasRequired: ["Schengen"],
+    rating: 4.8,
+    reviews: 112
   }
 ];
 
@@ -161,3 +223,4 @@ export const categories: Category[] = [
   { id: 'luxury', name: 'Luxury' },
   { id: 'adventure', name: 'Adventure' }
 ];
+
