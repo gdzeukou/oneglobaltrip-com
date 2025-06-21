@@ -9,7 +9,87 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      consultation_requests: {
+        Row: {
+          budget: string | null
+          created_at: string
+          destinations: string | null
+          email: string
+          id: string
+          interests: string | null
+          name: string
+          phone: string
+          travel_dates: string | null
+          travelers: string | null
+        }
+        Insert: {
+          budget?: string | null
+          created_at?: string
+          destinations?: string | null
+          email: string
+          id?: string
+          interests?: string | null
+          name: string
+          phone: string
+          travel_dates?: string | null
+          travelers?: string | null
+        }
+        Update: {
+          budget?: string | null
+          created_at?: string
+          destinations?: string | null
+          email?: string
+          id?: string
+          interests?: string | null
+          name?: string
+          phone?: string
+          travel_dates?: string | null
+          travelers?: string | null
+        }
+        Relationships: []
+      }
+      visa_applications: {
+        Row: {
+          created_at: string
+          departure_date: string | null
+          email: string
+          id: string
+          name: string
+          nationality: string
+          previous_visas: string | null
+          return_date: string | null
+          special_circumstances: string | null
+          travel_purpose: string
+          visa_type: string
+        }
+        Insert: {
+          created_at?: string
+          departure_date?: string | null
+          email: string
+          id?: string
+          name: string
+          nationality: string
+          previous_visas?: string | null
+          return_date?: string | null
+          special_circumstances?: string | null
+          travel_purpose?: string
+          visa_type: string
+        }
+        Update: {
+          created_at?: string
+          departure_date?: string | null
+          email?: string
+          id?: string
+          name?: string
+          nationality?: string
+          previous_visas?: string | null
+          return_date?: string | null
+          special_circumstances?: string | null
+          travel_purpose?: string
+          visa_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
