@@ -9,16 +9,34 @@ interface CountryTileProps {
 }
 
 const CountryTile = ({ name, image, type }: CountryTileProps) => {
-  const handleClick = () => {
-    const element = document.getElementById('visa-form');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+  // Map country names to URL-friendly slugs
+  const getCountrySlug = (countryName: string) => {
+    const slugMap: { [key: string]: string } = {
+      'Schengen Area': 'schengen',
+      'United Kingdom': 'uk',
+      'Canada': 'canada',
+      'Brazil': 'brazil',
+      'Nigeria e-Visa': 'nigeria',
+      'Nigeria': 'nigeria',
+      'India': 'india',
+      'UAE (Dubai)': 'uae',
+      'Portugal': 'portugal',
+      'Norway': 'norway',
+      'Denmark': 'denmark',
+      'Finland': 'finland',
+      'France': 'france',
+      'Germany': 'germany',
+      'Switzerland': 'switzerland'
+    };
+    return slugMap[countryName] || countryName.toLowerCase().replace(/\s+/g, '-');
   };
 
+  const countrySlug = getCountrySlug(name);
+  const href = `/visas/${type}/${countrySlug}`;
+
   return (
-    <Link to={`/visas/${type}?country=${encodeURIComponent(name)}`}>
-      <Card className="overflow-hidden hover-lift group cursor-pointer" onClick={handleClick}>
+    <Link to={href}>
+      <Card className="overflow-hidden hover-lift group cursor-pointer">
         <div className="relative h-48">
           <img
             src={image}

@@ -1,5 +1,6 @@
+
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MultiStepForm from '@/components/visa/MultiStepForm';
@@ -11,7 +12,13 @@ import CalendlyWidget from '@/components/CalendlyWidget';
 const ShortStayVisas = () => {
   const [searchParams] = useSearchParams();
   const [showCalendly, setShowCalendly] = useState(false);
+  const location = useLocation();
   const preSelectedCountry = searchParams.get('country');
+
+  // Scroll to top on page navigation
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (preSelectedCountry) {
@@ -109,8 +116,8 @@ const ShortStayVisas = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
-            <p className="mb-4">Book a 15-minute call with our visa experts to discuss your application.</p>
-            <CalendlyWidget url="https://calendly.com/oneglobaltrip/visa-consultation" />
+            <p className="mb-4">Book a 30-minute call with our visa experts to discuss your application.</p>
+            <CalendlyWidget url="https://calendly.com/camronm-oneglobaltrip/30min" />
             <Button 
               variant="outline" 
               onClick={() => setShowCalendly(false)}

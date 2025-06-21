@@ -13,6 +13,9 @@ import Booking from "./pages/Booking";
 import GetStarted from "./pages/GetStarted";
 import NotFound from "./pages/NotFound";
 
+// Short-stay country pages
+import BrazilShortStay from "./pages/visa-countries/BrazilShortStay";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -27,6 +30,10 @@ const App = () => (
           <Route path="/visas" element={<Visas />} />
           <Route path="/visas/short-stay" element={<ShortStayVisas />} />
           <Route path="/visas/long-stay" element={<LongStayVisas />} />
+          
+          {/* Short-stay country pages */}
+          <Route path="/visas/short-stay/brazil" element={<BrazilShortStay />} />
+          
           <Route path="/booking" element={<Booking />} />
           <Route path="/get-started" element={<GetStarted />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
