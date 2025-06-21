@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import {
-  Passport,
+  FileText,
   Plane,
   Hotel,
   MapPin,
@@ -28,7 +27,7 @@ const Index = () => {
 
   const features = [
     {
-      icon: <Passport className="h-6 w-6" />,
+      icon: <FileText className="h-6 w-6" />,
       name: 'Visa Services',
       description: 'Expert visa processing for 180+ countries',
     },
