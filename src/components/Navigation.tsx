@@ -4,8 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Menu, X, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,9 +32,26 @@ const Navigation = () => {
             <Link to="/packages" className="text-gray-700 hover:text-blue-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
               Packages
             </Link>
-            <Link to="/visas" className="text-gray-700 hover:text-blue-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-              Visas
-            </Link>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-gray-700 hover:text-blue-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Visas <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 bg-white">
+                <DropdownMenuItem asChild>
+                  <Link to="/visas" className="w-full">All Visa Services</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/visas/short-stay" className="w-full">Short-Stay Visas</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/visas/long-stay" className="w-full">Long-Stay & Residency</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {user ? (
               <DropdownMenu>
@@ -47,7 +64,7 @@ const Navigation = () => {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuContent className="w-56 bg-white" align="end" forceMount>
                   <DropdownMenuItem onClick={() => navigate('/dashboard')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
@@ -98,7 +115,21 @@ const Navigation = () => {
               className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium"
               onClick={() => setIsOpen(false)}
             >
-              Visas
+              All Visa Services
+            </Link>
+            <Link
+              to="/visas/short-stay"
+              className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium pl-6"
+              onClick={() => setIsOpen(false)}
+            >
+              Short-Stay Visas
+            </Link>
+            <Link
+              to="/visas/long-stay"
+              className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium pl-6"
+              onClick={() => setIsOpen(false)}
+            >
+              Long-Stay & Residency
             </Link>
             
             {user ? (

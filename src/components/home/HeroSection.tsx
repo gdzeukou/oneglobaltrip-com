@@ -1,55 +1,70 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, User } from 'lucide-react';
+import { ArrowRight, Plane, Building } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
   return (
-    <section className="relative pt-20 pb-16 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white overflow-hidden">
-      <div className="absolute inset-0 bg-black opacity-10"></div>
-      <div className="relative max-w-7xl mx-auto px-4 text-center">
+    <section className="pt-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white py-20">
+      <div className="max-w-7xl mx-auto px-4 text-center">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Your Gateway to
-          <span className="block text-yellow-500">Global Adventures</span>
+          Your Gateway to the World
+          <span className="block text-yellow-500">Starts Here</span>
         </h1>
         <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
-          Visa processing, flight deals, hotel bookings, and travel planning - all in one place
+          From quick getaways to permanent moves - we handle visas, flights, and accommodations 
+          so you can focus on your journey ahead
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          {user ? (
-            <Button 
-              size="lg" 
-              className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold text-lg px-8 py-3"
-              onClick={() => navigate('/dashboard')}
-            >
-              <User className="mr-2 h-5 w-5" />
-              Go to Dashboard
-            </Button>
-          ) : (
-            <>
-              <Button 
-                size="lg" 
-                className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold text-lg px-8 py-3"
-                onClick={() => navigate('/auth')}
-              >
-                Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-blue-900 font-bold text-lg px-8 py-3"
-                onClick={() => navigate('/visas')}
-              >
-                Explore Visas
-              </Button>
-            </>
-          )}
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <Button 
+            size="lg"
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold"
+            asChild
+          >
+            <Link to="/visas/short-stay">
+              <Plane className="h-5 w-5 mr-2" />
+              Short-Stay Visas
+            </Link>
+          </Button>
+          <Button 
+            size="lg"
+            variant="outline"
+            className="border-white text-white hover:bg-white hover:text-blue-900"
+            asChild
+          >
+            <Link to="/visas/long-stay">
+              <Building className="h-5 w-5 mr-2" />
+              Long-Stay & Residency
+            </Link>
+          </Button>
+          <Button 
+            size="lg"
+            variant="outline"
+            className="border-white text-white hover:bg-white hover:text-blue-900"
+            asChild
+          >
+            <Link to="/packages">
+              View All Packages
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </Link>
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <h3 className="font-bold mb-2">Quick Tourism</h3>
+            <p className="text-blue-100">90-day visas for vacation and business trips</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <h3 className="font-bold mb-2">Work & Study</h3>
+            <p className="text-blue-100">Long-term permits for career and education</p>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+            <h3 className="font-bold mb-2">Permanent Residency</h3>
+            <p className="text-blue-100">Complete relocation support and guidance</p>
+          </div>
         </div>
       </div>
     </section>
