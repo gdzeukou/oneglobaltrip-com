@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Calendar, MessageCircle, FileText, Phone, Mail, MapPin, Clock, CheckCircle } from 'lucide-react';
@@ -10,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import CalendlyWidget from '@/components/CalendlyWidget';
 
 const GetStarted = () => {
   const [searchParams] = useSearchParams();
@@ -240,18 +240,23 @@ const GetStarted = () => {
                     </CardContent>
                   </Card>
 
-                  {/* Calendly Widget Placeholder */}
+                  {/* Calendly Widget */}
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-blue-900">Or Schedule Directly</CardTitle>
+                      <CardTitle className="text-blue-900">Schedule Directly</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                        <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600 mb-4">Calendly widget would be embedded here</p>
-                        <Button className="bg-blue-900 hover:bg-blue-800">
-                          Open Calendar
-                        </Button>
+                      <div className="text-center space-y-4">
+                        <p className="text-gray-600 mb-4">
+                          Ready to get started? Book your free consultation instantly
+                        </p>
+                        <CalendlyWidget 
+                          url="https://calendly.com/admin-oneglobaltrip/planmytrip"
+                          buttonText="Book Free Consultation"
+                        />
+                        <p className="text-sm text-gray-500">
+                          15-minute call • No commitment required
+                        </p>
                       </div>
                     </CardContent>
                   </Card>
