@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -18,51 +17,24 @@ const DenmarkLongStay = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const insuranceRequirements = [
-    {
-      icon: Crown,
-      title: 'Danish Coverage',
-      detail: 'DKK 300,000+ medical coverage',
-      description: 'Comprehensive health insurance with minimum DKK 300,000 coverage recognized by Danish authorities'
-    },
-    {
-      icon: Shield,
-      title: 'EU Recognition',
-      detail: 'EU/EEA compliant insurance',
-      description: 'Insurance must meet EU standards and be valid throughout the Schengen area'
-    },
-    {
-      icon: Heart,
-      title: 'Comprehensive Care',
-      detail: 'Full medical spectrum',
-      description: 'Coverage for emergency care, hospitalization, specialist treatment, and preventive medicine'
-    },
-    {
-      icon: AlertTriangle,
-      title: 'Mental Health',
-      detail: 'Psychological care included',
-      description: 'Denmark requires mental health coverage as part of comprehensive medical insurance'
-    }
-  ];
-
   const cities = [
     {
       name: 'Copenhagen',
       image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
-      description: 'Capital with excellent healthcare infrastructure and diverse insurance provider options',
-      highlights: ['Rigshospitalet', 'International Insurance', 'Private Healthcare', 'Specialist Centers']
+      description: 'Capital famous for smørrebrød, hygge culture, and colorful Nyhavn waterfront',
+      highlights: ['Smørrebrød', 'Hygge Culture', 'Nyhavn Harbor', 'Tivoli Gardens']
     },
     {
       name: 'Aarhus',
       image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
-      description: 'University city with modern medical facilities and student-friendly insurance plans',
-      highlights: ['Aarhus University Hospital', 'Student Coverage', 'Medical Research', 'Wellness Programs']
+      description: 'University city known for Danish pastries, ARoS art museum, and vibrant music festivals',
+      highlights: ['Danish Pastries', 'ARoS Museum', 'Aarhus Festival', 'Latin Quarter']
     },
     {
       name: 'Odense',
       image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
-      description: 'Historic city with comprehensive healthcare system and family-oriented insurance options',
-      highlights: ['OUH Hospital', 'Family Insurance', 'Pediatric Care', 'Senior Services']
+      description: 'Hans Christian Andersen\'s birthplace, famous for fairy tales, fynsk cuisine, and historic charm',
+      highlights: ['Fairy Tales', 'Fynsk Cuisine', 'Andersen Museum', 'Historic Center']
     }
   ];
 
@@ -94,39 +66,49 @@ const DenmarkLongStay = () => {
 
       <TrustBadges />
 
-      <section className="py-16 bg-red-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">
-            🚨 Critical: Danish Insurance Compliance
+      <section className="py-12 bg-red-50">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
+            🚨 Critical: DKK 300,000+ Insurance Required
           </h2>
-          <div className="bg-red-100 border-l-4 border-red-500 p-6 mb-8 max-w-4xl mx-auto">
+          <div className="bg-red-100 border-l-4 border-red-500 p-4 mb-6 max-w-3xl mx-auto">
             <div className="flex">
-              <AlertTriangle className="h-6 w-6 text-red-500 mr-3 flex-shrink-0" />
+              <AlertTriangle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-bold text-red-800 mb-2">Mandatory Health Coverage</h3>
-                <p className="text-red-700">
-                  Denmark requires minimum DKK 300,000 medical insurance including mental health coverage. 
-                  The Danish Immigration Service strictly enforces these requirements for all long-stay applicants.
+                <h3 className="font-bold text-red-800 mb-1">DKK 300,000+ Coverage Mandatory</h3>
+                <p className="text-red-700 text-sm">
+                  Denmark requires comprehensive medical insurance including mental health coverage. 
+                  Danish Immigration Service strictly enforces these requirements.
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {insuranceRequirements.map((req, index) => (
-              <Card key={index} className="border-2 hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <req.icon className="h-8 w-8 text-red-700 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-lg mb-1">{req.title}</h3>
-                      <p className="text-red-700 font-semibold mb-2">{req.detail}</p>
-                      <p className="text-gray-600 text-sm">{req.description}</p>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Shield className="h-6 w-6 text-red-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">EU Recognition</h3>
+                    <p className="text-red-600 font-semibold text-sm mb-1">EU/EEA compliant insurance</p>
+                    <p className="text-gray-600 text-xs">Must meet EU standards and be valid throughout Schengen</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Heart className="h-6 w-6 text-red-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Mental Health</h3>
+                    <p className="text-red-600 font-semibold text-sm mb-1">Psychological care included</p>
+                    <p className="text-gray-600 text-xs">Denmark requires mental health coverage</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -134,7 +116,7 @@ const DenmarkLongStay = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Healthcare-Forward Danish Cities
+            Cultural Delights of Danish Cities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cities.map((city) => (

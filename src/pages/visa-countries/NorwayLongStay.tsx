@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -18,51 +17,24 @@ const NorwayLongStay = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const insuranceRequirements = [
-    {
-      icon: Crown,
-      title: 'Premium Coverage',
-      detail: 'NOK 500,000+ medical coverage',
-      description: 'Comprehensive health insurance with minimum NOK 500,000 coverage for all medical expenses in Norway'
-    },
-    {
-      icon: Shield,
-      title: 'Norwegian Recognition',
-      detail: 'EEA/Norwegian approved only',
-      description: 'Insurance must be explicitly recognized by Norwegian Immigration Service (UDI)'
-    },
-    {
-      icon: Heart,
-      title: 'Full Medical Coverage',
-      detail: 'Emergency + routine care',
-      description: 'Must cover emergency treatment, hospitalization, and routine medical care in Norway'
-    },
-    {
-      icon: AlertTriangle,
-      title: 'Arctic Coverage',
-      detail: 'Cold weather medical needs',
-      description: 'Special consideration for cold-weather related medical issues and seasonal conditions'
-    }
-  ];
-
   const cities = [
     {
       name: 'Oslo',
       image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
-      description: 'Capital with world-class healthcare system and extensive insurance provider network',
-      highlights: ['Oslo University Hospital', 'Private Insurance Market', 'Medical Specialists', 'Emergency Services']
+      description: 'Capital famous for lutefisk, Nobel Peace Prize ceremony, and stunning fjord views',
+      highlights: ['Lutefisk', 'Nobel Peace Prize', 'Vigeland Park', 'Opera House']
     },
     {
       name: 'Bergen',
       image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
-      description: 'Coastal city with specialized maritime medical facilities and comprehensive coverage',
-      highlights: ['Haukeland Hospital', 'Coastal Healthcare', 'Insurance Brokers', 'Medical Tourism']
+      description: 'Coastal city renowned for fresh seafood, colorful Bryggen wharf, and Bergen Festival',
+      highlights: ['Fresh Seafood', 'Bryggen Wharf', 'Bergen Festival', 'Fløibanen Funicular']
     },
     {
       name: 'Trondheim',
       image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
-      description: 'Historic city with university hospital and student-friendly insurance options',
-      highlights: ['St. Olavs Hospital', 'Student Insurance', 'Research Medicine', 'Preventive Care']
+      description: 'Historic city known for traditional Nordic cuisine, Nidaros Cathedral, and student culture',
+      highlights: ['Nordic Cuisine', 'Nidaros Cathedral', 'Stiftsgården Palace', 'Student Culture']
     }
   ];
 
@@ -94,39 +66,49 @@ const NorwayLongStay = () => {
 
       <TrustBadges />
 
-      <section className="py-16 bg-red-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">
-            🚨 Critical: Premium Insurance Requirements
+      <section className="py-12 bg-red-50">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
+            🚨 Critical: NOK 500,000+ Insurance Required
           </h2>
-          <div className="bg-red-100 border-l-4 border-red-500 p-6 mb-8 max-w-4xl mx-auto">
+          <div className="bg-red-100 border-l-4 border-red-500 p-4 mb-6 max-w-3xl mx-auto">
             <div className="flex">
-              <AlertTriangle className="h-6 w-6 text-red-500 mr-3 flex-shrink-0" />
+              <AlertTriangle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-bold text-red-800 mb-2">Mandatory Premium Coverage</h3>
-                <p className="text-red-700">
-                  Norway requires minimum NOK 500,000 medical insurance coverage. Given Norway's high healthcare costs, 
-                  insufficient coverage will result in automatic visa rejection and potential emergency medical debt.
+                <h3 className="font-bold text-red-800 mb-1">NOK 500,000+ Coverage Mandatory</h3>
+                <p className="text-red-700 text-sm">
+                  Norway requires premium medical insurance with Arctic coverage. 
+                  Insufficient coverage will result in automatic visa rejection.
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {insuranceRequirements.map((req, index) => (
-              <Card key={index} className="border-2 hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <req.icon className="h-8 w-8 text-red-600 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-lg mb-1">{req.title}</h3>
-                      <p className="text-red-600 font-semibold mb-2">{req.detail}</p>
-                      <p className="text-gray-600 text-sm">{req.description}</p>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Shield className="h-6 w-6 text-red-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Norwegian Recognition</h3>
+                    <p className="text-red-600 font-semibold text-sm mb-1">EEA/Norwegian approved only</p>
+                    <p className="text-gray-600 text-xs">Must be recognized by Norwegian Immigration Service</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Arctic Coverage</h3>
+                    <p className="text-red-600 font-semibold text-sm mb-1">Cold weather medical needs</p>
+                    <p className="text-gray-600 text-xs">Special coverage for cold-weather conditions</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -134,7 +116,7 @@ const NorwayLongStay = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Healthcare Excellence in Norwegian Cities
+            Cultural Richness of Norwegian Cities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cities.map((city) => (

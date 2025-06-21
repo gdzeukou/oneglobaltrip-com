@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -18,51 +17,24 @@ const GermanyLongStay = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const insuranceRequirements = [
-    {
-      icon: Euro,
-      title: 'German Standards',
-      detail: '€30,000+ statutory coverage',
-      description: 'Health insurance meeting German statutory requirements with minimum €30,000 coverage for all medical needs'
-    },
-    {
-      icon: Shield,
-      title: 'Krankenversicherung',
-      detail: 'German insurance system',
-      description: 'Must be compatible with German health insurance system (GKV) or approved private insurance (PKV)'
-    },
-    {
-      icon: Heart,
-      title: 'Comprehensive Benefits',
-      detail: 'Full spectrum coverage',
-      description: 'Coverage for emergency care, hospitalization, specialist treatment, preventive care, and dental'
-    },
-    {
-      icon: AlertTriangle,
-      title: 'Prescription & Therapy',
-      detail: 'Medicine and rehabilitation',
-      description: 'Must include prescription drug coverage and access to physiotherapy and rehabilitation services'
-    }
-  ];
-
   const cities = [
     {
       name: 'Berlin',
       image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
-      description: 'Capital with world-renowned healthcare system and extensive international insurance networks',
-      highlights: ['Charité Hospital', 'International Insurance', 'Private Healthcare', 'Medical Innovation']
+      description: 'Capital famous for currywurst, world-class museums, and historic Brandenburg Gate',
+      highlights: ['Currywurst', 'Museum Island', 'Brandenburg Gate', 'Berlin Wall Memorial']
     },
     {
       name: 'Munich',
       image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
-      description: 'Bavarian hub with premium healthcare facilities and comprehensive insurance provider network',
-      highlights: ['LMU Klinikum', 'Premium Healthcare', 'Insurance Brokers', 'Specialist Care']
+      description: 'Bavarian hub renowned for Oktoberfest, traditional beer gardens, and stunning architecture',
+      highlights: ['Oktoberfest', 'Beer Gardens', 'Neuschwanstein Castle', 'Marienplatz']
     },
     {
       name: 'Hamburg',
       image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
-      description: 'Northern metropolis with excellent medical infrastructure and maritime health services',
-      highlights: ['UKE Hospital', 'Maritime Medicine', 'International Clinics', 'Emergency Services']
+      description: 'Port city known for fresh fish markets, Reeperbahn nightlife, and maritime heritage',
+      highlights: ['Fish Market', 'Reeperbahn', 'Speicherstadt', 'Elbphilharmonie']
     }
   ];
 
@@ -94,39 +66,49 @@ const GermanyLongStay = () => {
 
       <TrustBadges />
 
-      <section className="py-16 bg-red-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">
-            🚨 Critical: German Healthcare Insurance Requirements
+      <section className="py-12 bg-red-50">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
+            🚨 Critical: €30,000+ German Insurance Required
           </h2>
-          <div className="bg-red-100 border-l-4 border-red-500 p-6 mb-8 max-w-4xl mx-auto">
+          <div className="bg-red-100 border-l-4 border-red-500 p-4 mb-6 max-w-3xl mx-auto">
             <div className="flex">
-              <AlertTriangle className="h-6 w-6 text-red-500 mr-3 flex-shrink-0" />
+              <AlertTriangle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-bold text-red-800 mb-2">Mandatory German-Standard Coverage</h3>
-                <p className="text-red-700">
-                  Germany requires minimum €30,000 medical insurance meeting strict German healthcare standards (Krankenversicherung). 
-                  Insurance must be compatible with German statutory or private health insurance systems.
+                <h3 className="font-bold text-red-800 mb-1">€30,000+ Coverage Mandatory</h3>
+                <p className="text-red-700 text-sm">
+                  Germany requires insurance meeting Krankenversicherung standards. 
+                  Must be compatible with German statutory or private health insurance.
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {insuranceRequirements.map((req, index) => (
-              <Card key={index} className="border-2 hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <req.icon className="h-8 w-8 text-red-600 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-lg mb-1">{req.title}</h3>
-                      <p className="text-red-600 font-semibold mb-2">{req.detail}</p>
-                      <p className="text-gray-600 text-sm">{req.description}</p>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Shield className="h-6 w-6 text-red-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Krankenversicherung</h3>
+                    <p className="text-red-600 font-semibold text-sm mb-1">German insurance system</p>
+                    <p className="text-gray-600 text-xs">Compatible with GKV or approved PKV</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Euro className="h-6 w-6 text-red-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Comprehensive Benefits</h3>
+                    <p className="text-red-600 font-semibold text-sm mb-1">Full spectrum coverage</p>
+                    <p className="text-gray-600 text-xs">Emergency, specialist, preventive, and dental care</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -134,7 +116,7 @@ const GermanyLongStay = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Healthcare Excellence in German Cities
+            Cultural Heritage of German Cities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cities.map((city) => (

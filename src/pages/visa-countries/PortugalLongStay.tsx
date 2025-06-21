@@ -7,7 +7,7 @@ import EnhancedMultiStepForm from '@/components/visa/EnhancedMultiStepForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, Heart, AlertTriangle, FileText, Clock, Euro } from 'lucide-react';
+import { Shield, AlertTriangle, FileText, Clock, Euro } from 'lucide-react';
 import CalendlyWidget from '@/components/CalendlyWidget';
 
 const PortugalLongStay = () => {
@@ -18,51 +18,24 @@ const PortugalLongStay = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const insuranceRequirements = [
-    {
-      icon: Euro,
-      title: 'Minimum Coverage',
-      detail: '€30,000 medical coverage required',
-      description: 'Comprehensive health insurance with minimum €30,000 coverage for medical expenses and emergency treatment'
-    },
-    {
-      icon: Shield,
-      title: 'EU Compliance',
-      detail: 'EU/EEA approved insurance',
-      description: 'Insurance must be recognized by Portuguese authorities and cover all EU/EEA territories'
-    },
-    {
-      icon: Heart,
-      title: 'Emergency Coverage',
-      detail: 'Emergency repatriation included',
-      description: 'Must include emergency medical evacuation and repatriation to home country'
-    },
-    {
-      icon: AlertTriangle,
-      title: 'Pre-existing Conditions',
-      detail: 'Coverage verification required',
-      description: 'Chronic conditions and pre-existing medical issues must be declared and covered'
-    }
-  ];
-
   const cities = [
     {
       name: 'Lisbon',
       image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
-      description: 'Historic capital with excellent healthcare system and expat-friendly insurance providers',
-      highlights: ['SNS Healthcare', 'Private Insurance Options', 'EU Health Card Accepted', 'Quality Medical Facilities']
+      description: 'Historic capital famous for pastéis de nata, fado music, and colorful azulejo tiles',
+      highlights: ['Pastéis de Nata', 'Fado Music', 'Azulejo Tiles', 'Jerónimos Monastery']
     },
     {
       name: 'Porto',
       image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
-      description: 'Vibrant northern city with comprehensive medical coverage and affordable healthcare',
-      highlights: ['Hospital São João', 'Insurance Brokers', 'Medical Tourism', 'Specialist Care']
+      description: 'Vibrant northern city renowned for port wine, francesinha sandwiches, and stunning architecture',
+      highlights: ['Port Wine', 'Francesinha', 'São Bento Station', 'Dom Luís Bridge']
     },
     {
       name: 'Faro',
       image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
-      description: 'Southern gateway with retirement-focused healthcare and insurance solutions',
-      highlights: ['Retirement Healthcare', 'Expat Insurance', 'Emergency Services', 'Wellness Centers']
+      description: 'Southern gateway known for cataplana seafood, traditional festivals, and Moorish architecture',
+      highlights: ['Cataplana', 'Festival do Marisco', 'Moorish Architecture', 'Ria Formosa']
     }
   ];
 
@@ -94,39 +67,49 @@ const PortugalLongStay = () => {
 
       <TrustBadges />
 
-      <section className="py-16 bg-red-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">
-            🚨 Critical: Medical Insurance Requirements
+      <section className="py-12 bg-green-50">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
+            🚨 Critical: €30,000+ Medical Insurance Required
           </h2>
-          <div className="bg-red-100 border-l-4 border-red-500 p-6 mb-8 max-w-4xl mx-auto">
+          <div className="bg-green-100 border-l-4 border-green-500 p-4 mb-6 max-w-3xl mx-auto">
             <div className="flex">
-              <AlertTriangle className="h-6 w-6 text-red-500 mr-3 flex-shrink-0" />
+              <AlertTriangle className="h-5 w-5 text-green-500 mr-3 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-bold text-red-800 mb-2">Mandatory Insurance Compliance</h3>
-                <p className="text-red-700">
-                  Portugal requires ALL long-stay visa applicants to have valid medical insurance with minimum €30,000 coverage. 
-                  Failure to meet these requirements will result in automatic visa rejection.
+                <h3 className="font-bold text-green-800 mb-1">€30,000+ Coverage Mandatory</h3>
+                <p className="text-green-700 text-sm">
+                  Portugal requires comprehensive medical insurance with emergency repatriation. 
+                  Insufficient coverage will result in automatic visa rejection.
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {insuranceRequirements.map((req, index) => (
-              <Card key={index} className="border-2 hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <req.icon className="h-8 w-8 text-green-600 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-lg mb-1">{req.title}</h3>
-                      <p className="text-green-600 font-semibold mb-2">{req.detail}</p>
-                      <p className="text-gray-600 text-sm">{req.description}</p>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Shield className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">EU Compliance</h3>
+                    <p className="text-green-600 font-semibold text-sm mb-1">EU/EEA approved insurance</p>
+                    <p className="text-gray-600 text-xs">Insurance must be recognized by Portuguese authorities</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Euro className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Emergency Coverage</h3>
+                    <p className="text-green-600 font-semibold text-sm mb-1">Emergency repatriation included</p>
+                    <p className="text-gray-600 text-xs">Must include emergency evacuation to home country</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -134,7 +117,7 @@ const PortugalLongStay = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Healthcare-Ready Portuguese Cities
+            Cultural Treasures of Portuguese Cities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cities.map((city) => (

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -18,51 +17,24 @@ const FranceLongStay = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const insuranceRequirements = [
-    {
-      icon: Euro,
-      title: 'French Coverage',
-      detail: '€30,000+ comprehensive coverage',
-      description: 'Health insurance with minimum €30,000 coverage meeting French social security standards'
-    },
-    {
-      icon: Shield,
-      title: 'Sécurité Sociale',
-      detail: 'French system compatibility',
-      description: 'Insurance must be compatible with French healthcare system and social security requirements'
-    },
-    {
-      icon: Heart,
-      title: 'Comprehensive Care',
-      detail: 'Full medical spectrum',
-      description: 'Coverage for emergency care, hospitalization, specialist treatment, and preventive medicine'
-    },
-    {
-      icon: AlertTriangle,
-      title: 'Prescription Coverage',
-      detail: 'Pharmacy and medication',
-      description: 'Must include prescription drug coverage and access to French pharmacy network'
-    }
-  ];
-
   const cities = [
     {
       name: 'Paris',
       image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
-      description: 'Capital with world-class healthcare system and extensive international insurance options',
-      highlights: ['Hôpital Pitié-Salpêtrière', 'International Insurance', 'Private Healthcare', 'Specialist Centers']
+      description: 'City of Light famous for croissants, world-class museums, and iconic Eiffel Tower',
+      highlights: ['Croissants & Café', 'Louvre Museum', 'Eiffel Tower', 'Seine River Cruises']
     },
     {
       name: 'Lyon',
       image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
-      description: 'Medical research hub with excellent healthcare infrastructure and student insurance programs',
-      highlights: ['Hospices Civils de Lyon', 'Medical Research', 'Student Coverage', 'Innovation Healthcare']
+      description: 'Culinary capital renowned for bouchon restaurants, silk heritage, and Festival of Lights',
+      highlights: ['Bouchon Cuisine', 'Silk Museum', 'Festival of Lights', 'Traboules Passages']
     },
     {
       name: 'Marseille',
       image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
-      description: 'Mediterranean port city with comprehensive healthcare and expat-friendly insurance services',
-      highlights: ['AP-HM Hospitals', 'Expat Services', 'Mediterranean Health', 'Emergency Care']
+      description: 'Mediterranean port famous for bouillabaisse, Notre-Dame de la Garde, and vibrant markets',
+      highlights: ['Bouillabaisse', 'Notre-Dame Basilica', 'Old Port', 'Calanques National Park']
     }
   ];
 
@@ -94,39 +66,49 @@ const FranceLongStay = () => {
 
       <TrustBadges />
 
-      <section className="py-16 bg-blue-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">
-            🚨 Critical: French Healthcare Insurance Requirements
+      <section className="py-12 bg-blue-50">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
+            🚨 Critical: €30,000+ French Insurance Required
           </h2>
-          <div className="bg-blue-100 border-l-4 border-blue-500 p-6 mb-8 max-w-4xl mx-auto">
+          <div className="bg-blue-100 border-l-4 border-blue-500 p-4 mb-6 max-w-3xl mx-auto">
             <div className="flex">
-              <AlertTriangle className="h-6 w-6 text-blue-500 mr-3 flex-shrink-0" />
+              <AlertTriangle className="h-5 w-5 text-blue-500 mr-3 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-bold text-blue-800 mb-2">Mandatory French-Compatible Coverage</h3>
-                <p className="text-blue-700">
-                  France requires minimum €30,000 medical insurance compatible with the French healthcare system (Sécurité Sociale). 
-                  Insurance must meet strict French standards for long-stay visa approval.
+                <h3 className="font-bold text-blue-800 mb-1">€30,000+ Coverage Mandatory</h3>
+                <p className="text-blue-700 text-sm">
+                  France requires medical insurance compatible with Sécurité Sociale. 
+                  Must meet strict French healthcare standards for approval.
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {insuranceRequirements.map((req, index) => (
-              <Card key={index} className="border-2 hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <req.icon className="h-8 w-8 text-blue-600 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-lg mb-1">{req.title}</h3>
-                      <p className="text-blue-600 font-semibold mb-2">{req.detail}</p>
-                      <p className="text-gray-600 text-sm">{req.description}</p>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Shield className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Sécurité Sociale</h3>
+                    <p className="text-blue-600 font-semibold text-sm mb-1">French system compatibility</p>
+                    <p className="text-gray-600 text-xs">Must be compatible with French social security</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Euro className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Prescription Coverage</h3>
+                    <p className="text-blue-600 font-semibold text-sm mb-1">Pharmacy and medication</p>
+                    <p className="text-gray-600 text-xs">Must include French pharmacy network access</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -134,7 +116,7 @@ const FranceLongStay = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Healthcare Excellence in French Cities
+            Cultural Excellence of French Cities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cities.map((city) => (

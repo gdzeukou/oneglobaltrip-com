@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -18,51 +17,24 @@ const FinlandLongStay = () => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const insuranceRequirements = [
-    {
-      icon: Snowflake,
-      title: 'Finnish Coverage',
-      detail: '€30,000+ specialized coverage',
-      description: 'Health insurance with minimum €30,000 coverage including winter weather-related medical needs'
-    },
-    {
-      icon: Shield,
-      title: 'Nordic Recognition',
-      detail: 'Finnish Immigration approved',
-      description: 'Insurance must be explicitly recognized by Finnish Immigration Service (Migri)'
-    },
-    {
-      icon: Heart,
-      title: 'Seasonal Coverage',
-      detail: 'Winter health considerations',
-      description: 'Coverage for seasonal affective disorders, vitamin D deficiency, and cold-related conditions'
-    },
-    {
-      icon: AlertTriangle,
-      title: 'Emergency Arctic Care',
-      detail: 'Extreme weather coverage',
-      description: 'Specialized coverage for extreme weather medical emergencies and Arctic conditions'
-    }
-  ];
-
   const cities = [
     {
       name: 'Helsinki',
       image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
-      description: 'Capital with world-renowned healthcare system and comprehensive insurance networks',
-      highlights: ['Helsinki University Hospital', 'Nordic Insurance', 'Specialized Care', 'Emergency Services']
+      description: 'Capital renowned for reindeer cuisine, design district, and stunning Senate Square',
+      highlights: ['Reindeer Cuisine', 'Design District', 'Senate Square', 'Suomenlinna Fortress']
     },
     {
       name: 'Tampere',
       image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
-      description: 'Technology hub with modern medical facilities and tech-worker insurance programs',
-      highlights: ['Tampere University Hospital', 'Tech Worker Coverage', 'Innovation Healthcare', 'Digital Health']
+      description: 'Industrial city famous for black sausage, Pyynikki tower, and vibrant sauna culture',
+      highlights: ['Black Sausage', 'Pyynikki Tower', 'Sauna Culture', 'Tampere Cathedral']
     },
     {
       name: 'Turku',
       image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
-      description: 'Historic city with excellent medical university and research-focused healthcare',
-      highlights: ['Turku University Hospital', 'Medical Research', 'Student Insurance', 'Wellness Centers']
+      description: 'Former capital known for archipelago bread, medieval castle, and Christmas markets',
+      highlights: ['Archipelago Bread', 'Turku Castle', 'Christmas Market', 'Aura River']
     }
   ];
 
@@ -94,39 +66,49 @@ const FinlandLongStay = () => {
 
       <TrustBadges />
 
-      <section className="py-16 bg-blue-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-4 text-gray-900">
-            🚨 Critical: Nordic-Specific Insurance Requirements
+      <section className="py-12 bg-blue-50">
+        <div className="max-w-5xl mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-4 text-gray-900">
+            🚨 Critical: €30,000+ Nordic Insurance Required
           </h2>
-          <div className="bg-blue-100 border-l-4 border-blue-500 p-6 mb-8 max-w-4xl mx-auto">
+          <div className="bg-blue-100 border-l-4 border-blue-500 p-4 mb-6 max-w-3xl mx-auto">
             <div className="flex">
-              <AlertTriangle className="h-6 w-6 text-blue-500 mr-3 flex-shrink-0" />
+              <AlertTriangle className="h-5 w-5 text-blue-500 mr-3 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-bold text-blue-800 mb-2">Specialized Nordic Coverage Required</h3>
-                <p className="text-blue-700">
-                  Finland requires €30,000+ medical insurance with specific coverage for Arctic conditions, seasonal health issues, 
-                  and extreme weather emergencies. Standard travel insurance is insufficient.
+                <h3 className="font-bold text-blue-800 mb-1">€30,000+ Coverage Mandatory</h3>
+                <p className="text-blue-700 text-sm">
+                  Finland requires specialized Nordic insurance with Arctic coverage. 
+                  Standard travel insurance is insufficient for Finnish conditions.
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {insuranceRequirements.map((req, index) => (
-              <Card key={index} className="border-2 hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <req.icon className="h-8 w-8 text-blue-600 flex-shrink-0" />
-                    <div>
-                      <h3 className="font-bold text-lg mb-1">{req.title}</h3>
-                      <p className="text-blue-600 font-semibold mb-2">{req.detail}</p>
-                      <p className="text-gray-600 text-sm">{req.description}</p>
-                    </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Shield className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Nordic Recognition</h3>
+                    <p className="text-blue-600 font-semibold text-sm mb-1">Finnish Immigration approved</p>
+                    <p className="text-gray-600 text-xs">Must be recognized by Finnish Immigration Service</p>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="border hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <Snowflake className="h-6 w-6 text-blue-600 flex-shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold mb-1">Winter Coverage</h3>
+                    <p className="text-blue-600 font-semibold text-sm mb-1">Extreme weather coverage</p>
+                    <p className="text-gray-600 text-xs">Coverage for Arctic conditions and seasonal issues</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
@@ -134,7 +116,7 @@ const FinlandLongStay = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Healthcare Innovation in Finnish Cities
+            Cultural Wonders of Finnish Cities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cities.map((city) => (
