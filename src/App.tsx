@@ -15,6 +15,12 @@ import NotFound from "./pages/NotFound";
 
 // Short-stay country pages
 import BrazilShortStay from "./pages/visa-countries/BrazilShortStay";
+import SchengenShortStay from "./pages/visa-countries/SchengenShortStay";
+import UKShortStay from "./pages/visa-countries/UKShortStay";
+import CanadaShortStay from "./pages/visa-countries/CanadaShortStay";
+import NigeriaShortStay from "./pages/visa-countries/NigeriaShortStay";
+import IndiaShortStay from "./pages/visa-countries/IndiaShortStay";
+import UAEShortStay from "./pages/visa-countries/UAEShortStay";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +39,12 @@ const App = () => (
           
           {/* Short-stay country pages */}
           <Route path="/visas/short-stay/brazil" element={<BrazilShortStay />} />
+          <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
+          <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
+          <Route path="/visas/short-stay/canada" element={<CanadaShortStay />} />
+          <Route path="/visas/short-stay/nigeria" element={<NigeriaShortStay />} />
+          <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
+          <Route path="/visas/short-stay/uae" element={<UAEShortStay />} />
           
           <Route path="/booking" element={<Booking />} />
           <Route path="/get-started" element={<GetStarted />} />
