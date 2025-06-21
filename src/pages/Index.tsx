@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Search, MapPin, Calendar, Users, Plane, Camera, Mountain, Waves, Building, Star, Heart, ArrowRight, FileText, Clock, CheckCircle, Shield, Award, Headphones, ChevronDown, ChevronUp, Play, Phone, Mail, MapPin as Location } from 'lucide-react';
+import { Search, MapPin, Calendar, Users, Plane, Camera, Mountain, Waves, Building, Star, Heart, ArrowRight, FileText, Clock, CheckCircle, Shield, Award, Headphones, ChevronDown, ChevronUp, Play, Phone, Mail, MapPin as Location, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -151,11 +150,10 @@ const Index = () => {
             </Button>
             <Button 
               size="lg" 
-              variant="outline" 
-              className="border-2 border-white text-white hover:bg-white hover:text-blue-900 px-8 py-4 text-lg font-semibold"
+              className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold px-8 py-4 text-lg"
               onClick={() => setShowLeadModal(true)}
             >
-              Free Visa Checklist
+              FREE VISA CHECKLIST
               <FileText className="h-5 w-5 ml-2" />
             </Button>
           </div>
@@ -207,6 +205,20 @@ const Index = () => {
               <p className="text-gray-600 leading-relaxed">$0 down, visa guarantee, and 24/7 support. Your peace of mind is our priority.</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Talk to an Agent CTA Row */}
+      <section className="bg-gradient-to-r from-blue-50 to-yellow-50 py-12">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            <MessageCircle className="h-8 w-8 text-blue-900" />
+            <h3 className="text-2xl font-bold text-gray-900">Questions? Talk to an Agent now.</h3>
+          </div>
+          <Button size="lg" className="bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 text-white font-bold px-8 py-4 text-lg">
+            TALK TO AN AGENT
+            <Phone className="h-5 w-5 ml-2" />
+          </Button>
         </div>
       </section>
 
