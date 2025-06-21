@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, MapPin, Calendar, Users, Star, Heart, ArrowRight, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,7 @@ const Packages = () => {
       category: "romantic",
       duration: "7 days",
       price: 2499,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       description: "Romantic getaway combining the charm of Paris with the beauty of Santorini",
       highlights: ["Eiffel Tower dinner", "Santorini sunset cruise", "5-star hotels"],
       visasRequired: ["Schengen"],
@@ -35,7 +34,7 @@ const Packages = () => {
       category: "cultural",
       duration: "10 days",
       price: 3299,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       description: "Explore two iconic cities via scenic rail routes",
       highlights: ["Royal Palace tours", "Canal boat cruise", "West End show"],
       visasRequired: ["UK", "Schengen"],
@@ -48,7 +47,7 @@ const Packages = () => {
       category: "luxury",
       duration: "5 days",
       price: 4299,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1426604966848-d7adac402bff?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       description: "Ultimate luxury experience in the heart of the Swiss Alps",
       highlights: ["Helicopter tours", "Michelin dining", "Spa treatments"],
       visasRequired: ["Schengen"],
@@ -61,7 +60,7 @@ const Packages = () => {
       category: "adventure",
       duration: "14 days",
       price: 3899,
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       description: "Multi-country coastal adventure through Spain, France, and Italy",
       highlights: ["Beach hopping", "Wine tastings", "Coastal hiking"],
       visasRequired: ["Schengen"],

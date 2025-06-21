@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CheckCircle, ArrowRight, ArrowLeft, Users, Calendar, CreditCard, Shield } from 'lucide-react';
@@ -60,13 +59,20 @@ const Booking = () => {
   ];
 
   const handleInputChange = (section: string, field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section as keyof typeof prev],
+    if (section === 'leadTraveler') {
+      setFormData(prev => ({
+        ...prev,
+        leadTraveler: {
+          ...prev.leadTraveler,
+          [field]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
         [field]: value
-      }
-    }));
+      }));
+    }
   };
 
   const handleNext = () => {
