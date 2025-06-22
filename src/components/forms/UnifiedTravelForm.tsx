@@ -63,7 +63,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   };
 
   const handleTravelNeedsChange = (need: string, checked: boolean | string) => {
-    const isChecked = typeof checked === 'boolean' ? checked : checked === 'true';
+    const isChecked = typeof checked === 'string' ? checked === 'true' : Boolean(checked);
     console.log('handleTravelNeedsChange called with:', { need, checked: isChecked, type: typeof isChecked });
     setFormData(prev => ({
       ...prev,
@@ -74,7 +74,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   };
 
   const handlePackageSelection = (packageId: string, checked: boolean | string) => {
-    const isChecked = typeof checked === 'boolean' ? checked : checked === 'true';
+    const isChecked = typeof checked === 'string' ? checked === 'true' : Boolean(checked);
     console.log('handlePackageSelection called with:', { packageId, checked: isChecked, type: typeof isChecked });
     setFormData(prev => ({
       ...prev,
@@ -171,6 +171,21 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
 
     try {
       await saveFormSubmission();
+
+      // Send welcome email
+      try {
+        await supabase.functions.invoke('send-welcome-email', {
+          body: {
+            name: formData.name,
+            email: formData.email,
+            formType: type,
+            destination: formData.destination,
+            travelNeeds: formData.travelNeeds
+          }
+        });
+      } catch (emailError) {
+        console.error('Error sending welcome email:', emailError);
+      }
 
       console.log('Form submitted:', { type, formData });
       

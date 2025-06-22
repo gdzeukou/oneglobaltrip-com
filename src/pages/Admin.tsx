@@ -41,6 +41,7 @@ const Admin = () => {
   const [emailSubject, setEmailSubject] = useState('');
   const [emailContent, setEmailContent] = useState('');
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -107,10 +108,23 @@ const Admin = () => {
       return;
     }
 
+    setSending(true);
+
     try {
-      // In a real implementation, you would call an edge function to send emails
-      // For now, we'll just save the campaign to the database
-      const { error } = await supabase
+      // Send emails using the edge function
+      const { data, error } = await supabase.functions.invoke('send-marketing-email', {
+        body: {
+          recipients: selectedEmails,
+          subject: emailSubject,
+          content: emailContent,
+          campaignName: `Custom Email - ${new Date().toISOString().split('T')[0]}`
+        }
+      });
+
+      if (error) throw error;
+
+      // Save campaign to database
+      await supabase
         .from('marketing_campaigns')
         .insert([{
           name: `Custom Email - ${new Date().toISOString().split('T')[0]}`,
@@ -122,11 +136,9 @@ const Admin = () => {
           sent_at: new Date().toISOString()
         }]);
 
-      if (error) throw error;
-
       toast({
-        title: "Email Campaign Created",
-        description: `Campaign created for ${selectedEmails.length} recipients. In production, integrate with email service to send.`,
+        title: "Email Campaign Sent Successfully!",
+        description: `Sent to ${data.successful} recipients. ${data.failed} failed.`,
       });
 
       // Clear form
@@ -135,12 +147,14 @@ const Admin = () => {
       setSelectedEmails([]);
 
     } catch (error) {
-      console.error('Error creating campaign:', error);
+      console.error('Error sending campaign:', error);
       toast({
         title: "Error",
-        description: "Failed to create email campaign",
+        description: "Failed to send email campaign",
         variant: "destructive"
       });
+    } finally {
+      setSending(false);
     }
   };
 
@@ -149,6 +163,81 @@ const Admin = () => {
     return userActivity.filter(activity => 
       activity.is_online && new Date(activity.last_seen) > fiveMinutesAgo
     );
+  };
+
+  const loadWelcomeEmailTemplate = () => {
+    setEmailSubject("✈️ We've Got Your Trip Covered — Next Steps Inside!");
+    setEmailContent(`
+      <h2 style="color: #2563eb;">Hi {{First Name}},</h2>
+      
+      <p>Thank you for reaching out to <strong>One Global Trip LLC</strong>—we're thrilled to help you plan your next adventure (and make the visa process a breeze).</p>
+      
+      <h3 style="color: #2563eb;">🚀 What happens now?</h3>
+      
+      <p>A dedicated Travel & Visa Specialist will review your request and get in touch within the next <strong>24 business hours</strong>. If you'd rather lock in a time right away, feel free to <strong>book a 15-minute call on our Calendly</strong>:</p>
+      
+      <div style="text-align: center; margin: 20px 0;">
+        <a href="https://calendly.com/oneglobaltrip/intro" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">📅 Pick My Call Slot</a>
+      </div>
+      
+      <h3 style="color: #2563eb;">✨ A quick look at what we can do for you</h3>
+      
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <thead>
+          <tr style="background-color: #f8fafc;">
+            <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Popular Service</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Perfect For</th>
+            <th style="padding: 12px; text-align: left; border: 1px solid #e2e8f0;">Why Travelers Love It</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;"><strong>Schengen Full Pack</strong></td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">Europe vacations & business trips</td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">End-to-end visa guidance, priority appointments, 24/7 AI chat</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;"><strong>UK Visa Pass</strong></td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">London getaways, study & work visits</td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">Form fill, document check, express biometrics</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;"><strong>Brazil e-Visa Fast-Track</strong></td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">Rio carnivals & Amazon tours</td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">Paperwork simplified + insider tips for 2025 rule changes</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;"><strong>Custom Trip Packages</strong></td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">Honeymoons, family reunions, solo escapes</td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">"Pay $0 upfront" planning—flights, hotels, tours bundled</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;"><strong>Travel Medical Insurance</strong></td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">All international travelers</td>
+            <td style="padding: 12px; border: 1px solid #e2e8f0;">Low-cost coverage accepted by embassies & airlines</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <h3 style="color: #2563eb;">📞 How to stay in touch</h3>
+      
+      <ul>
+        <li><strong>Reply to this email</strong> – we answer lightning-fast.</li>
+        <li><strong>WhatsApp/Text</strong> – +1 (555) 555-0130 for real-time chat.</li>
+        <li><strong>Phone</strong> – Call us at +1 (555) 555-0100 (Mon-Fri, 9 AM–6 PM CT).</li>
+        <li><strong>Instagram & TikTok</strong> – @OneGlobalTrip for travel hacks and flash deals.</li>
+      </ul>
+      
+      <div style="background-color: #fef3c7; padding: 15px; border-radius: 6px; margin: 20px 0;">
+        <p style="margin: 0;"><strong>💡 Pro tip:</strong> New clients who book a call this week get <strong>$25 off</strong> any visa service or <strong>free airport lounge access</strong> on select flight packages.</p>
+      </div>
+      
+      <p>We're here to make every step—form filling, flights, hotels, even last-minute seat upgrades—seamless and stress-free. Expect a friendly hello from your specialist soon!</p>
+      
+      <p>Safe travels,<br>
+      <strong>The One Global Trip Team</strong><br>
+      Your passport to easy visas & unforgettable journeys 🌍✈️</p>
+    `);
   };
 
   if (loading) {
@@ -295,6 +384,9 @@ const Admin = () => {
                 <Button onClick={clearEmailSelection} variant="outline">
                   Clear Selection
                 </Button>
+                <Button onClick={loadWelcomeEmailTemplate} variant="outline">
+                  Load Welcome Template
+                </Button>
                 <span className="text-sm text-muted-foreground self-center">
                   {selectedEmails.length} selected
                 </span>
@@ -329,14 +421,14 @@ const Admin = () => {
                   <Textarea
                     value={emailContent}
                     onChange={(e) => setEmailContent(e.target.value)}
-                    placeholder="Email content..."
-                    rows={6}
+                    placeholder="Email content (HTML supported)..."
+                    rows={10}
                   />
                 </div>
 
-                <Button onClick={sendCustomEmail} className="w-full">
+                <Button onClick={sendCustomEmail} className="w-full" disabled={sending}>
                   <Send className="h-4 w-4 mr-2" />
-                  Create Email Campaign
+                  {sending ? 'Sending...' : 'Send Email Campaign'}
                 </Button>
               </div>
             </CardContent>
