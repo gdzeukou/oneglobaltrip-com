@@ -1,3 +1,4 @@
+
 import { Package, PackageCategory } from '@/types/package';
 
 export const categories: PackageCategory[] = [
@@ -14,7 +15,7 @@ export const categories: PackageCategory[] = [
 ];
 
 export const packages: Package[] = [
-  // KEEPING EXISTING PACKAGES AS REQUESTED
+  // BUSINESS & VISA PACKAGES
   {
     id: 'schengen-explorer',
     title: 'Schengen Explorer Package',
@@ -44,7 +45,7 @@ export const packages: Package[] = [
     title: 'UK Business Traveler',
     description: 'Complete UK business visa package with fast-track processing and premium accommodations.',
     price: 899,
-    originalPrice: 1099,
+    originalPrice: 1199,
     duration: '1-2 weeks',
     country: 'United Kingdom',
     highlights: [
@@ -67,7 +68,7 @@ export const packages: Package[] = [
     title: 'France Student Visa Package',
     description: 'Complete student visa package with university applications and accommodation.',
     price: 1599,
-    originalPrice: 1899,
+    originalPrice: 1999,
     duration: '1-4 years',
     country: 'France',
     highlights: [
@@ -90,7 +91,7 @@ export const packages: Package[] = [
     title: 'Canada Express Entry',
     description: 'Complete Canada immigration package with Express Entry processing.',
     price: 3499,
-    originalPrice: 3999,
+    originalPrice: 4299,
     duration: '12-18 months',
     country: 'Canada',
     highlights: [
@@ -113,7 +114,7 @@ export const packages: Package[] = [
     title: 'UAE Business Hub',
     description: 'Dubai and Abu Dhabi business package with networking and trade support.',
     price: 1299,
-    originalPrice: 1599,
+    originalPrice: 1699,
     duration: '1-2 weeks',
     country: 'United Arab Emirates',
     highlights: [
@@ -138,7 +139,7 @@ export const packages: Package[] = [
     title: 'Euro Love Triangle',
     description: 'Three capitals of romance in one seamless itinerary.',
     price: 2899,
-    originalPrice: 3299,
+    originalPrice: 3499,
     duration: '9 days',
     country: 'Paris • Venice • Santorini',
     countries: ['France', 'Italy', 'Greece'],
@@ -162,7 +163,7 @@ export const packages: Package[] = [
     title: 'Paris In Love',
     description: 'A week of croissants, couture, and candle-lit Seine cruises.',
     price: 1899,
-    originalPrice: 2199,
+    originalPrice: 2399,
     duration: '6 days',
     country: 'France',
     highlights: [
@@ -187,7 +188,7 @@ export const packages: Package[] = [
     title: 'Nordic Heritage Duo',
     description: 'Discover Viking history and modern Scandinavian design across two nations.',
     price: 2299,
-    originalPrice: 2699,
+    originalPrice: 2799,
     duration: '8 days',
     country: 'Sweden • Finland',
     countries: ['Sweden', 'Finland'],
@@ -211,7 +212,7 @@ export const packages: Package[] = [
     title: 'Mediterranean Mosaic',
     description: 'Ancient ruins meet crystal waters in this Aegean adventure.',
     price: 2199,
-    originalPrice: 2599,
+    originalPrice: 2699,
     duration: '10 days',
     country: 'Cyprus • Greece',
     countries: ['Cyprus', 'Greece'],
@@ -235,7 +236,7 @@ export const packages: Package[] = [
     title: 'Icelandic Sagas',
     description: 'Fire, ice, and northern lights in the land of legends.',
     price: 1999,
-    originalPrice: 2399,
+    originalPrice: 2499,
     duration: '7 days',
     country: 'Iceland',
     highlights: [
@@ -258,7 +259,7 @@ export const packages: Package[] = [
     title: 'Samurai & Sakura',
     description: 'Ancient traditions bloom in modern Japan.',
     price: 2699,
-    originalPrice: 3099,
+    originalPrice: 3199,
     duration: '9 days',
     country: 'Japan',
     highlights: [
@@ -281,7 +282,7 @@ export const packages: Package[] = [
     title: 'Renaissance Revival',
     description: 'Art, architecture, and aperitivos in Italy.',
     price: 2399,
-    originalPrice: 2799,
+    originalPrice: 2899,
     duration: '8 days',
     country: 'Italy',
     highlights: [
@@ -306,7 +307,7 @@ export const packages: Package[] = [
     title: 'Royal Capitals Duo',
     description: 'Crown jewels and haute couture across two royal cities.',
     price: 3899,
-    originalPrice: 4399,
+    originalPrice: 4599,
     duration: '9 days',
     country: 'London • Paris',
     countries: ['United Kingdom', 'France'],
@@ -315,7 +316,7 @@ export const packages: Package[] = [
       'Private airport transfers',
       'Signature dining reservations',
       'VIP lounge access',
-      '30-min pre-departure stylist session'
+      'Personal stylist session'
     ],
     specialFeatures: ['Royal Experience', 'Luxury Service'],
     visasRequired: ['UK Visa', 'Schengen Visa'],
@@ -330,7 +331,7 @@ export const packages: Package[] = [
     title: 'Grand Euro Luxe Trio',
     description: 'European elegance across three sophisticated capitals.',
     price: 4299,
-    originalPrice: 4899,
+    originalPrice: 5199,
     duration: '11 days',
     country: 'Paris • Vienna • Zurich',
     countries: ['France', 'Austria', 'Switzerland'],
@@ -339,7 +340,7 @@ export const packages: Package[] = [
       'Private airport transfers',
       'Signature dining reservations',
       'VIP lounge access',
-      '30-min pre-departure stylist session'
+      'Personal stylist session'
     ],
     specialFeatures: ['European Elegance', 'Multi-Country Luxury'],
     visasRequired: ['Schengen Visa'],
@@ -354,7 +355,7 @@ export const packages: Package[] = [
     title: 'Asian Silk Sojourn',
     description: 'Imperial luxury in the land of the rising sun.',
     price: 3699,
-    originalPrice: 4199,
+    originalPrice: 4399,
     duration: '8 days',
     country: 'Tokyo • Kyoto',
     countries: ['Japan'],
@@ -363,7 +364,7 @@ export const packages: Package[] = [
       'Private airport transfers',
       'Signature dining reservations',
       'VIP lounge access',
-      '30-min pre-departure stylist session'
+      'Personal stylist session'
     ],
     specialFeatures: ['Japanese Luxury', 'Traditional Meets Modern'],
     visasRequired: ['Japan e-visa'],
@@ -378,7 +379,7 @@ export const packages: Package[] = [
     title: 'Sapphire Safari & Coast',
     description: 'Big Five adventures with pristine beach luxury.',
     price: 4699,
-    originalPrice: 5299,
+    originalPrice: 5599,
     duration: '12 days',
     country: 'Cape Town • Kruger • Mauritius',
     countries: ['South Africa', 'Mauritius'],
@@ -387,7 +388,7 @@ export const packages: Package[] = [
       'Private airport transfers',
       'Signature dining reservations',
       'VIP lounge access',
-      '30-min pre-departure stylist session'
+      'Personal stylist session'
     ],
     specialFeatures: ['Safari & Beach', 'Ultimate Luxury'],
     visasRequired: ['South Africa visa'],
@@ -402,7 +403,7 @@ export const packages: Package[] = [
     title: 'Nigerian Heritage Luxe',
     description: 'Discover West African culture in luxury and comfort.',
     price: 2899,
-    originalPrice: 3399,
+    originalPrice: 3499,
     duration: '6 days',
     country: 'Lagos • Abuja',
     countries: ['Nigeria'],
@@ -411,7 +412,7 @@ export const packages: Package[] = [
       'Private airport transfers',
       'Signature dining reservations',
       'VIP lounge access',
-      '30-min pre-departure stylist session'
+      'Personal stylist session'
     ],
     specialFeatures: ['African Heritage', 'Luxury Experience'],
     visasRequired: ['Nigeria visa express'],
@@ -428,7 +429,7 @@ export const packages: Package[] = [
     title: 'Disney & Castles France',
     description: 'Paris, Loire-Valley castles, and two magical days at Disneyland® Paris.',
     price: 2399,
-    originalPrice: 2799,
+    originalPrice: 2899,
     duration: '7 days',
     country: 'France',
     highlights: [
@@ -453,7 +454,7 @@ export const packages: Package[] = [
     title: 'Brit-Iceland Adventure',
     description: 'Harry-Potter studios, London eye, then geysers & glaciers in Reykjavik.',
     price: 2699,
-    originalPrice: 3099,
+    originalPrice: 3199,
     duration: '9 days',
     country: 'United Kingdom • Iceland',
     countries: ['United Kingdom', 'Iceland'],
@@ -479,7 +480,7 @@ export const packages: Package[] = [
     title: 'Euro Family Highlights',
     description: 'Three capitals, one epic family rail journey across Western Europe.',
     price: 2899,
-    originalPrice: 3299,
+    originalPrice: 3399,
     duration: '11 days',
     country: 'France • UK • Netherlands',
     countries: ['France', 'United Kingdom', 'Netherlands'],
