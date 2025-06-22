@@ -2,7 +2,7 @@
 import React from 'react';
 import AdminDashboard from './AdminDashboard';
 
-const Admin = () => {
+const Admin: React.FC = () => {
   return <AdminDashboard />;
 };
 
