@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -18,28 +18,77 @@ const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
   autoOpen = false,
   variant = "default"
 }) => {
-  const openCalendly = () => {
-    if (window.Calendly) {
-      window.Calendly.initPopupWidget({ url });
-    } else {
+  const [isLoading, setIsLoading] = useState(false);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+
+  const loadCalendlyScript = () => {
+    return new Promise<void>((resolve, reject) => {
+      // Check if script already exists
+      if (document.querySelector('script[src*="calendly"]')) {
+        console.log('Calendly script already loaded');
+        setScriptLoaded(true);
+        resolve();
+        return;
+      }
+
+      console.log('Loading Calendly script...');
+      const script = document.createElement('script');
+      script.src = 'https://assets.calendly.com/assets/external/widget.js';
+      script.async = true;
+      
+      script.onload = () => {
+        console.log('Calendly script loaded successfully');
+        setScriptLoaded(true);
+        resolve();
+      };
+      
+      script.onerror = () => {
+        console.error('Failed to load Calendly script');
+        reject(new Error('Failed to load Calendly script'));
+      };
+      
+      document.body.appendChild(script);
+    });
+  };
+
+  const openCalendly = async () => {
+    console.log('Opening Calendly widget...');
+    setIsLoading(true);
+
+    try {
+      // Ensure script is loaded
+      if (!scriptLoaded) {
+        await loadCalendlyScript();
+      }
+
+      // Wait a moment for window.Calendly to be available
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      if (window.Calendly) {
+        console.log('Opening Calendly popup');
+        window.Calendly.initPopupWidget({ url });
+      } else {
+        console.log('Calendly not available, opening in new window');
+        window.open(url, '_blank', 'width=800,height=700');
+      }
+    } catch (error) {
+      console.error('Error opening Calendly:', error);
+      // Fallback to opening in new window
       window.open(url, '_blank', 'width=800,height=700');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    // Load Calendly script if not already loaded
-    if (!window.Calendly && !document.querySelector('script[src*="calendly"]')) {
-      const script = document.createElement('script');
-      script.src = 'https://assets.calendly.com/assets/external/widget.js';
-      script.async = true;
-      document.body.appendChild(script);
-    }
+    // Load script on component mount
+    loadCalendlyScript().catch(console.error);
 
     // Auto-open if requested
     if (autoOpen) {
       const timer = setTimeout(() => {
         openCalendly();
-      }, 1000);
+      }, 1500); // Increased delay to ensure script is loaded
       return () => clearTimeout(timer);
     }
   }, [autoOpen, url]);
@@ -52,11 +101,12 @@ const CalendlyWidget: React.FC<CalendlyWidgetProps> = ({
     <div className={className}>
       <Button 
         onClick={openCalendly}
+        disabled={isLoading}
         variant={variant}
         className={variant === 'default' ? buttonStyles : "flex items-center space-x-2"}
       >
         <Calendar className="h-5 w-5" />
-        <span>{buttonText}</span>
+        <span>{isLoading ? 'Loading...' : buttonText}</span>
       </Button>
     </div>
   );

@@ -2,13 +2,7 @@
 import React from 'react';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 
-interface ConsultationFormProps {
-  formData: any;
-  onInputChange: (field: string, value: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
-}
-
-const ConsultationForm: React.FC<ConsultationFormProps> = () => {
+const ConsultationForm: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">

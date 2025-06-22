@@ -2,13 +2,7 @@
 import React from 'react';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 
-interface VisaApplicationFormProps {
-  formData: any;
-  onInputChange: (field: string, value: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
-}
-
-const VisaApplicationForm: React.FC<VisaApplicationFormProps> = () => {
+const VisaApplicationForm: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">

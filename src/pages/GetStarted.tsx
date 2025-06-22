@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Calendar, MessageCircle, FileText } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import ConsultationForm from '@/components/get-started/ConsultationForm';
 import VisaApplicationForm from '@/components/get-started/VisaApplicationForm';
@@ -14,47 +13,9 @@ const GetStarted = () => {
   const [searchParams] = useSearchParams();
   const service = searchParams.get('service');
   const [activeTab, setActiveTab] = useState(service ? 'visa-form' : 'consultation');
-  const [formData, setFormData] = useState({
-    // Consultation Form
-    name: '',
-    email: '',
-    phone: '',
-    travelDates: '',
-    destinations: '',
-    travelers: '',
-    budget: '',
-    interests: '',
-    
-    // Visa Form
-    visaType: service || '',
-    nationality: '',
-    travelPurpose: 'tourism',
-    departureDate: '',
-    returnDate: '',
-    previousVisas: '',
-    specialCircumstances: ''
-  });
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleConsultationSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Consultation request:', formData);
-    alert('Consultation request submitted! We\'ll contact you within 4 hours.');
-  };
-
-  const handleVisaSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Visa application:', formData);
-    alert('Visa application submitted! We\'ll review and contact you within 24 hours.');
-  };
 
   return (
     <div className="min-h-screen bg-white">
-      <Navigation />
-      
       {/* Hero Section */}
       <section className="pt-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
@@ -89,21 +50,13 @@ const GetStarted = () => {
 
             <TabsContent value="consultation">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <ConsultationForm
-                  formData={formData}
-                  onInputChange={handleInputChange}
-                  onSubmit={handleConsultationSubmit}
-                />
+                <ConsultationForm />
                 <ConsultationInfo />
               </div>
             </TabsContent>
 
             <TabsContent value="visa-form">
-              <VisaApplicationForm
-                formData={formData}
-                onInputChange={handleInputChange}
-                onSubmit={handleVisaSubmit}
-              />
+              <VisaApplicationForm />
             </TabsContent>
 
             <TabsContent value="contact">
