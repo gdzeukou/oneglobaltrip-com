@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -204,12 +203,7 @@ const FranceLongStay = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
             <p className="mb-4">Book a 30-minute call with our visa experts to discuss your France application and French healthcare insurance requirements.</p>
-            <Button
-              onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-            >
-              Book Consultation
-            </Button>
+            <CalendlyWidget url="https://calendly.com/camronm-oneglobaltrip/30min" />
             <Button 
               variant="outline" 
               onClick={() => setShowCalendly(false)}

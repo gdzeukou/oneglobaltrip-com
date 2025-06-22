@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -8,7 +7,6 @@ import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Clock, Users, FileText } from 'lucide-react';
-import CalendlyWidget from '@/components/CalendlyWidget';
 
 const UAEShortStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);

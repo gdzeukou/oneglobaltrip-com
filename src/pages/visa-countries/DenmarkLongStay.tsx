@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -8,7 +7,6 @@ import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Heart, AlertTriangle, FileText, Clock, Crown } from 'lucide-react';
-import CalendlyWidget from '@/components/CalendlyWidget';
 
 const DenmarkLongStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);

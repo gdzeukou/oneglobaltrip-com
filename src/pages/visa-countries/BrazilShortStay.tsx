@@ -7,7 +7,6 @@ import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Clock, Users, FileText } from 'lucide-react';
-import CalendlyWidget from '@/components/CalendlyWidget';
 
 const BrazilShortStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
