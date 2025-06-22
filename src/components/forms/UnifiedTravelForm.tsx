@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -62,9 +63,9 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleTravelNeedsChange = (need: string, checked: boolean | string) => {
-    const isChecked = typeof checked === 'string' ? checked === 'true' : Boolean(checked);
-    console.log('handleTravelNeedsChange called with:', { need, checked: isChecked, type: typeof isChecked });
+  const handleTravelNeedsChange = (need: string, checked: unknown) => {
+    const isChecked = Boolean(checked);
+    console.log('handleTravelNeedsChange called with:', { need, checked: isChecked });
     setFormData(prev => ({
       ...prev,
       travelNeeds: isChecked 
@@ -73,9 +74,9 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     }));
   };
 
-  const handlePackageSelection = (packageId: string, checked: boolean | string) => {
-    const isChecked = typeof checked === 'string' ? checked === 'true' : Boolean(checked);
-    console.log('handlePackageSelection called with:', { packageId, checked: isChecked, type: typeof isChecked });
+  const handlePackageSelection = (packageId: string, checked: unknown) => {
+    const isChecked = Boolean(checked);
+    console.log('handlePackageSelection called with:', { packageId, checked: isChecked });
     setFormData(prev => ({
       ...prev,
       selectedPackages: isChecked
