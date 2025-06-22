@@ -20,76 +20,98 @@ interface EnhancedMultiStepFormProps {
 const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: EnhancedMultiStepFormProps) => {
   const {
     formData,
-    setFormData,
     currentStep,
     totalSteps,
     isSubmitting,
-    availableNationalities,
+    handleInputChange,
     handleNext,
     handlePrev,
-    handleAdditionalNeedsChange,
     handleSubmit,
-    isStepValid
-  } = useVisaForm(type, preSelectedCountry, onComplete);
+    validateCurrentStep
+  } = useVisaForm({ type, preSelectedCountry, onComplete });
+
+  // Available nationalities for the nationality step
+  const availableNationalities = [
+    'Afghan', 'Albanian', 'Algerian', 'American', 'Andorran', 'Angolan', 'Argentine', 'Armenian', 'Australian',
+    'Austrian', 'Azerbaijani', 'Bahamian', 'Bahraini', 'Bangladeshi', 'Barbadian', 'Belarusian', 'Belgian',
+    'Belizean', 'Beninese', 'Bhutanese', 'Bolivian', 'Bosnian', 'Brazilian', 'British', 'Bruneian', 'Bulgarian',
+    'Burkinabe', 'Burmese', 'Burundian', 'Cambodian', 'Cameroonian', 'Canadian', 'Cape Verdean', 'Central African',
+    'Chadian', 'Chilean', 'Chinese', 'Colombian', 'Comoran', 'Congolese', 'Costa Rican', 'Croatian', 'Cuban',
+    'Cypriot', 'Czech', 'Danish', 'Djiboutian', 'Dominican', 'Dutch', 'East Timorese', 'Ecuadorean', 'Egyptian',
+    'Emirian', 'Equatorial Guinean', 'Eritrean', 'Estonian', 'Ethiopian', 'Fijian', 'Filipino', 'Finnish', 'French',
+    'Gabonese', 'Gambian', 'Georgian', 'German', 'Ghanaian', 'Greek', 'Grenadian', 'Guatemalan', 'Guinea-Bissauan',
+    'Guinean', 'Guyanese', 'Haitian', 'Herzegovinian', 'Honduran', 'Hungarian', 'Icelander', 'Indian', 'Indonesian',
+    'Iranian', 'Iraqi', 'Irish', 'Israeli', 'Italian', 'Ivorian', 'Jamaican', 'Japanese', 'Jordanian', 'Kazakhstani',
+    'Kenyan', 'Kittian and Nevisian', 'Kuwaiti', 'Kyrgyz', 'Laotian', 'Latvian', 'Lebanese', 'Liberian', 'Libyan',
+    'Liechtensteiner', 'Lithuanian', 'Luxembourer', 'Macedonian', 'Malagasy', 'Malawian', 'Malaysian', 'Maldivan',
+    'Malian', 'Maltese', 'Marshallese', 'Mauritanian', 'Mauritian', 'Mexican', 'Micronesian', 'Moldovan', 'Monacan',
+    'Mongolian', 'Moroccan', 'Mosotho', 'Motswana', 'Mozambican', 'Namibian', 'Nauruan', 'Nepalese', 'New Zealander',
+    'Nicaraguan', 'Nigerian', 'Nigerien', 'North Korean', 'Norwegian', 'Omani', 'Pakistani', 'Palauan', 'Panamanian',
+    'Papua New Guinean', 'Paraguayan', 'Peruvian', 'Polish', 'Portuguese', 'Qatari', 'Romanian', 'Russian', 'Rwandan',
+    'Saint Lucian', 'Salvadoran', 'Samoan', 'San Marinese', 'Sao Tomean', 'Saudi', 'Scottish', 'Senegalese', 'Serbian',
+    'Seychellois', 'Sierra Leonean', 'Singaporean', 'Slovakian', 'Slovenian', 'Solomon Islander', 'Somali', 'South African',
+    'South Korean', 'Spanish', 'Sri Lankan', 'Sudanese', 'Surinamer', 'Swazi', 'Swedish', 'Swiss', 'Syrian', 'Taiwanese',
+    'Tajik', 'Tanzanian', 'Thai', 'Togolese', 'Tongan', 'Trinidadian or Tobagonian', 'Tunisian', 'Turkish', 'Tuvaluan',
+    'Ugandan', 'Ukrainian', 'Uruguayan', 'Uzbekistani', 'Venezuelan', 'Vietnamese', 'Welsh', 'Yemenite', 'Zambian', 'Zimbabwean'
+  ];
 
   const renderStep = () => {
     switch (currentStep) {
-      case 1:
+      case 0:
         return (
           <DestinationStep
-            value={formData.destinationCountry}
-            onChange={(value) => setFormData({ ...formData, destinationCountry: value })}
+            value={formData.destination}
+            onChange={(value) => handleInputChange('destination', value)}
           />
         );
-      case 2:
+      case 1:
         return (
           <PurposeStep
             type={type}
             value={formData.purpose}
-            onChange={(value) => setFormData({ ...formData, purpose: value })}
+            onChange={(value) => handleInputChange('purpose', value)}
+          />
+        );
+      case 2:
+        return (
+          <TravelDateStep
+            value={formData.travelDate}
+            onChange={(value) => handleInputChange('travelDate', value)}
           />
         );
       case 3:
         return (
-          <TravelDateStep
-            value={formData.travelDate}
-            onChange={(value) => setFormData({ ...formData, travelDate: value })}
+          <DepartureCityStep
+            value={formData.departureCity}
+            onChange={(value) => handleInputChange('departureCity', value)}
           />
         );
       case 4:
         return (
-          <DepartureCityStep
-            value={formData.departureCity}
-            onChange={(value) => setFormData({ ...formData, departureCity: value })}
+          <NationalityStep
+            value={formData.nationality}
+            onChange={(value) => handleInputChange('nationality', value)}
+            availableNationalities={availableNationalities}
+            destinationCountry={formData.destination}
+            type={type}
           />
         );
       case 5:
         return (
-          <NationalityStep
-            value={formData.nationality}
-            onChange={(value) => setFormData({ ...formData, nationality: value })}
-            availableNationalities={availableNationalities}
-            destinationCountry={formData.destinationCountry}
-            type={type}
-          />
-        );
-      case 6:
-        return (
-          <PersonalInfoStep
-            name={formData.name}
-            onNameChange={(value) => setFormData({ ...formData, name: value })}
-            additionalNeeds={formData.additionalNeeds}
-            onAdditionalNeedsChange={handleAdditionalNeedsChange}
-          />
-        );
-      case 7:
-        return (
-          <ContactInfoStep
-            email={formData.email}
-            phone={formData.phone}
-            onEmailChange={(value) => setFormData({ ...formData, email: value })}
-            onPhoneChange={(value) => setFormData({ ...formData, phone: value })}
-          />
+          <div className="space-y-6">
+            <PersonalInfoStep
+              name={formData.name}
+              onNameChange={(value) => handleInputChange('name', value)}
+              additionalNeeds={[]}
+              onAdditionalNeedsChange={() => {}}
+            />
+            <ContactInfoStep
+              email={formData.email}
+              phone={formData.phone}
+              onEmailChange={(value) => handleInputChange('email', value)}
+              onPhoneChange={(value) => handleInputChange('phone', value)}
+            />
+          </div>
         );
       default:
         return null;
@@ -107,7 +129,7 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
             <div
               key={i}
               className={`h-2 w-8 rounded-full ${
-                i + 1 <= currentStep ? 'bg-blue-900' : 'bg-gray-200'
+                i <= currentStep ? 'bg-blue-900' : 'bg-gray-200'
               }`}
             />
           ))}
@@ -122,16 +144,16 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
           <Button
             variant="outline"
             onClick={handlePrev}
-            disabled={currentStep === 1}
+            disabled={currentStep === 0}
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             Previous
           </Button>
           
-          {currentStep < totalSteps ? (
+          {currentStep < totalSteps - 1 ? (
             <Button
               onClick={handleNext}
-              disabled={!isStepValid()}
+              disabled={!validateCurrentStep()}
               className="bg-blue-900 hover:bg-blue-800"
             >
               Next
@@ -140,7 +162,7 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
           ) : (
             <Button
               onClick={handleSubmit}
-              disabled={!isStepValid() || isSubmitting}
+              disabled={!validateCurrentStep() || isSubmitting}
               className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold"
             >
               {isSubmitting ? 'Submitting...' : (type === 'short-stay' ? 'Check Requirements' : 'Start Eligibility Check')}
