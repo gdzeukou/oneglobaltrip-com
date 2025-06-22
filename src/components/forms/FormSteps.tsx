@@ -11,6 +11,7 @@ interface FormStepsProps {
   onPrev: () => void;
   onSubmit: () => void;
   type: 'consultation' | 'visa-application' | 'package-booking';
+  isSubmitting?: boolean;
 }
 
 const FormSteps = ({ 
@@ -20,7 +21,8 @@ const FormSteps = ({
   onNext, 
   onPrev, 
   onSubmit, 
-  type 
+  type,
+  isSubmitting = false
 }: FormStepsProps) => {
   return (
     <div className="flex justify-between pt-6 mt-6 border-t">
@@ -46,10 +48,10 @@ const FormSteps = ({
       ) : (
         <Button
           onClick={onSubmit}
-          disabled={!isStepValid}
+          disabled={!isStepValid || isSubmitting}
           className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold flex items-center space-x-2"
         >
-          {type === 'package-booking' ? 'Confirm Booking ($0 Down)' : 'Submit Request'}
+          {isSubmitting ? 'Submitting...' : (type === 'package-booking' ? 'Confirm Booking ($0 Down)' : 'Submit Request')}
         </Button>
       )}
     </div>

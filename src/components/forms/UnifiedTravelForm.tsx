@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -566,6 +567,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
           onPrev={handlePrev}
           onSubmit={handleSubmit}
           type={type}
+          isSubmitting={isSubmitting}
         />
 
         <p className="text-sm text-gray-500 text-center mt-4">
