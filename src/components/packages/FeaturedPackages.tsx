@@ -12,7 +12,7 @@ interface FeaturedPackagesProps {
 
 const FeaturedPackages = ({ packages }: FeaturedPackagesProps) => {
   // Get the featured packages (the ones from home page)
-  const featuredPackageIds = [11, 12, 13, 14]; // Paris+Santorini, London-Amsterdam, Mediterranean Grand Tour, Swiss Alps & Bavaria
+  const featuredPackageIds = ['euro-love-triangle', 'paris-in-love', 'royal-capitals-duo', 'grand-euro-luxe-trio']; 
   const featuredPackages = packages.filter(pkg => featuredPackageIds.includes(pkg.id));
 
   return (
@@ -20,7 +20,7 @@ const FeaturedPackages = ({ packages }: FeaturedPackagesProps) => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Packages</h2>
-          <p className="text-xl text-gray-600">Handpicked European adventures with visa assistance included</p>
+          <p className="text-xl text-gray-600">Handpicked adventures with visa assistance included</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
