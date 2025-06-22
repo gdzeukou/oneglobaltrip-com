@@ -128,17 +128,16 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        // Mandatory fields validation
         return formData.name.trim() && formData.email.trim() && formData.phone.trim();
       case 2:
         if (type === 'package-booking') {
           return formData.selectedPackages.length > 0;
         }
-        return true; // Remove mandatory destination requirement
+        return true;
       case 3:
-        return true; // Travel preferences are optional
+        return true;
       case 4:
-        return true; // Final confirmation step
+        return true;
       default:
         return false;
     }

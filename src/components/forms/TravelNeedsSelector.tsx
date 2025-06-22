@@ -36,7 +36,7 @@ const TravelNeedsSelector = ({
             <Checkbox
               id={need}
               checked={selectedNeeds.includes(need)}
-              onCheckedChange={(checked) => onNeedChange(need, checked as boolean)}
+              onCheckedChange={(checked) => onNeedChange(need, Boolean(checked))}
             />
             <Label htmlFor={need} className="cursor-pointer text-sm">{need}</Label>
           </div>
