@@ -1,15 +1,9 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Star, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { packages } from '@/data/packages';
 import PackageSelector from './PackageSelector';
 import TravelNeedsSelector from './TravelNeedsSelector';
 import FormSteps from './FormSteps';
@@ -68,21 +62,23 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleTravelNeedsChange = (need: string, checked: boolean) => {
-    console.log('handleTravelNeedsChange called with:', { need, checked, type: typeof checked });
+  const handleTravelNeedsChange = (need: string, checked: boolean | string) => {
+    const isChecked = typeof checked === 'boolean' ? checked : checked === 'true';
+    console.log('handleTravelNeedsChange called with:', { need, checked: isChecked, type: typeof isChecked });
     setFormData(prev => ({
       ...prev,
-      travelNeeds: checked 
+      travelNeeds: isChecked 
         ? [...prev.travelNeeds, need]
         : prev.travelNeeds.filter(n => n !== need)
     }));
   };
 
-  const handlePackageSelection = (packageId: string, checked: boolean) => {
-    console.log('handlePackageSelection called with:', { packageId, checked, type: typeof checked });
+  const handlePackageSelection = (packageId: string, checked: boolean | string) => {
+    const isChecked = typeof checked === 'boolean' ? checked : checked === 'true';
+    console.log('handlePackageSelection called with:', { packageId, checked: isChecked, type: typeof isChecked });
     setFormData(prev => ({
       ...prev,
-      selectedPackages: checked
+      selectedPackages: isChecked
         ? [...prev.selectedPackages, packageId]
         : prev.selectedPackages.filter(id => id !== packageId)
     }));
