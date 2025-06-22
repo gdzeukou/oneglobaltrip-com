@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,11 +5,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronLeft, ChevronRight, Star, CreditCard, MapPin } from 'lucide-react';
+import { Star, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { packages } from '@/data/packages';
+import PackageSelector from './PackageSelector';
+import TravelNeedsSelector from './TravelNeedsSelector';
+import FormSteps from './FormSteps';
 
 interface UnifiedTravelFormProps {
   type: 'consultation' | 'visa-application' | 'package-booking';
@@ -53,16 +54,6 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     departureDate: '',
     returnDate: ''
   });
-
-  const travelNeedsOptions = [
-    'Flights',
-    'Place to Stay', 
-    'Car Rentals',
-    'Travel Insurance',
-    'Passport',
-    'Visa',
-    'Other'
-  ];
 
   const totalSteps = type === 'package-booking' ? 4 : 3;
 
@@ -225,122 +216,17 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
         if (type === 'package-booking') {
           return (
             <div className="space-y-6">
-              <div>
-                <Label className="text-lg font-semibold mb-4 block">Select the package(s) you're interested in: *</Label>
-                
-                {/* Desktop: Grid layout */}
-                <div className="hidden md:grid md:grid-cols-3 gap-4 mb-6">
-                  {packages.map((pkg) => (
-                    <div 
-                      key={pkg.id} 
-                      className={`relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-xl ${
-                        formData.selectedPackages.includes(pkg.id) ? 'ring-2 ring-blue-500 ring-offset-2' : ''
-                      }`}
-                      onClick={() => handlePackageSelection(pkg.id, !formData.selectedPackages.includes(pkg.id))}
-                    >
-                      <div className="absolute top-3 right-3 z-10">
-                        <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-                          $0 Down
-                        </div>
-                      </div>
-                      {formData.selectedPackages.includes(pkg.id) && (
-                        <div className="absolute top-3 left-3 z-10">
-                          <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                            ✓
-                          </div>
-                        </div>
-                      )}
-                      <div className="aspect-video overflow-hidden">
-                        <img 
-                          src={pkg.image || `https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=250&fit=crop`}
-                          alt={pkg.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-bold text-lg mb-1">{pkg.title}</h3>
-                        <p className="text-sm text-gray-600 mb-2 flex items-center">
-                          <MapPin className="h-3 w-3 mr-1" />
-                          {pkg.country} • {pkg.duration}
-                        </p>
-                        <p className="text-xl font-bold text-blue-900">From ${pkg.price.toLocaleString()}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Mobile: Carousel */}
-                <div className="md:hidden">
-                  <div className="flex overflow-x-auto space-x-4 pb-4 mb-6">
-                    {packages.map((pkg) => (
-                      <div 
-                        key={pkg.id} 
-                        className={`relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-xl flex-shrink-0 w-72 ${
-                          formData.selectedPackages.includes(pkg.id) ? 'ring-2 ring-blue-500 ring-offset-2' : ''
-                        }`}
-                        onClick={() => handlePackageSelection(pkg.id, !formData.selectedPackages.includes(pkg.id))}
-                      >
-                        <div className="absolute top-3 right-3 z-10">
-                          <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
-                            $0 Down
-                          </div>
-                        </div>
-                        {formData.selectedPackages.includes(pkg.id) && (
-                          <div className="absolute top-3 left-3 z-10">
-                            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
-                              ✓
-                            </div>
-                          </div>
-                        )}
-                        <div className="aspect-video overflow-hidden">
-                          <img 
-                            src={pkg.image || `https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=250&fit=crop`}
-                            alt={pkg.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="p-4">
-                          <h3 className="font-bold text-lg mb-1">{pkg.title}</h3>
-                          <p className="text-sm text-gray-600 mb-2 flex items-center">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            {pkg.country} • {pkg.duration}
-                          </p>
-                          <p className="text-xl font-bold text-blue-900">From ${pkg.price.toLocaleString()}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Travel Needs - Show immediately after package picker */}
-              <div>
-                <Label className="text-base font-medium">What do you still need for your trip? (Select all that apply)</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                  {travelNeedsOptions.map((need) => (
-                    <div key={need} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={need}
-                        checked={formData.travelNeeds.includes(need)}
-                        onCheckedChange={(checked) => handleTravelNeedsChange(need, checked as boolean)}
-                      />
-                      <Label htmlFor={need} className="cursor-pointer text-sm">{need}</Label>
-                    </div>
-                  ))}
-                </div>
-                {formData.travelNeeds.includes('Other') && (
-                  <div className="mt-4">
-                    <Label htmlFor="otherNeeds" className="text-base font-medium">Please specify:</Label>
-                    <Input
-                      id="otherNeeds"
-                      placeholder="Please describe what else you need..."
-                      value={formData.otherNeeds}
-                      onChange={(e) => handleInputChange('otherNeeds', e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                )}
-              </div>
+              <PackageSelector
+                selectedPackages={formData.selectedPackages}
+                onPackageSelection={handlePackageSelection}
+              />
+              
+              <TravelNeedsSelector
+                selectedNeeds={formData.travelNeeds}
+                otherNeeds={formData.otherNeeds}
+                onNeedChange={handleTravelNeedsChange}
+                onOtherNeedsChange={(value) => handleInputChange('otherNeeds', value)}
+              />
             </div>
           );
         } else {
@@ -439,33 +325,12 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
         } else {
           return (
             <div className="space-y-4">
-              <div>
-                <Label className="text-base font-medium">What do you still need for your trip? (Select all that apply)</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                  {travelNeedsOptions.map((need) => (
-                    <div key={need} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={need}
-                        checked={formData.travelNeeds.includes(need)}
-                        onCheckedChange={(checked) => handleTravelNeedsChange(need, checked as boolean)}
-                      />
-                      <Label htmlFor={need} className="cursor-pointer text-sm">{need}</Label>
-                    </div>
-                  ))}
-                </div>
-                {formData.travelNeeds.includes('Other') && (
-                  <div className="mt-4">
-                    <Label htmlFor="otherNeeds" className="text-base font-medium">Please specify:</Label>
-                    <Input
-                      id="otherNeeds"
-                      placeholder="Please describe what else you need..."
-                      value={formData.otherNeeds}
-                      onChange={(e) => handleInputChange('otherNeeds', e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                )}
-              </div>
+              <TravelNeedsSelector
+                selectedNeeds={formData.travelNeeds}
+                otherNeeds={formData.otherNeeds}
+                onNeedChange={handleTravelNeedsChange}
+                onOtherNeedsChange={(value) => handleInputChange('otherNeeds', value)}
+              />
               <div>
                 <Label htmlFor="specialRequests" className="text-base font-medium">Special Requests or Additional Information</Label>
                 <Textarea
@@ -602,36 +467,15 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
       <CardContent className="p-8">
         {renderStepContent()}
         
-        <div className="flex justify-between pt-6 mt-6 border-t">
-          <Button
-            variant="outline"
-            onClick={handlePrev}
-            disabled={currentStep === 1}
-            className="flex items-center space-x-2"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span>Previous</span>
-          </Button>
-
-          {currentStep < totalSteps ? (
-            <Button
-              onClick={handleNext}
-              disabled={!isStepValid()}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 flex items-center space-x-2"
-            >
-              <span>Next</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          ) : (
-            <Button
-              onClick={handleSubmit}
-              disabled={!isStepValid()}
-              className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold flex items-center space-x-2"
-            >
-              {type === 'package-booking' ? 'Confirm Booking ($0 Down)' : 'Submit Request'}
-            </Button>
-          )}
-        </div>
+        <FormSteps
+          currentStep={currentStep}
+          totalSteps={totalSteps}
+          isStepValid={isStepValid()}
+          onNext={handleNext}
+          onPrev={handlePrev}
+          onSubmit={handleSubmit}
+          type={type}
+        />
 
         <p className="text-sm text-gray-500 text-center mt-4">
           No credit card required • Free consultation • Response within 24 hours
