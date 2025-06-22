@@ -58,7 +58,7 @@ const HeroSection = () => {
               </Button>
             </>
           ) : (
-            // Non-signed-in user buttons - Fixed visibility issues
+            // Non-signed-in user buttons - Fixed hover visibility
             <>
               <Button 
                 size="lg"
@@ -73,7 +73,7 @@ const HeroSection = () => {
               <Button 
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-blue-100 hover:text-blue-900 hover:border-blue-100 transition-all duration-200"
+                className="border-white text-white hover:bg-white hover:text-blue-900 hover:border-white transition-all duration-200"
                 asChild
               >
                 <Link to="/visas/long-stay">
@@ -84,7 +84,7 @@ const HeroSection = () => {
               <Button 
                 size="lg"
                 variant="outline"
-                className="border-white text-white hover:bg-blue-100 hover:text-blue-900 hover:border-blue-100 transition-all duration-200"
+                className="border-white text-white hover:bg-white hover:text-blue-900 hover:border-white transition-all duration-200"
                 asChild
               >
                 <Link to="/packages">
