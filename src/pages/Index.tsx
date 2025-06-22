@@ -1,8 +1,8 @@
 
 import React from 'react';
 import Footer from '@/components/Footer';
-import EnhancedHeroSection from '@/components/home/EnhancedHeroSection';
-import EnhancedTrustIndicators from '@/components/home/EnhancedTrustIndicators';
+import HeroSection from '@/components/home/HeroSection';
+import TrustIndicators from '@/components/home/TrustIndicators';
 import ServicesSection from '@/components/home/ServicesSection';
 import PromoSection from '@/components/home/PromoSection';
 import StartTripSection from '@/components/home/StartTripSection';
@@ -13,8 +13,8 @@ import CTASection from '@/components/home/CTASection';
 const Index = () => {
   return (
     <div className="min-h-screen bg-white">
-      <EnhancedHeroSection />
-      <EnhancedTrustIndicators />
+      <HeroSection />
+      <TrustIndicators />
       <ServicesSection />
       <PromoSection />
       <StartTripSection />
