@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Navigation from "./components/Navigation";
+import FloatingCalendlyButton from "./components/FloatingCalendlyButton";
 import Index from "./pages/Index";
 import Packages from "./pages/Packages";
 import Visas from "./pages/Visas";
@@ -70,7 +72,7 @@ function App() {
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/admin" element={<Admin />} />
                     
-                    {/* Fixed short-stay visa routes to match the URL structure */}
+                    {/* Short-stay visa routes */}
                     <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
                     <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
                     <Route path="/visas/short-stay/canada" element={<CanadaShortStay />} />
@@ -79,7 +81,7 @@ function App() {
                     <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
                     <Route path="/visas/short-stay/nigeria" element={<NigeriaShortStay />} />
                     
-                    {/* Keep existing long-stay routes and add new structure */}
+                    {/* Long-stay visa routes */}
                     <Route path="/visas/germany/long-stay" element={<GermanyLongStay />} />
                     <Route path="/visas/france/long-stay" element={<FranceLongStay />} />
                     <Route path="/visas/portugal/long-stay" element={<PortugalLongStay />} />
@@ -89,7 +91,7 @@ function App() {
                     <Route path="/visas/switzerland/long-stay" element={<SwitzerlandLongStay />} />
                     <Route path="/visas/nigeria/long-stay" element={<NigeriaLongStay />} />
                     
-                    {/* New long-stay routes to match pattern */}
+                    {/* Alternative long-stay routes */}
                     <Route path="/visas/long-stay/germany" element={<GermanyLongStay />} />
                     <Route path="/visas/long-stay/france" element={<FranceLongStay />} />
                     <Route path="/visas/long-stay/portugal" element={<PortugalLongStay />} />
@@ -102,6 +104,7 @@ function App() {
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </main>
+                <FloatingCalendlyButton />
               </div>
             </BrowserRouter>
           </TooltipProvider>

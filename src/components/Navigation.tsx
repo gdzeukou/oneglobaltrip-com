@@ -1,20 +1,15 @@
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { Menu, X, User, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X, Calendar } from 'lucide-react';
+import CalendlyWidget from './CalendlyWidget';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+  const isActive = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -23,75 +18,66 @@ const Navigation = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-blue-900">One Global Trip</span>
+              <span className="text-xl font-bold text-blue-900">One Global Trip</span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/packages" className="text-gray-700 hover:text-blue-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            <Link
+              to="/"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive('/') 
+                  ? 'text-blue-900 border-b-2 border-blue-900' 
+                  : 'text-gray-700 hover:text-blue-900'
+              }`}
+            >
+              Home
+            </Link>
+            <Link
+              to="/packages"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive('/packages') 
+                  ? 'text-blue-900 border-b-2 border-blue-900' 
+                  : 'text-gray-700 hover:text-blue-900'
+              }`}
+            >
               Packages
             </Link>
+            <Link
+              to="/visas"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive('/visas') 
+                  ? 'text-blue-900 border-b-2 border-blue-900' 
+                  : 'text-gray-700 hover:text-blue-900'
+              }`}
+            >
+              Visas
+            </Link>
+            <Link
+              to="/get-started"
+              className={`px-3 py-2 text-sm font-medium transition-colors ${
+                isActive('/get-started') 
+                  ? 'text-blue-900 border-b-2 border-blue-900' 
+                  : 'text-gray-700 hover:text-blue-900'
+              }`}
+            >
+              Get Started
+            </Link>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-gray-700 hover:text-blue-900 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                  Visas <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 bg-white">
-                <DropdownMenuItem asChild>
-                  <Link to="/visas" className="w-full">All Visa Services</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/visas/short-stay" className="w-full">Short-Stay Visas</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/visas/long-stay" className="w-full">Long-Stay & Residency</Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-blue-600 text-white">
-                        {user.email?.charAt(0)?.toUpperCase() || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 bg-white" align="end" forceMount>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-                    <LayoutDashboard className="mr-2 h-4 w-4" />
-                    <span>Dashboard</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div className="flex items-center space-x-4">
-                <Button variant="outline" onClick={() => navigate('/auth')}>
-                  Sign In
-                </Button>
-                <Button onClick={() => navigate('/auth')}>
-                  Get Started
-                </Button>
-              </div>
-            )}
+            {/* Quick Book Button */}
+            <CalendlyWidget 
+              buttonText="Book Consultation"
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+            />
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="text-gray-700 hover:text-blue-900 focus:outline-none"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -101,81 +87,60 @@ const Navigation = () => {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+        <div className="md:hidden bg-white border-t">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            <Link
+              to="/"
+              className={`block px-3 py-2 text-base font-medium ${
+                isActive('/') 
+                  ? 'text-blue-900 bg-blue-50' 
+                  : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
+              }`}
+              onClick={() => setIsOpen(false)}
+            >
+              Home
+            </Link>
             <Link
               to="/packages"
-              className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium"
+              className={`block px-3 py-2 text-base font-medium ${
+                isActive('/packages') 
+                  ? 'text-blue-900 bg-blue-50' 
+                  : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
+              }`}
               onClick={() => setIsOpen(false)}
             >
               Packages
             </Link>
             <Link
               to="/visas"
-              className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium"
+              className={`block px-3 py-2 text-base font-medium ${
+                isActive('/visas') 
+                  ? 'text-blue-900 bg-blue-50' 
+                  : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
+              }`}
               onClick={() => setIsOpen(false)}
             >
-              All Visa Services
+              Visas
             </Link>
             <Link
-              to="/visas/short-stay"
-              className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium pl-6"
+              to="/get-started"
+              className={`block px-3 py-2 text-base font-medium ${
+                isActive('/get-started') 
+                  ? 'text-blue-900 bg-blue-50' 
+                  : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
+              }`}
               onClick={() => setIsOpen(false)}
             >
-              Short-Stay Visas
-            </Link>
-            <Link
-              to="/visas/long-stay"
-              className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium pl-6"
-              onClick={() => setIsOpen(false)}
-            >
-              Long-Stay & Residency
+              Get Started
             </Link>
             
-            {user ? (
-              <>
-                <Link
-                  to="/dashboard"
-                  className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <LayoutDashboard className="inline mr-2 h-4 w-4" />
-                  Dashboard
-                </Link>
-                <button
-                  onClick={() => {
-                    handleSignOut();
-                    setIsOpen(false);
-                  }}
-                  className="text-gray-700 hover:text-blue-900 block px-3 py-2 rounded-md text-base font-medium w-full text-left"
-                >
-                  <LogOut className="inline mr-2 h-4 w-4" />
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <div className="px-3 py-2 space-y-2">
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => {
-                    navigate('/auth');
-                    setIsOpen(false);
-                  }}
-                >
-                  Sign In
-                </Button>
-                <Button 
-                  className="w-full"
-                  onClick={() => {
-                    navigate('/auth');
-                    setIsOpen(false);
-                  }}
-                >
-                  Get Started
-                </Button>
-              </div>
-            )}
+            {/* Mobile Book Button */}
+            <div className="px-3 py-2">
+              <CalendlyWidget 
+                buttonText="Book FREE Consultation"
+                className="w-full"
+              />
+            </div>
           </div>
         </div>
       )}

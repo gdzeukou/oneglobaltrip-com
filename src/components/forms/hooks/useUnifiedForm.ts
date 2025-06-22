@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { sanitizeFormData, validateEmail, validatePhone, validateName, checkRateLimit } from '@/utils/securityUtils';
+import { sanitizeFormData, validateEmail, checkRateLimit } from '@/utils/securityUtils';
 
 interface FormData {
   name: string;
@@ -57,37 +57,10 @@ export const useUnifiedForm = (
   const totalSteps = type === 'package-booking' ? 4 : 3;
 
   const handleInputChange = (field: string, value: any) => {
-    if (typeof field !== 'string') {
-      console.warn('Invalid field type in handleInputChange');
-      return;
-    }
-
-    // More lenient validation - only warn, don't block
-    if (field === 'email' && typeof value === 'string' && value !== '' && !validateEmail(value)) {
-      console.warn('Email format may be invalid:', value);
-    }
-
-    if (field === 'name' && typeof value === 'string' && value !== '' && value.length > 100) {
-      console.warn('Name too long, truncating');
-      value = value.slice(0, 100);
-    }
-
-    if (field === 'phone' && typeof value === 'string' && value !== '' && value.length > 20) {
-      console.warn('Phone too long, truncating');
-      value = value.slice(0, 20);
-    }
-
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleTravelNeedsChange = (need: string, checked: boolean) => {
-    console.log('handleTravelNeedsChange called with:', { need, checked });
-    
-    if (typeof need !== 'string' || typeof checked !== 'boolean') {
-      console.warn('Invalid types in handleTravelNeedsChange');
-      return;
-    }
-
     setFormData(prev => ({
       ...prev,
       travelNeeds: checked 
@@ -97,13 +70,6 @@ export const useUnifiedForm = (
   };
 
   const handlePackageSelection = (packageId: string, checked: boolean) => {
-    console.log('handlePackageSelection called with:', { packageId, checked });
-    
-    if (typeof packageId !== 'string' || typeof checked !== 'boolean') {
-      console.warn('Invalid types in handlePackageSelection');
-      return;
-    }
-
     setFormData(prev => ({
       ...prev,
       selectedPackages: checked
@@ -156,7 +122,7 @@ export const useUnifiedForm = (
         ip_address: 'unknown',
         user_agent: navigator.userAgent,
         referrer: document.referrer,
-        user_id: null // Allow null for unauthenticated submissions
+        user_id: null
       };
 
       const { error } = await supabase
@@ -190,8 +156,18 @@ export const useUnifiedForm = (
     }
   };
 
+  const openCalendly = () => {
+    if (window.Calendly) {
+      window.Calendly.initPopupWidget({ 
+        url: 'https://calendly.com/camronm-oneglobaltrip/30min' 
+      });
+    } else {
+      window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank', 'width=800,height=700');
+    }
+  };
+
   const handleSubmit = async () => {
-    // More lenient validation - check for basic required fields only
+    // Basic validation
     if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
       toast({
         title: "Missing Information",
@@ -201,7 +177,6 @@ export const useUnifiedForm = (
       return;
     }
 
-    // Basic email format check
     if (!formData.email.includes('@') || !formData.email.includes('.')) {
       toast({
         title: "Invalid Email",
@@ -211,7 +186,6 @@ export const useUnifiedForm = (
       return;
     }
 
-    // Check rate limiting with more lenient approach
     try {
       const canSubmit = await checkRateLimit(formData.email);
       if (!canSubmit) {
@@ -223,7 +197,7 @@ export const useUnifiedForm = (
         return;
       }
     } catch (error) {
-      console.warn('Rate limit check failed, proceeding anyway:', error);
+      console.warn('Rate limit check failed, continuing:', error);
     }
 
     setIsSubmitting(true);
@@ -231,7 +205,7 @@ export const useUnifiedForm = (
     try {
       await saveFormSubmission();
 
-      // Try to send welcome email but don't fail if it doesn't work
+      // Try to send welcome email
       try {
         await supabase.functions.invoke('send-welcome-email', {
           body: {
@@ -243,13 +217,11 @@ export const useUnifiedForm = (
           }
         });
       } catch (emailError) {
-        console.warn('Welcome email failed, continuing anyway:', emailError);
+        console.warn('Welcome email failed:', emailError);
       }
 
-      console.log('Form submitted successfully:', { type, formData });
-      
       const messages = {
-        'consultation': "Thank you! We'll contact you within 24 hours with personalized recommendations.",
+        'consultation': "Thank you! Your consultation request has been submitted successfully.",
         'visa-application': "Your visa application has been started! We'll review and contact you within 24 hours.",
         'package-booking': "Booking request submitted! We'll contact you within 24 hours to confirm details."
       };
@@ -259,15 +231,15 @@ export const useUnifiedForm = (
         description: messages[type]
       });
 
-      // Always call onComplete to trigger Calendly
-      if (onComplete) {
-        onComplete();
-      } else {
-        // Small delay then redirect
-        setTimeout(() => {
-          navigate('/packages');
-        }, 2000);
-      }
+      // Always trigger Calendly after successful submission
+      setTimeout(() => {
+        if (onComplete) {
+          onComplete();
+        } else {
+          openCalendly();
+        }
+      }, 1000);
+
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
