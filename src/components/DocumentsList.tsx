@@ -4,8 +4,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Download, Trash2, Eye } from 'lucide-react';
+import { FileText, Download, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 
 interface UserDocument {
   id: string;
@@ -26,6 +27,8 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
   const { toast } = useToast();
   const [documents, setDocuments] = useState<UserDocument[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [documentToDelete, setDocumentToDelete] = useState<UserDocument | null>(null);
 
   const fetchDocuments = async () => {
     if (!user) return;
@@ -43,7 +46,6 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
 
       setDocuments(data || []);
     } catch (error) {
-      console.error('Error fetching documents:', error);
       toast({
         title: "Error",
         description: "Failed to load documents",
@@ -68,18 +70,23 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
         throw error;
       }
 
-      // Create download link
+      // Create download link securely
       const url = URL.createObjectURL(data);
       const a = window.document.createElement('a');
       a.href = url;
       a.download = doc.file_name;
+      a.style.display = 'none';
       window.document.body.appendChild(a);
       a.click();
       window.document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
+      toast({
+        title: "Download started",
+        description: "Your document is being downloaded"
+      });
+
     } catch (error) {
-      console.error('Download error:', error);
       toast({
         title: "Download failed",
         description: "There was an error downloading the document",
@@ -88,16 +95,19 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
     }
   };
 
-  const handleDelete = async (doc: UserDocument) => {
-    if (!confirm('Are you sure you want to delete this document?')) {
-      return;
-    }
+  const handleDeleteClick = (doc: UserDocument) => {
+    setDocumentToDelete(doc);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!documentToDelete) return;
 
     try {
-      // Delete from storage
+      // Delete from storage first
       const { error: storageError } = await supabase.storage
         .from('user-documents')
-        .remove([doc.file_path]);
+        .remove([documentToDelete.file_path]);
 
       if (storageError) {
         throw storageError;
@@ -107,7 +117,7 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
       const { error: dbError } = await supabase
         .from('user_documents')
         .delete()
-        .eq('id', doc.id);
+        .eq('id', documentToDelete.id);
 
       if (dbError) {
         throw dbError;
@@ -118,10 +128,11 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
         description: "The document has been removed successfully"
       });
 
+      setDeleteConfirmOpen(false);
+      setDocumentToDelete(null);
       fetchDocuments();
 
     } catch (error) {
-      console.error('Delete error:', error);
       toast({
         title: "Delete failed",
         description: "There was an error deleting the document",
@@ -167,49 +178,70 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
   }
 
   return (
-    <div className="space-y-4">
-      {documents.map((doc) => (
-        <div key={doc.id} className="border rounded-lg p-4 hover:bg-gray-50">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="flex items-center space-x-3">
-                <FileText className="h-5 w-5 text-gray-500" />
-                <div>
-                  <h4 className="font-medium text-gray-900">{doc.file_name}</h4>
-                  <div className="flex items-center space-x-2 mt-1">
-                    <Badge variant="secondary" className="capitalize">
-                      {doc.document_type.replace('_', ' ')}
-                    </Badge>
-                    <span className="text-sm text-gray-500">
-                      {formatFileSize(doc.file_size)}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {formatDate(doc.uploaded_at)}
-                    </span>
+    <>
+      <div className="space-y-4">
+        {documents.map((doc) => (
+          <div key={doc.id} className="border rounded-lg p-4 hover:bg-gray-50">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-3">
+                  <FileText className="h-5 w-5 text-gray-500" />
+                  <div>
+                    <h4 className="font-medium text-gray-900 truncate">{doc.file_name}</h4>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <Badge variant="secondary" className="capitalize">
+                        {doc.document_type.replace('_', ' ')}
+                      </Badge>
+                      <span className="text-sm text-gray-500">
+                        {formatFileSize(doc.file_size)}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {formatDate(doc.uploaded_at)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleDownload(doc)}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleDelete(doc)}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDownload(doc)}
+                  title="Download document"
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDeleteClick(doc)}
+                  title="Delete document"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Document</DialogTitle>
+          </DialogHeader>
+          <p>Are you sure you want to delete "{documentToDelete?.file_name}"? This action cannot be undone.</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Upload, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { validateFileType, validateFileSize, ALLOWED_DOCUMENT_TYPES, MAX_FILE_SIZE, sanitizeInput } from '@/utils/validation';
 
 interface DocumentUploadProps {
   onUploadSuccess?: () => void;
@@ -25,8 +26,18 @@ const DocumentUpload = ({ onUploadSuccess }: DocumentUploadProps) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      // Check file size (10MB limit)
-      if (selectedFile.size > 10 * 1024 * 1024) {
+      // Validate file type
+      if (!validateFileType(selectedFile, ALLOWED_DOCUMENT_TYPES)) {
+        toast({
+          title: "Invalid file type",
+          description: "Please select a PDF, image, or Word document",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Validate file size
+      if (!validateFileSize(selectedFile, MAX_FILE_SIZE)) {
         toast({
           title: "File too large",
           description: "Please select a file smaller than 10MB",
@@ -34,6 +45,7 @@ const DocumentUpload = ({ onUploadSuccess }: DocumentUploadProps) => {
         });
         return;
       }
+
       setFile(selectedFile);
     }
   };
@@ -51,33 +63,50 @@ const DocumentUpload = ({ onUploadSuccess }: DocumentUploadProps) => {
     setUploading(true);
 
     try {
-      // Create unique file path
-      const fileExt = file.name.split('.').pop();
+      // Additional validation
+      if (!validateFileType(file, ALLOWED_DOCUMENT_TYPES)) {
+        throw new Error('Invalid file type');
+      }
+
+      if (!validateFileSize(file, MAX_FILE_SIZE)) {
+        throw new Error('File too large');
+      }
+
+      // Create secure file path with sanitized filename
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      const sanitizedName = sanitizeInput(file.name.replace(/[^a-zA-Z0-9.-]/g, '_'));
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `${user.id}/${fileName}`;
 
       // Upload file to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('user-documents')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
       if (uploadError) {
         throw uploadError;
       }
 
-      // Save document metadata to database
+      // Save document metadata to database with sanitized inputs
       const { error: dbError } = await supabase
         .from('user_documents')
         .insert({
           user_id: user.id,
-          file_name: file.name,
+          file_name: sanitizeInput(file.name),
           file_path: filePath,
           file_size: file.size,
           mime_type: file.type,
-          document_type: documentType
+          document_type: sanitizeInput(documentType)
         });
 
       if (dbError) {
+        // Clean up uploaded file if database insert fails
+        await supabase.storage
+          .from('user-documents')
+          .remove([filePath]);
         throw dbError;
       }
 
@@ -93,10 +122,10 @@ const DocumentUpload = ({ onUploadSuccess }: DocumentUploadProps) => {
       onUploadSuccess?.();
 
     } catch (error) {
-      console.error('Upload error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Upload failed",
-        description: "There was an error uploading your document",
+        description: `There was an error uploading your document: ${errorMessage}`,
         variant: "destructive"
       });
     } finally {
@@ -142,7 +171,7 @@ const DocumentUpload = ({ onUploadSuccess }: DocumentUploadProps) => {
             />
             {file && (
               <div className="mt-2 p-2 bg-gray-50 rounded flex items-center justify-between">
-                <span className="text-sm text-gray-600">{file.name}</span>
+                <span className="text-sm text-gray-600 truncate">{file.name}</span>
                 <Button
                   variant="ghost"
                   size="sm"

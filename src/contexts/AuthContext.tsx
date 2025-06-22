@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { validateEmail } from '@/utils/validation';
 
 interface AuthContextType {
   user: User | null;
@@ -48,32 +49,62 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          first_name: firstName,
-          last_name: lastName,
+    // Validate inputs
+    if (!validateEmail(email)) {
+      return { error: { message: 'Please enter a valid email address' } };
+    }
+
+    if (password.length < 8) {
+      return { error: { message: 'Password must be at least 8 characters long' } };
+    }
+
+    try {
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { error } = await supabase.auth.signUp({
+        email: email.toLowerCase().trim(),
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            first_name: firstName?.trim(),
+            last_name: lastName?.trim(),
+          }
         }
-      }
-    });
-    return { error };
+      });
+      return { error };
+    } catch (error) {
+      return { error: { message: 'An unexpected error occurred during sign up' } };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    // Validate inputs
+    if (!validateEmail(email)) {
+      return { error: { message: 'Please enter a valid email address' } };
+    }
+
+    if (!password) {
+      return { error: { message: 'Password is required' } };
+    }
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.toLowerCase().trim(),
+        password,
+      });
+      return { error };
+    } catch (error) {
+      return { error: { message: 'An unexpected error occurred during sign in' } };
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      // Silent error for sign out
+    }
   };
 
   const value = {
