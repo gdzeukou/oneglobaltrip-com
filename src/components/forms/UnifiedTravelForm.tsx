@@ -260,13 +260,17 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
             <div className="space-y-6">
               <PackageSelector
                 selectedPackages={formData.selectedPackages}
-                onPackageSelection={handlePackageSelection}
+                onPackageSelection={(packageId: string, checked: string | boolean) => {
+                  handlePackageSelection(packageId, Boolean(checked));
+                }}
               />
               
               <TravelNeedsSelector
                 selectedNeeds={formData.travelNeeds}
                 otherNeeds={formData.otherNeeds}
-                onNeedChange={handleTravelNeedsChange}
+                onNeedChange={(need: string, checked: string | boolean) => {
+                  handleTravelNeedsChange(need, Boolean(checked));
+                }}
                 onOtherNeedsChange={(value) => handleInputChange('otherNeeds', value)}
               />
             </div>
@@ -294,7 +298,9 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
               <TravelNeedsSelector
                 selectedNeeds={formData.travelNeeds}
                 otherNeeds={formData.otherNeeds}
-                onNeedChange={handleTravelNeedsChange}
+                onNeedChange={(need: string, checked: string | boolean) => {
+                  handleTravelNeedsChange(need, Boolean(checked));
+                }}
                 onOtherNeedsChange={(value) => handleInputChange('otherNeeds', value)}
               />
               <PreferencesStep
