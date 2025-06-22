@@ -10,6 +10,11 @@ interface PackageSelectorProps {
 }
 
 const PackageSelector = ({ selectedPackages, onPackageSelection }: PackageSelectorProps) => {
+  const handlePackageClick = (packageId: string) => {
+    const isSelected = selectedPackages.includes(packageId);
+    onPackageSelection(packageId, !isSelected);
+  };
+
   return (
     <div>
       <Label className="text-lg font-semibold mb-4 block">Select the package(s) you're interested in: *</Label>
@@ -22,7 +27,7 @@ const PackageSelector = ({ selectedPackages, onPackageSelection }: PackageSelect
             className={`relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-xl ${
               selectedPackages.includes(pkg.id) ? 'ring-2 ring-blue-500 ring-offset-2' : ''
             }`}
-            onClick={() => onPackageSelection(pkg.id, !selectedPackages.includes(pkg.id))}
+            onClick={() => handlePackageClick(pkg.id)}
           >
             <div className="absolute top-3 right-3 z-10">
               <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
@@ -64,7 +69,7 @@ const PackageSelector = ({ selectedPackages, onPackageSelection }: PackageSelect
               className={`relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-xl flex-shrink-0 w-72 ${
                 selectedPackages.includes(pkg.id) ? 'ring-2 ring-blue-500 ring-offset-2' : ''
               }`}
-              onClick={() => onPackageSelection(pkg.id, !selectedPackages.includes(pkg.id))}
+              onClick={() => handlePackageClick(pkg.id)}
             >
               <div className="absolute top-3 right-3 z-10">
                 <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
