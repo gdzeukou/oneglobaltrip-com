@@ -1,8 +1,9 @@
+
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import EnhancedMultiStepForm from '@/components/visa/EnhancedMultiStepForm';
+import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -183,9 +184,9 @@ const GermanyLongStay = () => {
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Start Your Germany Application
           </h2>
-          <EnhancedMultiStepForm 
-            type="long-stay" 
-            preSelectedCountry="Germany"
+          <UnifiedTravelForm 
+            type="visa-application" 
+            title="Germany Long-Stay Visa Application"
             onComplete={() => setShowCalendly(true)}
           />
         </div>

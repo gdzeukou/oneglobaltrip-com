@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import EnhancedMultiStepForm from '@/components/visa/EnhancedMultiStepForm';
+import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -137,9 +137,9 @@ const UAEShortStay = () => {
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Start Your UAE Visa Application
           </h2>
-          <EnhancedMultiStepForm 
-            type="short-stay" 
-            preSelectedCountry="UAE"
+          <UnifiedTravelForm 
+            type="visa-application" 
+            title="UAE Tourist Visa Application"
             onComplete={() => setShowCalendly(true)}
           />
         </div>

@@ -1,8 +1,9 @@
+
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import EnhancedMultiStepForm from '@/components/visa/EnhancedMultiStepForm';
+import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -183,9 +184,9 @@ const DenmarkLongStay = () => {
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Start Your Denmark Application
           </h2>
-          <EnhancedMultiStepForm 
-            type="long-stay" 
-            preSelectedCountry="Denmark"
+          <UnifiedTravelForm 
+            type="visa-application" 
+            title="Denmark Long-Stay Visa Application"
             onComplete={() => setShowCalendly(true)}
           />
         </div>
@@ -202,7 +203,7 @@ const DenmarkLongStay = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
-            <p className="mb-4">Book a 30-minute call with our visa experts to discuss your Denmark application and comprehensive insurance requirements.</p>
+            <p className="mb-4">Book a 30-minute call with our visa experts to discuss your Denmark application and Danish healthcare insurance requirements.</p>
             <CalendlyWidget url="https://calendly.com/camronm-oneglobaltrip/30min" />
             <Button 
               variant="outline" 

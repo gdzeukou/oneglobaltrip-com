@@ -1,5 +1,4 @@
 
-import { useState, useEffect } from 'react';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 
 interface MultiStepFormProps {
