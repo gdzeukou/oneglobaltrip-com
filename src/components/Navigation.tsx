@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Calendar, User, LogOut } from 'lucide-react';
@@ -108,7 +107,6 @@ const Navigation = () => {
             {/* Quick Book Button */}
             <CalendlyWidget 
               buttonText="Book Consultation"
-              variant="outline"
               className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
             />
           </div>
