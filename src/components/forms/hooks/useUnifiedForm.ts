@@ -57,26 +57,24 @@ export const useUnifiedForm = (
   const totalSteps = type === 'package-booking' ? 4 : 3;
 
   const handleInputChange = (field: string, value: any) => {
-    // Enhanced security validation for input changes
     if (typeof field !== 'string') {
       console.warn('Invalid field type in handleInputChange');
       return;
     }
 
-    // Validate specific fields with enhanced security
-    if (field === 'email' && typeof value === 'string' && !validateEmail(value) && value !== '') {
-      console.warn('Invalid email format');
-      return;
+    // More lenient validation - only warn, don't block
+    if (field === 'email' && typeof value === 'string' && value !== '' && !validateEmail(value)) {
+      console.warn('Email format may be invalid:', value);
     }
 
-    if (field === 'name' && typeof value === 'string' && !validateName(value) && value !== '') {
-      console.warn('Invalid name format');
-      return;
+    if (field === 'name' && typeof value === 'string' && value !== '' && value.length > 100) {
+      console.warn('Name too long, truncating');
+      value = value.slice(0, 100);
     }
 
-    if (field === 'phone' && typeof value === 'string' && !validatePhone(value) && value !== '') {
-      console.warn('Invalid phone format');
-      return;
+    if (field === 'phone' && typeof value === 'string' && value !== '' && value.length > 20) {
+      console.warn('Phone too long, truncating');
+      value = value.slice(0, 20);
     }
 
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -134,7 +132,6 @@ export const useUnifiedForm = (
 
   const saveFormSubmission = async () => {
     try {
-      // Sanitize form data before submission
       const sanitizedData = sanitizeFormData(formData);
       
       const submissionData = {
@@ -158,14 +155,18 @@ export const useUnifiedForm = (
         return_date: sanitizedData.returnDate,
         ip_address: 'unknown',
         user_agent: navigator.userAgent,
-        referrer: document.referrer
+        referrer: document.referrer,
+        user_id: null // Allow null for unauthenticated submissions
       };
 
       const { error } = await supabase
         .from('form_submissions')
         .insert([submissionData]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       await trackActivity('form_submit', { form_type: type, submission_data: submissionData });
       
@@ -190,25 +191,39 @@ export const useUnifiedForm = (
   };
 
   const handleSubmit = async () => {
-    // Enhanced validation before submission
-    if (!validateName(formData.name) || !validateEmail(formData.email) || !validatePhone(formData.phone)) {
+    // More lenient validation - check for basic required fields only
+    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
       toast({
-        title: "Invalid Information",
-        description: "Please check your name, email, and phone number for correct format.",
+        title: "Missing Information",
+        description: "Please fill in your name, email, and phone number.",
         variant: "destructive"
       });
       return;
     }
 
-    // Check rate limiting
-    const canSubmit = await checkRateLimit(formData.email);
-    if (!canSubmit) {
+    // Basic email format check
+    if (!formData.email.includes('@') || !formData.email.includes('.')) {
       toast({
-        title: "Too Many Requests",
-        description: "Please wait before submitting another form. Maximum 5 submissions per hour.",
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
         variant: "destructive"
       });
       return;
+    }
+
+    // Check rate limiting with more lenient approach
+    try {
+      const canSubmit = await checkRateLimit(formData.email);
+      if (!canSubmit) {
+        toast({
+          title: "Please Wait",
+          description: "You've submitted several forms recently. Please wait before submitting another.",
+          variant: "destructive"
+        });
+        return;
+      }
+    } catch (error) {
+      console.warn('Rate limit check failed, proceeding anyway:', error);
     }
 
     setIsSubmitting(true);
@@ -216,6 +231,7 @@ export const useUnifiedForm = (
     try {
       await saveFormSubmission();
 
+      // Try to send welcome email but don't fail if it doesn't work
       try {
         await supabase.functions.invoke('send-welcome-email', {
           body: {
@@ -227,10 +243,10 @@ export const useUnifiedForm = (
           }
         });
       } catch (emailError) {
-        console.error('Error sending welcome email:', emailError);
+        console.warn('Welcome email failed, continuing anyway:', emailError);
       }
 
-      console.log('Form submitted:', { type, formData });
+      console.log('Form submitted successfully:', { type, formData });
       
       const messages = {
         'consultation': "Thank you! We'll contact you within 24 hours with personalized recommendations.",
@@ -243,18 +259,20 @@ export const useUnifiedForm = (
         description: messages[type]
       });
 
+      // Always call onComplete to trigger Calendly
       if (onComplete) {
         onComplete();
       } else {
+        // Small delay then redirect
         setTimeout(() => {
           navigate('/packages');
-        }, 1000);
+        }, 2000);
       }
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
         title: "Submission Error",
-        description: "There was an error submitting your form. Please try again.",
+        description: "There was an error submitting your form. Please try again or contact support.",
         variant: "destructive"
       });
     } finally {
@@ -265,7 +283,9 @@ export const useUnifiedForm = (
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return validateName(formData.name) && validateEmail(formData.email) && validatePhone(formData.phone);
+        return formData.name.trim().length > 0 && 
+               formData.email.trim().length > 0 && 
+               formData.phone.trim().length > 0;
       case 2:
         if (type === 'package-booking') {
           return formData.selectedPackages.length > 0;

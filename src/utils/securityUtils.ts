@@ -13,32 +13,30 @@ export const sanitizeInput = (input: string, maxLength: number = 1000): string =
 };
 
 export const validateEmail = (email: string): boolean => {
-  // Enhanced email validation with stricter regex
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  // More lenient email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email) && email.length <= 254 && email.length >= 5;
 };
 
 export const validatePhone = (phone: string): boolean => {
-  // Enhanced phone validation
-  const phoneRegex = /^\+?[\d\s\-\(\)]{7,20}$/;
+  // More lenient phone validation
+  const phoneRegex = /^[\d\s\-\(\)\+]{7,20}$/;
   const cleanPhone = phone.replace(/\s/g, '');
-  return phoneRegex.test(cleanPhone) && cleanPhone.length >= 7 && cleanPhone.length <= 20;
+  return phoneRegex.test(phone) && cleanPhone.length >= 7;
 };
 
 export const validateName = (name: string): boolean => {
-  // Name validation - letters, spaces, hyphens, apostrophes only
-  const nameRegex = /^[a-zA-Z\s\-']{1,100}$/;
+  // More lenient name validation
+  const nameRegex = /^[a-zA-Z\s\-'\.]{1,100}$/;
   return nameRegex.test(name.trim()) && name.trim().length >= 1;
 };
 
 export const validatePackageId = (packageId: string): boolean => {
-  // Validate package ID format
-  const packageIdRegex = /^[a-zA-Z0-9-_]{1,50}$/;
+  const packageIdRegex = /^[a-zA-Z0-9-_\s]{1,50}$/;
   return packageIdRegex.test(packageId);
 };
 
 export const validateTravelNeed = (need: string): boolean => {
-  // Validate travel need string
   const allowedNeeds = [
     'Flights', 'Place to Stay', 'Car Rentals', 'Travel Insurance', 
     'Passport', 'Visa', 'Other'
@@ -72,8 +70,7 @@ export const sanitizeFormData = (formData: any): any => {
 
 export const checkRateLimit = async (email: string, ipAddress: string = 'unknown'): Promise<boolean> => {
   try {
-    // This would typically call the Supabase function we created
-    // For now, we'll implement a simple client-side check
+    // Simple client-side rate limiting check
     const storageKey = `rate_limit_${email}_${ipAddress}`;
     const stored = localStorage.getItem(storageKey);
     
@@ -97,8 +94,8 @@ export const checkRateLimit = async (email: string, ipAddress: string = 'unknown
       return true;
     }
     
-    if (data.count >= 5) {
-      return false; // Rate limit exceeded
+    if (data.count >= 10) { // Increased limit to be more lenient
+      return false;
     }
     
     data.count++;

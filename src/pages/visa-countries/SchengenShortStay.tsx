@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -7,7 +6,7 @@ import EnhancedMultiStepForm from '@/components/visa/EnhancedMultiStepForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Clock, Users, FileText } from 'lucide-react';
+import { MapPin, Clock, Users, FileText, X } from 'lucide-react';
 import CalendlyWidget from '@/components/CalendlyWidget';
 
 const SchengenShortStay = () => {
@@ -44,6 +43,12 @@ const SchengenShortStay = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleFormComplete = () => {
+    setShowCalendly(true);
+    // Scroll to top for better visibility
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -140,7 +145,7 @@ const SchengenShortStay = () => {
           <EnhancedMultiStepForm 
             type="short-stay" 
             preSelectedCountry="Schengen Area"
-            onComplete={() => setShowCalendly(true)}
+            onComplete={handleFormComplete}
           />
         </div>
       </section>
@@ -152,19 +157,38 @@ const SchengenShortStay = () => {
         </div>
       </section>
 
+      {/* Enhanced Calendly Modal */}
       {showCalendly && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
-            <p className="mb-4">Book a 30-minute call with our visa experts to discuss your Schengen application.</p>
-            <CalendlyWidget url="https://calendly.com/camronm-oneglobaltrip/30min" />
-            <Button 
-              variant="outline" 
+          <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
+            <button 
               onClick={() => setShowCalendly(false)}
-              className="w-full mt-4"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
             >
-              Close
-            </Button>
+              <X className="h-6 w-6" />
+            </button>
+            
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold mb-2 text-blue-900">🎉 Application Submitted!</h3>
+              <p className="text-gray-600 mb-4">
+                Great! Now let's schedule your <strong>FREE consultation</strong> to discuss your Schengen visa application.
+              </p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                <p className="text-sm text-yellow-800">
+                  <strong>Next Steps:</strong> Book a 30-minute call with our visa experts to review your application and get personalized guidance.
+                </p>
+              </div>
+            </div>
+            
+            <CalendlyWidget 
+              url="https://calendly.com/camronm-oneglobaltrip/30min" 
+              buttonText="Schedule My FREE Consultation"
+              autoOpen={false}
+            />
+            
+            <p className="text-xs text-gray-500 text-center mt-4">
+              Or you can close this and we'll contact you within 24 hours
+            </p>
           </div>
         </div>
       )}
