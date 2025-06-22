@@ -23,7 +23,7 @@ const FloatingCalendlyButton = () => {
   return (
     <div className="fixed bottom-4 right-4 z-50 bg-white rounded-lg shadow-2xl border-2 border-blue-200 p-4 max-w-sm">
       <div className="flex justify-between items-center mb-3">
-        <h3 className="font-bold text-blue-900">Book Your FREE Consultation</h3>
+        <h3 className="font-bold text-blue-900 text-sm">Book Your FREE Consultation</h3>
         <button
           onClick={() => setIsMinimized(true)}
           className="text-gray-500 hover:text-gray-700"
@@ -32,7 +32,7 @@ const FloatingCalendlyButton = () => {
           <X className="h-4 w-4" />
         </button>
       </div>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-xs text-gray-600 mb-4">
         Get expert travel & visa guidance in just 30 minutes
       </p>
       <CalendlyWidget 
