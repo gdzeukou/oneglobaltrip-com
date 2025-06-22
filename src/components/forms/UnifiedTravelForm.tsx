@@ -35,7 +35,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     if (!sessionStorage.getItem('session_id')) {
       sessionStorage.setItem('session_id', crypto.randomUUID());
     }
-  }, []);
+  }, [type, trackActivity]);
 
   return (
     <Card className="max-w-2xl mx-auto shadow-xl border-2 border-blue-200">
