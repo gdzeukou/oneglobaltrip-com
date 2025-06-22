@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,6 +62,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   };
 
   const handleTravelNeedsChange = (need: string, checked: boolean) => {
+    console.log('handleTravelNeedsChange called with:', { need, checked, type: typeof checked });
     setFormData(prev => ({
       ...prev,
       travelNeeds: checked 
@@ -72,6 +72,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   };
 
   const handlePackageSelection = (packageId: string, checked: boolean) => {
+    console.log('handlePackageSelection called with:', { packageId, checked, type: typeof checked });
     setFormData(prev => ({
       ...prev,
       selectedPackages: checked
