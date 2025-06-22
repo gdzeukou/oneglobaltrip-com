@@ -10,6 +10,7 @@ import { ChevronLeft, ChevronRight, Info } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getFilteredNationalities } from '@/utils/visaRequirements';
+import { sanitizeInput, validateEmail, validatePhone } from '@/utils/securityUtils';
 
 interface EnhancedMultiStepFormProps {
   type: 'short-stay' | 'long-stay';
@@ -112,68 +113,145 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
   };
 
   const handleSubmit = async () => {
-    console.log('Form submission started', { type, formData });
+    console.log('=== VISA FORM SUBMISSION START ===');
+    console.log('Form type:', type);
+    console.log('Raw form data:', formData);
+    
     setIsSubmitting(true);
     
     try {
-      // Validate required fields
-      if (!formData.name.trim()) {
+      // Enhanced validation with detailed logging
+      console.log('=== VALIDATION PHASE ===');
+      
+      if (!formData.name?.trim()) {
+        console.error('Validation failed: Missing name');
         throw new Error('Name is required');
       }
-      if (!formData.email.trim() || !formData.email.includes('@')) {
+      
+      if (!validateEmail(formData.email)) {
+        console.error('Validation failed: Invalid email:', formData.email);
         throw new Error('Valid email is required');
       }
-      if (!formData.phone.trim()) {
+      
+      if (!formData.phone?.trim()) {
+        console.error('Validation failed: Missing phone');
         throw new Error('Phone number is required');
       }
-
-      const tableName = type === 'short-stay' ? 'short_visas_leads' : 'long_visas_leads';
-      const dataField = type === 'short-stay' ? 'purpose' : 'visa_category';
       
-      // Prepare data according to actual database schema
-      const submissionData = {
-        [dataField]: formData.purpose,
-        departure_city: formData.departureCity,
-        nationality: formData.nationality,
-        destination_country: formData.destinationCountry,
-        name: formData.name, // Single name field instead of first_name/last_name
-        email: formData.email,
-        phone: formData.phone
+      if (!formData.destinationCountry) {
+        console.error('Validation failed: Missing destination');
+        throw new Error('Destination country is required');
+      }
+      
+      if (!formData.nationality) {
+        console.error('Validation failed: Missing nationality');
+        throw new Error('Nationality is required');
+      }
+      
+      if (!formData.purpose) {
+        console.error('Validation failed: Missing purpose');
+        throw new Error('Purpose/category is required');
+      }
+
+      console.log('✓ All validations passed');
+
+      // Sanitize data
+      console.log('=== SANITIZATION PHASE ===');
+      const sanitizedData = {
+        purpose: sanitizeInput(formData.purpose, 100),
+        departure_city: sanitizeInput(formData.departureCity, 100),
+        nationality: sanitizeInput(formData.nationality, 100),
+        destination_country: sanitizeInput(formData.destinationCountry, 100),
+        name: sanitizeInput(formData.name, 100),
+        email: sanitizeInput(formData.email, 254),
+        phone: sanitizeInput(formData.phone, 20)
       };
 
-      console.log('Submitting to table:', tableName, 'with data:', submissionData);
+      console.log('Sanitized data:', sanitizedData);
 
-      const { data, error } = await supabase
+      // Determine table and field based on visa type
+      console.log('=== DATABASE PREPARATION ===');
+      const tableName = type === 'short-stay' ? 'short_visas_leads' : 'long_visas_leads';
+      const purposeField = type === 'short-stay' ? 'purpose' : 'visa_category';
+      
+      console.log('Target table:', tableName);
+      console.log('Purpose field:', purposeField);
+
+      // Prepare final submission data
+      const submissionData = {
+        [purposeField]: sanitizedData.purpose,
+        departure_city: sanitizedData.departure_city,
+        nationality: sanitizedData.nationality,
+        destination_country: sanitizedData.destination_country,
+        name: sanitizedData.name,
+        email: sanitizedData.email,
+        phone: sanitizedData.phone
+      };
+
+      console.log('Final submission data:', submissionData);
+
+      // Attempt database insertion
+      console.log('=== DATABASE INSERTION ===');
+      console.log(`Inserting into table: ${tableName}`);
+      
+      const { data: insertResult, error: insertError } = await supabase
         .from(tableName)
         .insert([submissionData])
         .select();
 
-      if (error) {
-        console.error('Supabase error details:', error);
-        throw new Error(`Database error: ${error.message}`);
+      if (insertError) {
+        console.error('❌ Database insertion failed');
+        console.error('Supabase error details:', {
+          message: insertError.message,
+          details: insertError.details,
+          hint: insertError.hint,
+          code: insertError.code
+        });
+        throw new Error(`Database error: ${insertError.message}`);
       }
 
-      console.log('Submission successful:', data);
+      console.log('✅ Database insertion successful:', insertResult);
 
+      // Success handling
+      console.log('=== SUCCESS HANDLING ===');
       toast({
         title: "Application Started!",
         description: "We'll review your information and contact you within 24 hours.",
       });
 
-      if (onComplete) onComplete();
+      console.log('✅ Toast notification sent');
+
+      if (onComplete) {
+        console.log('✅ Calling onComplete callback');
+        onComplete();
+      }
+
+      console.log('=== VISA FORM SUBMISSION COMPLETE ===');
+      
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('=== FORM SUBMISSION ERROR ===');
+      console.error('Error type:', typeof error);
+      console.error('Error instance:', error instanceof Error);
+      console.error('Full error object:', error);
       
       let errorMessage = "Please try again or contact support.";
+      
       if (error instanceof Error) {
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        
         if (error.message.includes('email')) {
           errorMessage = "Please check your email address and try again.";
         } else if (error.message.includes('required')) {
           errorMessage = error.message;
         } else if (error.message.includes('Database error')) {
           errorMessage = "There was a technical issue. Please try again in a moment.";
+        } else if (error.message.includes('duplicate') || error.message.includes('unique')) {
+          errorMessage = "You've already submitted an application with this information.";
         }
       }
+
+      console.error('Final error message to user:', errorMessage);
 
       toast({
         title: "Submission Failed",
@@ -181,7 +259,9 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
         variant: "destructive",
       });
     } finally {
+      console.log('=== CLEANUP ===');
       setIsSubmitting(false);
+      console.log('isSubmitting set to false');
     }
   };
 
