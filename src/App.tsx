@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -60,16 +59,16 @@ function App() {
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/admin" element={<Admin />} />
                   
-                  {/* Short-stay visa routes */}
-                  <Route path="/visas/schengen/short-stay" element={<SchengenShortStay />} />
-                  <Route path="/visas/uk/short-stay" element={<UKShortStay />} />
-                  <Route path="/visas/canada/short-stay" element={<CanadaShortStay />} />
-                  <Route path="/visas/brazil/short-stay" element={<BrazilShortStay />} />
-                  <Route path="/visas/uae/short-stay" element={<UAEShortStay />} />
-                  <Route path="/visas/india/short-stay" element={<IndiaShortStay />} />
-                  <Route path="/visas/nigeria/short-stay" element={<NigeriaShortStay />} />
+                  {/* Fixed short-stay visa routes to match the URL structure */}
+                  <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
+                  <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
+                  <Route path="/visas/short-stay/canada" element={<CanadaShortStay />} />
+                  <Route path="/visas/short-stay/brazil" element={<BrazilShortStay />} />
+                  <Route path="/visas/short-stay/uae" element={<UAEShortStay />} />
+                  <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
+                  <Route path="/visas/short-stay/nigeria" element={<NigeriaShortStay />} />
                   
-                  {/* Long-stay visa routes */}
+                  {/* Keep existing long-stay routes and add new structure */}
                   <Route path="/visas/germany/long-stay" element={<GermanyLongStay />} />
                   <Route path="/visas/france/long-stay" element={<FranceLongStay />} />
                   <Route path="/visas/portugal/long-stay" element={<PortugalLongStay />} />
@@ -78,6 +77,16 @@ function App() {
                   <Route path="/visas/finland/long-stay" element={<FinlandLongStay />} />
                   <Route path="/visas/switzerland/long-stay" element={<SwitzerlandLongStay />} />
                   <Route path="/visas/nigeria/long-stay" element={<NigeriaLongStay />} />
+                  
+                  {/* New long-stay routes to match pattern */}
+                  <Route path="/visas/long-stay/germany" element={<GermanyLongStay />} />
+                  <Route path="/visas/long-stay/france" element={<FranceLongStay />} />
+                  <Route path="/visas/long-stay/portugal" element={<PortugalLongStay />} />
+                  <Route path="/visas/long-stay/norway" element={<NorwayLongStay />} />
+                  <Route path="/visas/long-stay/denmark" element={<DenmarkLongStay />} />
+                  <Route path="/visas/long-stay/finland" element={<FinlandLongStay />} />
+                  <Route path="/visas/long-stay/switzerland" element={<SwitzerlandLongStay />} />
+                  <Route path="/visas/long-stay/nigeria" element={<NigeriaLongStay />} />
                   
                   <Route path="*" element={<NotFound />} />
                 </Routes>

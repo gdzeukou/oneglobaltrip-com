@@ -1,6 +1,8 @@
 
-import { Card, CardContent } from '@/components/ui/card';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface CountryTileProps {
   name: string;
@@ -9,48 +11,56 @@ interface CountryTileProps {
 }
 
 const CountryTile = ({ name, image, type }: CountryTileProps) => {
-  // Map country names to URL-friendly slugs
   const getCountrySlug = (countryName: string) => {
-    const slugMap: { [key: string]: string } = {
+    const mapping: { [key: string]: string } = {
       'Schengen Area': 'schengen',
       'United Kingdom': 'uk',
+      'UAE (Dubai)': 'uae',
+      'Nigeria e-Visa': 'nigeria',
       'Canada': 'canada',
       'Brazil': 'brazil',
-      'Nigeria e-Visa': 'nigeria',
-      'Nigeria': 'nigeria',
       'India': 'india',
-      'UAE (Dubai)': 'uae',
       'Portugal': 'portugal',
       'Norway': 'norway',
       'Denmark': 'denmark',
       'Finland': 'finland',
+      'Nigeria': 'nigeria',
       'France': 'france',
       'Germany': 'germany',
       'Switzerland': 'switzerland'
     };
-    return slugMap[countryName] || countryName.toLowerCase().replace(/\s+/g, '-');
+    
+    return mapping[countryName] || countryName.toLowerCase().replace(/\s+/g, '-');
   };
 
   const countrySlug = getCountrySlug(name);
-  const href = `/visas/${type}/${countrySlug}`;
+  const linkTo = `/visas/${type}/${countrySlug}`;
 
   return (
-    <Link to={href}>
-      <Card className="overflow-hidden hover-lift group cursor-pointer">
-        <div className="relative h-48">
+    <Link to={linkTo} className="block">
+      <Card className="hover-lift overflow-hidden group cursor-pointer">
+        <div className="relative h-40">
           <img
             src={image}
-            alt={name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            alt={`${name} visa`}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <h3 className="text-white text-xl font-bold text-center px-4">{name}</h3>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute bottom-3 left-3 right-3">
+            <h3 className="text-white font-bold text-lg mb-1">{name}</h3>
+            <p className="text-white/90 text-sm capitalize">{type.replace('-', ' ')} Visa</p>
           </div>
         </div>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between text-blue-600 group-hover:text-blue-800 transition-colors">
+            <span className="font-medium">Apply Now</span>
+            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </CardContent>
       </Card>
     </Link>
   );
 };
 
 export default CountryTile;
+
