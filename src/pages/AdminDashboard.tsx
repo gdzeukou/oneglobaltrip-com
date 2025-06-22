@@ -21,7 +21,7 @@ import AutomationManager from '@/components/admin/AutomationManager';
 import CalendarView from '@/components/admin/CalendarView';
 
 // Import new Supabase components
-import SupabaseConfig from '@/components/admin/supabase/SupabaseConfig';
+import SupabaseConfigComponent from '@/components/admin/supabase/SupabaseConfig';
 import SupabasePanel from '@/components/admin/supabase/SupabasePanel';
 
 interface SupabaseConfig {
@@ -36,6 +36,11 @@ const AdminDashboard = () => {
 
   const handleSupabaseConfigSaved = (config: SupabaseConfig) => {
     setSupabaseConfig(config);
+  };
+
+  const handleLeadUpdate = () => {
+    // Refresh leads data
+    console.log('Lead updated, refreshing data...');
   };
 
   return (
@@ -110,13 +115,16 @@ const AdminDashboard = () => {
         </TabsContent>
 
         <TabsContent value="leads">
-          <EnhancedUserActivity onSelectLead={setSelectedLead} />
-          {selectedLead && (
-            <LeadModal 
-              lead={selectedLead} 
-              onClose={() => setSelectedLead(null)} 
-            />
-          )}
+          <div className="space-y-4">
+            <EnhancedUserActivity />
+            {selectedLead && (
+              <LeadModal 
+                lead={selectedLead} 
+                onClose={() => setSelectedLead(null)}
+                onUpdate={handleLeadUpdate}
+              />
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="analytics">
@@ -142,7 +150,7 @@ const AdminDashboard = () => {
           </div>
           
           {!supabaseConfig ? (
-            <SupabaseConfig onConfigSaved={handleSupabaseConfigSaved} />
+            <SupabaseConfigComponent onConfigSaved={handleSupabaseConfigSaved} />
           ) : (
             <SupabasePanel 
               projectUrl={supabaseConfig.projectUrl}

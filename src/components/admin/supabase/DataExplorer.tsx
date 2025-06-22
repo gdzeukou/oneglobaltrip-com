@@ -221,7 +221,7 @@ const DataExplorer: React.FC<DataExplorerProps> = ({
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-sm">{table.name}</span>
                     {table.has_rls && (
-                      <Shield className="h-3 w-3 text-orange-500" title="RLS Enabled" />
+                      <Shield className="h-3 w-3 text-orange-500" />
                     )}
                   </div>
                   <div className="text-xs text-muted-foreground">
