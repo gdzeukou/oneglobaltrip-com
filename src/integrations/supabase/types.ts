@@ -9,6 +9,83 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      appointments: {
+        Row: {
+          appointment_type: string | null
+          created_at: string
+          duration_minutes: number | null
+          id: string
+          lead_id: string | null
+          meeting_link: string | null
+          notes: string | null
+          scheduled_at: string
+          status: string | null
+        }
+        Insert: {
+          appointment_type?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          lead_id?: string | null
+          meeting_link?: string | null
+          notes?: string | null
+          scheduled_at: string
+          status?: string | null
+        }
+        Update: {
+          appointment_type?: string | null
+          created_at?: string
+          duration_minutes?: number | null
+          id?: string
+          lead_id?: string | null
+          meeting_link?: string | null
+          notes?: string | null
+          scheduled_at?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "appointments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "form_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_rules: {
+        Row: {
+          action_data: Json
+          action_type: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          trigger_conditions: Json
+          trigger_type: string
+        }
+        Insert: {
+          action_data: Json
+          action_type: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          trigger_conditions: Json
+          trigger_type: string
+        }
+        Update: {
+          action_data?: Json
+          action_type?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          trigger_conditions?: Json
+          trigger_type?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           booking_date: string | null
@@ -204,6 +281,97 @@ export type Database = {
           },
         ]
       }
+      email_templates: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+          subject: string
+          template_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          subject: string
+          template_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          subject?: string
+          template_type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      email_tracking: {
+        Row: {
+          campaign_send_id: string | null
+          clicked_at: string | null
+          created_at: string
+          email_template_id: string | null
+          id: string
+          lead_id: string | null
+          opened_at: string | null
+          replied_at: string | null
+          tracking_pixel_url: string | null
+        }
+        Insert: {
+          campaign_send_id?: string | null
+          clicked_at?: string | null
+          created_at?: string
+          email_template_id?: string | null
+          id?: string
+          lead_id?: string | null
+          opened_at?: string | null
+          replied_at?: string | null
+          tracking_pixel_url?: string | null
+        }
+        Update: {
+          campaign_send_id?: string | null
+          clicked_at?: string | null
+          created_at?: string
+          email_template_id?: string | null
+          id?: string
+          lead_id?: string | null
+          opened_at?: string | null
+          replied_at?: string | null
+          tracking_pixel_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_tracking_campaign_send_id_fkey"
+            columns: ["campaign_send_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_sends"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_tracking_email_template_id_fkey"
+            columns: ["email_template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_tracking_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "form_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       form_submission_rate_limit: {
         Row: {
           email: string
@@ -233,7 +401,9 @@ export type Database = {
       }
       form_submissions: {
         Row: {
+          appointment_booked: boolean | null
           budget: string | null
+          contacted_at: string | null
           created_at: string
           departure_date: string | null
           destination: string | null
@@ -241,13 +411,19 @@ export type Database = {
           email: string
           form_type: string
           id: string
+          internal_notes: string | null
           ip_address: string | null
+          last_follow_up: string | null
+          lead_status: string | null
+          lead_tags: string[] | null
           name: string
           nationality: string | null
           other_needs: string | null
           phone: string
+          referral_source: string | null
           referrer: string | null
           return_date: string | null
+          sales_value: number | null
           selected_packages: string[] | null
           special_requests: string | null
           travel_date: string | null
@@ -260,7 +436,9 @@ export type Database = {
           visa_type: string | null
         }
         Insert: {
+          appointment_booked?: boolean | null
           budget?: string | null
+          contacted_at?: string | null
           created_at?: string
           departure_date?: string | null
           destination?: string | null
@@ -268,13 +446,19 @@ export type Database = {
           email: string
           form_type: string
           id?: string
+          internal_notes?: string | null
           ip_address?: string | null
+          last_follow_up?: string | null
+          lead_status?: string | null
+          lead_tags?: string[] | null
           name: string
           nationality?: string | null
           other_needs?: string | null
           phone: string
+          referral_source?: string | null
           referrer?: string | null
           return_date?: string | null
+          sales_value?: number | null
           selected_packages?: string[] | null
           special_requests?: string | null
           travel_date?: string | null
@@ -287,7 +471,9 @@ export type Database = {
           visa_type?: string | null
         }
         Update: {
+          appointment_booked?: boolean | null
           budget?: string | null
+          contacted_at?: string | null
           created_at?: string
           departure_date?: string | null
           destination?: string | null
@@ -295,13 +481,19 @@ export type Database = {
           email?: string
           form_type?: string
           id?: string
+          internal_notes?: string | null
           ip_address?: string | null
+          last_follow_up?: string | null
+          lead_status?: string | null
+          lead_tags?: string[] | null
           name?: string
           nationality?: string | null
           other_needs?: string | null
           phone?: string
+          referral_source?: string | null
           referrer?: string | null
           return_date?: string | null
+          sales_value?: number | null
           selected_packages?: string[] | null
           special_requests?: string | null
           travel_date?: string | null
@@ -540,7 +732,10 @@ export type Database = {
           ip_address: string | null
           is_online: boolean | null
           last_seen: string | null
+          location_data: Json | null
           page_visited: string
+          referrer_source: string | null
+          session_duration: number | null
           session_id: string | null
           user_agent: string | null
           user_id: string | null
@@ -556,7 +751,10 @@ export type Database = {
           ip_address?: string | null
           is_online?: boolean | null
           last_seen?: string | null
+          location_data?: Json | null
           page_visited: string
+          referrer_source?: string | null
+          session_duration?: number | null
           session_id?: string | null
           user_agent?: string | null
           user_id?: string | null
@@ -572,7 +770,10 @@ export type Database = {
           ip_address?: string | null
           is_online?: boolean | null
           last_seen?: string | null
+          location_data?: Json | null
           page_visited?: string
+          referrer_source?: string | null
+          session_duration?: number | null
           session_id?: string | null
           user_agent?: string | null
           user_id?: string | null

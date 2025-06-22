@@ -3,19 +3,24 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Calendar } from '@/components/ui/calendar';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { 
-  Mail, Users, Activity, Send, Search, Filter, Calendar as CalendarIcon,
-  TrendingUp, Phone, DollarSign, Clock, MapPin, ExternalLink,
-  Download, Plus, Edit, Trash2, Play, Pause, BarChart3
+  Mail, Users, Activity, Search, Download, TrendingUp, 
+  Phone, DollarSign, Clock, BarChart3, Edit, ExternalLink
 } from 'lucide-react';
+
+// Import all the new components
+import LeadModal from '@/components/admin/LeadModal';
+import EmailTemplateManager from '@/components/admin/EmailTemplateManager';
+import EnhancedUserActivity from '@/components/admin/EnhancedUserActivity';
+import AutomationManager from '@/components/admin/AutomationManager';
+import CalendarView from '@/components/admin/CalendarView';
+import AnalyticsReports from '@/components/admin/AnalyticsReports';
 
 interface EnhancedFormSubmission {
   id: string;
@@ -65,8 +70,6 @@ const AdminDashboard = () => {
     conversionRate: 0
   });
   const [selectedLead, setSelectedLead] = useState<EnhancedFormSubmission | null>(null);
-  const [emailTemplates, setEmailTemplates] = useState<any[]>([]);
-  const [automationRules, setAutomationRules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const { toast } = useToast();
@@ -116,21 +119,6 @@ const AdminDashboard = () => {
         mostVisitedPackage: 'Schengen Visa Package',
         conversionRate: submissionsData?.length ? (appointmentsBooked / submissionsData.length) * 100 : 0
       });
-
-      // Fetch email templates
-      const { data: templatesData } = await supabase
-        .from('email_templates')
-        .select('*')
-        .eq('is_active', true);
-      
-      setEmailTemplates(templatesData || []);
-
-      // Fetch automation rules
-      const { data: rulesData } = await supabase
-        .from('automation_rules')
-        .select('*');
-      
-      setAutomationRules(rulesData || []);
 
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -188,43 +176,6 @@ const AdminDashboard = () => {
       fetchAllData();
     } catch (error) {
       console.error('Error updating lead status:', error);
-    }
-  };
-
-  const addLeadTag = async (leadId: string, tag: string) => {
-    try {
-      const lead = submissions.find(s => s.id === leadId);
-      if (!lead) return;
-
-      const newTags = [...(lead.lead_tags || []), tag];
-      
-      const { error } = await supabase
-        .from('form_submissions')
-        .update({ lead_tags: newTags })
-        .eq('id', leadId);
-
-      if (error) throw error;
-      fetchAllData();
-    } catch (error) {
-      console.error('Error adding tag:', error);
-    }
-  };
-
-  const saveInternalNotes = async (leadId: string, notes: string) => {
-    try {
-      const { error } = await supabase
-        .from('form_submissions')
-        .update({ internal_notes: notes })
-        .eq('id', leadId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Notes Saved",
-        description: "Internal notes have been saved"
-      });
-    } catch (error) {
-      console.error('Error saving notes:', error);
     }
   };
 
@@ -540,290 +491,34 @@ const AdminDashboard = () => {
           </Card>
         </TabsContent>
 
-        {/* Enhanced User Activity */}
-        <TabsContent value="activity" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Enhanced User Activity Tracking</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-gray-500">
-                Enhanced user activity tracking with session duration, location data, and referral sources will be displayed here.
-                <br />
-                Features: Session timelines, geographic data, traffic sources, conversion paths.
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="activity">
+          <EnhancedUserActivity />
         </TabsContent>
 
-        {/* Advanced Email Center */}
-        <TabsContent value="emails" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Advanced Email Control Center</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-semibold mb-3">Email Templates</h3>
-                  <div className="space-y-2">
-                    {emailTemplates.map((template) => (
-                      <div key={template.id} className="flex items-center justify-between p-3 border rounded">
-                        <div>
-                          <div className="font-medium">{template.name}</div>
-                          <div className="text-sm text-gray-600">{template.subject}</div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline">
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          <Button size="sm" variant="outline">
-                            <Send className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-3">Quick Actions</h3>
-                  <div className="space-y-2">
-                    <Button className="w-full justify-start">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Create New Template
-                    </Button>
-                    <Button className="w-full justify-start" variant="outline">
-                      <Send className="h-4 w-4 mr-2" />
-                      Send Bulk Email
-                    </Button>
-                    <Button className="w-full justify-start" variant="outline">
-                      <CalendarIcon className="h-4 w-4 mr-2" />
-                      Schedule Campaign
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="emails">
+          <EmailTemplateManager />
         </TabsContent>
 
-        {/* Calendar View */}
-        <TabsContent value="calendar" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Internal Calendar & Appointments</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                  <Calendar />
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-3">Upcoming Appointments</h3>
-                  <div className="space-y-3">
-                    <div className="p-3 border rounded">
-                      <div className="font-medium">John Doe - Schengen Consultation</div>
-                      <div className="text-sm text-gray-600">Tomorrow, 2:00 PM</div>
-                      <div className="text-sm text-blue-600">Zoom Meeting</div>
-                    </div>
-                    <div className="p-3 border rounded">
-                      <div className="font-medium">Sarah Smith - UK Visa Follow-up</div>
-                      <div className="text-sm text-gray-600">Dec 25, 10:00 AM</div>
-                      <div className="text-sm text-blue-600">Phone Call</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="calendar">
+          <CalendarView />
         </TabsContent>
 
-        {/* Automation Center */}
-        <TabsContent value="automation" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Automation Rules & Triggers</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create New Automation
-                </Button>
-                
-                <div className="space-y-3">
-                  <div className="p-4 border rounded">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium">Schengen Welcome Email</div>
-                        <div className="text-sm text-gray-600">
-                          Trigger: Form submission for Schengen visa → Send welcome email
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className="bg-green-100 text-green-800">Active</Badge>
-                        <Button size="sm" variant="outline">
-                          <Edit className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 border rounded">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-medium">Follow-up Reminder</div>
-                        <div className="text-sm text-gray-600">
-                          Trigger: No reply after 2 days → Send follow-up email
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className="bg-green-100 text-green-800">Active</Badge>
-                        <Button size="sm" variant="outline">
-                          <Edit className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="automation">
+          <AutomationManager />
         </TabsContent>
 
-        {/* Analytics */}
-        <TabsContent value="analytics" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Business Analytics & Reports</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-semibold mb-3">Conversion Funnel</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between p-2 bg-blue-50 rounded">
-                      <span>Page Visitors</span>
-                      <span className="font-medium">1,245</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-blue-100 rounded">
-                      <span>Form Started</span>
-                      <span className="font-medium">382</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-blue-200 rounded">
-                      <span>Form Completed</span>
-                      <span className="font-medium">186</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-green-200 rounded">
-                      <span>Consultation Booked</span>
-                      <span className="font-medium">89</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-green-300 rounded">
-                      <span>Converted to Sale</span>
-                      <span className="font-medium">34</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="font-semibold mb-3">Export Reports</h3>
-                  <div className="space-y-2">
-                    <Button className="w-full justify-start" variant="outline">
-                      <Download className="h-4 w-4 mr-2" />
-                      Weekly Summary Report
-                    </Button>
-                    <Button className="w-full justify-start" variant="outline">
-                      <Download className="h-4 w-4 mr-2" />
-                      Lead Analytics Report
-                    </Button>
-                    <Button className="w-full justify-start" variant="outline">
-                      <Download className="h-4 w-4 mr-2" />
-                      Revenue & Conversion Report
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="analytics">
+          <AnalyticsReports />
         </TabsContent>
       </Tabs>
 
       {/* Lead Detail Modal */}
       {selectedLead && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Lead Details: {selectedLead.name}</h2>
-              <Button variant="outline" onClick={() => setSelectedLead(null)}>
-                ✕
-              </Button>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium">Email</label>
-                  <div className="text-sm">{selectedLead.email}</div>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Phone</label>
-                  <div className="text-sm">{selectedLead.phone}</div>
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium">Internal Notes</label>
-                <Textarea
-                  placeholder="Add your internal notes about this lead..."
-                  value={selectedLead.internal_notes || ''}
-                  onChange={(e) => setSelectedLead({
-                    ...selectedLead,
-                    internal_notes: e.target.value
-                  })}
-                  rows={4}
-                />
-                <Button 
-                  className="mt-2"
-                  onClick={() => saveInternalNotes(selectedLead.id, selectedLead.internal_notes || '')}
-                >
-                  Save Notes
-                </Button>
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium mb-2 block">Add Tags</label>
-                <div className="flex gap-2 flex-wrap">
-                  {['hot', 'cold', 'follow-up', 'paid', 'problem'].map(tag => (
-                    <Button
-                      key={tag}
-                      size="sm"
-                      variant="outline"
-                      onClick={() => addLeadTag(selectedLead.id, tag)}
-                      className="capitalize"
-                    >
-                      + {tag}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              
-              <div className="flex gap-2 pt-4">
-                <Button className="flex-1">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Send Email
-                </Button>
-                <Button variant="outline" className="flex-1">
-                  <Phone className="h-4 w-4 mr-2" />
-                  WhatsApp
-                </Button>
-                <Button variant="outline" className="flex-1">
-                  <CalendarIcon className="h-4 w-4 mr-2" />
-                  Book Call
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <LeadModal
+          lead={selectedLead}
+          onClose={() => setSelectedLead(null)}
+          onUpdate={fetchAllData}
+        />
       )}
     </div>
   );
