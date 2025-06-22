@@ -1,4 +1,3 @@
-
 // Enhanced security utilities for input validation and sanitization
 
 export const sanitizeInput = (input: string, maxLength: number = 1000): string => {
@@ -13,9 +12,9 @@ export const sanitizeInput = (input: string, maxLength: number = 1000): string =
 };
 
 export const validateEmail = (email: string): boolean => {
-  // More lenient email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email) && email.length <= 254 && email.length >= 5;
+  // More robust email validation
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  return emailRegex.test(email) && email.length <= 254;
 };
 
 export const validatePhone = (phone: string): boolean => {
@@ -44,65 +43,58 @@ export const validateTravelNeed = (need: string): boolean => {
   return allowedNeeds.includes(need) || need === '';
 };
 
-export const sanitizeFormData = (formData: any): any => {
-  const sanitized = { ...formData };
+export const sanitizeFormData = (data: any) => {
+  const sanitized = { ...data };
   
-  // Sanitize string fields
-  if (sanitized.name) sanitized.name = sanitizeInput(sanitized.name, 100);
-  if (sanitized.email) sanitized.email = sanitizeInput(sanitized.email, 254);
-  if (sanitized.phone) sanitized.phone = sanitizeInput(sanitized.phone, 20);
-  if (sanitized.destination) sanitized.destination = sanitizeInput(sanitized.destination, 100);
-  if (sanitized.nationality) sanitized.nationality = sanitizeInput(sanitized.nationality, 50);
-  if (sanitized.specialRequests) sanitized.specialRequests = sanitizeInput(sanitized.specialRequests, 2000);
-  if (sanitized.otherNeeds) sanitized.otherNeeds = sanitizeInput(sanitized.otherNeeds, 500);
-  
-  // Validate and sanitize arrays
-  if (sanitized.travelNeeds && Array.isArray(sanitized.travelNeeds)) {
-    sanitized.travelNeeds = sanitized.travelNeeds.filter(need => validateTravelNeed(need));
-  }
-  
-  if (sanitized.selectedPackages && Array.isArray(sanitized.selectedPackages)) {
-    sanitized.selectedPackages = sanitized.selectedPackages.filter(pkg => validatePackageId(pkg));
-  }
+  // Sanitize string fields to prevent XSS
+  Object.keys(sanitized).forEach(key => {
+    if (typeof sanitized[key] === 'string') {
+      // Remove potentially dangerous characters but keep basic punctuation
+      sanitized[key] = sanitized[key]
+        .trim()
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/javascript:/gi, '')
+        .replace(/on\w+\s*=/gi, '')
+        .slice(0, 500); // Limit length
+    }
+  });
   
   return sanitized;
 };
 
-export const checkRateLimit = async (email: string, ipAddress: string = 'unknown'): Promise<boolean> => {
+export const checkRateLimit = async (email: string): Promise<boolean> => {
   try {
-    // Simple client-side rate limiting check
-    const storageKey = `rate_limit_${email}_${ipAddress}`;
-    const stored = localStorage.getItem(storageKey);
+    const now = new Date();
+    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
     
-    if (!stored) {
-      localStorage.setItem(storageKey, JSON.stringify({
-        count: 1,
-        firstSubmission: Date.now()
-      }));
-      return true;
-    }
+    // Get submissions from the last hour for this email
+    const recentSubmissions = JSON.parse(localStorage.getItem('recent_submissions') || '[]');
+    const emailSubmissions = recentSubmissions
+      .filter((sub: any) => sub.email === email && new Date(sub.timestamp) > oneHourAgo);
     
-    const data = JSON.parse(stored);
-    const hourAgo = Date.now() - (60 * 60 * 1000); // 1 hour
-    
-    if (data.firstSubmission < hourAgo) {
-      // Reset counter
-      localStorage.setItem(storageKey, JSON.stringify({
-        count: 1,
-        firstSubmission: Date.now()
-      }));
-      return true;
-    }
-    
-    if (data.count >= 10) { // Increased limit to be more lenient
+    // Allow up to 3 submissions per hour
+    if (emailSubmissions.length >= 3) {
+      console.log('Rate limit exceeded for email:', email);
       return false;
     }
     
-    data.count++;
-    localStorage.setItem(storageKey, JSON.stringify(data));
+    // Add current submission to tracking
+    recentSubmissions.push({
+      email,
+      timestamp: now.toISOString()
+    });
+    
+    // Keep only last 24 hours of data
+    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    const filteredSubmissions = recentSubmissions
+      .filter((sub: any) => new Date(sub.timestamp) > oneDayAgo);
+    
+    localStorage.setItem('recent_submissions', JSON.stringify(filteredSubmissions));
+    
     return true;
   } catch (error) {
     console.warn('Rate limit check failed:', error);
-    return true; // Allow on error
+    // Don't block submission if rate limiting fails
+    return true;
   }
 };

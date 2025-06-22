@@ -125,15 +125,19 @@ export const useUnifiedForm = (
         user_id: null
       };
 
-      const { error } = await supabase
+      console.log('Saving form submission:', { type, submissionData });
+
+      const { data, error } = await supabase
         .from('form_submissions')
-        .insert([submissionData]);
+        .insert([submissionData])
+        .select();
 
       if (error) {
         console.error('Supabase error:', error);
-        throw error;
+        throw new Error(`Database error: ${error.message}`);
       }
 
+      console.log('Form submission saved successfully:', data);
       await trackActivity('form_submit', { form_type: type, submission_data: submissionData });
       
     } catch (error) {
@@ -161,20 +165,31 @@ export const useUnifiedForm = (
   };
 
   const handleSubmit = async () => {
-    // Basic validation
-    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
+    console.log('UnifiedForm submission started:', { type, formData });
+
+    // Enhanced validation
+    if (!formData.name.trim()) {
       toast({
         title: "Missing Information",
-        description: "Please fill in your name, email, and phone number.",
+        description: "Please enter your name.",
         variant: "destructive"
       });
       return;
     }
 
-    if (!formData.email.includes('@') || !formData.email.includes('.')) {
+    if (!validateEmail(formData.email)) {
       toast({
         title: "Invalid Email",
         description: "Please enter a valid email address.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!formData.phone.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter your phone number.",
         variant: "destructive"
       });
       return;
@@ -236,10 +251,20 @@ export const useUnifiedForm = (
 
     } catch (error) {
       console.error('Error submitting form:', error);
+      
+      let errorMessage = "There was an error submitting your form. Please try again or contact support.";
+      if (error instanceof Error) {
+        if (error.message.includes('email')) {
+          errorMessage = "Please check your email address and try again.";
+        } else if (error.message.includes('Database error')) {
+          errorMessage = "There was a technical issue. Please try again in a moment.";
+        }
+      }
+
       toast({
         title: "Submission Error",
-        description: "There was an error submitting your form. Please try again or contact support.",
-        variant: "destructive"
+        description: errorMessage,
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -250,7 +275,7 @@ export const useUnifiedForm = (
     switch (currentStep) {
       case 1:
         return formData.name.trim().length > 0 && 
-               formData.email.trim().length > 0 && 
+               validateEmail(formData.email) && 
                formData.phone.trim().length > 0;
       case 2:
         if (type === 'package-booking') {

@@ -30,13 +30,12 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
     departureCity: '',
     nationality: '',
     additionalNeeds: [] as string[],
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     phone: ''
   });
 
-  const totalSteps = 8;
+  const totalSteps = 7;
 
   const shortStayPurposes = [
     'Tourism',
@@ -113,28 +112,48 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
   };
 
   const handleSubmit = async () => {
+    console.log('Form submission started', { type, formData });
     setIsSubmitting(true);
     
     try {
+      // Validate required fields
+      if (!formData.name.trim()) {
+        throw new Error('Name is required');
+      }
+      if (!formData.email.trim() || !formData.email.includes('@')) {
+        throw new Error('Valid email is required');
+      }
+      if (!formData.phone.trim()) {
+        throw new Error('Phone number is required');
+      }
+
       const tableName = type === 'short-stay' ? 'short_visas_leads' : 'long_visas_leads';
       const dataField = type === 'short-stay' ? 'purpose' : 'visa_category';
       
-      const { error } = await supabase
-        .from(tableName)
-        .insert([
-          {
-            [dataField]: formData.purpose,
-            departure_city: formData.departureCity,
-            nationality: formData.nationality,
-            destination_country: formData.destinationCountry,
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            email: formData.email,
-            phone: formData.phone
-          }
-        ]);
+      // Prepare data according to actual database schema
+      const submissionData = {
+        [dataField]: formData.purpose,
+        departure_city: formData.departureCity,
+        nationality: formData.nationality,
+        destination_country: formData.destinationCountry,
+        name: formData.name, // Single name field instead of first_name/last_name
+        email: formData.email,
+        phone: formData.phone
+      };
 
-      if (error) throw error;
+      console.log('Submitting to table:', tableName, 'with data:', submissionData);
+
+      const { data, error } = await supabase
+        .from(tableName)
+        .insert([submissionData])
+        .select();
+
+      if (error) {
+        console.error('Supabase error details:', error);
+        throw new Error(`Database error: ${error.message}`);
+      }
+
+      console.log('Submission successful:', data);
 
       toast({
         title: "Application Started!",
@@ -143,10 +162,22 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
 
       if (onComplete) onComplete();
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Form submission error:', error);
+      
+      let errorMessage = "Please try again or contact support.";
+      if (error instanceof Error) {
+        if (error.message.includes('email')) {
+          errorMessage = "Please check your email address and try again.";
+        } else if (error.message.includes('required')) {
+          errorMessage = error.message;
+        } else if (error.message.includes('Database error')) {
+          errorMessage = "There was a technical issue. Please try again in a moment.";
+        }
+      }
+
       toast({
         title: "Submission Failed",
-        description: "Please try again or contact support.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -161,9 +192,8 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
       case 3: return formData.travelDate.length > 0;
       case 4: return formData.departureCity.length > 0;
       case 5: return formData.nationality.length > 0;
-      case 6: return true; // Additional needs is optional
-      case 7: return formData.firstName.length > 0 && formData.lastName.length > 0;
-      case 8: return formData.email.length > 0 && formData.phone.length > 0;
+      case 6: return formData.name.length > 0;
+      case 7: return formData.email.length > 0 && formData.phone.length > 0;
       default: return false;
     }
   };
@@ -295,54 +325,39 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
           </div>
         )}
 
-        {/* Step 6: Additional Needs */}
+        {/* Step 6: Name and Additional Needs */}
         {currentStep === 6 && (
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold">What else do you still need? (Optional)</Label>
-            <div className="grid grid-cols-2 gap-4">
-              {additionalNeedsOptions.map((need) => (
-                <div key={need} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={need}
-                    checked={formData.additionalNeeds.includes(need)}
-                    onCheckedChange={(checked) => handleAdditionalNeedsChange(need, checked as boolean)}
-                  />
-                  <Label htmlFor={need} className="cursor-pointer text-sm">{need}</Label>
-                </div>
-              ))}
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <Label htmlFor="name" className="text-lg font-semibold">Your Full Name</Label>
+              <Input
+                id="name"
+                placeholder="Enter your full name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+            </div>
+            
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold">What else do you still need? (Optional)</Label>
+              <div className="grid grid-cols-2 gap-4">
+                {additionalNeedsOptions.map((need) => (
+                  <div key={need} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={need}
+                      checked={formData.additionalNeeds.includes(need)}
+                      onCheckedChange={(checked) => handleAdditionalNeedsChange(need, checked as boolean)}
+                    />
+                    <Label htmlFor={need} className="cursor-pointer text-sm">{need}</Label>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
-        {/* Step 7: Name Information */}
+        {/* Step 7: Contact Information */}
         {currentStep === 7 && (
-          <div className="space-y-4">
-            <Label className="text-lg font-semibold">Your Name</Label>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  placeholder="First name"
-                  value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  placeholder="Last name"
-                  value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 8: Contact Information */}
-        {currentStep === 8 && (
           <div className="space-y-4">
             <Label className="text-lg font-semibold">Contact Information</Label>
             <div className="space-y-4">
