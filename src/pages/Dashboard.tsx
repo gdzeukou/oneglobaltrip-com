@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,6 +20,8 @@ import {
   Plus,
   Clock
 } from 'lucide-react';
+import DocumentUpload from '@/components/DocumentUpload';
+import DocumentsList from '@/components/DocumentsList';
 
 interface Profile {
   id: string;
@@ -61,6 +62,7 @@ const Dashboard = () => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
+  const [documentsRefreshTrigger, setDocumentsRefreshTrigger] = useState(0);
 
   useEffect(() => {
     if (!user) {
@@ -143,6 +145,10 @@ const Dashboard = () => {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const handleDocumentUploadSuccess = () => {
+    setDocumentsRefreshTrigger(prev => prev + 1);
   };
 
   if (loading) {
@@ -419,18 +425,10 @@ const Dashboard = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Documents</CardTitle>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Upload Document
-                  </Button>
+                  <DocumentUpload onUploadSuccess={handleDocumentUploadSuccess} />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-12">
-                    <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No documents uploaded</h3>
-                    <p className="text-gray-600 mb-6">Upload your travel documents for safekeeping</p>
-                    <Button>Upload First Document</Button>
-                  </div>
+                  <DocumentsList refreshTrigger={documentsRefreshTrigger} />
                 </CardContent>
               </Card>
             </TabsContent>
