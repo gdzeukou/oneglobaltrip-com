@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -19,19 +20,19 @@ const PortugalLongStay = () => {
   const cities = [
     {
       name: 'Lisbon',
-      image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
+      image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop&crop=faces,center',
       description: 'Historic capital famous for pastéis de nata, fado music, and colorful azulejo tiles',
       highlights: ['Pastéis de Nata', 'Fado Music', 'Azulejo Tiles', 'Jerónimos Monastery']
     },
     {
       name: 'Porto',
-      image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
+      image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop&crop=faces,center',
       description: 'Vibrant northern city renowned for port wine, francesinha sandwiches, and stunning architecture',
       highlights: ['Port Wine', 'Francesinha', 'São Bento Station', 'Dom Luís Bridge']
     },
     {
       name: 'Faro',
-      image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
+      image: 'https://images.unsplash.com/photo-1561414927-6d86591d0c4f?w=800&h=600&fit=crop&crop=faces,center',
       description: 'Southern gateway known for cataplana seafood, traditional festivals, and Moorish architecture',
       highlights: ['Cataplana', 'Festival do Marisco', 'Moorish Architecture', 'Ria Formosa']
     }
@@ -123,8 +124,9 @@ const PortugalLongStay = () => {
                 <div className="relative h-48">
                   <img
                     src={city.image}
-                    alt={city.name}
+                    alt={`${city.name} - Portuguese city featuring ${city.highlights[0]}`}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/40" />
                   <div className="absolute bottom-4 left-4">

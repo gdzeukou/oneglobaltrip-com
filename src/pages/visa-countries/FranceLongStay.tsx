@@ -1,12 +1,13 @@
+
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
+import EnhancedMultiStepForm from '@/components/visa/EnhancedMultiStepForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, Heart, AlertTriangle, FileText, Clock, Euro } from 'lucide-react';
+import { Shield, AlertTriangle, FileText, Clock, Euro } from 'lucide-react';
 
 const FranceLongStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
@@ -19,19 +20,19 @@ const FranceLongStay = () => {
   const cities = [
     {
       name: 'Paris',
-      image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
+      image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=faces,center',
       description: 'City of Light famous for croissants, world-class museums, and iconic Eiffel Tower',
       highlights: ['Croissants & Café', 'Louvre Museum', 'Eiffel Tower', 'Seine River Cruises']
     },
     {
       name: 'Lyon',
-      image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
+      image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop&crop=faces,center',
       description: 'Culinary capital renowned for bouchon restaurants, silk heritage, and Festival of Lights',
       highlights: ['Bouchon Cuisine', 'Silk Museum', 'Festival of Lights', 'Traboules Passages']
     },
     {
       name: 'Marseille',
-      image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
+      image: 'https://images.unsplash.com/photo-1508050919630-b135583b29ab?w=800&h=600&fit=crop&crop=faces,center',
       description: 'Mediterranean port famous for bouillabaisse, Notre-Dame de la Garde, and vibrant markets',
       highlights: ['Bouillabaisse', 'Notre-Dame Basilica', 'Old Port', 'Calanques National Park']
     }
@@ -123,8 +124,9 @@ const FranceLongStay = () => {
                 <div className="relative h-48">
                   <img
                     src={city.image}
-                    alt={city.name}
+                    alt={`${city.name} - French city with ${city.highlights[0]}`}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/40" />
                   <div className="absolute bottom-4 left-4">
@@ -182,9 +184,9 @@ const FranceLongStay = () => {
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Start Your France Application
           </h2>
-          <UnifiedTravelForm 
-            type="visa-application" 
-            title="France Long-Stay Visa Application"
+          <EnhancedMultiStepForm 
+            type="long-stay" 
+            preSelectedCountry="France"
             onComplete={() => setShowCalendly(true)}
           />
         </div>

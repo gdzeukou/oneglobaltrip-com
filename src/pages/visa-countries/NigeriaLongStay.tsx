@@ -19,19 +19,19 @@ const NigeriaLongStay = () => {
   const cities = [
     {
       name: 'Lagos',
-      image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=faces,center',
       description: 'Nigeria\'s vibrant megacity famous for Afrobeats music, Nollywood films, and dynamic street culture',
       highlights: ['Jollof Rice', 'Afrobeats Music', 'Lagos Carnival', 'Art Galleries']
     },
     {
       name: 'Abuja',
-      image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=faces,center',
       description: 'Modern capital city known for its planned architecture, cultural festivals, and diverse cuisine',
       highlights: ['Suya Grills', 'Abuja Carnival', 'National Mosque', 'Cultural Festivals']
     },
     {
       name: 'Kano',
-      image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=faces,center',
       description: 'Ancient trading city famous for traditional crafts, Hausa culture, and the historic Kurmi Market',
       highlights: ['Fura da Nono', 'Durbar Festival', 'Ancient City Walls', 'Traditional Crafts']
     }
@@ -123,8 +123,9 @@ const NigeriaLongStay = () => {
                 <div className="relative h-48">
                   <img
                     src={city.image}
-                    alt={city.name}
+                    alt={`${city.name} - Nigerian city known for ${city.highlights[0]}`}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/40" />
                   <div className="absolute bottom-4 left-4">

@@ -15,7 +15,7 @@ const PromoSection = () => {
       price: "$2,499",
       paymentInfo: "No payments until 30 days before departure",
       description: "All planning done for you – flights, stays, activities. Just bring your passport!",
-      image: "/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png"
+      image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center"
     },
     {
       id: 2,
@@ -24,7 +24,7 @@ const PromoSection = () => {
       price: "$1,899",
       paymentInfo: "Reserve with $0 today",
       description: "Experience the vibrant culture, stunning beaches, and unforgettable carnival atmosphere.",
-      image: "/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png"
+      image: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&h=600&fit=crop&crop=center"
     },
     {
       id: 3,
@@ -33,7 +33,7 @@ const PromoSection = () => {
       price: "$2,799",
       paymentInfo: "Pay later, travel worry-free",
       description: "Immerse yourself in ancient traditions and modern wonders across three incredible cities.",
-      image: "/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png"
+      image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop&crop=center"
     }
   ];
 
@@ -61,8 +61,9 @@ const PromoSection = () => {
               <div className="aspect-video overflow-hidden">
                 <img 
                   src={trip.image} 
-                  alt={trip.title}
+                  alt={`${trip.title} - ${trip.subtitle}`}
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </div>
               <div className="p-6">
@@ -104,8 +105,9 @@ const PromoSection = () => {
                     <div className="aspect-video overflow-hidden">
                       <img 
                         src={trip.image} 
-                        alt={trip.title}
+                        alt={`${trip.title} - ${trip.subtitle}`}
                         className="w-full h-full object-cover"
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-6">
