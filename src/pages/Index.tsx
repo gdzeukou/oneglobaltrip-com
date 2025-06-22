@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import HeroSection from '@/components/home/HeroSection';
 import TrustIndicators from '@/components/home/TrustIndicators';
 import ServicesSection from '@/components/home/ServicesSection';
+import PromoSection from '@/components/home/PromoSection';
 import StartTripSection from '@/components/home/StartTripSection';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
@@ -17,6 +18,7 @@ const Index = () => {
       <HeroSection />
       <TrustIndicators />
       <ServicesSection />
+      <PromoSection />
       <StartTripSection />
       <WhyChooseUsSection />
       <TestimonialsSection />
