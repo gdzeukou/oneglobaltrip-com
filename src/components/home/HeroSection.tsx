@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Plane, Building, MapPin, FileText } from 'lucide-react';
@@ -36,8 +35,7 @@ const HeroSection = () => {
               </Button>
               <Button 
                 size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-900"
+                className="bg-white/10 text-white border-2 border-yellow-400 hover:bg-yellow-400 hover:text-blue-900 transition-all duration-200"
                 asChild
               >
                 <Link to="/visas">
@@ -47,8 +45,7 @@ const HeroSection = () => {
               </Button>
               <Button 
                 size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-900"
+                className="bg-white/10 text-white border-2 border-yellow-400 hover:bg-yellow-400 hover:text-blue-900 transition-all duration-200"
                 asChild
               >
                 <Link to="/packages">
@@ -58,7 +55,7 @@ const HeroSection = () => {
               </Button>
             </>
           ) : (
-            // Non-signed-in user buttons - Fixed hover visibility
+            // Non-signed-in user buttons - Fixed visibility with proper contrast
             <>
               <Button 
                 size="lg"
@@ -72,8 +69,7 @@ const HeroSection = () => {
               </Button>
               <Button 
                 size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-900 hover:border-white transition-all duration-200"
+                className="bg-white/10 text-white border-2 border-yellow-400 hover:bg-yellow-400 hover:text-blue-900 transition-all duration-200"
                 asChild
               >
                 <Link to="/visas/long-stay">
@@ -83,8 +79,7 @@ const HeroSection = () => {
               </Button>
               <Button 
                 size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-900 hover:border-white transition-all duration-200"
+                className="bg-white/10 text-white border-2 border-yellow-400 hover:bg-yellow-400 hover:text-blue-900 transition-all duration-200"
                 asChild
               >
                 <Link to="/packages">
