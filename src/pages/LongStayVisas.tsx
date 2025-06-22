@@ -7,6 +7,8 @@ import MultiStepForm from '@/components/visa/MultiStepForm';
 import CountryTile from '@/components/visa/CountryTile';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
+import OptimizedImage from '@/components/ui/optimized-image';
+import { getCountryImage } from '@/utils/countryImages';
 
 const LongStayVisas = () => {
   const [searchParams] = useSearchParams();
@@ -31,14 +33,14 @@ const LongStayVisas = () => {
   }, [preSelectedCountry]);
 
   const countries = [
-    { name: 'Portugal', image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png' },
-    { name: 'Norway', image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png' },
-    { name: 'Denmark', image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png' },
-    { name: 'Finland', image: '/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png' },
-    { name: 'Nigeria', image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png' },
-    { name: 'France', image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png' },
-    { name: 'Germany', image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png' },
-    { name: 'Switzerland', image: '/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png' }
+    { name: 'Portugal', image: getCountryImage('Portugal') },
+    { name: 'Norway', image: getCountryImage('Norway') },
+    { name: 'Denmark', image: getCountryImage('Denmark') },
+    { name: 'Finland', image: getCountryImage('Finland') },
+    { name: 'Nigeria', image: getCountryImage('Nigeria') },
+    { name: 'France', image: getCountryImage('France') },
+    { name: 'Germany', image: getCountryImage('Germany') },
+    { name: 'Switzerland', image: getCountryImage('Switzerland') }
   ];
 
   const scrollToForm = () => {
@@ -52,16 +54,26 @@ const LongStayVisas = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-r from-blue-900 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">Long-Stay & Residency Visas Without the Guesswork</h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto">
+      {/* Hero Section with Background Image */}
+      <section className="pt-24 pb-16 relative bg-gradient-to-r from-blue-900 to-blue-800 text-white overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-20">
+          <OptimizedImage
+            src="https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=1920&h=1080&fit=crop&crop=center"
+            alt="European cityscape for long-stay visas"
+            className="w-full h-full"
+            overlay
+            overlayColor="bg-blue-900/60"
+            priority
+          />
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
+          <h1 className="text-5xl font-bold mb-6 hero-text animate-fade-in">Long-Stay & Residency Visas Without the Guesswork</h1>
+          <p className="text-xl mb-8 max-w-3xl mx-auto animate-slide-up">
             Work, study, retire, or live abroad—One Global Trip has you covered with expert guidance every step of the way.
           </p>
           <Button 
             onClick={scrollToForm}
-            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold text-lg px-8 py-3"
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold text-lg px-8 py-3 hover-lift pulse-glow animate-scale-in"
           >
             Get Residency Help
           </Button>
@@ -73,17 +85,18 @@ const LongStayVisas = () => {
       {/* Country Tiles */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 animate-fade-in">
             Popular Long-Stay Destinations
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {countries.map((country) => (
-              <CountryTile
-                key={country.name}
-                name={country.name}
-                image={country.image}
-                type="long-stay"
-              />
+            {countries.map((country, index) => (
+              <div key={country.name} className="animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                <CountryTile
+                  name={country.name}
+                  image={country.image}
+                  type="long-stay"
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -92,14 +105,16 @@ const LongStayVisas = () => {
       {/* Multi-Step Form */}
       <section id="visa-form" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 animate-fade-in">
             Start Your Application
           </h2>
-          <MultiStepForm 
-            type="long-stay" 
-            preSelectedCountry={preSelectedCountry || undefined}
-            onComplete={() => setShowCalendly(true)}
-          />
+          <div className="animate-slide-up">
+            <MultiStepForm 
+              type="long-stay" 
+              preSelectedCountry={preSelectedCountry || undefined}
+              onComplete={() => setShowCalendly(true)}
+            />
+          </div>
         </div>
       </section>
 
@@ -114,12 +129,12 @@ const LongStayVisas = () => {
       {/* Calendly Modal */}
       {showCalendly && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full animate-scale-in">
             <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
             <p className="mb-4">Book a 30-minute call with our visa experts to discuss your application.</p>
             <Button
               onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-4"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-4 hover-lift"
             >
               Book Consultation
             </Button>

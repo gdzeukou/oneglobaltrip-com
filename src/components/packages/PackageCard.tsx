@@ -5,26 +5,47 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Package } from '@/types/package';
+import OptimizedImage from '@/components/ui/optimized-image';
 
 interface PackageCardProps {
   package: Package;
 }
 
 const PackageCard = ({ package: pkg }: PackageCardProps) => {
+  // Enhanced destination-specific images
+  const getDestinationImage = (countryName: string, originalImage: string) => {
+    const countryImages = {
+      'France': 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center',
+      'Italy': 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=800&h=600&fit=crop&crop=center',
+      'Spain': 'https://images.unsplash.com/photo-1539650116574-75c0c6d73a0e?w=800&h=600&fit=crop&crop=center',
+      'Germany': 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop&crop=center',
+      'Netherlands': 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&h=600&fit=crop&crop=center',
+      'United Kingdom': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop&crop=center',
+      'Switzerland': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&crop=center',
+      'Austria': 'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=800&h=600&fit=crop&crop=center',
+      'Portugal': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop&crop=center',
+      'Greece': 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&h=600&fit=crop&crop=center'
+    };
+    
+    return countryImages[countryName as keyof typeof countryImages] || originalImage;
+  };
+
   return (
-    <Card className="overflow-hidden hover-lift group">
+    <Card className="overflow-hidden hover-lift group card-hover bg-white shadow-lg">
       <div className="relative">
-        <img
-          src={pkg.image}
+        <OptimizedImage
+          src={getDestinationImage(pkg.country, pkg.image)}
           alt={pkg.title}
-          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-64 group-hover:scale-110 transition-transform duration-500"
+          overlay
+          overlayColor="bg-black/10"
         />
         <div className="absolute top-4 right-4">
           <Badge className="bg-yellow-500 text-blue-900 font-bold">
             From ${pkg.price.toLocaleString()}
           </Badge>
         </div>
-        <button className="absolute top-4 left-4 p-2 bg-white/80 rounded-full hover:bg-white transition-colors">
+        <button className="absolute top-4 left-4 p-2 bg-white/80 rounded-full hover:bg-white transition-colors hover-lift">
           <Heart className="h-5 w-5 text-gray-600" />
         </button>
       </div>
@@ -72,7 +93,7 @@ const PackageCard = ({ package: pkg }: PackageCardProps) => {
           ))}
         </div>
         
-        <Button asChild className="w-full bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700">
+        <Button asChild className="w-full bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 hover-lift">
           <Link to={`/booking?package=${pkg.id}`}>
             Book This Package
             <ArrowRight className="h-4 w-4 ml-2" />

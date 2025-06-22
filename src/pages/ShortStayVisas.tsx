@@ -8,6 +8,8 @@ import CountryTile from '@/components/visa/CountryTile';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import OptimizedImage from '@/components/ui/optimized-image';
+import { getCountryImage } from '@/utils/countryImages';
 
 const ShortStayVisas = () => {
   const [searchParams] = useSearchParams();
@@ -31,13 +33,13 @@ const ShortStayVisas = () => {
   }, [preSelectedCountry]);
 
   const countries = [
-    { name: 'Schengen Area', image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png' },
-    { name: 'United Kingdom', image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png' },
-    { name: 'Canada', image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png' },
-    { name: 'Brazil', image: '/lovable-uploads/c1698ac0-2579-49f9-9f36-e184b2b21206.png' },
-    { name: 'Nigeria e-Visa', image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png' },
-    { name: 'India', image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png' },
-    { name: 'UAE (Dubai)', image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png' }
+    { name: 'Schengen Area', image: getCountryImage('Schengen Area') },
+    { name: 'United Kingdom', image: getCountryImage('United Kingdom') },
+    { name: 'Canada', image: getCountryImage('Canada') },
+    { name: 'Brazil', image: getCountryImage('Brazil') },
+    { name: 'Nigeria e-Visa', image: getCountryImage('Nigeria e-Visa') },
+    { name: 'India', image: getCountryImage('India') },
+    { name: 'UAE (Dubai)', image: getCountryImage('UAE (Dubai)') }
   ];
 
   const scrollToForm = () => {
@@ -56,16 +58,26 @@ const ShortStayVisas = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-r from-blue-900 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">Short-Stay Visas Made Simple</h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto">
+      {/* Hero Section with Background Image */}
+      <section className="pt-24 pb-16 relative bg-gradient-to-r from-blue-900 to-blue-800 text-white overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-20">
+          <OptimizedImage
+            src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920&h=1080&fit=crop&crop=center"
+            alt="Global travel destinations for short-stay visas"
+            className="w-full h-full"
+            overlay
+            overlayColor="bg-blue-900/60"
+            priority
+          />
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
+          <h1 className="text-5xl font-bold mb-6 hero-text animate-fade-in">Short-Stay Visas Made Simple</h1>
+          <p className="text-xl mb-8 max-w-3xl mx-auto animate-slide-up">
             Tourism, business, or a quick visit—get approved fast with our expert guidance and guaranteed support.
           </p>
           <Button 
             onClick={scrollToForm}
-            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold text-lg px-8 py-3"
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold text-lg px-8 py-3 hover-lift pulse-glow animate-scale-in"
           >
             Start My Application
           </Button>
@@ -77,17 +89,18 @@ const ShortStayVisas = () => {
       {/* Country Tiles */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 animate-fade-in">
             Popular Short-Stay Destinations
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {countries.map((country) => (
-              <CountryTile
-                key={country.name}
-                name={country.name}
-                image={country.image}
-                type="short-stay"
-              />
+            {countries.map((country, index) => (
+              <div key={country.name} className="animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                <CountryTile
+                  name={country.name}
+                  image={country.image}
+                  type="short-stay"
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -95,14 +108,16 @@ const ShortStayVisas = () => {
 
       <section id="visa-form" className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 animate-fade-in">
             Start Your Application
           </h2>
-          <MultiStepForm 
-            type="short-stay" 
-            preSelectedCountry={preSelectedCountry || undefined}
-            onComplete={handleFormComplete}
-          />
+          <div className="animate-slide-up">
+            <MultiStepForm 
+              type="short-stay" 
+              preSelectedCountry={preSelectedCountry || undefined}
+              onComplete={handleFormComplete}
+            />
+          </div>
         </div>
       </section>
 
@@ -116,10 +131,10 @@ const ShortStayVisas = () => {
       {/* Simple Booking Modal */}
       {showBookingModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full relative animate-scale-in">
             <button 
               onClick={() => setShowBookingModal(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 hover-lift"
             >
               <X className="h-6 w-6" />
             </button>
@@ -137,7 +152,7 @@ const ShortStayVisas = () => {
               
               <Button
                 onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-4"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-4 hover-lift"
               >
                 Book My FREE Consultation
               </Button>

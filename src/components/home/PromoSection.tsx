@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ExternalLink, Plane } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import OptimizedImage from '@/components/ui/optimized-image';
 
 const PromoSection = () => {
   const featuredTrips = [
@@ -40,7 +41,7 @@ const PromoSection = () => {
   return (
     <section className="py-16 bg-gradient-to-br from-blue-50 to-yellow-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             Pack Your Bags, Not Your Bills – Book Now, Pay $0 Down!
           </h2>
@@ -51,19 +52,20 @@ const PromoSection = () => {
 
         {/* Desktop: Side-by-side cards */}
         <div className="hidden md:grid md:grid-cols-3 gap-8 mb-8">
-          {featuredTrips.map((trip) => (
-            <div key={trip.id} className="relative bg-white rounded-xl shadow-lg overflow-hidden hover-lift">
+          {featuredTrips.map((trip, index) => (
+            <div key={trip.id} className="relative bg-white rounded-xl shadow-lg overflow-hidden hover-lift card-hover animate-scale-in" style={{ animationDelay: `${index * 0.2}s` }}>
               <div className="absolute top-4 right-4 z-10">
                 <Badge className="bg-green-500 text-white font-bold px-3 py-1">
                   $0 Down
                 </Badge>
               </div>
               <div className="aspect-video overflow-hidden">
-                <img 
+                <OptimizedImage 
                   src={trip.image} 
                   alt={`${trip.title} - ${trip.subtitle}`}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
+                  className="w-full h-full transition-transform duration-500 group-hover:scale-110"
+                  overlay
+                  overlayColor="bg-black/10"
                 />
               </div>
               <div className="p-6">
@@ -77,7 +79,7 @@ const PromoSection = () => {
                   </div>
                 </div>
                 <Button 
-                  className="w-full bg-blue-900 hover:bg-blue-800 text-white"
+                  className="w-full bg-blue-900 hover:bg-blue-800 text-white hover-lift"
                   asChild
                 >
                   <Link to="/packages" target="_blank" rel="noopener noreferrer">
@@ -103,11 +105,12 @@ const PromoSection = () => {
                       </Badge>
                     </div>
                     <div className="aspect-video overflow-hidden">
-                      <img 
+                      <OptimizedImage 
                         src={trip.image} 
                         alt={`${trip.title} - ${trip.subtitle}`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
+                        className="w-full h-full"
+                        overlay
+                        overlayColor="bg-black/10"
                       />
                     </div>
                     <div className="p-6">
@@ -139,7 +142,7 @@ const PromoSection = () => {
           </Carousel>
         </div>
 
-        <div className="text-center mt-8">
+        <div className="text-center mt-8 animate-slide-up">
           <div className="flex items-center justify-center space-x-2 text-gray-600">
             <Plane className="h-5 w-5" />
             <span className="font-medium">All planning done for you – flights, stays, activities. Just bring your passport!</span>
