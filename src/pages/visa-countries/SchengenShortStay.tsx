@@ -183,7 +183,6 @@ const SchengenShortStay = () => {
             <CalendlyWidget 
               url="https://calendly.com/camronm-oneglobaltrip/30min" 
               buttonText="Schedule My FREE Consultation"
-              autoOpen={false}
             />
             
             <p className="text-xs text-gray-500 text-center mt-4">

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -140,7 +139,6 @@ const ShortStayVisas = () => {
             <CalendlyWidget 
               url="https://calendly.com/camronm-oneglobaltrip/30min" 
               buttonText="Book My FREE Consultation"
-              autoOpen={false}
             />
             
             <p className="text-xs text-gray-500 text-center mt-4">
