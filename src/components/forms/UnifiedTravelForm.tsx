@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronLeft, ChevronRight, Star, CreditCard } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Star, CreditCard, MapPin } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { packages } from '@/data/packages';
@@ -101,6 +101,16 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   };
 
   const handleSubmit = () => {
+    // Validate required fields
+    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
+      toast({
+        title: "Required Fields Missing",
+        description: "Please fill in your name, email, and phone number.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     console.log('Form submitted:', { type, formData });
     
     const messages = {
@@ -127,12 +137,13 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return formData.name && formData.email && formData.phone;
+        // Mandatory fields validation
+        return formData.name.trim() && formData.email.trim() && formData.phone.trim();
       case 2:
         if (type === 'package-booking') {
           return formData.selectedPackages.length > 0;
         }
-        return formData.destination;
+        return true; // Remove mandatory destination requirement
       case 3:
         return true; // Travel preferences are optional
       case 4:
@@ -213,24 +224,122 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
       case 2:
         if (type === 'package-booking') {
           return (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
-                <Label className="text-base font-medium">Select the package(s) you're interested in: *</Label>
-                <div className="grid grid-cols-1 gap-3 mt-3 max-h-60 overflow-y-auto">
+                <Label className="text-lg font-semibold mb-4 block">Select the package(s) you're interested in: *</Label>
+                
+                {/* Desktop: Grid layout */}
+                <div className="hidden md:grid md:grid-cols-3 gap-4 mb-6">
                   {packages.map((pkg) => (
-                    <div key={pkg.id} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                      <Checkbox
-                        id={pkg.id}
-                        checked={formData.selectedPackages.includes(pkg.id)}
-                        onCheckedChange={(checked) => handlePackageSelection(pkg.id, checked as boolean)}
-                      />
-                      <div className="flex-1">
-                        <Label htmlFor={pkg.id} className="cursor-pointer font-medium">{pkg.title}</Label>
-                        <p className="text-sm text-gray-600">{pkg.country} - {pkg.duration} - From ${pkg.price.toLocaleString()}</p>
+                    <div 
+                      key={pkg.id} 
+                      className={`relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-xl ${
+                        formData.selectedPackages.includes(pkg.id) ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                      }`}
+                      onClick={() => handlePackageSelection(pkg.id, !formData.selectedPackages.includes(pkg.id))}
+                    >
+                      <div className="absolute top-3 right-3 z-10">
+                        <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
+                          $0 Down
+                        </div>
+                      </div>
+                      {formData.selectedPackages.includes(pkg.id) && (
+                        <div className="absolute top-3 left-3 z-10">
+                          <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                            ✓
+                          </div>
+                        </div>
+                      )}
+                      <div className="aspect-video overflow-hidden">
+                        <img 
+                          src={pkg.image || `https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=250&fit=crop`}
+                          alt={pkg.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-bold text-lg mb-1">{pkg.title}</h3>
+                        <p className="text-sm text-gray-600 mb-2 flex items-center">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          {pkg.country} • {pkg.duration}
+                        </p>
+                        <p className="text-xl font-bold text-blue-900">From ${pkg.price.toLocaleString()}</p>
                       </div>
                     </div>
                   ))}
                 </div>
+
+                {/* Mobile: Carousel */}
+                <div className="md:hidden">
+                  <div className="flex overflow-x-auto space-x-4 pb-4 mb-6">
+                    {packages.map((pkg) => (
+                      <div 
+                        key={pkg.id} 
+                        className={`relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transition-all duration-200 hover:shadow-xl flex-shrink-0 w-72 ${
+                          formData.selectedPackages.includes(pkg.id) ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                        }`}
+                        onClick={() => handlePackageSelection(pkg.id, !formData.selectedPackages.includes(pkg.id))}
+                      >
+                        <div className="absolute top-3 right-3 z-10">
+                          <div className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">
+                            $0 Down
+                          </div>
+                        </div>
+                        {formData.selectedPackages.includes(pkg.id) && (
+                          <div className="absolute top-3 left-3 z-10">
+                            <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                              ✓
+                            </div>
+                          </div>
+                        )}
+                        <div className="aspect-video overflow-hidden">
+                          <img 
+                            src={pkg.image || `https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=250&fit=crop`}
+                            alt={pkg.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-bold text-lg mb-1">{pkg.title}</h3>
+                          <p className="text-sm text-gray-600 mb-2 flex items-center">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            {pkg.country} • {pkg.duration}
+                          </p>
+                          <p className="text-xl font-bold text-blue-900">From ${pkg.price.toLocaleString()}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Travel Needs - Show immediately after package picker */}
+              <div>
+                <Label className="text-base font-medium">What do you still need for your trip? (Select all that apply)</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                  {travelNeedsOptions.map((need) => (
+                    <div key={need} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={need}
+                        checked={formData.travelNeeds.includes(need)}
+                        onCheckedChange={(checked) => handleTravelNeedsChange(need, checked as boolean)}
+                      />
+                      <Label htmlFor={need} className="cursor-pointer text-sm">{need}</Label>
+                    </div>
+                  ))}
+                </div>
+                {formData.travelNeeds.includes('Other') && (
+                  <div className="mt-4">
+                    <Label htmlFor="otherNeeds" className="text-base font-medium">Please specify:</Label>
+                    <Input
+                      id="otherNeeds"
+                      placeholder="Please describe what else you need..."
+                      value={formData.otherNeeds}
+                      onChange={(e) => handleInputChange('otherNeeds', e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -239,14 +348,13 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="destination" className="text-base font-medium">Dream Destination *</Label>
+                  <Label htmlFor="destination" className="text-base font-medium">Dream Destination</Label>
                   <Input
                     id="destination"
                     placeholder="e.g., Paris, Tokyo, New York"
                     value={formData.destination}
                     onChange={(e) => handleInputChange('destination', e.target.value)}
                     className="mt-1"
-                    required
                   />
                 </div>
                 <div>
@@ -312,48 +420,66 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
         }
 
       case 3:
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label className="text-base font-medium">What do you still need for your trip? (Select all that apply)</Label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
-                {travelNeedsOptions.map((need) => (
-                  <div key={need} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={need}
-                      checked={formData.travelNeeds.includes(need)}
-                      onCheckedChange={(checked) => handleTravelNeedsChange(need, checked as boolean)}
-                    />
-                    <Label htmlFor={need} className="cursor-pointer text-sm">{need}</Label>
-                  </div>
-                ))}
+        if (type === 'package-booking') {
+          return (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="specialRequests" className="text-base font-medium">Special Requests or Additional Information</Label>
+                <Textarea
+                  id="specialRequests"
+                  placeholder="Tell us about any special requirements, dietary restrictions, accessibility needs, or other preferences..."
+                  value={formData.specialRequests}
+                  onChange={(e) => handleInputChange('specialRequests', e.target.value)}
+                  rows={4}
+                  className="mt-1"
+                />
               </div>
-              {formData.travelNeeds.includes('Other') && (
-                <div className="mt-4">
-                  <Label htmlFor="otherNeeds" className="text-base font-medium">Please specify:</Label>
-                  <Input
-                    id="otherNeeds"
-                    placeholder="Please describe what else you need..."
-                    value={formData.otherNeeds}
-                    onChange={(e) => handleInputChange('otherNeeds', e.target.value)}
-                    className="mt-1"
-                  />
+            </div>
+          );
+        } else {
+          return (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-base font-medium">What do you still need for your trip? (Select all that apply)</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-3">
+                  {travelNeedsOptions.map((need) => (
+                    <div key={need} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={need}
+                        checked={formData.travelNeeds.includes(need)}
+                        onCheckedChange={(checked) => handleTravelNeedsChange(need, checked as boolean)}
+                      />
+                      <Label htmlFor={need} className="cursor-pointer text-sm">{need}</Label>
+                    </div>
+                  ))}
                 </div>
-              )}
+                {formData.travelNeeds.includes('Other') && (
+                  <div className="mt-4">
+                    <Label htmlFor="otherNeeds" className="text-base font-medium">Please specify:</Label>
+                    <Input
+                      id="otherNeeds"
+                      placeholder="Please describe what else you need..."
+                      value={formData.otherNeeds}
+                      onChange={(e) => handleInputChange('otherNeeds', e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="specialRequests" className="text-base font-medium">Special Requests or Additional Information</Label>
+                <Textarea
+                  id="specialRequests"
+                  placeholder="Tell us about any special requirements, dietary restrictions, accessibility needs, or other preferences..."
+                  value={formData.specialRequests}
+                  onChange={(e) => handleInputChange('specialRequests', e.target.value)}
+                  rows={4}
+                  className="mt-1"
+                />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="specialRequests" className="text-base font-medium">Special Requests or Additional Information</Label>
-              <Textarea
-                id="specialRequests"
-                placeholder="Tell us about any special requirements, dietary restrictions, accessibility needs, or other preferences..."
-                value={formData.specialRequests}
-                onChange={(e) => handleInputChange('specialRequests', e.target.value)}
-                rows={4}
-                className="mt-1"
-              />
-            </div>
-          </div>
-        );
+          );
+        }
 
       case 4:
         return (
@@ -416,8 +542,8 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     if (type === 'package-booking') {
       switch (currentStep) {
         case 1: return 'Personal Information';
-        case 2: return 'Package Selection';
-        case 3: return 'Travel Preferences';
+        case 2: return 'Package Selection & Travel Needs';
+        case 3: return 'Additional Preferences';
         case 4: return 'Payment & Confirmation';
         default: return '';
       }
