@@ -58,11 +58,11 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
     fetchDocuments();
   }, [user, refreshTrigger]);
 
-  const handleDownload = async (document: UserDocument) => {
+  const handleDownload = async (doc: UserDocument) => {
     try {
       const { data, error } = await supabase.storage
         .from('user-documents')
-        .download(document.file_path);
+        .download(doc.file_path);
 
       if (error) {
         throw error;
@@ -70,12 +70,12 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
 
       // Create download link
       const url = URL.createObjectURL(data);
-      const a = document.createElement('a');
+      const a = window.document.createElement('a');
       a.href = url;
-      a.download = document.file_name;
-      document.body.appendChild(a);
+      a.download = doc.file_name;
+      window.document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
+      window.document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
     } catch (error) {
@@ -88,7 +88,7 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
     }
   };
 
-  const handleDelete = async (document: UserDocument) => {
+  const handleDelete = async (doc: UserDocument) => {
     if (!confirm('Are you sure you want to delete this document?')) {
       return;
     }
@@ -97,7 +97,7 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
       // Delete from storage
       const { error: storageError } = await supabase.storage
         .from('user-documents')
-        .remove([document.file_path]);
+        .remove([doc.file_path]);
 
       if (storageError) {
         throw storageError;
@@ -107,7 +107,7 @@ const DocumentsList = ({ refreshTrigger }: DocumentsListProps) => {
       const { error: dbError } = await supabase
         .from('user_documents')
         .delete()
-        .eq('id', document.id);
+        .eq('id', doc.id);
 
       if (dbError) {
         throw dbError;
