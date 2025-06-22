@@ -112,6 +112,33 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
     }));
   };
 
+  const sendWelcomeEmail = async () => {
+    try {
+      console.log('📧 Attempting to send welcome email...');
+      
+      const { data, error } = await supabase.functions.invoke('send-welcome-email', {
+        body: {
+          name: formData.name,
+          email: formData.email,
+          formType: type === 'short-stay' ? 'short-stay-visa' : 'long-stay-visa',
+          destination: formData.destinationCountry,
+          travelNeeds: formData.additionalNeeds
+        }
+      });
+
+      if (error) {
+        console.warn('⚠️ Welcome email failed (non-critical):', error);
+        return false;
+      }
+
+      console.log('✅ Welcome email sent successfully');
+      return true;
+    } catch (error) {
+      console.warn('⚠️ Welcome email service unavailable (non-critical):', error);
+      return false;
+    }
+  };
+
   const handleSubmit = async () => {
     console.log('=== VISA FORM SUBMISSION START ===');
     console.log('Form type:', type);
@@ -190,7 +217,7 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
 
       console.log('Final submission data:', submissionData);
 
-      // Attempt database insertion
+      // Critical: Save to database (must succeed)
       console.log('=== DATABASE INSERTION ===');
       console.log(`Inserting into table: ${tableName}`);
       
@@ -212,11 +239,20 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
 
       console.log('✅ Database insertion successful:', insertResult);
 
+      // Non-critical: Send welcome email (failure doesn't affect success)
+      const emailSent = await sendWelcomeEmail();
+
       // Success handling
       console.log('=== SUCCESS HANDLING ===');
+      
+      let successDescription = "We'll review your information and contact you within 24 hours.";
+      if (!emailSent) {
+        successDescription += " (Note: We'll contact you directly as our email service is temporarily unavailable.)";
+      }
+
       toast({
         title: "Application Started!",
-        description: "We'll review your information and contact you within 24 hours.",
+        description: successDescription,
       });
 
       console.log('✅ Toast notification sent');
@@ -234,6 +270,7 @@ const EnhancedMultiStepForm = ({ type, preSelectedCountry, onComplete }: Enhance
       console.error('Error instance:', error instanceof Error);
       console.error('Full error object:', error);
       
+      // Only show error for actual critical failures (database errors)
       let errorMessage = "Please try again or contact support.";
       
       if (error instanceof Error) {

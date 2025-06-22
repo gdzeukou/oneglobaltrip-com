@@ -1,3 +1,4 @@
+
 // Enhanced security utilities for input validation and sanitization
 
 export const sanitizeInput = (input: string, maxLength: number = 1000): string => {
@@ -93,7 +94,7 @@ export const checkRateLimit = async (email: string): Promise<boolean> => {
     
     return true;
   } catch (error) {
-    console.warn('Rate limit check failed:', error);
+    console.warn('Rate limit check failed (non-critical):', error);
     // Don't block submission if rate limiting fails
     return true;
   }
