@@ -514,6 +514,7 @@ export type Database = {
           destination_country: string
           email: string
           id: string
+          name: string
           nationality: string
           phone: string
           visa_category: string
@@ -524,6 +525,7 @@ export type Database = {
           destination_country: string
           email: string
           id?: string
+          name?: string
           nationality: string
           phone: string
           visa_category: string
@@ -534,6 +536,7 @@ export type Database = {
           destination_country?: string
           email?: string
           id?: string
+          name?: string
           nationality?: string
           phone?: string
           visa_category?: string
@@ -652,6 +655,7 @@ export type Database = {
           destination_country: string
           email: string
           id: string
+          name: string
           nationality: string
           phone: string
           purpose: string
@@ -662,6 +666,7 @@ export type Database = {
           destination_country: string
           email: string
           id?: string
+          name?: string
           nationality: string
           phone: string
           purpose: string
@@ -672,6 +677,7 @@ export type Database = {
           destination_country?: string
           email?: string
           id?: string
+          name?: string
           nationality?: string
           phone?: string
           purpose?: string
