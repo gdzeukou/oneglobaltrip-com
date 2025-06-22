@@ -157,13 +157,7 @@ export const useUnifiedForm = (
   };
 
   const openCalendly = () => {
-    if (window.Calendly) {
-      window.Calendly.initPopupWidget({ 
-        url: 'https://calendly.com/camronm-oneglobaltrip/30min' 
-      });
-    } else {
-      window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank', 'width=800,height=700');
-    }
+    window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank', 'width=800,height=700');
   };
 
   const handleSubmit = async () => {

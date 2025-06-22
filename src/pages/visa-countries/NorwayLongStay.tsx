@@ -7,7 +7,6 @@ import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Heart, AlertTriangle, FileText, Clock, Crown } from 'lucide-react';
-import CalendlyWidget from '@/components/CalendlyWidget';
 
 const NorwayLongStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
@@ -203,11 +202,16 @@ const NorwayLongStay = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
             <p className="mb-4">Book a 30-minute call with our visa experts to discuss your Norway application and premium insurance requirements.</p>
-            <CalendlyWidget url="https://calendly.com/camronm-oneglobaltrip/30min" />
+            <Button
+              onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-4"
+            >
+              Book Consultation
+            </Button>
             <Button 
               variant="outline" 
               onClick={() => setShowCalendly(false)}
-              className="w-full mt-4"
+              className="w-full"
             >
               Close
             </Button>

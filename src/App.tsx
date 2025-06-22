@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Navigation from "./components/Navigation";
-import FloatingCalendlyButton from "./components/FloatingCalendlyButton";
 import Index from "./pages/Index";
 import Packages from "./pages/Packages";
 import Visas from "./pages/Visas";
@@ -104,7 +103,6 @@ function App() {
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </main>
-                <FloatingCalendlyButton />
               </div>
             </BrowserRouter>
           </TooltipProvider>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock, CheckCircle, FileText } from 'lucide-react';
-import CalendlyWidget from '@/components/CalendlyWidget';
+import { Button } from '@/components/ui/button';
 
 const ConsultationInfo: React.FC = () => {
   return (
@@ -47,10 +47,12 @@ const ConsultationInfo: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Ready to get started? Book your free consultation instantly
             </p>
-            <CalendlyWidget 
-              url="https://calendly.com/admin-oneglobaltrip/planmytrip"
-              buttonText="Book Free Consultation"
-            />
+            <Button
+              onClick={() => window.open('https://calendly.com/admin-oneglobaltrip/planmytrip', '_blank')}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+            >
+              Book Free Consultation
+            </Button>
             <p className="text-sm text-gray-500">
               15-minute call • No commitment required
             </p>

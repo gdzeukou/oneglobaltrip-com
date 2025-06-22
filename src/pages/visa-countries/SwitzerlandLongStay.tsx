@@ -7,7 +7,6 @@ import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Heart, AlertTriangle, FileText, Clock, Crown } from 'lucide-react';
-import CalendlyWidget from '@/components/CalendlyWidget';
 
 const SwitzerlandLongStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
@@ -162,12 +161,12 @@ const SwitzerlandLongStay = () => {
             <Card className="text-center p-6">
               <Shield className="h-12 w-12 text-red-600 mx-auto mb-4" />
               <h3 className="font-bold mb-2">Premium Insurance</h3>
-              <p className="text-sm text-gray-600">CHF 100,000+ with Alpine coverage</p>
+              <p className="text-sm text-gray-600">CHF 100,000+ coverage mandatory</p>
             </Card>
             <Card className="text-center p-6">
               <Clock className="h-12 w-12 text-red-600 mx-auto mb-4" />
               <h3 className="font-bold mb-2">Processing Time</h3>
-              <p className="text-sm text-gray-600">90-180 days average</p>
+              <p className="text-sm text-gray-600">8-12 weeks average</p>
             </Card>
             <Card className="text-center p-6">
               <Crown className="h-12 w-12 text-red-600 mx-auto mb-4" />
@@ -202,12 +201,17 @@ const SwitzerlandLongStay = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
-            <p className="mb-4">Book a 30-minute call with our visa experts to discuss your Switzerland application and premium Alpine insurance requirements.</p>
-            <CalendlyWidget url="https://calendly.com/camronm-oneglobaltrip/30min" />
+            <p className="mb-4">Book a 30-minute call with our visa experts to discuss your Switzerland application and premium insurance requirements.</p>
+            <Button
+              onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-4"
+            >
+              Book Consultation
+            </Button>
             <Button 
               variant="outline" 
               onClick={() => setShowCalendly(false)}
-              className="w-full mt-4"
+              className="w-full"
             >
               Close
             </Button>
