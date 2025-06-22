@@ -7,10 +7,9 @@ import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Clock, Users, FileText, X } from 'lucide-react';
-import CalendlyWidget from '@/components/CalendlyWidget';
 
 const SchengenShortStay = () => {
-  const [showCalendly, setShowCalendly] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -46,8 +45,7 @@ const SchengenShortStay = () => {
   };
 
   const handleFormComplete = () => {
-    setShowCalendly(true);
-    // Scroll to top for better visibility
+    setShowBookingModal(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -157,37 +155,39 @@ const SchengenShortStay = () => {
         </div>
       </section>
 
-      {/* Enhanced Calendly Modal */}
-      {showCalendly && (
+      {/* Simple Booking Modal */}
+      {showBookingModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
             <button 
-              onClick={() => setShowCalendly(false)}
+              onClick={() => setShowBookingModal(false)}
               className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
             >
               <X className="h-6 w-6" />
             </button>
             
-            <div className="text-center mb-6">
+            <div className="text-center">
               <h3 className="text-2xl font-bold mb-2 text-blue-900">🎉 Application Submitted!</h3>
               <p className="text-gray-600 mb-4">
                 Great! Now let's schedule your <strong>FREE consultation</strong> to discuss your Schengen visa application.
               </p>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                 <p className="text-sm text-yellow-800">
                   <strong>Next Steps:</strong> Book a 30-minute call with our visa experts to review your application and get personalized guidance.
                 </p>
               </div>
+              
+              <Button
+                onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-4"
+              >
+                Schedule My FREE Consultation
+              </Button>
+              
+              <p className="text-xs text-gray-500 text-center">
+                Or you can close this and we'll contact you within 24 hours
+              </p>
             </div>
-            
-            <CalendlyWidget 
-              url="https://calendly.com/camronm-oneglobaltrip/30min" 
-              buttonText="Schedule My FREE Consultation"
-            />
-            
-            <p className="text-xs text-gray-500 text-center mt-4">
-              Or you can close this and we'll contact you within 24 hours
-            </p>
           </div>
         </div>
       )}

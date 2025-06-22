@@ -203,8 +203,13 @@ const DenmarkLongStay = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
-            <p className="mb-4">Book a 30-minute call with our visa experts to discuss your Denmark application and Danish healthcare insurance requirements.</p>
-            <CalendlyWidget url="https://calendly.com/camronm-oneglobaltrip/30min" />
+            <p className="mb-4">Book a 30-minute call with our visa experts to discuss your Denmark application.</p>
+            <Button
+              onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+            >
+              Book Consultation
+            </Button>
             <Button 
               variant="outline" 
               onClick={() => setShowCalendly(false)}
