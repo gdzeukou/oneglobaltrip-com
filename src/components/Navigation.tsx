@@ -1,8 +1,8 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Calendar, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import CalendlyWidget from './CalendlyWidget';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -103,12 +103,6 @@ const Navigation = () => {
                 <span>Sign In</span>
               </Link>
             )}
-            
-            {/* Quick Book Button */}
-            <CalendlyWidget 
-              buttonText="Book Consultation"
-              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-            />
           </div>
 
           {/* Mobile menu button */}
@@ -201,14 +195,6 @@ const Navigation = () => {
                 Sign In / Sign Up
               </Link>
             )}
-            
-            {/* Mobile Book Button */}
-            <div className="px-3 py-2">
-              <CalendlyWidget 
-                buttonText="Book FREE Consultation"
-                className="w-full"
-              />
-            </div>
           </div>
         </div>
       )}
