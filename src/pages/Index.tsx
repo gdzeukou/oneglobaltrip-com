@@ -1,6 +1,5 @@
 
 import React from 'react';
-import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import HeroSection from '@/components/home/HeroSection';
 import TrustIndicators from '@/components/home/TrustIndicators';
@@ -14,7 +13,6 @@ import CTASection from '@/components/home/CTASection';
 const Index = () => {
   return (
     <div className="min-h-screen bg-white">
-      <Navigation />
       <HeroSection />
       <TrustIndicators />
       <ServicesSection />
