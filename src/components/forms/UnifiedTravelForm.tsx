@@ -13,6 +13,10 @@ import { packages } from '@/data/packages';
 import PackageSelector from './PackageSelector';
 import TravelNeedsSelector from './TravelNeedsSelector';
 import FormSteps from './FormSteps';
+import PersonalInfoStep from './PersonalInfoStep';
+import TravelInfoStep from './TravelInfoStep';
+import PreferencesStep from './PreferencesStep';
+import ReviewStep from './ReviewStep';
 import { supabase } from '@/integrations/supabase/client';
 
 interface UnifiedTravelFormProps {
@@ -95,7 +99,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
         session_id: sessionStorage.getItem('session_id') || crypto.randomUUID(),
         is_online: true,
         last_seen: new Date().toISOString(),
-        ip_address: 'unknown', // You'd need to implement IP detection
+        ip_address: 'unknown',
         user_agent: navigator.userAgent
       });
     } catch (error) {
@@ -125,7 +129,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
         travel_purpose: formData.travelPurpose,
         departure_date: formData.departureDate,
         return_date: formData.returnDate,
-        ip_address: 'unknown', // You'd implement IP detection
+        ip_address: 'unknown',
         user_agent: navigator.userAgent,
         referrer: document.referrer
       };
@@ -136,7 +140,6 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
 
       if (error) throw error;
 
-      // Track form submission activity
       await trackActivity('form_submit', { form_type: type, submission_data: submissionData });
       
     } catch (error) {
@@ -159,7 +162,6 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   };
 
   const handleSubmit = async () => {
-    // Validate required fields
     if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
       toast({
         title: "Required Fields Missing",
@@ -172,7 +174,6 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     setIsSubmitting(true);
 
     try {
-      // Save form submission to database
       await saveFormSubmission();
 
       console.log('Form submitted:', { type, formData });
@@ -191,7 +192,6 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
       if (onComplete) {
         onComplete();
       } else {
-        // Navigate to appropriate page after submission
         setTimeout(() => {
           navigate('/packages');
         }, 1000);
@@ -208,11 +208,9 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     }
   };
 
-  // Track form start when component mounts
   React.useEffect(() => {
     trackActivity('form_start', { form_type: type });
     
-    // Set session ID if not exists
     if (!sessionStorage.getItem('session_id')) {
       sessionStorage.setItem('session_id', crypto.randomUUID());
     }
@@ -240,68 +238,11 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name" className="text-base font-medium">Full Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="mt-1"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="email" className="text-base font-medium">Email Address *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="mt-1"
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="phone" className="text-base font-medium">Phone Number *</Label>
-              <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value)}
-                className="mt-1"
-                required
-              />
-            </div>
-            {type === 'visa-application' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="nationality" className="text-base font-medium">Nationality *</Label>
-                  <Input
-                    id="nationality"
-                    value={formData.nationality}
-                    onChange={(e) => handleInputChange('nationality', e.target.value)}
-                    className="mt-1"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="visaType" className="text-base font-medium">Visa Type</Label>
-                  <Select onValueChange={(value) => handleInputChange('visaType', value)}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select visa type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="schengen">Schengen Visa</SelectItem>
-                      <SelectItem value="uk">UK Visa</SelectItem>
-                      <SelectItem value="brazil">Brazil eVisa</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            )}
-          </div>
+          <PersonalInfoStep
+            formData={formData}
+            onInputChange={handleInputChange}
+            type={type}
+          />
         );
 
       case 2:
@@ -323,96 +264,20 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
           );
         } else {
           return (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="destination" className="text-base font-medium">Dream Destination</Label>
-                  <Input
-                    id="destination"
-                    placeholder="e.g., Paris, Tokyo, New York"
-                    value={formData.destination}
-                    onChange={(e) => handleInputChange('destination', e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="travelDate" className="text-base font-medium">Preferred Travel Date</Label>
-                  <Input
-                    id="travelDate"
-                    type="date"
-                    value={formData.travelDate}
-                    onChange={(e) => handleInputChange('travelDate', e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="duration" className="text-base font-medium">Trip Duration</Label>
-                  <Select onValueChange={(value) => handleInputChange('duration', value)}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select duration" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1-3 days">1-3 days</SelectItem>
-                      <SelectItem value="4-7 days">4-7 days</SelectItem>
-                      <SelectItem value="1-2 weeks">1-2 weeks</SelectItem>
-                      <SelectItem value="3-4 weeks">3-4 weeks</SelectItem>
-                      <SelectItem value="1-3 months">1-3 months</SelectItem>
-                      <SelectItem value="3+ months">3+ months</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="travelers" className="text-base font-medium">Number of Travelers</Label>
-                  <Select onValueChange={(value) => handleInputChange('travelers', value)}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select travelers" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Just me</SelectItem>
-                      <SelectItem value="2">2 people</SelectItem>
-                      <SelectItem value="3-4">3-4 people</SelectItem>
-                      <SelectItem value="5+">5+ people</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="budget" className="text-base font-medium">Budget Range (USD)</Label>
-                <Select onValueChange={(value) => handleInputChange('budget', value)}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select budget" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Under $1,000">Under $1,000</SelectItem>
-                    <SelectItem value="$1,000 - $3,000">$1,000 - $3,000</SelectItem>
-                    <SelectItem value="$3,000 - $5,000">$3,000 - $5,000</SelectItem>
-                    <SelectItem value="$5,000 - $10,000">$5,000 - $10,000</SelectItem>
-                    <SelectItem value="$10,000+">$10,000+</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            <TravelInfoStep
+              formData={formData}
+              onInputChange={handleInputChange}
+            />
           );
         }
 
       case 3:
         if (type === 'package-booking') {
           return (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="specialRequests" className="text-base font-medium">Special Requests or Additional Information</Label>
-                <Textarea
-                  id="specialRequests"
-                  placeholder="Tell us about any special requirements, dietary restrictions, accessibility needs, or other preferences..."
-                  value={formData.specialRequests}
-                  onChange={(e) => handleInputChange('specialRequests', e.target.value)}
-                  rows={4}
-                  className="mt-1"
-                />
-              </div>
-            </div>
+            <PreferencesStep
+              formData={formData}
+              onInputChange={handleInputChange}
+            />
           );
         } else {
           return (
@@ -423,71 +288,20 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
                 onNeedChange={handleTravelNeedsChange}
                 onOtherNeedsChange={(value) => handleInputChange('otherNeeds', value)}
               />
-              <div>
-                <Label htmlFor="specialRequests" className="text-base font-medium">Special Requests or Additional Information</Label>
-                <Textarea
-                  id="specialRequests"
-                  placeholder="Tell us about any special requirements, dietary restrictions, accessibility needs, or other preferences..."
-                  value={formData.specialRequests}
-                  onChange={(e) => handleInputChange('specialRequests', e.target.value)}
-                  rows={4}
-                  className="mt-1"
-                />
-              </div>
+              <PreferencesStep
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
             </div>
           );
         }
 
       case 4:
         return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Review Your Request</h3>
-              <div className="flex items-center justify-center space-x-2 mb-6">
-                <CreditCard className="h-6 w-6 text-green-600" />
-                <span className="text-xl font-semibold text-green-600">$0 Down Payment Required</span>
-              </div>
-            </div>
-            
-            <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-              <div>
-                <h4 className="font-semibold text-gray-900">Contact Information</h4>
-                <p className="text-gray-700">{formData.name} • {formData.email} • {formData.phone}</p>
-              </div>
-              
-              {type === 'package-booking' && formData.selectedPackages.length > 0 && (
-                <div>
-                  <h4 className="font-semibold text-gray-900">Selected Packages</h4>
-                  <ul className="text-gray-700">
-                    {formData.selectedPackages.map(pkgId => {
-                      const pkg = packages.find(p => p.id === pkgId);
-                      return pkg ? <li key={pkgId}>• {pkg.title}</li> : null;
-                    })}
-                  </ul>
-                </div>
-              )}
-              
-              {formData.destination && (
-                <div>
-                  <h4 className="font-semibold text-gray-900">Travel Details</h4>
-                  <p className="text-gray-700">
-                    {formData.destination}
-                    {formData.duration && ` • ${formData.duration}`}
-                    {formData.travelers && ` • ${formData.travelers} travelers`}
-                    {formData.budget && ` • ${formData.budget}`}
-                  </p>
-                </div>
-              )}
-              
-              {formData.travelNeeds.length > 0 && (
-                <div>
-                  <h4 className="font-semibold text-gray-900">Services Needed</h4>
-                  <p className="text-gray-700">{formData.travelNeeds.join(', ')}</p>
-                  {formData.otherNeeds && <p className="text-gray-700 italic">Other: {formData.otherNeeds}</p>}
-                </div>
-              )}
-            </div>
-          </div>
+          <ReviewStep
+            formData={formData}
+            type={type}
+          />
         );
 
       default:
