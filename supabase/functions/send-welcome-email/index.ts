@@ -1,4 +1,5 @@
 
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { Resend } from 'npm:resend@2.0.0'
 
@@ -29,6 +30,12 @@ serve(async (req) => {
     // Validate required fields
     if (!requestData.name || !requestData.email || !requestData.formType) {
       throw new Error('Missing required fields: name, email, or formType')
+    }
+
+    // Validate API key exists
+    const apiKey = Deno.env.get('RESEND_API_KEY')
+    if (!apiKey) {
+      throw new Error('RESEND_API_KEY not configured')
     }
 
     // Email template based on form type
@@ -109,23 +116,38 @@ serve(async (req) => {
       `
     }
 
+    console.log('Attempting to send email with Resend...')
+
     const emailResponse = await resend.emails.send({
-      from: 'One Global Trip <noreply@oneglobaltrip.com>',
+      from: 'One Global Trip <hello@oneglobaltrip.com>',
       to: [requestData.email],
       subject: subject,
       html: htmlContent,
     })
 
-    console.log('Welcome email sent successfully:', emailResponse)
+    console.log('Email response from Resend:', emailResponse)
 
-    return new Response(JSON.stringify(emailResponse), {
+    if (emailResponse.error) {
+      console.error('Resend API error:', emailResponse.error)
+      throw new Error(`Email sending failed: ${emailResponse.error.message || 'Unknown error'}`)
+    }
+
+    console.log('Welcome email sent successfully:', emailResponse.data)
+
+    return new Response(JSON.stringify({
+      success: true,
+      data: emailResponse.data
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (error: any) {
     console.error('Error in send-welcome-email function:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        success: false,
+        error: error.message 
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -133,3 +155,4 @@ serve(async (req) => {
     )
   }
 })
+
