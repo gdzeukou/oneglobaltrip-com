@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { sanitizeFormData, validateEmail, validatePhone, validateName, checkRateLimit } from '@/utils/securityUtils';
 
 interface FormData {
   name: string;
@@ -56,11 +57,39 @@ export const useUnifiedForm = (
   const totalSteps = type === 'package-booking' ? 4 : 3;
 
   const handleInputChange = (field: string, value: any) => {
+    // Enhanced security validation for input changes
+    if (typeof field !== 'string') {
+      console.warn('Invalid field type in handleInputChange');
+      return;
+    }
+
+    // Validate specific fields with enhanced security
+    if (field === 'email' && typeof value === 'string' && !validateEmail(value) && value !== '') {
+      console.warn('Invalid email format');
+      return;
+    }
+
+    if (field === 'name' && typeof value === 'string' && !validateName(value) && value !== '') {
+      console.warn('Invalid name format');
+      return;
+    }
+
+    if (field === 'phone' && typeof value === 'string' && !validatePhone(value) && value !== '') {
+      console.warn('Invalid phone format');
+      return;
+    }
+
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleTravelNeedsChange = (need: string, checked: boolean) => {
     console.log('handleTravelNeedsChange called with:', { need, checked });
+    
+    if (typeof need !== 'string' || typeof checked !== 'boolean') {
+      console.warn('Invalid types in handleTravelNeedsChange');
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       travelNeeds: checked 
@@ -71,6 +100,12 @@ export const useUnifiedForm = (
 
   const handlePackageSelection = (packageId: string, checked: boolean) => {
     console.log('handlePackageSelection called with:', { packageId, checked });
+    
+    if (typeof packageId !== 'string' || typeof checked !== 'boolean') {
+      console.warn('Invalid types in handlePackageSelection');
+      return;
+    }
+
     setFormData(prev => ({
       ...prev,
       selectedPackages: checked
@@ -99,25 +134,28 @@ export const useUnifiedForm = (
 
   const saveFormSubmission = async () => {
     try {
+      // Sanitize form data before submission
+      const sanitizedData = sanitizeFormData(formData);
+      
       const submissionData = {
         form_type: type,
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        nationality: formData.nationality,
-        destination: formData.destination,
-        travel_date: formData.travelDate,
-        duration: formData.duration,
-        travelers: formData.travelers,
-        budget: formData.budget,
-        selected_packages: formData.selectedPackages,
-        travel_needs: formData.travelNeeds,
-        other_needs: formData.otherNeeds,
-        special_requests: formData.specialRequests,
-        visa_type: formData.visaType,
-        travel_purpose: formData.travelPurpose,
-        departure_date: formData.departureDate,
-        return_date: formData.returnDate,
+        name: sanitizedData.name,
+        email: sanitizedData.email,
+        phone: sanitizedData.phone,
+        nationality: sanitizedData.nationality,
+        destination: sanitizedData.destination,
+        travel_date: sanitizedData.travelDate,
+        duration: sanitizedData.duration,
+        travelers: sanitizedData.travelers,
+        budget: sanitizedData.budget,
+        selected_packages: sanitizedData.selectedPackages,
+        travel_needs: sanitizedData.travelNeeds,
+        other_needs: sanitizedData.otherNeeds,
+        special_requests: sanitizedData.specialRequests,
+        visa_type: sanitizedData.visaType,
+        travel_purpose: sanitizedData.travelPurpose,
+        departure_date: sanitizedData.departureDate,
+        return_date: sanitizedData.returnDate,
         ip_address: 'unknown',
         user_agent: navigator.userAgent,
         referrer: document.referrer
@@ -133,6 +171,7 @@ export const useUnifiedForm = (
       
     } catch (error) {
       console.error('Error saving form submission:', error);
+      throw error;
     }
   };
 
@@ -151,10 +190,22 @@ export const useUnifiedForm = (
   };
 
   const handleSubmit = async () => {
-    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
+    // Enhanced validation before submission
+    if (!validateName(formData.name) || !validateEmail(formData.email) || !validatePhone(formData.phone)) {
       toast({
-        title: "Required Fields Missing",
-        description: "Please fill in your name, email, and phone number.",
+        title: "Invalid Information",
+        description: "Please check your name, email, and phone number for correct format.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Check rate limiting
+    const canSubmit = await checkRateLimit(formData.email);
+    if (!canSubmit) {
+      toast({
+        title: "Too Many Requests",
+        description: "Please wait before submitting another form. Maximum 5 submissions per hour.",
         variant: "destructive"
       });
       return;
@@ -214,7 +265,7 @@ export const useUnifiedForm = (
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return formData.name.trim() && formData.email.trim() && formData.phone.trim();
+        return validateName(formData.name) && validateEmail(formData.email) && validatePhone(formData.phone);
       case 2:
         if (type === 'package-booking') {
           return formData.selectedPackages.length > 0;

@@ -37,6 +37,37 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     }
   }, [type, trackActivity]);
 
+  // Enhanced security wrapper for travel needs change
+  const secureHandleTravelNeedsChange = (need: string, checked: boolean) => {
+    // Validate input to prevent XSS
+    if (typeof need !== 'string' || typeof checked !== 'boolean') {
+      console.warn('Invalid input types for travel needs change');
+      return;
+    }
+    
+    // Sanitize the need string
+    const sanitizedNeed = need.trim().slice(0, 100); // Limit length
+    handleTravelNeedsChange(sanitizedNeed, checked);
+  };
+
+  // Enhanced security wrapper for package selection
+  const secureHandlePackageSelection = (packageId: string, checked: boolean) => {
+    // Validate input to prevent tampering
+    if (typeof packageId !== 'string' || typeof checked !== 'boolean') {
+      console.warn('Invalid input types for package selection');
+      return;
+    }
+    
+    // Validate package ID format (UUID-like)
+    const uuidRegex = /^[a-zA-Z0-9-_]+$/;
+    if (!uuidRegex.test(packageId)) {
+      console.warn('Invalid package ID format');
+      return;
+    }
+    
+    handlePackageSelection(packageId, checked);
+  };
+
   return (
     <Card className="max-w-2xl mx-auto shadow-xl border-2 border-blue-200">
       <FormHeader
@@ -52,8 +83,8 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
           type={type}
           formData={formData}
           onInputChange={handleInputChange}
-          onTravelNeedsChange={handleTravelNeedsChange}
-          onPackageSelection={handlePackageSelection}
+          onTravelNeedsChange={secureHandleTravelNeedsChange}
+          onPackageSelection={secureHandlePackageSelection}
         />
         
         <FormSteps

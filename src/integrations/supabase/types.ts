@@ -204,6 +204,33 @@ export type Database = {
           },
         ]
       }
+      form_submission_rate_limit: {
+        Row: {
+          email: string
+          first_submission_at: string | null
+          id: string
+          ip_address: string
+          last_submission_at: string | null
+          submission_count: number | null
+        }
+        Insert: {
+          email: string
+          first_submission_at?: string | null
+          id?: string
+          ip_address: string
+          last_submission_at?: string | null
+          submission_count?: number | null
+        }
+        Update: {
+          email?: string
+          first_submission_at?: string | null
+          id?: string
+          ip_address?: string
+          last_submission_at?: string | null
+          submission_count?: number | null
+        }
+        Relationships: []
+      }
       form_submissions: {
         Row: {
           budget: string | null
@@ -650,7 +677,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_submission_rate_limit: {
+        Args: {
+          _ip_address: string
+          _email: string
+          _max_submissions?: number
+          _time_window_minutes?: number
+        }
+        Returns: boolean
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
