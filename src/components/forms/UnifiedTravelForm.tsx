@@ -12,6 +12,7 @@ import { packages } from '@/data/packages';
 import PackageSelector from './PackageSelector';
 import TravelNeedsSelector from './TravelNeedsSelector';
 import FormSteps from './FormSteps';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UnifiedTravelFormProps {
   type: 'consultation' | 'visa-application' | 'package-booking';
@@ -24,6 +25,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   const { toast } = useToast();
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     // Personal Information
     name: '',
@@ -81,19 +83,81 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     }));
   };
 
+  // Track user activity
+  const trackActivity = async (actionType: string, actionData?: any) => {
+    try {
+      await supabase.from('user_activity').insert({
+        email: formData.email || 'anonymous',
+        page_visited: window.location.pathname,
+        action_type: actionType,
+        action_data: actionData,
+        session_id: sessionStorage.getItem('session_id') || crypto.randomUUID(),
+        is_online: true,
+        last_seen: new Date().toISOString(),
+        ip_address: 'unknown', // You'd need to implement IP detection
+        user_agent: navigator.userAgent
+      });
+    } catch (error) {
+      console.error('Error tracking activity:', error);
+    }
+  };
+
+  // Save form submission to database
+  const saveFormSubmission = async () => {
+    try {
+      const submissionData = {
+        form_type: type,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        nationality: formData.nationality,
+        destination: formData.destination,
+        travel_date: formData.travelDate,
+        duration: formData.duration,
+        travelers: formData.travelers,
+        budget: formData.budget,
+        selected_packages: formData.selectedPackages,
+        travel_needs: formData.travelNeeds,
+        other_needs: formData.otherNeeds,
+        special_requests: formData.specialRequests,
+        visa_type: formData.visaType,
+        travel_purpose: formData.travelPurpose,
+        departure_date: formData.departureDate,
+        return_date: formData.returnDate,
+        ip_address: 'unknown', // You'd implement IP detection
+        user_agent: navigator.userAgent,
+        referrer: document.referrer
+      };
+
+      const { error } = await supabase
+        .from('form_submissions')
+        .insert([submissionData]);
+
+      if (error) throw error;
+
+      // Track form submission activity
+      await trackActivity('form_submit', { form_type: type, submission_data: submissionData });
+      
+    } catch (error) {
+      console.error('Error saving form submission:', error);
+    }
+  };
+
   const handleNext = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
+      trackActivity('form_next_step', { step: currentStep + 1, form_type: type });
     }
   };
 
   const handlePrev = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      trackActivity('form_prev_step', { step: currentStep - 1, form_type: type });
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Validate required fields
     if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
       toast({
@@ -104,28 +168,54 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
       return;
     }
 
-    console.log('Form submitted:', { type, formData });
-    
-    const messages = {
-      'consultation': "Thank you! We'll contact you within 24 hours with personalized recommendations.",
-      'visa-application': "Your visa application has been started! We'll review and contact you within 24 hours.",
-      'package-booking': "Booking request submitted! We'll contact you within 24 hours to confirm details."
-    };
+    setIsSubmitting(true);
 
-    toast({
-      title: "Request Submitted Successfully!",
-      description: messages[type]
-    });
+    try {
+      // Save form submission to database
+      await saveFormSubmission();
 
-    if (onComplete) {
-      onComplete();
-    } else {
-      // Navigate to appropriate page after submission
-      setTimeout(() => {
-        navigate('/packages');
-      }, 1000);
+      console.log('Form submitted:', { type, formData });
+      
+      const messages = {
+        'consultation': "Thank you! We'll contact you within 24 hours with personalized recommendations.",
+        'visa-application': "Your visa application has been started! We'll review and contact you within 24 hours.",
+        'package-booking': "Booking request submitted! We'll contact you within 24 hours to confirm details."
+      };
+
+      toast({
+        title: "Request Submitted Successfully!",
+        description: messages[type]
+      });
+
+      if (onComplete) {
+        onComplete();
+      } else {
+        // Navigate to appropriate page after submission
+        setTimeout(() => {
+          navigate('/packages');
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      toast({
+        title: "Submission Error",
+        description: "There was an error submitting your form. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  // Track form start when component mounts
+  React.useEffect(() => {
+    trackActivity('form_start', { form_type: type });
+    
+    // Set session ID if not exists
+    if (!sessionStorage.getItem('session_id')) {
+      sessionStorage.setItem('session_id', crypto.randomUUID());
+    }
+  }, []);
 
   const isStepValid = () => {
     switch (currentStep) {

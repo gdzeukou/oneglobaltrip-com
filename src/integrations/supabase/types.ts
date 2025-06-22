@@ -71,6 +71,56 @@ export type Database = {
           },
         ]
       }
+      campaign_sends: {
+        Row: {
+          campaign_id: string | null
+          clicked_at: string | null
+          created_at: string
+          delivered_at: string | null
+          error_message: string | null
+          id: string
+          opened_at: string | null
+          recipient_email: string
+          sent_at: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          campaign_id?: string | null
+          clicked_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          opened_at?: string | null
+          recipient_email: string
+          sent_at?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          campaign_id?: string | null
+          clicked_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          error_message?: string | null
+          id?: string
+          opened_at?: string | null
+          recipient_email?: string
+          sent_at?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_sends_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "marketing_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultation_requests: {
         Row: {
           budget: string | null
@@ -154,6 +204,90 @@ export type Database = {
           },
         ]
       }
+      form_submissions: {
+        Row: {
+          budget: string | null
+          created_at: string
+          departure_date: string | null
+          destination: string | null
+          duration: string | null
+          email: string
+          form_type: string
+          id: string
+          ip_address: string | null
+          name: string
+          nationality: string | null
+          other_needs: string | null
+          phone: string
+          referrer: string | null
+          return_date: string | null
+          selected_packages: string[] | null
+          special_requests: string | null
+          travel_date: string | null
+          travel_needs: string[] | null
+          travel_purpose: string | null
+          travelers: string | null
+          updated_at: string
+          user_agent: string | null
+          user_id: string | null
+          visa_type: string | null
+        }
+        Insert: {
+          budget?: string | null
+          created_at?: string
+          departure_date?: string | null
+          destination?: string | null
+          duration?: string | null
+          email: string
+          form_type: string
+          id?: string
+          ip_address?: string | null
+          name: string
+          nationality?: string | null
+          other_needs?: string | null
+          phone: string
+          referrer?: string | null
+          return_date?: string | null
+          selected_packages?: string[] | null
+          special_requests?: string | null
+          travel_date?: string | null
+          travel_needs?: string[] | null
+          travel_purpose?: string | null
+          travelers?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+          visa_type?: string | null
+        }
+        Update: {
+          budget?: string | null
+          created_at?: string
+          departure_date?: string | null
+          destination?: string | null
+          duration?: string | null
+          email?: string
+          form_type?: string
+          id?: string
+          ip_address?: string | null
+          name?: string
+          nationality?: string | null
+          other_needs?: string | null
+          phone?: string
+          referrer?: string | null
+          return_date?: string | null
+          selected_packages?: string[] | null
+          special_requests?: string | null
+          travel_date?: string | null
+          travel_needs?: string[] | null
+          travel_purpose?: string | null
+          travelers?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+          visa_type?: string | null
+        }
+        Relationships: []
+      }
       long_visas_leads: {
         Row: {
           created_at: string
@@ -184,6 +318,72 @@ export type Database = {
           nationality?: string
           phone?: string
           visa_category?: string
+        }
+        Relationships: []
+      }
+      marketing_campaigns: {
+        Row: {
+          clicked_count: number | null
+          content: string
+          created_at: string
+          id: string
+          max_days_since_signup: number | null
+          min_days_since_signup: number | null
+          name: string
+          opened_count: number | null
+          recipients_count: number | null
+          scheduled_at: string | null
+          sent_at: string | null
+          status: string | null
+          subject: string | null
+          target_budget_ranges: string[] | null
+          target_destinations: string[] | null
+          target_form_types: string[] | null
+          target_travel_needs: string[] | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          clicked_count?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          max_days_since_signup?: number | null
+          min_days_since_signup?: number | null
+          name: string
+          opened_count?: number | null
+          recipients_count?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string | null
+          target_budget_ranges?: string[] | null
+          target_destinations?: string[] | null
+          target_form_types?: string[] | null
+          target_travel_needs?: string[] | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          clicked_count?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          max_days_since_signup?: number | null
+          min_days_since_signup?: number | null
+          name?: string
+          opened_count?: number | null
+          recipients_count?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string | null
+          target_budget_ranges?: string[] | null
+          target_destinations?: string[] | null
+          target_form_types?: string[] | null
+          target_travel_needs?: string[] | null
+          type?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -298,6 +498,57 @@ export type Database = {
           trip_type?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_activity: {
+        Row: {
+          action_data: Json | null
+          action_type: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          email: string
+          id: string
+          ip_address: string | null
+          is_online: boolean | null
+          last_seen: string | null
+          page_visited: string
+          session_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_data?: Json | null
+          action_type?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: string | null
+          is_online?: boolean | null
+          last_seen?: string | null
+          page_visited: string
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_data?: Json | null
+          action_type?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: string | null
+          is_online?: boolean | null
+          last_seen?: string | null
+          page_visited?: string
+          session_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
