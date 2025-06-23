@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -5,8 +6,6 @@ import Footer from '@/components/Footer';
 import MultiStepForm from '@/components/visa/MultiStepForm';
 import CountryTile from '@/components/visa/CountryTile';
 import TrustBadges from '@/components/visa/TrustBadges';
-import AgentiveChatWidget from '@/components/ai/AgentiveChatWidget';
-import AgentiveInlineWidget from '@/components/ai/AgentiveInlineWidget';
 import { Button } from '@/components/ui/button';
 import OptimizedImage from '@/components/ui/optimized-image';
 import { getCountryImage } from '@/utils/countryImages';
@@ -104,20 +103,6 @@ const LongStayVisas = () => {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Inline Visa Chat Widget */}
-      <section className="py-8 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-4">
-          <h3 className="text-2xl font-bold text-center mb-6 text-gray-900">
-            Have Questions? Chat with Camron
-          </h3>
-          <AgentiveInlineWidget 
-            containerId="ogt-longstay-widget"
-            context="visa"
-            height="520px"
-          />
         </div>
       </section>
 

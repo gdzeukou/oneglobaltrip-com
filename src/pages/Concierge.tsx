@@ -1,7 +1,7 @@
+
 import React, { useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import AgentiveInlineWidget from '@/components/ai/AgentiveInlineWidget';
 import { Bot, Sparkles, Clock, Users } from 'lucide-react';
 
 const Concierge = () => {
@@ -65,24 +65,21 @@ const Concierge = () => {
         </div>
       </section>
 
-      {/* Main Chat Interface */}
+      {/* Chat Information Section */}
       <section className="py-12">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="bg-gray-50 rounded-xl p-8">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Start Planning Your Journey</h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Ask Camron anything about travel packages, visa requirements, destinations, or let him help you 
-                create the perfect itinerary. He can also connect you with our human experts when needed.
+          <div className="bg-gray-50 rounded-xl p-8 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Start Planning Your Journey</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto mb-6">
+              Click the orange chat bubble in the bottom-right corner to start chatting with Camron. 
+              Ask anything about travel packages, visa requirements, destinations, or let him help you 
+              create the perfect itinerary.
+            </p>
+            <div className="bg-orange-100 border border-orange-200 rounded-lg p-4 inline-block">
+              <p className="text-orange-800 font-medium">
+                💬 Look for the orange bubble → It's available on every page!
               </p>
             </div>
-
-            <AgentiveInlineWidget 
-              containerId="ogt-concierge-widget"
-              context="concierge"
-              height="600px"
-              className="shadow-lg"
-            />
           </div>
         </div>
       </section>
