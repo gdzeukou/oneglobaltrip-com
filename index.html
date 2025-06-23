@@ -18,27 +18,20 @@
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
     
     <link rel="icon" href="/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png" type="image/png">
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Agentive AI Widget Configuration -->
-    <script>
-      window.agentiveConfig = {
-        agentId: '9d18091f-c302-4cde-a2cf-fca4d3a0b0c1',
-        baseUrl: 'https://api.agentive.ai/v1/agents/9d18091f-c302-4cde-a2cf-fca4d3a0b0c1/chat',
-        webhookUrl: window.location.origin + '/api/agentive-webhook',
-        primaryColor: '#FF6B00'
-      };
-    </script>
+    <!-- Agentive AI Widget -->
     <script 
       src="https://cdn.agentive.ai/widget.js"
       data-agent-id="9d18091f-c302-4cde-a2cf-fca4d3a0b0c1"
       data-mode="bubble"
       data-primary-color="#FF6B00"
       data-welcome="Hi, I'm Camron – how can I help with your trip?"
+      async
     ></script>
-  </head>
-
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

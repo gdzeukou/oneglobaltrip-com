@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, X, Minimize2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +8,14 @@ interface AgentiveChatWidgetProps {
   preloadData?: Record<string, any>;
   className?: string;
   height?: string;
+}
+
+// Extend Window interface to include Agentive
+declare global {
+  interface Window {
+    agentive: any;
+    agentiveConfig: any;
+  }
 }
 
 const AgentiveChatWidget = ({ 
@@ -24,40 +31,57 @@ const AgentiveChatWidget = ({
   useEffect(() => {
     // Check if Agentive widget is loaded
     const checkAgentiveLoaded = () => {
-      if (window.agentive && window.agentiveConfig) {
+      if (typeof window !== 'undefined' && window.agentive) {
+        console.log('Agentive widget loaded successfully');
         setIsLoaded(true);
         
         // Initialize with context if provided
         if (context || preloadData) {
-          window.agentive.setContext({
-            context: context,
-            data: preloadData,
-            page: window.location.pathname
-          });
+          try {
+            window.agentive.setContext({
+              context: context,
+              data: preloadData,
+              page: window.location.pathname
+            });
+            console.log('Agentive context set:', { context, preloadData });
+          } catch (error) {
+            console.warn('Failed to set Agentive context:', error);
+          }
         }
       } else {
-        setTimeout(checkAgentiveLoaded, 100);
+        // Keep checking for Agentive to load
+        setTimeout(checkAgentiveLoaded, 500);
       }
     };
 
-    checkAgentiveLoaded();
+    // Start checking after a short delay to allow script to load
+    setTimeout(checkAgentiveLoaded, 1000);
   }, [context, preloadData]);
 
   const handleToggleChat = () => {
-    if (!isLoaded) return;
+    if (!isLoaded || !window.agentive) {
+      console.warn('Agentive widget not yet loaded');
+      return;
+    }
     
-    setIsOpen(!isOpen);
-    
-    if (!isOpen && window.agentive) {
-      // Open Agentive chat
-      window.agentive.open({
-        mode: mode,
-        context: context,
-        data: preloadData
-      });
-    } else if (window.agentive) {
-      // Close Agentive chat
-      window.agentive.close();
+    try {
+      setIsOpen(!isOpen);
+      
+      if (!isOpen) {
+        // Open Agentive chat
+        window.agentive.open({
+          mode: mode,
+          context: context,
+          data: preloadData
+        });
+        console.log('Agentive chat opened');
+      } else {
+        // Close Agentive chat
+        window.agentive.close();
+        console.log('Agentive chat closed');
+      }
+    } catch (error) {
+      console.error('Error toggling Agentive chat:', error);
     }
   };
 
@@ -81,7 +105,7 @@ const AgentiveChatWidget = ({
           
           {/* Loading indicator */}
           {!isLoaded && (
-            <div className="absolute -top-1 -right-1 h-4 w-4 bg-yellow-400 rounded-full animate-pulse"></div>
+            <div className="absolute -top-1 -right-1 h-4 w-4 bg-yellow-400 rounded-full animate-pulse" title="Loading chat..."></div>
           )}
         </div>
 
@@ -115,20 +139,25 @@ const AgentiveChatWidget = ({
         
         <div className="p-4">
           {!isOpen ? (
-            <Button
-              onClick={handleToggleChat}
-              disabled={!isLoaded}
-              className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
-            >
-              Start Chat
-            </Button>
+            <div className="text-center">
+              <Button
+                onClick={handleToggleChat}
+                disabled={!isLoaded}
+                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+              >
+                {isLoaded ? 'Start Chat' : 'Loading...'}
+              </Button>
+              {!isLoaded && (
+                <p className="text-sm text-gray-500 mt-2">Loading chat widget...</p>
+              )}
+            </div>
           ) : (
             <div 
               id={`agentive-${context || 'inline'}-container`} 
-              className="min-h-[400px]"
+              className="min-h-[400px] flex items-center justify-center"
               style={{ height }}
             >
-              {/* Agentive widget will be injected here */}
+              <p className="text-gray-500">Chat interface will appear here</p>
             </div>
           )}
         </div>
@@ -141,10 +170,27 @@ const AgentiveChatWidget = ({
       <div className={`w-full ${className}`}>
         <div 
           id={`agentive-${context || 'fullwidth'}-container`} 
-          className="border border-gray-200 rounded-lg bg-white"
+          className="border border-gray-200 rounded-lg bg-white flex items-center justify-center"
           style={{ height: height === '520px' ? '600px' : height }}
         >
-          {/* Agentive widget will be injected here */}
+          {isLoaded ? (
+            <div className="text-center p-8">
+              <MessageCircle className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Chat with Camron</h3>
+              <p className="text-gray-600 mb-4">Your AI travel assistant is ready to help!</p>
+              <Button
+                onClick={handleToggleChat}
+                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
+              >
+                Start Conversation
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center p-8">
+              <div className="animate-spin h-8 w-8 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+              <p className="text-gray-500">Loading chat interface...</p>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -152,22 +198,5 @@ const AgentiveChatWidget = ({
 
   return null;
 };
-
-// Add global types for Agentive
-declare global {
-  interface Window {
-    agentive: {
-      open: (config?: any) => void;
-      close: () => void;
-      setContext: (context: any) => void;
-    };
-    agentiveConfig: {
-      agentId: string;
-      baseUrl: string;
-      webhookUrl: string;
-      primaryColor: string;
-    };
-  }
-}
 
 export default AgentiveChatWidget;
