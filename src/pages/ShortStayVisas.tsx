@@ -6,6 +6,7 @@ import MultiStepForm from '@/components/visa/MultiStepForm';
 import CountryTile from '@/components/visa/CountryTile';
 import TrustBadges from '@/components/visa/TrustBadges';
 import AgentiveChatWidget from '@/components/ai/AgentiveChatWidget';
+import AgentiveInlineWidget from '@/components/ai/AgentiveInlineWidget';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import OptimizedImage from '@/components/ui/optimized-image';
@@ -19,24 +20,6 @@ const ShortStayVisas = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    
-    // Set Agentive context for short-stay visas
-    const script = document.createElement('script');
-    script.innerHTML = `
-      if (window.agentive) {
-        window.agentive.setContext({
-          page: 'short-stay-visas',
-          context: 'visa',
-          visa_type: 'short-stay',
-          services: ['tourist_visa', 'business_visa', 'document_assistance']
-        });
-      }
-    `;
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
   }, [location.pathname]);
 
   useEffect(() => {
@@ -134,18 +117,11 @@ const ShortStayVisas = () => {
           <h3 className="text-2xl font-bold text-center mb-6 text-gray-900">
             Have Questions? Chat with Camron
           </h3>
-          <div id="ogt-visa-widget">
-            <AgentiveChatWidget 
-              mode="inline"
-              context="visa"
-              height="520px"
-              preloadData={{
-                page: 'short-stay-visas',
-                visa_type: 'short-stay',
-                services: ['tourist_visa', 'business_visa', 'document_assistance']
-              }}
-            />
-          </div>
+          <AgentiveInlineWidget 
+            containerId="ogt-shortstay-widget"
+            context="visa"
+            height="520px"
+          />
         </div>
       </section>
 

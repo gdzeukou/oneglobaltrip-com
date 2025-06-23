@@ -6,6 +6,7 @@ import MultiStepForm from '@/components/visa/MultiStepForm';
 import CountryTile from '@/components/visa/CountryTile';
 import TrustBadges from '@/components/visa/TrustBadges';
 import AgentiveChatWidget from '@/components/ai/AgentiveChatWidget';
+import AgentiveInlineWidget from '@/components/ai/AgentiveInlineWidget';
 import { Button } from '@/components/ui/button';
 import OptimizedImage from '@/components/ui/optimized-image';
 import { getCountryImage } from '@/utils/countryImages';
@@ -19,24 +20,6 @@ const LongStayVisas = () => {
   // Scroll to top on page navigation
   useEffect(() => {
     window.scrollTo(0, 0);
-    
-    // Set Agentive context for long-stay visas
-    const script = document.createElement('script');
-    script.innerHTML = `
-      if (window.agentive) {
-        window.agentive.setContext({
-          page: 'long-stay-visas',
-          context: 'visa',
-          visa_type: 'long-stay',
-          services: ['residency_visa', 'work_visa', 'study_visa', 'retirement_visa']
-        });
-      }
-    `;
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
   }, [location.pathname]);
 
   useEffect(() => {
@@ -130,18 +113,11 @@ const LongStayVisas = () => {
           <h3 className="text-2xl font-bold text-center mb-6 text-gray-900">
             Have Questions? Chat with Camron
           </h3>
-          <div id="ogt-visa-widget">
-            <AgentiveChatWidget 
-              mode="inline"
-              context="visa"
-              height="520px"
-              preloadData={{
-                page: 'long-stay-visas',
-                visa_type: 'long-stay',
-                services: ['residency_visa', 'work_visa', 'study_visa', 'retirement_visa']
-              }}
-            />
-          </div>
+          <AgentiveInlineWidget 
+            containerId="ogt-longstay-widget"
+            context="visa"
+            height="520px"
+          />
         </div>
       </section>
 

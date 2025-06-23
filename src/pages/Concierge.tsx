@@ -1,8 +1,7 @@
-
 import React, { useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import AgentiveChatWidget from '@/components/ai/AgentiveChatWidget';
+import AgentiveInlineWidget from '@/components/ai/AgentiveInlineWidget';
 import { Bot, Sparkles, Clock, Users } from 'lucide-react';
 
 const Concierge = () => {
@@ -28,10 +27,6 @@ const Concierge = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      
-      {/* Meta tags for Agentive context */}
-      <meta data-agentive-context="concierge" />
-      <meta data-agentive-context-json='{"page":"concierge","intent":"full_planning","features":["packages","visas","itinerary","consultation"]}' />
       
       {/* Hero Section */}
       <section className="pt-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white py-16">
@@ -82,19 +77,12 @@ const Concierge = () => {
               </p>
             </div>
 
-            <div id="ogt-concierge">
-              <AgentiveChatWidget 
-                mode="fullwidth"
-                context="concierge"
-                height="100vh"
-                preloadData={{
-                  page: 'concierge',
-                  intent: 'full_planning',
-                  features: ['packages', 'visas', 'itinerary', 'consultation']
-                }}
-                className="shadow-lg"
-              />
-            </div>
+            <AgentiveInlineWidget 
+              containerId="ogt-concierge-widget"
+              context="concierge"
+              height="600px"
+              className="shadow-lg"
+            />
           </div>
         </div>
       </section>
