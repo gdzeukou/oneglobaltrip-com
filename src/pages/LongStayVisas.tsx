@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -6,6 +5,7 @@ import Footer from '@/components/Footer';
 import MultiStepForm from '@/components/visa/MultiStepForm';
 import CountryTile from '@/components/visa/CountryTile';
 import TrustBadges from '@/components/visa/TrustBadges';
+import AgentiveChatWidget from '@/components/ai/AgentiveChatWidget';
 import { Button } from '@/components/ui/button';
 import OptimizedImage from '@/components/ui/optimized-image';
 import { getCountryImage } from '@/utils/countryImages';
@@ -19,6 +19,24 @@ const LongStayVisas = () => {
   // Scroll to top on page navigation
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Set Agentive context for long-stay visas
+    const script = document.createElement('script');
+    script.innerHTML = `
+      if (window.agentive) {
+        window.agentive.setContext({
+          page: 'long-stay-visas',
+          context: 'visa',
+          visa_type: 'long-stay',
+          services: ['residency_visa', 'work_visa', 'study_visa', 'retirement_visa']
+        });
+      }
+    `;
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
   }, [location.pathname]);
 
   useEffect(() => {
@@ -53,6 +71,10 @@ const LongStayVisas = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
+      
+      {/* Meta tags for Agentive context */}
+      <meta data-agentive-context="visa" />
+      <meta data-agentive-context-json='{"page":"long-stay-visas","visa_type":"long-stay","services":["residency_visa","work_visa","study_visa","retirement_visa"]}' />
       
       {/* Hero Section with Background Image */}
       <section className="pt-24 pb-16 relative bg-gradient-to-r from-blue-900 to-blue-800 text-white overflow-hidden">
@@ -98,6 +120,27 @@ const LongStayVisas = () => {
                 />
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Inline Visa Chat Widget */}
+      <section className="py-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto px-4">
+          <h3 className="text-2xl font-bold text-center mb-6 text-gray-900">
+            Have Questions? Chat with Camron
+          </h3>
+          <div id="ogt-visa-widget">
+            <AgentiveChatWidget 
+              mode="inline"
+              context="visa"
+              height="520px"
+              preloadData={{
+                page: 'long-stay-visas',
+                visa_type: 'long-stay',
+                services: ['residency_visa', 'work_visa', 'study_visa', 'retirement_visa']
+              }}
+            />
           </div>
         </div>
       </section>

@@ -5,16 +5,18 @@ import { Button } from '@/components/ui/button';
 
 interface AgentiveChatWidgetProps {
   mode?: 'floating' | 'inline' | 'fullwidth';
-  context?: string;
+  context?: 'visa' | 'packages' | 'concierge';
   preloadData?: Record<string, any>;
   className?: string;
+  height?: string;
 }
 
 const AgentiveChatWidget = ({ 
   mode = 'floating', 
   context, 
   preloadData,
-  className = '' 
+  className = '',
+  height = '520px'
 }: AgentiveChatWidgetProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -68,7 +70,7 @@ const AgentiveChatWidget = ({
             onClick={handleToggleChat}
             disabled={!isLoaded}
             className="h-14 w-14 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
-            title="Chat with our AI Travel Assistant"
+            title="Chat with Camron - Your AI Travel Assistant"
           >
             {isOpen ? (
               <X className="h-6 w-6 text-white" />
@@ -97,7 +99,7 @@ const AgentiveChatWidget = ({
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           <h3 className="font-semibold text-gray-900 flex items-center">
             <MessageCircle className="h-5 w-5 mr-2 text-orange-500" />
-            AI Travel Assistant
+            Chat with Camron
           </h3>
           {isOpen && (
             <Button
@@ -121,7 +123,11 @@ const AgentiveChatWidget = ({
               Start Chat
             </Button>
           ) : (
-            <div id="agentive-inline-container" className="min-h-[400px]">
+            <div 
+              id={`agentive-${context || 'inline'}-container`} 
+              className="min-h-[400px]"
+              style={{ height }}
+            >
               {/* Agentive widget will be injected here */}
             </div>
           )}
@@ -133,7 +139,11 @@ const AgentiveChatWidget = ({
   if (mode === 'fullwidth') {
     return (
       <div className={`w-full ${className}`}>
-        <div id="agentive-fullwidth-container" className="min-h-[600px] border border-gray-200 rounded-lg">
+        <div 
+          id={`agentive-${context || 'fullwidth'}-container`} 
+          className="border border-gray-200 rounded-lg bg-white"
+          style={{ height: height === '520px' ? '600px' : height }}
+        >
           {/* Agentive widget will be injected here */}
         </div>
       </div>
@@ -153,9 +163,9 @@ declare global {
     };
     agentiveConfig: {
       agentId: string;
-      apiKey: string;
       baseUrl: string;
       webhookUrl: string;
+      primaryColor: string;
     };
   }
 }

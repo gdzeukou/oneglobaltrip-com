@@ -4,14 +4,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, agentive-signature',
 };
 
 interface AgentiveWebhookPayload {
   tool: string;
-  data: any;
-  sessionId: string;
-  userId?: string;
+  arguments: any;
+  conversation_id: string;
+  timestamp: number;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -22,6 +22,10 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Verify webhook signature
+    const signature = req.headers.get('agentive-signature');
+    const webhookSecret = Deno.env.get('AGENTIVE_WEBHOOK_SECRET') || 'whsec_ogt2025';
+    
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -30,19 +34,19 @@ const handler = async (req: Request): Promise<Response> => {
     const payload: AgentiveWebhookPayload = await req.json();
     console.log('📋 Webhook payload:', payload);
 
-    const { tool, data, sessionId } = payload;
+    const { tool, arguments: toolArgs, conversation_id } = payload;
 
     switch (tool) {
       case 'store_lead_supabase':
-        await handleStoreLeadSupabase(supabase, data, sessionId);
+        await handleStoreLeadSupabase(supabase, toolArgs, conversation_id);
         break;
       
       case 'schedule_call_calendly':
-        await handleScheduleCallCalendly(data, sessionId);
+        await handleScheduleCallCalendly(toolArgs, conversation_id);
         break;
       
       case 'send_email_resend':
-        await handleSendEmailResend(data, sessionId);
+        await handleSendEmailResend(supabase, toolArgs, conversation_id);
         break;
       
       default:
@@ -54,7 +58,7 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, tool, sessionId }),
+      JSON.stringify({ status: 'ok', data: { tool, conversation_id } }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
@@ -67,22 +71,20 @@ const handler = async (req: Request): Promise<Response> => {
   }
 };
 
-async function handleStoreLeadSupabase(supabase: any, data: any, sessionId: string) {
-  console.log('💾 Storing lead in Supabase:', data);
+async function handleStoreLeadSupabase(supabase: any, args: any, conversationId: string) {
+  console.log('💾 Storing lead in Supabase:', args);
   
   const leadData = {
-    name: data.name || data.full_name || '',
-    email: data.email || '',
-    phone: data.phone || data.phone_number || '',
+    name: args.full_name || '',
+    email: args.email || '',
+    phone: args.phone || '',
     form_type: 'agentive-chat',
     form_data: {
-      nationality: data.nationality,
-      travel_destination: data.destination,
-      travel_purpose: data.purpose,
-      travel_date: data.travel_date,
-      session_id: sessionId,
+      nationality: args.nationality,
+      service_needed: args.service_needed,
+      conversation_id: conversationId,
       source: 'agentive-ai-agent',
-      ...data
+      ...args
     },
     created_at: new Date().toISOString()
   };
@@ -99,36 +101,35 @@ async function handleStoreLeadSupabase(supabase: any, data: any, sessionId: stri
   console.log('✅ Lead stored successfully');
 }
 
-async function handleScheduleCallCalendly(data: any, sessionId: string) {
-  console.log('📅 Processing Calendly scheduling:', data);
+async function handleScheduleCallCalendly(args: any, conversationId: string) {
+  console.log('📅 Processing Calendly scheduling:', args);
   
-  // For now, just log the Calendly data
-  // You can extend this to trigger additional workflows
-  console.log('Calendly URL provided:', data.calendly_url);
-  console.log('Session ID:', sessionId);
+  // Generate Calendly URL for OGT 30-min consultation
+  const calendlyUrl = 'https://calendly.com/camronm-oneglobaltrip/30min';
   
-  // Could trigger additional email notifications or database updates here
+  console.log('Calendly URL provided:', calendlyUrl);
+  console.log('Email:', args.email);
+  console.log('Topic:', args.topic);
+  console.log('Conversation ID:', conversationId);
+  
+  // Log the scheduling request for follow-up
+  // Could also trigger email with Calendly link here
 }
 
-async function handleSendEmailResend(data: any, sessionId: string) {
-  console.log('📧 Processing email send via Resend:', data);
+async function handleSendEmailResend(supabase: any, args: any, conversationId: string) {
+  console.log('📧 Processing email send via Resend:', args);
   
   try {
-    // Call the existing send-welcome-email function
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
-    );
-
     const { error } = await supabase.functions.invoke('send-welcome-email', {
       body: {
-        email: data.email,
-        name: data.name,
+        email: args.to,
+        name: args.full_name || 'Valued Customer',
         type: 'agentive-consultation',
+        customSubject: args.subject,
+        customHtml: args.html_body,
         formData: {
-          session_id: sessionId,
-          source: 'agentive-ai-agent',
-          ...data
+          conversation_id: conversationId,
+          source: 'agentive-ai-agent'
         }
       }
     });

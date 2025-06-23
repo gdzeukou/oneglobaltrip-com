@@ -19,16 +19,22 @@
     
     <link rel="icon" href="/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png" type="image/png">
     
-    <!-- Agentive AI Widget - Replace AGENT_ID with your actual agent ID -->
+    <!-- Agentive AI Widget Configuration -->
     <script>
       window.agentiveConfig = {
-        agentId: 'YOUR_AGENT_ID', // Replace with actual agent ID
-        apiKey: 'YOUR_API_KEY', // Replace with actual API key
-        baseUrl: 'https://api.agentive.ai/v1',
-        webhookUrl: window.location.origin + '/api/agentive-webhook'
+        agentId: '9d18091f-c302-4cde-a2cf-fca4d3a0b0c1',
+        baseUrl: 'https://api.agentive.ai/v1/agents/9d18091f-c302-4cde-a2cf-fca4d3a0b0c1/chat',
+        webhookUrl: window.location.origin + '/api/agentive-webhook',
+        primaryColor: '#FF6B00'
       };
     </script>
-    <script src="https://cdn.agentive.ai/widget.js" data-agent-id="YOUR_AGENT_ID"></script>
+    <script 
+      src="https://cdn.agentive.ai/widget.js"
+      data-agent-id="9d18091f-c302-4cde-a2cf-fca4d3a0b0c1"
+      data-mode="bubble"
+      data-primary-color="#FF6B00"
+      data-welcome="Hi, I'm Camron – how can I help with your trip?"
+    ></script>
   </head>
 
   <body>
