@@ -1,12 +1,31 @@
+
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
+import VisaPricingCard from '@/components/visa/VisaPricingCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Clock, Users, FileText } from 'lucide-react';
+
+// UAE specific pricing data
+const uaePricingData = {
+  service: 'UAE Tourist Visa',
+  totalPrice: '$250',
+  consularFee: '$120',
+  centerFee: '$80',
+  centerType: 'VFS' as const,
+  serviceFee: '$50',
+  included: [
+    'UAE visa application center appointments',
+    'Complete application form preparation',
+    'Document verification and submission',
+    'Real-time application tracking updates',
+    'Tourist visa specialist support'
+  ]
+};
 
 const UAEShortStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
@@ -64,6 +83,19 @@ const UAEShortStay = () => {
       </section>
 
       <TrustBadges />
+
+      {/* Pricing Breakdown Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">UAE Visa Pricing</h2>
+            <p className="text-xl text-gray-600">Transparent pricing with no hidden fees</p>
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <VisaPricingCard visaData={uaePricingData} />
+          </div>
+        </div>
+      </section>
 
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">

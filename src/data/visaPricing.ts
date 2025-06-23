@@ -119,5 +119,80 @@ export const visaPricingData = {
       'Embassy interview preparation guidance',
       'Residence permit application tracking'
     ]
+  },
+  uaeVisa: {
+    service: 'UAE Tourist Visa',
+    totalPrice: '$250',
+    consularFee: '$120',
+    centerFee: '$80',
+    centerType: 'VFS' as const,
+    serviceFee: '$50',
+    included: [
+      'UAE visa application center appointments',
+      'Complete application form preparation',
+      'Document verification and submission',
+      'Real-time application tracking updates',
+      'Tourist visa specialist support'
+    ]
+  },
+  indiaVisa: {
+    service: 'India e-Visa',
+    totalPrice: '$180',
+    consularFee: '$100',
+    centerFee: '$0',
+    centerType: 'Processing' as const,
+    serviceFee: '$80',
+    included: [
+      'Online e-visa application submission',
+      'Digital document preparation and upload',
+      'Application status monitoring and alerts',
+      'Tourist/business visa consultation',
+      'Express processing coordination'
+    ]
+  },
+  portugalResidency: {
+    service: 'Portugal Residency Permit',
+    totalPrice: '$1299',
+    consularFee: '$850',
+    centerFee: '$150',
+    centerType: 'VFS' as const,
+    serviceFee: '$299',
+    included: [
+      'Residence permit application support',
+      'Document preparation and apostille assistance',
+      'Appointment booking at Portuguese centers',
+      'Embassy interview preparation guidance',
+      'Long-term visa specialist consultation'
+    ]
+  },
+  norwayWorkPermit: {
+    service: 'Norway Work Permit',
+    totalPrice: '$899',
+    consularFee: '$600',
+    centerFee: '$120',
+    centerType: 'VFS' as const,
+    serviceFee: '$179',
+    included: [
+      'Work permit application preparation',
+      'Document verification and submission',
+      'Appointment booking at Norwegian centers',
+      'Employer documentation assistance',
+      'Immigration specialist consultation'
+    ]
+  },
+  denmarkFamilyReunion: {
+    service: 'Denmark Family Reunion',
+    totalPrice: '$799',
+    consularFee: '$500',
+    centerFee: '$120',
+    centerType: 'VFS' as const,
+    serviceFee: '$179',
+    included: [
+      'Family reunification application support',
+      'Document preparation and verification',
+      'Appointment booking at Danish centers',
+      'Relationship documentation assistance',
+      'Immigration law consultation'
+    ]
   }
 };
