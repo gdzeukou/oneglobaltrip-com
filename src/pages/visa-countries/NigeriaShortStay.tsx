@@ -5,8 +5,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
-import VisaPricingCard from '@/components/visa/VisaPricingCard';
-import { visaPricingData } from '@/data/visaPricing';
+import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Clock, Users, FileText } from 'lucide-react';
@@ -68,18 +67,11 @@ const NigeriaShortStay = () => {
 
       <TrustBadges />
 
-      {/* Pricing Breakdown Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Nigeria Visa Pricing</h2>
-            <p className="text-xl text-gray-600">Transparent pricing with no hidden fees</p>
-          </div>
-          <div className="max-w-4xl mx-auto">
-            <VisaPricingCard visaData={visaPricingData.nigeriaVisa} />
-          </div>
-        </div>
-      </section>
+      <CountrySpecificPricing 
+        country="nigeriaVisa"
+        title="Nigeria Visa Pricing"
+        description="Transparent pricing with no hidden fees"
+      />
 
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { CheckCircle, Clock, FileText, Shield, ArrowRight, AlertCircle, Users, Calendar, Plane, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,7 +34,7 @@ const Visas = () => {
       id: 'schengen',
       name: 'Schengen Visa Pack',
       countries: '27 European Countries',
-      price: 299,
+      price: 193,
       processingTime: '10-15 days',
       validityPeriod: '90 days',
       description: 'Access to 27 European countries with a single visa',
@@ -42,22 +43,72 @@ const Visas = () => {
     },
     {
       id: 'uk',
-      name: 'UK Visa Pass',
+      name: 'UK Visa Pass - 6 Month',
       countries: 'United Kingdom',
-      price: 399,
+      price: 480,
       processingTime: '15-20 days',
       validityPeriod: '6 months',
       description: 'Standard visitor visa for tourism and business',
       type: 'short-stay'
     },
     {
+      id: 'uk-5year',
+      name: 'UK Visa Pass - 5 Year',
+      countries: 'United Kingdom',
+      price: 995,
+      processingTime: '15-20 days',
+      validityPeriod: '5 years',
+      description: 'Long-term visitor visa for multiple entries',
+      type: 'short-stay'
+    },
+    {
       id: 'brazil',
       name: 'Brazil eVisa',
       countries: 'Brazil',
-      price: 199,
+      price: 175,
       processingTime: '5-10 days',
       validityPeriod: '90 days',
       description: 'Electronic visa for tourism purposes',
+      type: 'short-stay'
+    },
+    {
+      id: 'canada',
+      name: 'Canada Entry Visa',
+      countries: 'Canada',
+      price: 300,
+      processingTime: '2-4 weeks',
+      validityPeriod: '6 months',
+      description: 'Visitor visa and eTA for Canada',
+      type: 'short-stay'
+    },
+    {
+      id: 'nigeria',
+      name: 'Nigeria Visa',
+      countries: 'Nigeria',
+      price: 290,
+      processingTime: '5-7 days',
+      validityPeriod: '90 days',
+      description: 'Tourist and business visa for Nigeria',
+      type: 'short-stay'
+    },
+    {
+      id: 'uae',
+      name: 'UAE Tourist Visa',
+      countries: 'United Arab Emirates',
+      price: 250,
+      processingTime: '3-5 days',
+      validityPeriod: '30-90 days',
+      description: 'Tourist visa for UAE and Dubai',
+      type: 'short-stay'
+    },
+    {
+      id: 'india',
+      name: 'India e-Visa',
+      countries: 'India',
+      price: 180,
+      processingTime: '3-5 days',
+      validityPeriod: '60 days',
+      description: 'Electronic visa for India tourism',
       type: 'short-stay'
     }
   ];
@@ -177,7 +228,7 @@ const Visas = () => {
                 <CardHeader className="text-center">
                   <CardTitle className="text-2xl text-blue-900">Schengen Area Visa</CardTitle>
                   <p className="text-gray-600">Visit 27 European Countries</p>
-                  <div className="text-3xl font-bold text-blue-900">$299</div>
+                  <div className="text-3xl font-bold text-blue-900">$193</div>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 mb-6 text-sm">
@@ -294,7 +345,7 @@ const Visas = () => {
                   </div>
                   <div className="flex items-center text-sm">
                     <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                    <span>Starting from $199</span>
+                    <span>Starting from $175</span>
                   </div>
                 </div>
                 <Button className="w-full" asChild>
@@ -331,7 +382,7 @@ const Visas = () => {
                   </div>
                   <div className="flex items-center text-sm">
                     <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                    <span>Starting from $799</span>
+                    <span>Starting from $240</span>
                   </div>
                 </div>
                 <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
@@ -362,7 +413,7 @@ const Visas = () => {
 
             <TabsContent value="short-stay">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {shortStayVisas.map((visa) => (
+                {shortStayVisas.slice(0, 6).map((visa) => (
                   <Card key={visa.id} className="hover-lift relative">
                     {visa.popular && (
                       <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded">
