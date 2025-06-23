@@ -15,6 +15,7 @@ interface AgentiveWebhookPayload {
   conversation_id: string;
   timestamp: number;
   event_type?: string;
+  agent_id?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -25,8 +26,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    // Log all headers for debugging
-    console.log('📋 Request headers:', Object.fromEntries(req.headers.entries()));
+    // Verify agent ID
+    const expectedAgentId = '9d18091f-c302-4cde-a2cf-fca4d3a0b0c1';
+    console.log('📋 Expected Agent ID:', expectedAgentId);
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -36,13 +38,18 @@ const handler = async (req: Request): Promise<Response> => {
     const payload: AgentiveWebhookPayload = await req.json();
     console.log('📋 Webhook payload:', JSON.stringify(payload, null, 2));
 
+    // Verify agent ID matches
+    if (payload.agent_id && payload.agent_id !== expectedAgentId) {
+      console.warn('⚠️ Agent ID mismatch:', payload.agent_id, 'vs', expectedAgentId);
+    }
+
     const { tool, function_name, arguments: toolArgs, conversation_id } = payload;
     const toolName = tool || function_name;
 
     if (!toolName) {
       console.log('ℹ️ No tool specified, treating as chat message');
       return new Response(
-        JSON.stringify({ status: 'ok', message: 'Chat message received' }),
+        JSON.stringify({ status: 'ok', message: 'Chat message received', agent_id: expectedAgentId }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -66,13 +73,16 @@ const handler = async (req: Request): Promise<Response> => {
       default:
         console.warn('❓ Unknown tool:', toolName);
         return new Response(
-          JSON.stringify({ status: 'ok', message: `Unknown tool: ${toolName}` }),
+          JSON.stringify({ status: 'ok', message: `Unknown tool: ${toolName}`, agent_id: expectedAgentId }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
     }
 
     return new Response(
-      JSON.stringify({ status: 'success', data: { tool: toolName, conversation_id } }),
+      JSON.stringify({ 
+        status: 'success', 
+        data: { tool: toolName, conversation_id, agent_id: expectedAgentId }
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
@@ -82,7 +92,8 @@ const handler = async (req: Request): Promise<Response> => {
       JSON.stringify({ 
         error: error.message,
         status: 'error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        agent_id: '9d18091f-c302-4cde-a2cf-fca4d3a0b0c1'
       }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -102,6 +113,7 @@ async function handleStoreLeadSupabase(supabase: any, args: any, conversationId:
       service_needed: args.service_needed,
       conversation_id: conversationId,
       source: 'agentive-ai-agent',
+      agent_id: '9d18091f-c302-4cde-a2cf-fca4d3a0b0c1',
       ...args
     },
     created_at: new Date().toISOString()
@@ -143,7 +155,8 @@ async function handleSendEmailResend(supabase: any, args: any, conversationId: s
         customHtml: args.html_body,
         formData: {
           conversation_id: conversationId,
-          source: 'agentive-ai-agent'
+          source: 'agentive-ai-agent',
+          agent_id: '9d18091f-c302-4cde-a2cf-fca4d3a0b0c1'
         }
       }
     });
