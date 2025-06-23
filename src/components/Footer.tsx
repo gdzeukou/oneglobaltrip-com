@@ -34,7 +34,7 @@ const Footer = () => {
               <Link to="/packages" className="block text-blue-200 hover:text-white transition-colors">Packages</Link>
               <Link to="/visas" className="block text-blue-200 hover:text-white transition-colors">Visas</Link>
               <Link to="/get-started" className="block text-blue-200 hover:text-white transition-colors">Get Started</Link>
-              <Link to="/booking" className="block text-blue-200 hover:text-white transition-colors">Book Now</Link>
+              <Link to="/auth" className="block text-blue-200 hover:text-white transition-colors">Sign In</Link>
             </div>
           </div>
 
@@ -42,9 +42,9 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Services</h4>
             <div className="space-y-2 text-blue-200">
-              <p>Schengen Visa Pack</p>
-              <p>UK Visa Pass</p>
-              <p>Brazil eVisa</p>
+              <Link to="/visas/short-stay/schengen" className="block hover:text-white transition-colors">Schengen Visa Pack</Link>
+              <Link to="/visas/short-stay/uk" className="block hover:text-white transition-colors">UK Visa Pass</Link>
+              <Link to="/visas/short-stay/brazil" className="block hover:text-white transition-colors">Brazil eVisa</Link>
               <p>Passport Renewal</p>
               <p>Custom Itineraries</p>
             </div>
@@ -56,15 +56,15 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4" />
-                <span className="text-blue-200">+1 (555) 123-4567</span>
+                <span className="text-blue-200">+1 310-627-1610</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4" />
-                <span className="text-blue-200">hello@oneglobaltrip.com</span>
+                <span className="text-blue-200">booking@oneglobaltrip.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
-                <span className="text-blue-200">Dallas, Texas</span>
+                <span className="text-blue-200">San Francisco, CA</span>
               </div>
             </div>
           </div>
