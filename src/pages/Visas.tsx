@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { CheckCircle, Clock, FileText, Shield, ArrowRight, AlertCircle, Users, Calendar, Plane, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -213,7 +212,7 @@ const Visas = () => {
         </div>
       </section>
 
-      {/* Pricing Transparency Section */}
+      {/* Pricing Transparency Section - Now Carousel */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
@@ -221,12 +220,24 @@ const Visas = () => {
             <p className="text-xl text-gray-600">No hidden fees. See exactly what you pay for.</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <VisaPricingCard visaData={visaPricingData.schengenShortStay} />
-            <VisaPricingCard visaData={visaPricingData.ukVisa6Month} />
-            <VisaPricingCard visaData={visaPricingData.canadaEntry} />
-            <VisaPricingCard visaData={visaPricingData.nigeriaVisa} />
-          </div>
+          <Carousel className="w-full max-w-6xl mx-auto">
+            <CarouselContent className="-ml-2 md:-ml-4">
+              <CarouselItem className="pl-2 md:pl-4 md:basis-1/2 xl:basis-1/3">
+                <VisaPricingCard visaData={visaPricingData.schengenShortStay} />
+              </CarouselItem>
+              <CarouselItem className="pl-2 md:pl-4 md:basis-1/2 xl:basis-1/3">
+                <VisaPricingCard visaData={visaPricingData.ukVisa6Month} />
+              </CarouselItem>
+              <CarouselItem className="pl-2 md:pl-4 md:basis-1/2 xl:basis-1/3">
+                <VisaPricingCard visaData={visaPricingData.canadaEntry} />
+              </CarouselItem>
+              <CarouselItem className="pl-2 md:pl-4 md:basis-1/2 xl:basis-1/3">
+                <VisaPricingCard visaData={visaPricingData.nigeriaVisa} />
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
 
           <div className="text-center mt-8">
             <Button 
@@ -244,7 +255,7 @@ const Visas = () => {
         </div>
       </section>
 
-      {/* Main CTA Section - Most Important Offers */}
+      {/* Main CTA Section - Enhanced with detailed benefits */}
       <section id="main-cta-section" className="py-20 bg-gradient-to-r from-yellow-500 to-orange-500">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-4xl mx-auto">
@@ -264,16 +275,28 @@ const Visas = () => {
                 <CardContent>
                   <ul className="space-y-2 mb-6 text-sm">
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                      <span>90 days validity</span>
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>Multiple entries allowed</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>90 days validity period</span>
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>27 countries access</span>
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>Tourism & business purposes</span>
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
                       <span>10-15 days processing</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                      <span>27 countries access</span>
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>Expert application support</span>
                     </li>
                   </ul>
                   <Button 
@@ -298,16 +321,28 @@ const Visas = () => {
                 <CardContent>
                   <ul className="space-y-2 mb-6 text-sm">
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                      <span>2 years validity</span>
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>Multiple entries allowed</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                      <span>3-6 months processing</span>
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>2 years initial validity</span>
                     </li>
                     <li className="flex items-center">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                      <span>EU access included</span>
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>Work permit included</span>
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>EU countries access</span>
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>Renewal possible</span>
+                    </li>
+                    <li className="flex items-center">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      <span>Path to permanent residency</span>
                     </li>
                   </ul>
                   <Button 
@@ -428,7 +463,7 @@ const Visas = () => {
         </div>
       </section>
 
-      {/* Popular Visa Services - Now with Carousel */}
+      {/* Popular Visa Services - Carousel */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
