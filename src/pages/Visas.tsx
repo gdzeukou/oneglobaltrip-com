@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { CheckCircle, Clock, FileText, Shield, ArrowRight, AlertCircle, Users, Calendar, Plane, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import VisaPricingCard from '@/components/visa/VisaPricingCard';
+import { visaPricingData } from '@/data/visaPricing';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Visas = () => {
@@ -126,6 +127,37 @@ const Visas = () => {
               <Users className="h-5 w-5 text-yellow-500" />
               <span>Expert Support</span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Transparency Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Transparent Pricing</h2>
+            <p className="text-xl text-gray-600">No hidden fees. See exactly what you pay for.</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <VisaPricingCard visaData={visaPricingData.schengenShortStay} />
+            <VisaPricingCard visaData={visaPricingData.ukVisa6Month} />
+            <VisaPricingCard visaData={visaPricingData.canadaEntry} />
+            <VisaPricingCard visaData={visaPricingData.nigeriaVisa} />
+          </div>
+
+          <div className="text-center mt-8">
+            <Button 
+              size="lg"
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={() => {
+                const element = document.getElementById('main-cta-section');
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              View All Visa Services
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </Button>
           </div>
         </div>
       </section>
@@ -426,4 +458,3 @@ const Visas = () => {
 };
 
 export default Visas;
-
