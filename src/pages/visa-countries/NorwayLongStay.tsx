@@ -1,9 +1,11 @@
+
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import EnhancedMultiStepForm from '@/components/visa/EnhancedMultiStepForm';
 import TrustBadges from '@/components/visa/TrustBadges';
+import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Heart, AlertTriangle, FileText, Clock, Crown } from 'lucide-react';
@@ -64,6 +66,12 @@ const NorwayLongStay = () => {
       </section>
 
       <TrustBadges />
+
+      <CountrySpecificPricing 
+        country="norwayLongStay"
+        title="Norway Long-Stay Visa Pricing"
+        description="Transparent pricing with no hidden fees"
+      />
 
       <section className="py-12 bg-red-50">
         <div className="max-w-5xl mx-auto px-4">
