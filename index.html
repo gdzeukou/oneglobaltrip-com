@@ -18,6 +18,17 @@
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
     
     <link rel="icon" href="/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png" type="image/png">
+    
+    <!-- Agentive AI Widget - Replace AGENT_ID with your actual agent ID -->
+    <script>
+      window.agentiveConfig = {
+        agentId: 'YOUR_AGENT_ID', // Replace with actual agent ID
+        apiKey: 'YOUR_API_KEY', // Replace with actual API key
+        baseUrl: 'https://api.agentive.ai/v1',
+        webhookUrl: window.location.origin + '/api/agentive-webhook'
+      };
+    </script>
+    <script src="https://cdn.agentive.ai/widget.js" data-agent-id="YOUR_AGENT_ID"></script>
   </head>
 
   <body>

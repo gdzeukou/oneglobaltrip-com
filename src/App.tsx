@@ -14,6 +14,7 @@ import AdminDashboard from '@/pages/AdminDashboard';
 import Visas from '@/pages/Visas';
 import ShortStayVisas from '@/pages/ShortStayVisas';
 import LongStayVisas from '@/pages/LongStayVisas';
+import Concierge from '@/pages/Concierge';
 
 // Visa country pages
 import SchengenShortStay from '@/pages/visa-countries/SchengenShortStay';
@@ -50,6 +51,7 @@ function App() {
               <Route path="/packages" element={<Packages />} />
               <Route path="/booking" element={<Booking />} />
               <Route path="/get-started" element={<GetStarted />} />
+              <Route path="/concierge" element={<Concierge />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
               <Route path="/visas" element={<Visas />} />
