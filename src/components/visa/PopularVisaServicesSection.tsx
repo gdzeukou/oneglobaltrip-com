@@ -1,3 +1,4 @@
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -94,34 +95,34 @@ const PopularVisaServicesSection = () => {
 
   const longStayVisas = [
     {
-      id: 'portugal-residency',
-      name: 'Portugal Residency',
+      id: 'portugal-longstay',
+      name: 'Portugal Long-Stay',
       countries: 'Portugal',
-      price: 1299,
-      processingTime: '3-6 months',
-      validityPeriod: '2 years',
-      description: 'Temporary residence permit for work or investment',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'Long-stay visa for work, study, or residence',
       type: 'long-stay',
       popular: true
     },
     {
-      id: 'norway-work',
-      name: 'Norway Work Permit',
+      id: 'norway-longstay',
+      name: 'Norway Long-Stay',
       countries: 'Norway',
-      price: 899,
-      processingTime: '2-4 months',
-      validityPeriod: '3 years',
-      description: 'Work permit for skilled professionals',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'Long-stay visa for work or study',
       type: 'long-stay'
     },
     {
-      id: 'denmark-family',
-      name: 'Denmark Family Reunion',
+      id: 'denmark-longstay',
+      name: 'Denmark Long-Stay',
       countries: 'Denmark',
-      price: 799,
-      processingTime: '4-8 months',
-      validityPeriod: '2 years',
-      description: 'Family reunification residence permit',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'Long-stay visa for work or study',
       type: 'long-stay'
     },
     {

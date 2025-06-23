@@ -141,7 +141,7 @@ const UK5YearShortStay = () => {
 
       {/* Pricing Section */}
       <CountrySpecificPricing 
-        country="United Kingdom" 
+        country="ukVisa5Year" 
         visaType="5-Year Visitor Visa"
         pricingData={{
           service: 'UK Visa Pass – 5-year',

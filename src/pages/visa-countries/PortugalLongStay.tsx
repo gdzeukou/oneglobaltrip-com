@@ -68,8 +68,8 @@ const PortugalLongStay = () => {
       <TrustBadges />
 
       <CountrySpecificPricing 
-        country="portugalResidency"
-        title="Portugal Residency Permit Pricing"
+        country="portugalLongStay"
+        title="Portugal Long-Stay Visa Pricing"
         description="Transparent pricing with no hidden fees"
       />
 

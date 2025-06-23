@@ -150,49 +150,49 @@ export const visaPricingData = {
       'Express processing coordination'
     ]
   },
-  portugalResidency: {
-    service: 'Portugal Residency Permit',
-    totalPrice: '$1299',
-    consularFee: '$850',
-    centerFee: '$150',
+  portugalLongStay: {
+    service: 'Portugal Long-Stay Visa',
+    totalPrice: '$240',
+    consularFee: '$150',
+    centerFee: '$55',
     centerType: 'VFS' as const,
-    serviceFee: '$299',
+    serviceFee: '$35',
     included: [
-      'Residence permit application support',
-      'Document preparation and apostille assistance',
+      'Portuguese long-stay visa application support',
       'Appointment booking at Portuguese centers',
-      'Embassy interview preparation guidance',
-      'Long-term visa specialist consultation'
-    ]
-  },
-  norwayWorkPermit: {
-    service: 'Norway Work Permit',
-    totalPrice: '$899',
-    consularFee: '$600',
-    centerFee: '$120',
-    centerType: 'VFS' as const,
-    serviceFee: '$179',
-    included: [
-      'Work permit application preparation',
-      'Document verification and submission',
-      'Appointment booking at Norwegian centers',
-      'Employer documentation assistance',
+      'Document preparation and verification',
+      'Student/work/residence visa guidance',
       'Immigration specialist consultation'
     ]
   },
-  denmarkFamilyReunion: {
-    service: 'Denmark Family Reunion',
-    totalPrice: '$799',
-    consularFee: '$500',
-    centerFee: '$120',
+  norwayLongStay: {
+    service: 'Norway Long-Stay Visa',
+    totalPrice: '$240',
+    consularFee: '$150',
+    centerFee: '$55',
     centerType: 'VFS' as const,
-    serviceFee: '$179',
+    serviceFee: '$35',
     included: [
-      'Family reunification application support',
+      'Norwegian long-stay visa application support',
+      'Appointment booking at Norwegian centers',
       'Document preparation and verification',
+      'Student/work visa guidance',
+      'Immigration specialist consultation'
+    ]
+  },
+  denmarkLongStay: {
+    service: 'Denmark Long-Stay Visa',
+    totalPrice: '$240',
+    consularFee: '$150',
+    centerFee: '$55',
+    centerType: 'VFS' as const,
+    serviceFee: '$35',
+    included: [
+      'Danish long-stay visa application support',
       'Appointment booking at Danish centers',
-      'Relationship documentation assistance',
-      'Immigration law consultation'
+      'Document preparation and verification',
+      'Student/work visa guidance',
+      'Immigration specialist consultation'
     ]
   },
   finlandLongStay: {
@@ -235,36 +235,6 @@ export const visaPricingData = {
     included: [
       'French long-stay visa application support',
       'Appointment booking at French centers',
-      'Document preparation and verification',
-      'Student/work visa guidance',
-      'Immigration specialist consultation'
-    ]
-  },
-  denmarkLongStay: {
-    service: 'Denmark Long-Stay Visa',
-    totalPrice: '$240',
-    consularFee: '$150',
-    centerFee: '$55',
-    centerType: 'VFS' as const,
-    serviceFee: '$35',
-    included: [
-      'Danish long-stay visa application support',
-      'Appointment booking at Danish centers',
-      'Document preparation and verification',
-      'Student/work visa guidance',
-      'Immigration specialist consultation'
-    ]
-  },
-  norwayLongStay: {
-    service: 'Norway Long-Stay Visa',
-    totalPrice: '$240',
-    consularFee: '$150',
-    centerFee: '$55',
-    centerType: 'VFS' as const,
-    serviceFee: '$35',
-    included: [
-      'Norwegian long-stay visa application support',
-      'Appointment booking at Norwegian centers',
       'Document preparation and verification',
       'Student/work visa guidance',
       'Immigration specialist consultation'
