@@ -144,6 +144,36 @@ const Visas = () => {
       validityPeriod: '2 years',
       description: 'Family reunification residence permit',
       type: 'long-stay'
+    },
+    {
+      id: 'finland-longstay',
+      name: 'Finland Long-Stay',
+      countries: 'Finland',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'Long-stay visa with Finnish insurance',
+      type: 'long-stay'
+    },
+    {
+      id: 'germany-longstay',
+      name: 'Germany Long-Stay',
+      countries: 'Germany',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'German long-stay visa for work/study',
+      type: 'long-stay'
+    },
+    {
+      id: 'france-longstay',
+      name: 'France Long-Stay',
+      countries: 'France',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'French long-stay visa for work/study',
+      type: 'long-stay'
     }
   ];
 

@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
+import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Heart, AlertTriangle, FileText, Clock, Euro } from 'lucide-react';
@@ -64,6 +65,12 @@ const FinlandLongStay = () => {
       </section>
 
       <TrustBadges />
+
+      <CountrySpecificPricing 
+        country="finlandLongStay"
+        title="Finland Long-Stay Visa Pricing"
+        description="Transparent pricing with no hidden fees"
+      />
 
       <section className="py-12 bg-blue-50">
         <div className="max-w-5xl mx-auto px-4">

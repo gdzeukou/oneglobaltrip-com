@@ -194,5 +194,95 @@ export const visaPricingData = {
       'Relationship documentation assistance',
       'Immigration law consultation'
     ]
+  },
+  finlandLongStay: {
+    service: 'Finland Long-Stay Visa',
+    totalPrice: '$240',
+    consularFee: '$150',
+    centerFee: '$55',
+    centerType: 'VFS' as const,
+    serviceFee: '$35',
+    included: [
+      'Long-stay visa application support',
+      'Finnish insurance compliance guidance',
+      'Appointment booking at Finnish centers',
+      'Document preparation and verification',
+      'Healthcare insurance consultation'
+    ]
+  },
+  germanyLongStay: {
+    service: 'Germany Long-Stay Visa',
+    totalPrice: '$240',
+    consularFee: '$150',
+    centerFee: '$55',
+    centerType: 'VFS' as const,
+    serviceFee: '$35',
+    included: [
+      'German long-stay visa application support',
+      'Appointment booking at German centers',
+      'Document preparation and verification',
+      'Student/work visa guidance',
+      'Immigration specialist consultation'
+    ]
+  },
+  franceLongStay: {
+    service: 'France Long-Stay Visa',
+    totalPrice: '$240',
+    consularFee: '$150',
+    centerFee: '$55',
+    centerType: 'VFS' as const,
+    serviceFee: '$35',
+    included: [
+      'French long-stay visa application support',
+      'Appointment booking at French centers',
+      'Document preparation and verification',
+      'Student/work visa guidance',
+      'Immigration specialist consultation'
+    ]
+  },
+  denmarkLongStay: {
+    service: 'Denmark Long-Stay Visa',
+    totalPrice: '$240',
+    consularFee: '$150',
+    centerFee: '$55',
+    centerType: 'VFS' as const,
+    serviceFee: '$35',
+    included: [
+      'Danish long-stay visa application support',
+      'Appointment booking at Danish centers',
+      'Document preparation and verification',
+      'Student/work visa guidance',
+      'Immigration specialist consultation'
+    ]
+  },
+  norwayLongStay: {
+    service: 'Norway Long-Stay Visa',
+    totalPrice: '$240',
+    consularFee: '$150',
+    centerFee: '$55',
+    centerType: 'VFS' as const,
+    serviceFee: '$35',
+    included: [
+      'Norwegian long-stay visa application support',
+      'Appointment booking at Norwegian centers',
+      'Document preparation and verification',
+      'Student/work visa guidance',
+      'Immigration specialist consultation'
+    ]
+  },
+  switzerlandLongStay: {
+    service: 'Switzerland Long-Stay Visa',
+    totalPrice: '$240',
+    consularFee: '$150',
+    centerFee: '$55',
+    centerType: 'VFS' as const,
+    serviceFee: '$35',
+    included: [
+      'Swiss long-stay visa application support',
+      'Appointment booking at Swiss centers',
+      'Document preparation and verification',
+      'Student/work visa guidance',
+      'Immigration specialist consultation'
+    ]
   }
 };
