@@ -1,29 +1,10 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Bot, Sparkles, Clock, Users } from 'lucide-react';
 
 const Concierge = () => {
-  useEffect(() => {
-    // Add page-specific context for Agentive
-    const script = document.createElement('script');
-    script.innerHTML = `
-      if (window.agentive) {
-        window.agentive.setContext({
-          page: 'concierge',
-          context: 'concierge',
-          services: ['full_planning', 'packages', 'visas', 'itinerary', 'consultation']
-        });
-      }
-    `;
-    document.head.appendChild(script);
-
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
-
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
@@ -35,12 +16,12 @@ const Concierge = () => {
             <div className="flex items-center justify-center mb-4">
               <Bot className="h-12 w-12 text-yellow-500 mr-4" />
               <h1 className="text-4xl md:text-6xl font-bold">
-                Meet Camron, Your AI Travel Concierge
+                AI Travel Concierge Coming Soon
               </h1>
             </div>
             <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto">
-              Your personal AI assistant for planning the perfect trip. Get instant answers, 
-              personalized recommendations, and expert guidance 24/7.
+              We're preparing an amazing AI assistant to help you plan the perfect trip. 
+              Get instant answers, personalized recommendations, and expert guidance.
             </p>
           </div>
 
@@ -65,19 +46,18 @@ const Concierge = () => {
         </div>
       </section>
 
-      {/* Chat Information Section */}
+      {/* Information Section */}
       <section className="py-12">
         <div className="max-w-6xl mx-auto px-4">
           <div className="bg-gray-50 rounded-xl p-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Start Planning Your Journey</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Coming Soon</h2>
             <p className="text-gray-600 max-w-2xl mx-auto mb-6">
-              Click the orange chat bubble in the bottom-right corner to start chatting with Camron. 
-              Ask anything about travel packages, visa requirements, destinations, or let him help you 
-              create the perfect itinerary.
+              Our AI travel concierge is being prepared to help you with travel packages, 
+              visa requirements, destinations, and create the perfect itinerary.
             </p>
-            <div className="bg-orange-100 border border-orange-200 rounded-lg p-4 inline-block">
-              <p className="text-orange-800 font-medium">
-                💬 Look for the orange bubble → It's available on every page!
+            <div className="bg-blue-100 border border-blue-200 rounded-lg p-4 inline-block">
+              <p className="text-blue-800 font-medium">
+                🚀 We're working hard to bring you the best travel assistance experience!
               </p>
             </div>
           </div>
@@ -87,7 +67,7 @@ const Concierge = () => {
       {/* Quick Actions */}
       <section className="py-12 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">What Camron Can Help You With</h3>
+          <h3 className="text-2xl font-bold text-center mb-8 text-gray-900">What Our AI Will Help You With</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { title: 'Visa Requirements', desc: 'Get detailed visa info for any destination' },

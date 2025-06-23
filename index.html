@@ -23,35 +23,5 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Official Agentive Widget Script -->
-    <script type="text/javascript">
-      (function(d, t) {
-        var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
-        v.onload = function() {
-          console.log('✅ Agentive script loaded successfully');
-          if (!document.getElementById('root')) {
-            var root = d.createElement('div');
-            root.id = 'root';
-            d.body.appendChild(root);
-          }
-          if (window.myChatWidget && typeof window.myChatWidget.load === 'function') {
-            console.log('✅ Loading Agentive widget with ID: 37a3ea25-30ce-428b-914e-bb2f13ba12a4');
-            window.myChatWidget.load({
-              id: '37a3ea25-30ce-428b-914e-bb2f13ba12a4',
-            });
-          } else {
-            console.error('❌ myChatWidget not available');
-          }
-        };
-        v.onerror = function() {
-          console.error('❌ Failed to load Agentive script from agentivehub.com');
-        };
-        v.src = "https://agentivehub.com/production.bundle.min.js";
-        v.type = "text/javascript";
-        s.parentNode.insertBefore(v, s);
-        console.log('🔧 Agentive script injection started...');
-      })(document, 'script');
-    </script>
   </body>
 </html>
