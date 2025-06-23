@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import VisaPricingCard from '@/components/visa/VisaPricingCard';
@@ -427,7 +428,7 @@ const Visas = () => {
         </div>
       </section>
 
-      {/* Sample Visa Services */}
+      {/* Popular Visa Services - Now with Carousel */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
@@ -442,92 +443,104 @@ const Visas = () => {
             </TabsList>
 
             <TabsContent value="short-stay">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {shortStayVisas.slice(0, 6).map((visa) => (
-                  <Card key={visa.id} className="hover-lift relative">
-                    {visa.popular && (
-                      <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded">
-                        POPULAR
-                      </div>
-                    )}
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg text-blue-900">{visa.name}</CardTitle>
-                        <Badge className="bg-blue-500 text-white">
-                          ${visa.price}
-                        </Badge>
-                      </div>
-                      <p className="text-gray-600 text-sm">{visa.countries}</p>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-700 mb-4 text-sm">{visa.description}</p>
-                      <div className="space-y-1 text-xs mb-4">
-                        <div className="flex justify-between">
-                          <span>Processing:</span>
-                          <span className="font-medium">{visa.processingTime}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Validity:</span>
-                          <span className="font-medium">{visa.validityPeriod}</span>
-                        </div>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        className="w-full"
-                        onClick={() => navigate(`/visas/short-stay/${visa.id === 'schengen' ? 'schengen' : visa.id}`)}
-                      >
-                        Apply Now
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <Carousel className="w-full max-w-5xl mx-auto">
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {shortStayVisas.map((visa) => (
+                    <CarouselItem key={visa.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                      <Card className="hover-lift relative h-full">
+                        {visa.popular && (
+                          <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded">
+                            POPULAR
+                          </div>
+                        )}
+                        <CardHeader>
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg text-blue-900">{visa.name}</CardTitle>
+                            <Badge className="bg-blue-500 text-white">
+                              ${visa.price}
+                            </Badge>
+                          </div>
+                          <p className="text-gray-600 text-sm">{visa.countries}</p>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-gray-700 mb-4 text-sm">{visa.description}</p>
+                          <div className="space-y-1 text-xs mb-4">
+                            <div className="flex justify-between">
+                              <span>Processing:</span>
+                              <span className="font-medium">{visa.processingTime}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Validity:</span>
+                              <span className="font-medium">{visa.validityPeriod}</span>
+                            </div>
+                          </div>
+                          <Button 
+                            size="sm" 
+                            className="w-full"
+                            onClick={() => navigate(`/visas/short-stay/${visa.id === 'schengen' ? 'schengen' : visa.id}`)}
+                          >
+                            Apply Now
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
             </TabsContent>
 
             <TabsContent value="long-stay">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {longStayVisas.map((visa) => (
-                  <Card key={visa.id} className="hover-lift relative">
-                    {visa.popular && (
-                      <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded">
-                        POPULAR
-                      </div>
-                    )}
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg text-purple-900">{visa.name}</CardTitle>
-                        <Badge className="bg-purple-500 text-white">
-                          ${visa.price}
-                        </Badge>
-                      </div>
-                      <p className="text-gray-600 text-sm">{visa.countries}</p>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-700 mb-4 text-sm">{visa.description}</p>
-                      <div className="space-y-1 text-xs mb-4">
-                        <div className="flex justify-between">
-                          <span>Processing:</span>
-                          <span className="font-medium">{visa.processingTime}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Validity:</span>
-                          <span className="font-medium">{visa.validityPeriod}</span>
-                        </div>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        className="w-full bg-purple-600 hover:bg-purple-700"
-                        onClick={() => {
-                          const country = visa.id.split('-')[0];
-                          navigate(`/visas/long-stay/${country}`);
-                        }}
-                      >
-                        Apply Now
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <Carousel className="w-full max-w-5xl mx-auto">
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {longStayVisas.map((visa) => (
+                    <CarouselItem key={visa.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                      <Card className="hover-lift relative h-full">
+                        {visa.popular && (
+                          <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded">
+                            POPULAR
+                          </div>
+                        )}
+                        <CardHeader>
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg text-purple-900">{visa.name}</CardTitle>
+                            <Badge className="bg-purple-500 text-white">
+                              ${visa.price}
+                            </Badge>
+                          </div>
+                          <p className="text-gray-600 text-sm">{visa.countries}</p>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-gray-700 mb-4 text-sm">{visa.description}</p>
+                          <div className="space-y-1 text-xs mb-4">
+                            <div className="flex justify-between">
+                              <span>Processing:</span>
+                              <span className="font-medium">{visa.processingTime}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Validity:</span>
+                              <span className="font-medium">{visa.validityPeriod}</span>
+                            </div>
+                          </div>
+                          <Button 
+                            size="sm" 
+                            className="w-full bg-purple-600 hover:bg-purple-700"
+                            onClick={() => {
+                              const country = visa.id.split('-')[0];
+                              navigate(`/visas/long-stay/${country}`);
+                            }}
+                          >
+                            Apply Now
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
             </TabsContent>
           </Tabs>
         </div>
