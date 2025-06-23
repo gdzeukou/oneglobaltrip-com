@@ -21,7 +21,7 @@ const Footer = () => {
             
             {/* Founders */}
             <div className="pt-4">
-              <p className="text-sm text-blue-200 mb-2">Founded by Camron & Zuku</p>
+              <p className="text-sm text-blue-200 mb-2">Founded by a group of travelers</p>
               <p className="text-xs text-blue-300">U.S-based, travel-obsessed</p>
             </div>
           </div>
