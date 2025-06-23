@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -142,22 +141,8 @@ const UK5YearShortStay = () => {
       {/* Pricing Section */}
       <CountrySpecificPricing 
         country="ukVisa5Year" 
-        visaType="5-Year Visitor Visa"
-        pricingData={{
-          service: 'UK Visa Pass – 5-year',
-          totalPrice: '$995',
-          consularFee: '$599',
-          centerFee: '$295',
-          centerType: 'VFS' as const,
-          serviceFee: '$101',
-          included: [
-            'Long-term visa application specialist support',
-            'Premium appointment booking assistance',
-            'Comprehensive document review and preparation',
-            'Multi-entry visa application guidance',
-            'Ongoing support for 5-year validity'
-          ]
-        }}
+        title="UK 5-Year Visa Pricing"
+        description="Transparent pricing with no hidden fees"
       />
 
       {/* Application Form */}

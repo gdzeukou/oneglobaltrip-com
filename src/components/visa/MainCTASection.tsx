@@ -1,130 +1,101 @@
 
-import { CheckCircle, Plane, Building } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
+import OptimizedImage from '@/components/ui/optimized-image';
 
 const MainCTASection = () => {
   const navigate = useNavigate();
 
+  const popularChoices = [
+    {
+      id: 'schengen',
+      title: 'Schengen Visa Pack',
+      subtitle: '27 European Countries',
+      description: 'Access 27 European countries with a single visa application',
+      price: 'from $193',
+      image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=600&h=400&fit=crop&crop=center',
+      alt: 'European landmarks for Schengen visa',
+      badge: 'POPULAR',
+      badgeColor: 'bg-red-500',
+      route: '/visas/short-stay/schengen'
+    },
+    {
+      id: 'portugal',
+      title: 'Portugal Long-Stay Visa',
+      subtitle: 'Work, Study & Residence',
+      description: 'Long-term visa for Portugal with comprehensive support',
+      price: 'from $240',
+      image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&h=400&fit=crop&crop=center',
+      alt: 'Portuguese architecture for Portugal visa',
+      badge: 'TRENDING',
+      badgeColor: 'bg-red-500',
+      route: '/visas/long-stay/portugal'
+    }
+  ];
+
   return (
-    <section id="main-cta-section" className="py-20 bg-gradient-to-r from-yellow-500 to-orange-500">
-      <div className="max-w-7xl mx-auto px-4 text-center">
-        <div className="bg-white rounded-2xl p-8 shadow-2xl max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">🎯 Most Popular Choice</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            
-            {/* Schengen - Most Popular Short Stay */}
-            <Card className="border-2 border-blue-500 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 text-sm font-bold">
-                MOST POPULAR
+    <section id="main-cta-section" className="py-16 bg-white">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Most Popular Choices</h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Start your visa application today with our most requested services
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
+          {popularChoices.map((choice) => (
+            <Card key={choice.id} className="overflow-hidden hover-lift group cursor-pointer relative" onClick={() => navigate(choice.route)}>
+              <div className="absolute top-4 right-4 z-10">
+                <span className={`${choice.badgeColor} text-white px-3 py-1 text-sm font-bold rounded-full`}>
+                  {choice.badge}
+                </span>
               </div>
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl text-blue-900">Schengen Area Visa</CardTitle>
-                <p className="text-gray-600">Visit 27 European Countries</p>
-                <div className="text-3xl font-bold text-blue-900">$193</div>
+              <div className="relative h-48">
+                <OptimizedImage
+                  src={choice.image}
+                  alt={choice.alt}
+                  className="w-full h-full group-hover:scale-110 transition-transform duration-500"
+                  overlay
+                  overlayColor="bg-black/20"
+                />
+              </div>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl text-blue-900">{choice.title}</CardTitle>
+                    <p className="text-gray-600 text-sm">{choice.subtitle}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-blue-900">{choice.price}</p>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 mb-6 text-sm">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Multiple entries allowed</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>90 days validity period</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>27 countries access</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Tourism & business purposes</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>10-15 days processing</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Expert application support</span>
-                  </li>
-                </ul>
-                <Button 
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-3"
-                  onClick={() => navigate('/visas/short-stay/schengen')}
-                >
-                  Apply for Schengen Visa
+                <p className="text-gray-700 mb-4">{choice.description}</p>
+                <Button className="w-full bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700">
+                  Start Application
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </CardContent>
             </Card>
+          ))}
+        </div>
 
-            {/* Portugal - Most Popular Long Stay */}
-            <Card className="border-2 border-purple-500 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-purple-500 text-white px-3 py-1 text-sm font-bold">
-                TRENDING
-              </div>
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl text-purple-900">Portugal Residency</CardTitle>
-                <p className="text-gray-600">Live & Work in Europe</p>
-                <div className="text-3xl font-bold text-purple-900">$1,299</div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2 mb-6 text-sm">
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Multiple entries allowed</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>2 years initial validity</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Work permit included</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>EU countries access</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Renewal possible</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                    <span>Path to permanent residency</span>
-                  </li>
-                </ul>
-                <Button 
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-lg py-3"
-                  onClick={() => navigate('/visas/long-stay/portugal')}
-                >
-                  Apply for Portugal Residency
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold"
-              onClick={() => navigate('/visas/short-stay')}
-            >
-              <Plane className="h-5 w-5 mr-2" />
-              All Short-Stay Visas
-            </Button>
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold"
-              onClick={() => navigate('/visas/long-stay')}
-            >
-              <Building className="h-5 w-5 mr-2" />
-              All Long-Stay Visas
-            </Button>
-          </div>
+        <div className="text-center">
+          <p className="text-lg text-gray-600 mb-6">
+            Need help choosing? Our visa experts are here to guide you.
+          </p>
+          <Button 
+            size="lg"
+            variant="outline"
+            className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+            onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
+          >
+            Book Free Consultation
+          </Button>
         </div>
       </div>
     </section>
