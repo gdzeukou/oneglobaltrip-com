@@ -4,68 +4,86 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, agentive-signature',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, agentive-signature, x-agentive-signature',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 interface AgentiveWebhookPayload {
-  tool: string;
+  tool?: string;
+  function_name?: string;
   arguments: any;
   conversation_id: string;
   timestamp: number;
+  event_type?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  console.log('🤖 Agentive webhook received:', req.method);
+  console.log('🤖 Agentive webhook received:', req.method, req.url);
 
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Verify webhook signature
-    const signature = req.headers.get('agentive-signature');
-    const webhookSecret = Deno.env.get('AGENTIVE_WEBHOOK_SECRET') || 'whsec_ogt2025';
-    
+    // Log all headers for debugging
+    console.log('📋 Request headers:', Object.fromEntries(req.headers.entries()));
+
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
     const payload: AgentiveWebhookPayload = await req.json();
-    console.log('📋 Webhook payload:', payload);
+    console.log('📋 Webhook payload:', JSON.stringify(payload, null, 2));
 
-    const { tool, arguments: toolArgs, conversation_id } = payload;
+    const { tool, function_name, arguments: toolArgs, conversation_id } = payload;
+    const toolName = tool || function_name;
 
-    switch (tool) {
+    if (!toolName) {
+      console.log('ℹ️ No tool specified, treating as chat message');
+      return new Response(
+        JSON.stringify({ status: 'ok', message: 'Chat message received' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    switch (toolName) {
       case 'store_lead_supabase':
+      case 'store_lead':
         await handleStoreLeadSupabase(supabase, toolArgs, conversation_id);
         break;
       
       case 'schedule_call_calendly':
+      case 'schedule_call':
         await handleScheduleCallCalendly(toolArgs, conversation_id);
         break;
       
       case 'send_email_resend':
+      case 'send_email':
         await handleSendEmailResend(supabase, toolArgs, conversation_id);
         break;
       
       default:
-        console.warn('❓ Unknown tool:', tool);
+        console.warn('❓ Unknown tool:', toolName);
         return new Response(
-          JSON.stringify({ error: 'Unknown tool', tool }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ status: 'ok', message: `Unknown tool: ${toolName}` }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
     }
 
     return new Response(
-      JSON.stringify({ status: 'ok', data: { tool, conversation_id } }),
+      JSON.stringify({ status: 'success', data: { tool: toolName, conversation_id } }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
     console.error('❌ Webhook error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        status: 'error',
+        timestamp: new Date().toISOString()
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
@@ -75,7 +93,7 @@ async function handleStoreLeadSupabase(supabase: any, args: any, conversationId:
   console.log('💾 Storing lead in Supabase:', args);
   
   const leadData = {
-    name: args.full_name || '',
+    name: args.full_name || args.name || '',
     email: args.email || '',
     phone: args.phone || '',
     form_type: 'agentive-chat',
@@ -104,16 +122,12 @@ async function handleStoreLeadSupabase(supabase: any, args: any, conversationId:
 async function handleScheduleCallCalendly(args: any, conversationId: string) {
   console.log('📅 Processing Calendly scheduling:', args);
   
-  // Generate Calendly URL for OGT 30-min consultation
   const calendlyUrl = 'https://calendly.com/camronm-oneglobaltrip/30min';
   
-  console.log('Calendly URL provided:', calendlyUrl);
-  console.log('Email:', args.email);
-  console.log('Topic:', args.topic);
-  console.log('Conversation ID:', conversationId);
-  
-  // Log the scheduling request for follow-up
-  // Could also trigger email with Calendly link here
+  console.log('✅ Calendly URL provided:', calendlyUrl);
+  console.log('📧 Email:', args.email);
+  console.log('📝 Topic:', args.topic);
+  console.log('🆔 Conversation ID:', conversationId);
 }
 
 async function handleSendEmailResend(supabase: any, args: any, conversationId: string) {
@@ -122,8 +136,8 @@ async function handleSendEmailResend(supabase: any, args: any, conversationId: s
   try {
     const { error } = await supabase.functions.invoke('send-welcome-email', {
       body: {
-        email: args.to,
-        name: args.full_name || 'Valued Customer',
+        email: args.to || args.email,
+        name: args.full_name || args.name || 'Valued Customer',
         type: 'agentive-consultation',
         customSubject: args.subject,
         customHtml: args.html_body,

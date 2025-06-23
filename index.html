@@ -24,14 +24,20 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Agentive AI Widget - Global Floating Bubble -->
+    <!-- Agentive AI Widget Script -->
+    <script>
+      window.agentiveConfig = {
+        agentId: '9d18091f-c302-4cde-a2cf-fca4d3a0b0c1',
+        mode: 'bubble',
+        primaryColor: '#FF6B00',
+        welcome: "Hi, I'm Camron – how can I help with your trip?",
+        position: 'bottom-right'
+      };
+    </script>
     <script 
       src="https://cdn.agentive.ai/widget.js"
-      data-agent-id="9d18091f-c302-4cde-a2cf-fca4d3a0b0c1"
-      data-mode="bubble"
-      data-primary-color="#FF6B00"
-      data-welcome="Hi, I'm Camron – how can I help with your trip?"
-      async
+      onload="console.log('Agentive widget loaded successfully')"
+      onerror="console.error('Failed to load Agentive widget')"
     ></script>
   </body>
 </html>
