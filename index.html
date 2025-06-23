@@ -24,23 +24,42 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Agentive AI Floating Bubble Widget -->
+    <!-- Agentive AI Widget - Simplified Configuration -->
     <script>
+      console.log('🔧 Initializing Agentive widget...');
+      
+      // Simple configuration
       window.agentiveConfig = {
         agentId: '9d18091f-c302-4cde-a2cf-fca4d3a0b0c1',
         apiKey: '31f1731a-15a2-42fe-8807-05b5a02fac86',
         mode: 'bubble',
         primaryColor: '#FF6B00',
-        welcome: "Hi, I'm Camron – how can I help with your trip?",
         position: 'bottom-right',
-        size: 'medium'
+        size: 'medium',
+        welcome: "Hi, I'm Camron – how can I help with your trip?"
       };
+      
+      console.log('🔧 Agentive config set:', window.agentiveConfig);
     </script>
+    
+    <!-- Load Agentive Widget Script -->
     <script 
       src="https://cdn.agentive.ai/widget.js"
-      async
-      onload="console.log('Agentive floating bubble loaded successfully with agent ID: 9d18091f-c302-4cde-a2cf-fca4d3a0b0c1')"
-      onerror="console.error('Failed to load Agentive widget')"
+      onload="console.log('✅ Agentive widget script loaded successfully'); console.log('🎯 Agent ID:', '9d18091f-c302-4cde-a2cf-fca4d3a0b0c1');"
+      onerror="console.error('❌ Failed to load Agentive widget script');"
     ></script>
+    
+    <!-- Fallback initialization -->
+    <script>
+      setTimeout(() => {
+        if (typeof window.agentive !== 'undefined') {
+          console.log('✅ Agentive widget is available');
+        } else {
+          console.error('❌ Agentive widget failed to initialize');
+          // Try to reinitialize
+          console.log('🔄 Attempting to reinitialize...');
+        }
+      }, 3000);
+    </script>
   </body>
 </html>
