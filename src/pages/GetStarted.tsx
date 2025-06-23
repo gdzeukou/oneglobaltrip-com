@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Calendar, MessageCircle, FileText } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import ConsultationForm from '@/components/get-started/ConsultationForm';
 import VisaApplicationForm from '@/components/get-started/VisaApplicationForm';
@@ -16,6 +17,7 @@ const GetStarted = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <Navigation />
       {/* Hero Section */}
       <section className="pt-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
