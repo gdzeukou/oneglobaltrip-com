@@ -36,6 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email_confirmed_at);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -65,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const redirectUrl = `${window.location.origin}/`;
       
-      const { error } = await supabase.auth.signUp({
+      const { error, data } = await supabase.auth.signUp({
         email: email.toLowerCase().trim(),
         password,
         options: {
@@ -76,6 +77,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
       });
+
+      // If signup was successful, immediately sign out the user
+      // This prevents the confusing state where they're logged in but unverified
+      if (!error && data.user) {
+        console.log('Signup successful, signing out user to enforce email verification');
+        await supabase.auth.signOut();
+      }
+
       return { error };
     } catch (error) {
       return { error: { message: 'An unexpected error occurred during sign up' } };
@@ -93,10 +102,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data } = await supabase.auth.signInWithPassword({
         email: email.toLowerCase().trim(),
         password,
       });
+
+      // Check for specific email verification errors
+      if (error) {
+        console.log('Sign in error:', error);
+        
+        // Handle different types of authentication errors
+        if (error.message.includes('Email not confirmed') || 
+            error.message.includes('email_not_confirmed') ||
+            error.message.includes('signup_disabled')) {
+          return { error: { message: 'Please verify your email address before signing in. Check your inbox for a verification link.' } };
+        }
+        
+        if (error.message.includes('Invalid login credentials')) {
+          return { error: { message: 'Invalid email or password. Please check your credentials and try again.' } };
+        }
+      }
+
+      // If sign in was successful but email is not verified, sign them out
+      if (!error && data.user && !data.user.email_confirmed_at) {
+        console.log('User signed in but email not verified, signing out');
+        await supabase.auth.signOut();
+        return { error: { message: 'Please verify your email address before signing in. Check your inbox for a verification link.' } };
+      }
+
       return { error };
     } catch (error) {
       return { error: { message: 'An unexpected error occurred during sign in' } };
@@ -107,7 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await supabase.auth.signOut();
     } catch (error) {
-      // Silent error for sign out
+      console.error('Error signing out:', error);
     }
   };
 

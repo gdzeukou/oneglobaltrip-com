@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, LogIn, UserPlus, Mail } from 'lucide-react';
+import { Eye, EyeOff, LogIn, UserPlus, Mail, CheckCircle } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
@@ -19,6 +19,7 @@ const Auth = () => {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
 
   // Login form state
   const [loginData, setLoginData] = useState({
@@ -49,11 +50,7 @@ const Auth = () => {
     const { error } = await signIn(loginData.email, loginData.password);
     
     if (error) {
-      if (error.message.includes('Email not confirmed')) {
-        setError('Please verify your email address before signing in. Check your inbox for a verification link.');
-      } else {
-        setError(error.message);
-      }
+      setError(error.message);
     }
     
     setLoading(false);
@@ -89,6 +86,16 @@ const Auth = () => {
     } else {
       setSignupSuccess(true);
       setError('');
+      // Clear the form
+      setSignupData({
+        email: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        confirmPassword: '',
+      });
+      // Switch to login tab after successful signup
+      setActiveTab('login');
     }
     
     setLoading(false);
@@ -110,7 +117,7 @@ const Auth = () => {
               </p>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="login" className="w-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="login" className="flex items-center space-x-2">
                     <LogIn className="h-4 w-4" />
@@ -132,9 +139,13 @@ const Auth = () => {
 
                 {signupSuccess && (
                   <Alert className="mt-4 border-green-200 bg-green-50">
-                    <Mail className="h-4 w-4" />
+                    <CheckCircle className="h-4 w-4" />
                     <AlertDescription className="text-green-800">
-                      Account created successfully! Please check your email for a verification link before signing in.
+                      <div className="space-y-2">
+                        <p className="font-medium">Account created successfully!</p>
+                        <p>We've sent a verification link to your email address. Please check your inbox and click the link to verify your account before signing in.</p>
+                        <p className="text-sm">Don't forget to check your spam folder if you don't see the email.</p>
+                      </div>
                     </AlertDescription>
                   </Alert>
                 )}
@@ -177,6 +188,9 @@ const Auth = () => {
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading ? 'Signing In...' : 'Sign In'}
                     </Button>
+                    <p className="text-xs text-gray-500 text-center">
+                      Make sure you've verified your email address before signing in.
+                    </p>
                   </form>
                 </TabsContent>
 
@@ -249,9 +263,12 @@ const Auth = () => {
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading ? 'Creating Account...' : 'Create Account'}
                     </Button>
-                    <p className="text-xs text-gray-500 text-center">
-                      You'll receive an email to verify your account before you can sign in.
-                    </p>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-xs text-blue-700">
+                        <Mail className="h-3 w-3 inline mr-1" />
+                        After creating your account, you'll receive a verification email. You must verify your email before you can sign in.
+                      </p>
+                    </div>
                   </form>
                 </TabsContent>
               </Tabs>
