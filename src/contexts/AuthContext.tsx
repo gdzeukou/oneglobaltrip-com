@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,7 +16,7 @@ interface AuthContextType {
     phoneNumber?: string;
   } | null;
   signUp: (email: string, password: string, firstName?: string, lastName?: string, phoneNumber?: string, verificationMethod?: 'email' | 'sms') => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string, verificationMethod?: 'email' | 'sms', phoneNumber?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resendVerification: () => Promise<{ error: any }>;
   sendOTP: (email: string, method: 'email' | 'sms', purpose: 'signup' | 'signin', phoneNumber?: string) => Promise<{ error: any }>;
@@ -245,7 +244,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, verificationMethod: 'email' | 'sms' = 'email', phoneNumber?: string) => {
     // Validate inputs
     if (!validateEmail(email)) {
       return { error: { message: 'Please enter a valid email address' } };
@@ -253,6 +252,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (!password) {
       return { error: { message: 'Password is required' } };
+    }
+
+    if (verificationMethod === 'sms' && !phoneNumber) {
+      return { error: { message: 'Phone number is required for SMS verification' } };
     }
 
     try {
@@ -265,7 +268,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }));
 
       // Send OTP instead of signing in immediately
-      return await sendOTP(email.toLowerCase().trim(), 'email', 'signin');
+      return await sendOTP(email.toLowerCase().trim(), verificationMethod, 'signin', phoneNumber?.trim());
     } catch (error) {
       console.error('Signin error:', error);
       localStorage.removeItem('pendingSignin');

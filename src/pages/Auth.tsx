@@ -19,7 +19,8 @@ const Auth = () => {
   
   const [activeTab, setActiveTab] = useState('signin');
   const [showPassword, setShowPassword] = useState(false);
-  const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
+  const [signupVerificationMethod, setSignupVerificationMethod] = useState<'email' | 'sms'>('email');
+  const [signinVerificationMethod, setSigninVerificationMethod] = useState<'email' | 'sms'>('email');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
@@ -29,7 +30,8 @@ const Auth = () => {
     password: '',
     firstName: '',
     lastName: '',
-    phoneNumber: ''
+    phoneNumber: '',
+    signinPhoneNumber: ''
   });
 
   // Redirect authenticated users
@@ -61,7 +63,7 @@ const Auth = () => {
         formData.firstName,
         formData.lastName,
         formData.phoneNumber,
-        verificationMethod
+        signupVerificationMethod
       );
 
       if (error) {
@@ -82,7 +84,8 @@ const Auth = () => {
     setError('');
 
     try {
-      const { error } = await signIn(formData.email, formData.password);
+      const phoneNumber = signinVerificationMethod === 'sms' ? formData.signinPhoneNumber : undefined;
+      const { error } = await signIn(formData.email, formData.password, signinVerificationMethod, phoneNumber);
 
       if (error) {
         setError(error.message);
@@ -186,6 +189,45 @@ const Auth = () => {
                   </div>
                 </div>
 
+                <div className="space-y-3">
+                  <Label>Verification Method</Label>
+                  <RadioGroup
+                    value={signinVerificationMethod}
+                    onValueChange={(value: 'email' | 'sms') => setSigninVerificationMethod(value)}
+                    className="flex flex-col space-y-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="email" id="signin-email-method" />
+                      <Label htmlFor="signin-email-method" className="flex items-center gap-2 cursor-pointer">
+                        <Mail className="h-4 w-4" />
+                        Email Verification
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="sms" id="signin-sms-method" />
+                      <Label htmlFor="signin-sms-method" className="flex items-center gap-2 cursor-pointer">
+                        <Smartphone className="h-4 w-4" />
+                        SMS Verification
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {signinVerificationMethod === 'sms' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="signinPhoneNumber">Phone Number</Label>
+                    <Input
+                      id="signinPhoneNumber"
+                      name="signinPhoneNumber"
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      value={formData.signinPhoneNumber}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                )}
+
                 {error && (
                   <Alert className="border-red-200 bg-red-50">
                     <AlertDescription className="text-red-800">
@@ -272,20 +314,20 @@ const Auth = () => {
                 <div className="space-y-3">
                   <Label>Verification Method</Label>
                   <RadioGroup
-                    value={verificationMethod}
-                    onValueChange={(value: 'email' | 'sms') => setVerificationMethod(value)}
+                    value={signupVerificationMethod}
+                    onValueChange={(value: 'email' | 'sms') => setSignupVerificationMethod(value)}
                     className="flex flex-col space-y-2"
                   >
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="email" id="email" />
-                      <Label htmlFor="email" className="flex items-center gap-2 cursor-pointer">
+                      <RadioGroupItem value="email" id="signup-email-verify" />
+                      <Label htmlFor="signup-email-verify" className="flex items-center gap-2 cursor-pointer">
                         <Mail className="h-4 w-4" />
                         Email Verification
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="sms" id="sms" />
-                      <Label htmlFor="sms" className="flex items-center gap-2 cursor-pointer">
+                      <RadioGroupItem value="sms" id="signup-sms-verify" />
+                      <Label htmlFor="signup-sms-verify" className="flex items-center gap-2 cursor-pointer">
                         <Smartphone className="h-4 w-4" />
                         SMS Verification
                       </Label>
@@ -293,7 +335,7 @@ const Auth = () => {
                   </RadioGroup>
                 </div>
 
-                {verificationMethod === 'sms' && (
+                {signupVerificationMethod === 'sms' && (
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Phone Number</Label>
                     <Input
