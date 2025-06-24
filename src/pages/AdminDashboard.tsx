@@ -9,8 +9,10 @@ import {
   Mail, 
   Calendar,
   Database,
-  Settings
+  Settings,
+  RefreshCw
 } from 'lucide-react';
+import { useAdminMetrics } from '@/hooks/useAdminMetrics';
 
 // Import existing admin components
 import AnalyticsReports from '@/components/admin/AnalyticsReports';
@@ -33,6 +35,18 @@ interface SupabaseConfig {
 const AdminDashboard = () => {
   const [supabaseConfig, setSupabaseConfig] = useState<SupabaseConfig | null>(null);
   const [selectedLead, setSelectedLead] = useState<any>(null);
+  const { 
+    totalLeads, 
+    conversionRate, 
+    emailsSent, 
+    appointments, 
+    previousMonthLeads,
+    previousMonthEmails,
+    previousMonthAppointments,
+    loading, 
+    error,
+    calculateChange 
+  } = useAdminMetrics();
 
   const handleSupabaseConfigSaved = (config: SupabaseConfig) => {
     setSupabaseConfig(config);
@@ -41,7 +55,33 @@ const AdminDashboard = () => {
   const handleLeadUpdate = () => {
     // Refresh leads data
     console.log('Lead updated, refreshing data...');
+    // Note: The useAdminMetrics hook could be enhanced to have a refresh function
+    window.location.reload(); // Simple refresh for now
   };
+
+  const formatChangeText = (current: number, previous: number, unit: string = '') => {
+    const change = calculateChange(current, previous);
+    const direction = change > 0 ? '+' : '';
+    return `${direction}${change}% from last month${unit}`;
+  };
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-800">{error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            variant="outline" 
+            className="mt-2"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -72,8 +112,16 @@ const AdminDashboard = () => {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">2,350</div>
-                <p className="text-xs text-muted-foreground">+180 from last month</p>
+                {loading ? (
+                  <div className="text-2xl font-bold text-muted-foreground">Loading...</div>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{totalLeads.toLocaleString()}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {formatChangeText(totalLeads, previousMonthLeads)}
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
 
@@ -83,8 +131,16 @@ const AdminDashboard = () => {
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">12.5%</div>
-                <p className="text-xs text-muted-foreground">+2.1% from last month</p>
+                {loading ? (
+                  <div className="text-2xl font-bold text-muted-foreground">Loading...</div>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{conversionRate}%</div>
+                    <p className="text-xs text-muted-foreground">
+                      {appointments > 0 ? `${appointments} appointments booked` : 'No appointments yet'}
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
 
@@ -94,8 +150,16 @@ const AdminDashboard = () => {
                 <Mail className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">1,234</div>
-                <p className="text-xs text-muted-foreground">+19% from last month</p>
+                {loading ? (
+                  <div className="text-2xl font-bold text-muted-foreground">Loading...</div>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{emailsSent.toLocaleString()}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {formatChangeText(emailsSent, previousMonthEmails)}
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
 
@@ -105,8 +169,16 @@ const AdminDashboard = () => {
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">89</div>
-                <p className="text-xs text-muted-foreground">+12 from last week</p>
+                {loading ? (
+                  <div className="text-2xl font-bold text-muted-foreground">Loading...</div>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">{appointments}</div>
+                    <p className="text-xs text-muted-foreground">
+                      {formatChangeText(appointments, previousMonthAppointments)}
+                    </p>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
