@@ -8,12 +8,14 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, LogIn, UserPlus, Mail, CheckCircle } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Eye, EyeOff, LogIn, UserPlus, Mail, CheckCircle, Smartphone } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import OTPVerification from '@/components/auth/OTPVerification';
 
 const Auth = () => {
-  const { signIn, signUp, user, isEmailVerified } = useAuth();
+  const { signIn, signUp, user, isEmailVerified, otpStep, verifyOTP, clearOTPStep } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -33,7 +35,9 @@ const Auth = () => {
     password: '',
     firstName: '',
     lastName: '',
+    phoneNumber: '',
     confirmPassword: '',
+    verificationMethod: 'email' as 'email' | 'sms',
   });
 
   useEffect(() => {
@@ -41,6 +45,28 @@ const Auth = () => {
       navigate('/dashboard');
     }
   }, [user, isEmailVerified, navigate]);
+
+  // Show OTP verification if required
+  if (otpStep?.isRequired) {
+    return (
+      <OTPVerification
+        email={otpStep.email}
+        purpose={otpStep.purpose}
+        method={otpStep.method}
+        phoneNumber={otpStep.phoneNumber}
+        onVerificationSuccess={() => {
+          clearOTPStep();
+          if (otpStep.purpose === 'signin') {
+            navigate('/dashboard');
+          } else {
+            setSignupSuccess(true);
+            setActiveTab('login');
+          }
+        }}
+        onBack={clearOTPStep}
+      />
+    );
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,28 +100,34 @@ const Auth = () => {
       return;
     }
 
+    if (signupData.verificationMethod === 'sms' && !signupData.phoneNumber) {
+      setError('Phone number is required for SMS verification');
+      setLoading(false);
+      return;
+    }
+
     const { error } = await signUp(
       signupData.email,
       signupData.password,
       signupData.firstName,
-      signupData.lastName
+      signupData.lastName,
+      signupData.phoneNumber,
+      signupData.verificationMethod
     );
     
     if (error) {
       setError(error.message);
     } else {
-      setSignupSuccess(true);
-      setError('');
-      // Clear the form
+      // Clear the form if OTP step is initiated
       setSignupData({
         email: '',
         password: '',
         firstName: '',
         lastName: '',
+        phoneNumber: '',
         confirmPassword: '',
+        verificationMethod: 'email',
       });
-      // Switch to login tab after successful signup
-      setActiveTab('login');
     }
     
     setLoading(false);
@@ -142,9 +174,8 @@ const Auth = () => {
                     <CheckCircle className="h-4 w-4" />
                     <AlertDescription className="text-green-800">
                       <div className="space-y-2">
-                        <p className="font-medium">Account created successfully!</p>
-                        <p>We've sent a verification link to your email address. Please check your inbox and click the link to verify your account before signing in.</p>
-                        <p className="text-sm">Don't forget to check your spam folder if you don't see the email.</p>
+                        <p className="font-medium">Account verification completed!</p>
+                        <p>You can now sign in to your account using your email and password.</p>
                       </div>
                     </AlertDescription>
                   </Alert>
@@ -189,7 +220,7 @@ const Auth = () => {
                       {loading ? 'Signing In...' : 'Sign In'}
                     </Button>
                     <p className="text-xs text-gray-500 text-center">
-                      Make sure you've verified your email address before signing in.
+                      You'll receive a verification code via email to complete your sign-in.
                     </p>
                   </form>
                 </TabsContent>
@@ -227,6 +258,44 @@ const Auth = () => {
                         required
                       />
                     </div>
+                    <div>
+                      <Label>Verification Method</Label>
+                      <RadioGroup
+                        value={signupData.verificationMethod}
+                        onValueChange={(value: 'email' | 'sms') => 
+                          setSignupData({...signupData, verificationMethod: value})
+                        }
+                        className="flex space-x-6 mt-2"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="email" id="email" />
+                          <Label htmlFor="email" className="flex items-center space-x-2 cursor-pointer">
+                            <Mail className="h-4 w-4" />
+                            <span>Email</span>
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="sms" id="sms" />
+                          <Label htmlFor="sms" className="flex items-center space-x-2 cursor-pointer">
+                            <Smartphone className="h-4 w-4" />
+                            <span>SMS</span>
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                    {signupData.verificationMethod === 'sms' && (
+                      <div>
+                        <Label htmlFor="phone-number">Phone Number</Label>
+                        <Input
+                          id="phone-number"
+                          type="tel"
+                          value={signupData.phoneNumber}
+                          onChange={(e) => setSignupData({...signupData, phoneNumber: e.target.value})}
+                          placeholder="+1234567890"
+                          required
+                        />
+                      </div>
+                    )}
                     <div>
                       <Label htmlFor="signup-password">Password (min. 8 characters)</Label>
                       <div className="relative">
@@ -266,7 +335,7 @@ const Auth = () => {
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                       <p className="text-xs text-blue-700">
                         <Mail className="h-3 w-3 inline mr-1" />
-                        After creating your account, you'll receive a verification email. You must verify your email before you can sign in.
+                        You'll receive a verification code via {signupData.verificationMethod} to complete your registration.
                       </p>
                     </div>
                   </form>

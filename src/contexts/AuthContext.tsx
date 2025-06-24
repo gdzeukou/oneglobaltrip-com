@@ -9,10 +9,20 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isEmailVerified: boolean;
-  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
+  otpStep: {
+    isRequired: boolean;
+    email: string;
+    purpose: 'signup' | 'signin';
+    method: 'email' | 'sms';
+    phoneNumber?: string;
+  } | null;
+  signUp: (email: string, password: string, firstName?: string, lastName?: string, phoneNumber?: string, verificationMethod?: 'email' | 'sms') => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resendVerification: () => Promise<{ error: any }>;
+  sendOTP: (email: string, method: 'email' | 'sms', purpose: 'signup' | 'signin', phoneNumber?: string) => Promise<{ error: any }>;
+  verifyOTP: (email: string, code: string, purpose: 'signup' | 'signin') => Promise<{ error: any }>;
+  clearOTPStep: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -29,6 +39,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [otpStep, setOTPStep] = useState<{
+    isRequired: boolean;
+    email: string;
+    purpose: 'signup' | 'signin';
+    method: 'email' | 'sms';
+    phoneNumber?: string;
+  } | null>(null);
 
   const isEmailVerified = user?.email_confirmed_at ? true : false;
 
@@ -40,6 +57,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Clear OTP step on successful auth
+        if (event === 'SIGNED_IN' && session?.user) {
+          setOTPStep(null);
+        }
       }
     );
 
@@ -53,7 +75,107 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
+  const sendOTP = async (email: string, method: 'email' | 'sms', purpose: 'signup' | 'signin', phoneNumber?: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-otp', {
+        body: {
+          email,
+          method,
+          purpose,
+          phoneNumber
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        setOTPStep({
+          isRequired: true,
+          email,
+          purpose,
+          method,
+          phoneNumber
+        });
+      }
+
+      return { error: data?.error ? { message: data.error } : null };
+    } catch (error: any) {
+      console.error('Send OTP error:', error);
+      return { error: { message: error.message || 'Failed to send verification code' } };
+    }
+  };
+
+  const verifyOTP = async (email: string, code: string, purpose: 'signup' | 'signin') => {
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-otp', {
+        body: {
+          email,
+          code,
+          purpose
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        if (purpose === 'signup') {
+          // For signup, we can now actually create the user account
+          const pendingSignup = localStorage.getItem('pendingSignup');
+          if (pendingSignup) {
+            const signupData = JSON.parse(pendingSignup);
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+              email: signupData.email,
+              password: signupData.password,
+              options: {
+                data: {
+                  first_name: signupData.firstName,
+                  last_name: signupData.lastName,
+                  phone_number: signupData.phoneNumber
+                }
+              }
+            });
+
+            localStorage.removeItem('pendingSignup');
+            
+            if (authError) {
+              return { error: authError };
+            }
+          }
+        } else {
+          // For signin, we can now actually sign in the user
+          const pendingSignin = localStorage.getItem('pendingSignin');
+          if (pendingSignin) {
+            const signinData = JSON.parse(pendingSignin);
+            const { error: authError } = await supabase.auth.signInWithPassword({
+              email: signinData.email,
+              password: signinData.password
+            });
+
+            localStorage.removeItem('pendingSignin');
+            
+            if (authError) {
+              return { error: authError };
+            }
+          }
+        }
+        
+        setOTPStep(null);
+      }
+
+      return { error: data?.error ? { message: data.error } : null };
+    } catch (error: any) {
+      console.error('Verify OTP error:', error);
+      return { error: { message: error.message || 'Verification failed' } };
+    }
+  };
+
+  const clearOTPStep = () => {
+    setOTPStep(null);
+    localStorage.removeItem('pendingSignup');
+    localStorage.removeItem('pendingSignin');
+  };
+
+  const signUp = async (email: string, password: string, firstName?: string, lastName?: string, phoneNumber?: string, verificationMethod: 'email' | 'sms' = 'email') => {
     // Validate inputs
     if (!validateEmail(email)) {
       return { error: { message: 'Please enter a valid email address' } };
@@ -63,30 +185,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { error: { message: 'Password must be at least 8 characters long' } };
     }
 
+    if (verificationMethod === 'sms' && !phoneNumber) {
+      return { error: { message: 'Phone number is required for SMS verification' } };
+    }
+
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      
-      const { error, data } = await supabase.auth.signUp({
+      // Store signup data for after OTP verification
+      localStorage.setItem('pendingSignup', JSON.stringify({
         email: email.toLowerCase().trim(),
         password,
-        options: {
-          emailRedirectTo: redirectUrl,
-          data: {
-            first_name: firstName?.trim(),
-            last_name: lastName?.trim(),
-          }
-        }
-      });
+        firstName: firstName?.trim(),
+        lastName: lastName?.trim(),
+        phoneNumber: phoneNumber?.trim()
+      }));
 
-      // If signup was successful, immediately sign out the user
-      // This prevents the confusing state where they're logged in but unverified
-      if (!error && data.user) {
-        console.log('Signup successful, signing out user to enforce email verification');
-        await supabase.auth.signOut();
-      }
-
-      return { error };
+      // Send OTP instead of creating account immediately
+      return await sendOTP(email.toLowerCase().trim(), verificationMethod, 'signup', phoneNumber?.trim());
     } catch (error) {
+      localStorage.removeItem('pendingSignup');
       return { error: { message: 'An unexpected error occurred during sign up' } };
     }
   };
@@ -102,36 +218,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
-      const { error, data } = await supabase.auth.signInWithPassword({
+      // Store signin data for after OTP verification
+      localStorage.setItem('pendingSignin', JSON.stringify({
         email: email.toLowerCase().trim(),
-        password,
-      });
+        password
+      }));
 
-      // Check for specific email verification errors
-      if (error) {
-        console.log('Sign in error:', error);
-        
-        // Handle different types of authentication errors
-        if (error.message.includes('Email not confirmed') || 
-            error.message.includes('email_not_confirmed') ||
-            error.message.includes('signup_disabled')) {
-          return { error: { message: 'Please verify your email address before signing in. Check your inbox for a verification link.' } };
-        }
-        
-        if (error.message.includes('Invalid login credentials')) {
-          return { error: { message: 'Invalid email or password. Please check your credentials and try again.' } };
-        }
-      }
-
-      // If sign in was successful but email is not verified, sign them out
-      if (!error && data.user && !data.user.email_confirmed_at) {
-        console.log('User signed in but email not verified, signing out');
-        await supabase.auth.signOut();
-        return { error: { message: 'Please verify your email address before signing in. Check your inbox for a verification link.' } };
-      }
-
-      return { error };
+      // Send OTP instead of signing in immediately
+      return await sendOTP(email.toLowerCase().trim(), 'email', 'signin');
     } catch (error) {
+      localStorage.removeItem('pendingSignin');
       return { error: { message: 'An unexpected error occurred during sign in' } };
     }
   };
@@ -139,6 +235,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
+      setOTPStep(null);
+      localStorage.removeItem('pendingSignup');
+      localStorage.removeItem('pendingSignin');
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -168,10 +267,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     loading,
     isEmailVerified,
+    otpStep,
     signUp,
     signIn,
     signOut,
     resendVerification,
+    sendOTP,
+    verifyOTP,
+    clearOTPStep,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

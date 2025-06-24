@@ -609,6 +609,51 @@ export type Database = {
         }
         Relationships: []
       }
+      otp_codes: {
+        Row: {
+          attempts: number
+          code: string
+          created_at: string
+          expires_at: string
+          id: string
+          is_used: boolean
+          max_attempts: number
+          phone_number: string | null
+          purpose: string
+          user_email: string
+          verification_method: string
+          verified_at: string | null
+        }
+        Insert: {
+          attempts?: number
+          code: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          max_attempts?: number
+          phone_number?: string | null
+          purpose: string
+          user_email: string
+          verification_method: string
+          verified_at?: string | null
+        }
+        Update: {
+          attempts?: number
+          code?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_used?: boolean
+          max_attempts?: number
+          phone_number?: string | null
+          purpose?: string
+          user_email?: string
+          verification_method?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -620,6 +665,7 @@ export type Database = {
           passport_expiry: string | null
           passport_number: string | null
           phone: string | null
+          phone_number: string | null
           updated_at: string
         }
         Insert: {
@@ -632,6 +678,7 @@ export type Database = {
           passport_expiry?: string | null
           passport_number?: string | null
           phone?: string | null
+          phone_number?: string | null
           updated_at?: string
         }
         Update: {
@@ -644,6 +691,7 @@ export type Database = {
           passport_expiry?: string | null
           passport_number?: string | null
           phone?: string | null
+          phone_number?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -884,6 +932,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_otp_rate_limit: {
+        Args: {
+          _email: string
+          _max_codes?: number
+          _time_window_minutes?: number
+        }
+        Returns: boolean
+      }
       check_submission_rate_limit: {
         Args: {
           _ip_address: string
@@ -892,6 +948,14 @@ export type Database = {
           _time_window_minutes?: number
         }
         Returns: boolean
+      }
+      cleanup_expired_otp_codes: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      generate_otp_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       is_admin: {
         Args: Record<PropertyKey, never>
