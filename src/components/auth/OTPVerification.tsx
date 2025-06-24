@@ -1,12 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { Mail, Smartphone, RefreshCw, Clock, CheckCircle, AlertCircle } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Mail, Smartphone, ArrowLeft, RefreshCw } from 'lucide-react';
 
 interface OTPVerificationProps {
   email: string;
@@ -17,47 +16,44 @@ interface OTPVerificationProps {
   onBack: () => void;
 }
 
-const OTPVerification: React.FC<OTPVerificationProps> = ({
-  email,
-  purpose,
-  method,
-  phoneNumber,
-  onVerificationSuccess,
-  onBack
-}) => {
-  const navigate = useNavigate();
-  const { verifyOTP, sendOTP } = useAuth();
-  const [code, setCode] = useState('');
+const OTPVerification = ({ 
+  email, 
+  purpose, 
+  method, 
+  phoneNumber, 
+  onVerificationSuccess, 
+  onBack 
+}: OTPVerificationProps) => {
+  const { verifyOTP, resendOTP } = useAuth();
+  const [otp, setOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [resendCooldown, setResendCooldown] = useState(0);
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
 
   useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [timeLeft]);
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 0) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
-  useEffect(() => {
-    if (resendCooldown > 0) {
-      const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [resendCooldown]);
+    return () => clearInterval(timer);
+  }, []);
 
   const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
   const handleVerify = async () => {
-    if (code.length !== 6) {
-      setError('Please enter a 6-digit verification code');
+    if (otp.length !== 6) {
+      setError('Please enter the complete 6-digit code');
       return;
     }
 
@@ -65,26 +61,14 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
     setError('');
 
     try {
-      console.log('Verifying OTP code...');
-      const { error } = await verifyOTP(email, code, purpose);
-
+      const { error } = await verifyOTP(email, otp, purpose);
+      
       if (error) {
         setError(error.message);
       } else {
-        setSuccess('Verification successful! Redirecting...');
-        console.log('OTP verification successful, calling onVerificationSuccess');
-        
-        // Call the success callback
         onVerificationSuccess();
-        
-        // Navigate to dashboard after a short delay
-        setTimeout(() => {
-          console.log('Navigating to dashboard...');
-          navigate('/dashboard', { replace: true });
-        }, 1000);
       }
     } catch (error: any) {
-      console.error('OTP verification error:', error);
       setError(error.message || 'Verification failed');
     } finally {
       setIsVerifying(false);
@@ -92,154 +76,117 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
   };
 
   const handleResend = async () => {
-    if (resendCooldown > 0) return;
-
     setIsResending(true);
     setError('');
-    setSuccess('');
 
     try {
-      const { error } = await sendOTP(email, method, purpose, phoneNumber);
-
+      const { error } = await resendOTP(email, method, purpose, phoneNumber);
+      
       if (error) {
         setError(error.message);
       } else {
-        setSuccess('New verification code sent!');
-        setResendCooldown(60);
-        setTimeLeft(600);
-        setCode('');
+        setTimeLeft(600); // Reset timer
+        setOtp(''); // Clear current OTP
       }
     } catch (error: any) {
-      console.error('Resend OTP error:', error);
       setError(error.message || 'Failed to resend code');
     } finally {
       setIsResending(false);
     }
   };
 
-  const actionText = purpose === 'signup' ? 'complete your registration' : 'sign in';
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <Card className="max-w-md w-full">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="relative">
-              {method === 'email' ? (
-                <Mail className="h-12 w-12 text-blue-600" />
-              ) : (
-                <Smartphone className="h-12 w-12 text-blue-600" />
-              )}
-              <div className="absolute -top-1 -right-1 bg-yellow-500 rounded-full p-1">
-                <Clock className="h-3 w-3 text-white" />
-              </div>
-            </div>
+          <div className="mx-auto mb-4 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+            {method === 'email' ? (
+              <Mail className="h-6 w-6 text-blue-600" />
+            ) : (
+              <Smartphone className="h-6 w-6 text-blue-600" />
+            )}
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">
             Enter Verification Code
           </CardTitle>
           <p className="text-gray-600">
-            We've sent a 6-digit code to {method === 'email' ? email : phoneNumber} to {actionText}
+            We've sent a 6-digit code to {method === 'email' ? email : phoneNumber}
           </p>
         </CardHeader>
         
         <CardContent className="space-y-6">
-          <div className="flex justify-center">
-            <InputOTP
-              maxLength={6}
-              value={code}
-              onChange={(value) => {
-                setCode(value);
-                setError('');
-              }}
-            >
-              <InputOTPGroup>
-                <InputOTPSlot index={0} />
-                <InputOTPSlot index={1} />
-                <InputOTPSlot index={2} />
-                <InputOTPSlot index={3} />
-                <InputOTPSlot index={4} />
-                <InputOTPSlot index={5} />
-              </InputOTPGroup>
-            </InputOTP>
-          </div>
+          <div className="space-y-4">
+            <div className="flex justify-center">
+              <InputOTP
+                maxLength={6}
+                value={otp}
+                onChange={setOtp}
+                onComplete={handleVerify}
+              >
+                <InputOTPGroup>
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
 
-          <div className="text-center">
-            <p className="text-sm text-gray-500 mb-2">
-              Code expires in: <span className="font-medium text-red-600">{formatTime(timeLeft)}</span>
-            </p>
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Code expires in <span className="font-mono font-semibold">{formatTime(timeLeft)}</span>
+              </p>
+            </div>
           </div>
 
           {error && (
             <Alert className="border-red-200 bg-red-50">
-              <AlertCircle className="h-4 w-4" />
               <AlertDescription className="text-red-800">
                 {error}
               </AlertDescription>
             </Alert>
           )}
 
-          {success && (
-            <Alert className="border-green-200 bg-green-50">
-              <CheckCircle className="h-4 w-4" />
-              <AlertDescription className="text-green-800">
-                {success}
-              </AlertDescription>
-            </Alert>
-          )}
-
           <div className="space-y-3">
-            <Button
-              onClick={handleVerify}
-              disabled={isVerifying || code.length !== 6}
+            <Button 
+              onClick={handleVerify} 
+              disabled={isVerifying || otp.length !== 6}
               className="w-full"
             >
-              {isVerifying ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Verifying...
-                </>
-              ) : (
-                'Verify Code'
-              )}
+              {isVerifying ? 'Verifying...' : 'Verify Code'}
             </Button>
 
-            <Button
-              onClick={handleResend}
-              disabled={isResending || resendCooldown > 0}
-              variant="outline"
-              className="w-full"
-            >
-              {isResending ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Sending...
-                </>
-              ) : resendCooldown > 0 ? (
-                <>
-                  <Clock className="h-4 w-4 mr-2" />
-                  Resend in {resendCooldown}s
-                </>
-              ) : (
-                <>
-                  {method === 'email' ? <Mail className="h-4 w-4 mr-2" /> : <Smartphone className="h-4 w-4 mr-2" />}
-                  Resend Code
-                </>
-              )}
-            </Button>
+            <div className="flex justify-between items-center">
+              <Button
+                variant="ghost"
+                onClick={onBack}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
 
-            <Button
-              onClick={onBack}
-              variant="ghost"
-              className="w-full"
-            >
-              Back to {purpose === 'signup' ? 'Sign Up' : 'Sign In'}
-            </Button>
+              <Button
+                variant="ghost"
+                onClick={handleResend}
+                disabled={isResending || timeLeft > 540} // Allow resend after 1 minute
+                className="flex items-center gap-2"
+              >
+                {isResending ? (
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+                Resend Code
+              </Button>
+            </div>
           </div>
 
-          <div className="text-center pt-4 border-t">
+          <div className="text-center pt-4">
             <p className="text-xs text-gray-500">
-              Didn't receive the code? Check your {method === 'email' ? 'spam folder' : 'messages'} or try resending.
+              Having trouble? Make sure to check your spam folder or contact our One Global Trip support team.
             </p>
           </div>
         </CardContent>

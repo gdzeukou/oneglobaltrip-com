@@ -123,7 +123,7 @@ const Auth = () => {
       <Card className="max-w-md w-full">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-gray-900">
-            Welcome to Travel App
+            Welcome to One Global Trip
           </CardTitle>
           <p className="text-gray-600">
             Sign in to your account or create a new one

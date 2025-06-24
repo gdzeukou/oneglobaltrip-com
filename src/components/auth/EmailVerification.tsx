@@ -1,45 +1,36 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Mail, RefreshCw, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Mail, RefreshCw, CheckCircle } from 'lucide-react';
 
 const EmailVerification = () => {
-  const { user, resendVerification, signOut } = useAuth();
+  const { user, resendVerificationEmail, signOut } = useAuth();
   const [isResending, setIsResending] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [resendCooldown, setResendCooldown] = useState(0);
 
-  // Cooldown timer for resend button
-  useEffect(() => {
-    if (resendCooldown > 0) {
-      const timer = setTimeout(() => {
-        setResendCooldown(prev => prev - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [resendCooldown]);
-
-  const handleResendVerification = async () => {
-    if (resendCooldown > 0) return;
+  const handleResendEmail = async () => {
+    if (!user?.email) return;
     
     setIsResending(true);
-    setMessage('');
     setError('');
+    setMessage('');
 
-    const { error } = await resendVerification();
-    
-    if (error) {
-      setError(error.message);
-    } else {
-      setMessage('Verification email sent successfully! Please check your inbox and spam folder.');
-      setResendCooldown(60); // 60 second cooldown
+    try {
+      const { error } = await resendVerificationEmail();
+      if (error) {
+        setError(error.message);
+      } else {
+        setMessage('Verification email sent! Please check your inbox.');
+      }
+    } catch (error: any) {
+      setError(error.message || 'Failed to resend verification email');
+    } finally {
+      setIsResending(false);
     }
-    
-    setIsResending(false);
   };
 
   const handleSignOut = async () => {
@@ -50,51 +41,27 @@ const EmailVerification = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <Card className="max-w-md w-full">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="relative">
-              <Mail className="h-12 w-12 text-blue-600" />
-              <div className="absolute -top-1 -right-1 bg-yellow-500 rounded-full p-1">
-                <Clock className="h-3 w-3 text-white" />
-              </div>
-            </div>
+          <div className="mx-auto mb-4 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+            <Mail className="h-6 w-6 text-blue-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">
-            Verify Your Email Address
+            Verify Your Email
           </CardTitle>
           <p className="text-gray-600">
-            We've sent a verification link to <span className="font-medium">{user?.email}</span>
+            We've sent a verification link to your email address
           </p>
         </CardHeader>
+        
         <CardContent className="space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex items-start space-x-3">
-              <CheckCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <h3 className="font-medium text-blue-900">Check your email</h3>
-                <p className="text-sm text-blue-700 mt-1">
-                  Click the verification link in your email to activate your account. 
-                  The link will redirect you back to this site once verified.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-              <div>
-                <h3 className="font-medium text-yellow-900">Don't see the email?</h3>
-                <ul className="text-sm text-yellow-700 mt-1 space-y-1">
-                  <li>• Check your spam or junk folder</li>
-                  <li>• Make sure {user?.email} is correct</li>
-                  <li>• Wait a few minutes for delivery</li>
-                </ul>
-              </div>
-            </div>
+          <div className="text-center">
+            <p className="text-sm text-gray-600 mb-4">
+              Please check your email <strong>{user?.email}</strong> and click the verification link to activate your One Global Trip account.
+            </p>
           </div>
 
           {message && (
             <Alert className="border-green-200 bg-green-50">
+              <CheckCircle className="h-4 w-4 text-green-600" />
               <AlertDescription className="text-green-800">
                 {message}
               </AlertDescription>
@@ -110,9 +77,9 @@ const EmailVerification = () => {
           )}
 
           <div className="space-y-3">
-            <Button
-              onClick={handleResendVerification}
-              disabled={isResending || resendCooldown > 0}
+            <Button 
+              onClick={handleResendEmail} 
+              disabled={isResending}
               className="w-full"
               variant="outline"
             >
@@ -120,11 +87,6 @@ const EmailVerification = () => {
                 <>
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                   Sending...
-                </>
-              ) : resendCooldown > 0 ? (
-                <>
-                  <Clock className="h-4 w-4 mr-2" />
-                  Resend in {resendCooldown}s
                 </>
               ) : (
                 <>
@@ -134,21 +96,18 @@ const EmailVerification = () => {
               )}
             </Button>
 
-            <Button
+            <Button 
               onClick={handleSignOut}
-              variant="ghost"
               className="w-full"
+              variant="ghost"
             >
-              Use Different Email Address
+              Sign Out
             </Button>
           </div>
 
-          <div className="text-center pt-4 border-t">
+          <div className="text-center pt-4">
             <p className="text-xs text-gray-500">
-              Having trouble? Contact our support team for assistance.
-            </p>
-            <p className="text-xs text-gray-400 mt-1">
-              After verification, you'll be able to access your dashboard and all features.
+              Having trouble? Check your spam folder or contact our support team.
             </p>
           </div>
         </CardContent>
