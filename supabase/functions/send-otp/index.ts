@@ -186,8 +186,65 @@ const handler = async (req: Request): Promise<Response> => {
         throw new Error('Failed to send verification email');
       }
     } else if (method === 'sms') {
-      // TODO: Implement SMS sending with Twilio or similar service
-      console.log(`SMS OTP would be sent to ${phoneNumber}: ${otpCode}`);
+      if (!phoneNumber) {
+        throw new Error('Phone number is required for SMS verification');
+      }
+
+      // Get Twilio credentials from Supabase secrets
+      const twilioSecret = Deno.env.get("twilio");
+      if (!twilioSecret) {
+        console.error('Twilio credentials not found in environment');
+        throw new Error('SMS service is not configured');
+      }
+
+      let twilioConfig;
+      try {
+        twilioConfig = JSON.parse(twilioSecret);
+      } catch (parseError) {
+        console.error('Failed to parse Twilio configuration:', parseError);
+        throw new Error('SMS service configuration error');
+      }
+
+      const { accountSid, authToken, fromNumber } = twilioConfig;
+
+      if (!accountSid || !authToken || !fromNumber) {
+        console.error('Missing Twilio configuration fields');
+        throw new Error('SMS service is not properly configured');
+      }
+
+      // Send SMS using Twilio REST API
+      const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+      const credentials = btoa(`${accountSid}:${authToken}`);
+
+      const messageBody = `Your One Global Trip verification code is: ${otpCode}. This code expires in 10 minutes.`;
+
+      try {
+        const response = await fetch(twilioUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Basic ${credentials}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            To: phoneNumber,
+            From: fromNumber,
+            Body: messageBody,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          console.error('Twilio API error:', response.status, errorData);
+          throw new Error(`Failed to send SMS: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log(`SMS sent successfully to ${phoneNumber}, SID: ${result.sid}`);
+        
+      } catch (smsError) {
+        console.error('SMS sending error:', smsError);
+        throw new Error('Failed to send SMS verification code');
+      }
     }
 
     return new Response(
