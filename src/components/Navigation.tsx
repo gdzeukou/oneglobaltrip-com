@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,54 +25,68 @@ const Navigation = () => {
     }
   };
 
+  const getUserInitials = () => {
+    if (user?.email) {
+      return user.email.charAt(0).toUpperCase();
+    }
+    return 'U';
+  };
+
+  const getUserDisplayName = () => {
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    return 'User';
+  };
+
   return (
-    <nav className="bg-white shadow-lg fixed w-full top-0 z-[9999] border-b border-gray-200">
+    <nav className="bg-white/95 backdrop-blur-lg shadow-lg fixed w-full top-0 z-[9999] border-b border-gray-200/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-blue-900">One Global Trip</span>
+              <span className="text-xl font-bold gradient-text-primary">One Global Trip</span>
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             <Link
               to="/"
-              className={`px-3 py-2 text-sm font-medium transition-colors ${
+              className={`px-3 py-2 text-sm font-medium transition-all duration-200 ${
                 isActive('/') 
                   ? 'text-blue-900 border-b-2 border-blue-900' 
-                  : 'text-gray-700 hover:text-blue-900'
+                  : 'text-gray-700 hover:text-blue-900 hover:scale-105'
               }`}
             >
               Home
             </Link>
             <Link
               to="/packages"
-              className={`px-3 py-2 text-sm font-medium transition-colors ${
+              className={`px-3 py-2 text-sm font-medium transition-all duration-200 ${
                 isActive('/packages') 
                   ? 'text-blue-900 border-b-2 border-blue-900' 
-                  : 'text-gray-700 hover:text-blue-900'
+                  : 'text-gray-700 hover:text-blue-900 hover:scale-105'
               }`}
             >
               Packages
             </Link>
             <Link
               to="/visas"
-              className={`px-3 py-2 text-sm font-medium transition-colors ${
+              className={`px-3 py-2 text-sm font-medium transition-all duration-200 ${
                 isActive('/visas') 
                   ? 'text-blue-900 border-b-2 border-blue-900' 
-                  : 'text-gray-700 hover:text-blue-900'
+                  : 'text-gray-700 hover:text-blue-900 hover:scale-105'
               }`}
             >
               Visas
             </Link>
             <Link
               to="/get-started"
-              className={`px-3 py-2 text-sm font-medium transition-colors ${
+              className={`px-3 py-2 text-sm font-medium transition-all duration-200 ${
                 isActive('/get-started') 
                   ? 'text-blue-900 border-b-2 border-blue-900' 
-                  : 'text-gray-700 hover:text-blue-900'
+                  : 'text-gray-700 hover:text-blue-900 hover:scale-105'
               }`}
             >
               Get Started
@@ -78,30 +94,41 @@ const Navigation = () => {
 
             {/* Authentication Section */}
             {user ? (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
                 <Link
                   to="/dashboard"
-                  className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900"
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                    isActive('/dashboard')
+                      ? 'bg-blue-900 text-white shadow-lg'
+                      : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
+                  }`}
                 >
-                  <User className="h-4 w-4" />
-                  <span>{user.email?.split('@')[0]}</span>
+                  <Avatar className="h-6 w-6">
+                    <AvatarFallback className="bg-blue-600 text-white text-xs">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span>{getUserDisplayName()}</span>
                 </Link>
-                <button
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={handleSignOut}
-                  className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-900"
+                  className="text-gray-700 hover:text-blue-900 hover:bg-blue-50 transition-all duration-200"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span>Sign Out</span>
-                </button>
+                </Button>
               </div>
             ) : (
-              <Link
-                to="/auth"
-                className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-900"
+              <Button
+                asChild
+                className="bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
               >
-                <User className="h-4 w-4" />
-                <span>Sign In</span>
-              </Link>
+                <Link to="/auth">
+                  <User className="h-4 w-4 mr-2" />
+                  Sign In
+                </Link>
+              </Button>
             )}
           </div>
 
@@ -109,7 +136,7 @@ const Navigation = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-blue-900 focus:outline-none relative z-[10000]"
+              className="text-gray-700 hover:text-blue-900 focus:outline-none relative z-[10000] transition-colors duration-200"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -119,11 +146,11 @@ const Navigation = () => {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg relative z-[9998]">
+        <div className="md:hidden bg-white/95 backdrop-blur-lg border-t border-gray-200/50 shadow-lg relative z-[9998]">
           <div className="px-2 pt-2 pb-3 space-y-1">
             <Link
               to="/"
-              className={`block px-3 py-2 text-base font-medium ${
+              className={`block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200 ${
                 isActive('/') 
                   ? 'text-blue-900 bg-blue-50' 
                   : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
@@ -134,7 +161,7 @@ const Navigation = () => {
             </Link>
             <Link
               to="/packages"
-              className={`block px-3 py-2 text-base font-medium ${
+              className={`block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200 ${
                 isActive('/packages') 
                   ? 'text-blue-900 bg-blue-50' 
                   : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
@@ -145,7 +172,7 @@ const Navigation = () => {
             </Link>
             <Link
               to="/visas"
-              className={`block px-3 py-2 text-base font-medium ${
+              className={`block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200 ${
                 isActive('/visas') 
                   ? 'text-blue-900 bg-blue-50' 
                   : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
@@ -156,7 +183,7 @@ const Navigation = () => {
             </Link>
             <Link
               to="/get-started"
-              className={`block px-3 py-2 text-base font-medium ${
+              className={`block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200 ${
                 isActive('/get-started') 
                   ? 'text-blue-900 bg-blue-50' 
                   : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
@@ -168,32 +195,41 @@ const Navigation = () => {
 
             {/* Mobile Authentication */}
             {user ? (
-              <>
+              <div className="pt-4 border-t border-gray-200/50 mt-4">
                 <Link
                   to="/dashboard"
-                  className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-gray-50"
+                  className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
                   onClick={() => setIsOpen(false)}
                 >
-                  Dashboard ({user.email?.split('@')[0]})
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-blue-600 text-white text-sm">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span>Dashboard ({getUserDisplayName()})</span>
                 </Link>
                 <button
                   onClick={() => {
                     handleSignOut();
                     setIsOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-gray-50"
+                  className="flex items-center space-x-3 w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-red-50 rounded-lg transition-all duration-200"
                 >
-                  Sign Out
+                  <LogOut className="h-5 w-5" />
+                  <span>Sign Out</span>
                 </button>
-              </>
+              </div>
             ) : (
-              <Link
-                to="/auth"
-                className="block px-3 py-2 text-base font-medium text-blue-600 hover:text-blue-900 hover:bg-blue-50"
-                onClick={() => setIsOpen(false)}
-              >
-                Sign In / Sign Up
-              </Link>
+              <div className="pt-4 border-t border-gray-200/50 mt-4">
+                <Link
+                  to="/auth"
+                  className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <User className="h-5 w-5" />
+                  <span>Sign In / Sign Up</span>
+                </Link>
+              </div>
             )}
           </div>
         </div>

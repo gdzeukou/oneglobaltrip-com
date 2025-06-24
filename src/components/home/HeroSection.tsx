@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Plane, Building, MapPin, FileText } from 'lucide-react';
+import { ArrowRight, Plane, Building, MapPin, FileText, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import OptimizedImage from '@/components/ui/optimized-image';
@@ -40,53 +39,69 @@ const HeroSection = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-20 text-center">
         <div className="animate-fade-in">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 hero-text">
-            Your Gateway to the World
-            <span className="block text-yellow-500 animate-float">Starts Here</span>
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto animate-slide-up">
-            From quick getaways to permanent moves - we handle visas, flights, and accommodations 
-            so you can focus on your journey ahead
-          </p>
+          {user ? (
+            <>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 hero-text">
+                Welcome Back to Your
+                <span className="block text-yellow-500 animate-float">Travel Dashboard</span>
+              </h1>
+              <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto animate-slide-up">
+                Continue planning your journey or explore new destinations. 
+                Your personalized travel experience awaits.
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 hero-text">
+                Your Gateway to the World
+                <span className="block text-yellow-500 animate-float">Starts Here</span>
+              </h1>
+              <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto animate-slide-up">
+                From quick getaways to permanent moves - we handle visas, flights, and accommodations 
+                so you can focus on your journey ahead
+              </p>
+            </>
+          )}
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-scale-in">
           {user ? (
-            // Signed-in user buttons
+            // Signed-in user buttons with updated styling
             <>
               <Button 
                 size="lg"
-                className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold hover-lift pulse-glow"
+                className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold text-lg px-8 py-3 hover-lift pulse-glow shadow-xl"
+                asChild
+              >
+                <Link to="/dashboard">
+                  <User className="h-5 w-5 mr-2" />
+                  My Dashboard
+                </Link>
+              </Button>
+              <Button 
+                size="lg"
+                className="bg-white/10 backdrop-blur-sm text-white border-2 border-yellow-400 hover:bg-yellow-400 hover:text-blue-900 transition-all duration-300 hover-lift font-bold text-lg px-8 py-3 shadow-xl"
                 asChild
               >
                 <Link to="/packages">
                   <MapPin className="h-5 w-5 mr-2" />
-                  Destinations
+                  Browse Destinations
                 </Link>
               </Button>
               <Button 
                 size="lg"
-                className="bg-white/10 text-white border-2 border-yellow-400 hover:bg-yellow-400 hover:text-blue-900 transition-all duration-200 hover-lift"
+                className="bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 hover:bg-white hover:text-blue-900 transition-all duration-300 hover-lift font-bold text-lg px-8 py-3 shadow-xl"
                 asChild
               >
                 <Link to="/visas">
                   <FileText className="h-5 w-5 mr-2" />
-                  All Visas
-                </Link>
-              </Button>
-              <Button 
-                size="lg"
-                className="bg-white/10 text-white border-2 border-yellow-400 hover:bg-yellow-400 hover:text-blue-900 transition-all duration-200 hover-lift"
-                asChild
-              >
-                <Link to="/packages">
-                  View All Packages
+                  Visa Services
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </Link>
               </Button>
             </>
           ) : (
-            // Non-signed-in user buttons
+            // Non-signed-in user buttons (keep existing)
             <>
               <Button 
                 size="lg"
@@ -122,29 +137,57 @@ const HeroSection = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm animate-slide-up">
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 glass hover-lift">
-            <h3 className="font-bold mb-2 flex items-center justify-center">
-              <Plane className="h-4 w-4 mr-2" />
-              Quick Tourism
-            </h3>
-            <p className="text-blue-100">90-day visas for vacation and business trips</p>
+        {user ? (
+          // Signed-in user info cards
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm animate-slide-up">
+            <div className="bg-white/15 backdrop-blur-lg rounded-xl p-6 glass hover-lift border border-white/20 shadow-2xl">
+              <h3 className="font-bold mb-3 flex items-center justify-center text-yellow-400">
+                <User className="h-5 w-5 mr-2" />
+                Personal Dashboard
+              </h3>
+              <p className="text-blue-100">Track your applications, trips, and travel documents</p>
+            </div>
+            <div className="bg-white/15 backdrop-blur-lg rounded-xl p-6 glass hover-lift border border-white/20 shadow-2xl">
+              <h3 className="font-bold mb-3 flex items-center justify-center text-yellow-400">
+                <MapPin className="h-5 w-5 mr-2" />
+                Curated Packages
+              </h3>
+              <p className="text-blue-100">Exclusive deals and personalized travel recommendations</p>
+            </div>
+            <div className="bg-white/15 backdrop-blur-lg rounded-xl p-6 glass hover-lift border border-white/20 shadow-2xl">
+              <h3 className="font-bold mb-3 flex items-center justify-center text-yellow-400">
+                <FileText className="h-5 w-5 mr-2" />
+                Priority Support
+              </h3>
+              <p className="text-blue-100">Dedicated assistance for all your travel needs</p>
+            </div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 glass hover-lift">
-            <h3 className="font-bold mb-2 flex items-center justify-center">
-              <Building className="h-4 w-4 mr-2" />
-              Work & Study
-            </h3>
-            <p className="text-blue-100">Long-term permits for career and education</p>
+        ) : (
+          // Non-signed-in user info cards (keep existing)
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm animate-slide-up">
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 glass hover-lift">
+              <h3 className="font-bold mb-2 flex items-center justify-center">
+                <Plane className="h-4 w-4 mr-2" />
+                Quick Tourism
+              </h3>
+              <p className="text-blue-100">90-day visas for vacation and business trips</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 glass hover-lift">
+              <h3 className="font-bold mb-2 flex items-center justify-center">
+                <Building className="h-4 w-4 mr-2" />
+                Work & Study
+              </h3>
+              <p className="text-blue-100">Long-term permits for career and education</p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 glass hover-lift">
+              <h3 className="font-bold mb-2 flex items-center justify-center">
+                <MapPin className="h-4 w-4 mr-2" />
+                Permanent Residency
+              </h3>
+              <p className="text-blue-100">Complete relocation support and guidance</p>
+            </div>
           </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 glass hover-lift">
-            <h3 className="font-bold mb-2 flex items-center justify-center">
-              <MapPin className="h-4 w-4 mr-2" />
-              Permanent Residency
-            </h3>
-            <p className="text-blue-100">Complete relocation support and guidance</p>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Floating elements for visual appeal */}
