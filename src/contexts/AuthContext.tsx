@@ -52,15 +52,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state change:', event, session?.user?.email_confirmed_at);
+      async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
         
         // Clear OTP step on successful auth
         if (event === 'SIGNED_IN' && session?.user) {
+          console.log('User signed in successfully, clearing OTP step');
           setOTPStep(null);
+          // Clear any pending data
+          localStorage.removeItem('pendingSignup');
+          localStorage.removeItem('pendingSignin');
+        }
+
+        if (event === 'SIGNED_OUT') {
+          setOTPStep(null);
+          localStorage.removeItem('pendingSignup');
+          localStorage.removeItem('pendingSignin');
         }
       }
     );
@@ -77,6 +87,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const sendOTP = async (email: string, method: 'email' | 'sms', purpose: 'signup' | 'signin', phoneNumber?: string) => {
     try {
+      console.log(`Sending OTP to ${email} via ${method} for ${purpose}`);
+      
       const { data, error } = await supabase.functions.invoke('send-otp', {
         body: {
           email,
@@ -86,9 +98,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Send OTP error:', error);
+        throw error;
+      }
 
       if (data?.success) {
+        console.log('OTP sent successfully');
         setOTPStep({
           isRequired: true,
           email,
@@ -107,6 +123,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const verifyOTP = async (email: string, code: string, purpose: 'signup' | 'signin') => {
     try {
+      console.log(`Verifying OTP for ${email}, purpose: ${purpose}`);
+      
       const { data, error } = await supabase.functions.invoke('verify-otp', {
         body: {
           email,
@@ -115,14 +133,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Verify OTP error:', error);
+        throw error;
+      }
 
       if (data?.success) {
+        console.log('OTP verification successful');
+        
         if (purpose === 'signup') {
-          // For signup, we can now actually create the user account
+          // For signup, create the user account
           const pendingSignup = localStorage.getItem('pendingSignup');
           if (pendingSignup) {
             const signupData = JSON.parse(pendingSignup);
+            console.log('Creating user account after OTP verification');
+            
             const { data: authData, error: authError } = await supabase.auth.signUp({
               email: signupData.email,
               password: signupData.password,
@@ -138,14 +163,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.removeItem('pendingSignup');
             
             if (authError) {
+              console.error('Signup error after OTP:', authError);
               return { error: authError };
             }
+
+            console.log('User account created successfully');
           }
         } else {
-          // For signin, we can now actually sign in the user
+          // For signin, authenticate the user
           const pendingSignin = localStorage.getItem('pendingSignin');
           if (pendingSignin) {
             const signinData = JSON.parse(pendingSignin);
+            console.log('Signing in user after OTP verification');
+            
             const { error: authError } = await supabase.auth.signInWithPassword({
               email: signinData.email,
               password: signinData.password
@@ -154,11 +184,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.removeItem('pendingSignin');
             
             if (authError) {
+              console.error('Signin error after OTP:', authError);
               return { error: authError };
             }
+
+            console.log('User signed in successfully');
           }
         }
         
+        // Clear OTP step - the auth state change will handle the rest
         setOTPStep(null);
       }
 
@@ -170,6 +204,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const clearOTPStep = () => {
+    console.log('Clearing OTP step');
     setOTPStep(null);
     localStorage.removeItem('pendingSignup');
     localStorage.removeItem('pendingSignin');
@@ -190,6 +225,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
+      console.log('Starting signup process for:', email);
+      
       // Store signup data for after OTP verification
       localStorage.setItem('pendingSignup', JSON.stringify({
         email: email.toLowerCase().trim(),
@@ -202,6 +239,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Send OTP instead of creating account immediately
       return await sendOTP(email.toLowerCase().trim(), verificationMethod, 'signup', phoneNumber?.trim());
     } catch (error) {
+      console.error('Signup error:', error);
       localStorage.removeItem('pendingSignup');
       return { error: { message: 'An unexpected error occurred during sign up' } };
     }
@@ -218,6 +256,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
+      console.log('Starting signin process for:', email);
+      
       // Store signin data for after OTP verification
       localStorage.setItem('pendingSignin', JSON.stringify({
         email: email.toLowerCase().trim(),
@@ -227,6 +267,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Send OTP instead of signing in immediately
       return await sendOTP(email.toLowerCase().trim(), 'email', 'signin');
     } catch (error) {
+      console.error('Signin error:', error);
       localStorage.removeItem('pendingSignin');
       return { error: { message: 'An unexpected error occurred during sign in' } };
     }
@@ -234,6 +275,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
+      console.log('Signing out user');
       await supabase.auth.signOut();
       setOTPStep(null);
       localStorage.removeItem('pendingSignup');

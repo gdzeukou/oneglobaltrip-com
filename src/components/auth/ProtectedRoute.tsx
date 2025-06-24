@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import EmailVerification from './EmailVerification';
 
 interface ProtectedRouteProps {
@@ -11,6 +11,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children, requireEmailVerification = true }: ProtectedRouteProps) => {
   const { user, isEmailVerified, loading, otpStep } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -22,13 +23,15 @@ const ProtectedRoute = ({ children, requireEmailVerification = true }: Protected
 
   // If OTP verification is required, redirect to auth page
   if (otpStep?.isRequired) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
+  // If no user, redirect to auth page
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
+  // If email verification is required and email is not verified, show verification component
   if (requireEmailVerification && !isEmailVerified) {
     return <EmailVerification />;
   }

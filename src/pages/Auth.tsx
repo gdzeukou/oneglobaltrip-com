@@ -1,50 +1,108 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Eye, EyeOff, LogIn, UserPlus, Mail, CheckCircle, Smartphone } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import { Eye, EyeOff, Mail, Smartphone, UserPlus, LogIn } from 'lucide-react';
 import OTPVerification from '@/components/auth/OTPVerification';
 
 const Auth = () => {
-  const { signIn, signUp, user, isEmailVerified, otpStep, verifyOTP, clearOTPStep } = useAuth();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const location = useLocation();
+  const { user, signUp, signIn, otpStep, verifyOTP, clearOTPStep } = useAuth();
+  
+  const [activeTab, setActiveTab] = useState('signin');
   const [showPassword, setShowPassword] = useState(false);
-  const [signupSuccess, setSignupSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState('login');
-
-  // Login form state
-  const [loginData, setLoginData] = useState({
-    email: '',
-    password: '',
-  });
-
-  // Signup form state
-  const [signupData, setSignupData] = useState({
+  const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  // Form states
+  const [formData, setFormData] = useState({
     email: '',
     password: '',
     firstName: '',
     lastName: '',
-    phoneNumber: '',
-    confirmPassword: '',
-    verificationMethod: 'email' as 'email' | 'sms',
+    phoneNumber: ''
   });
 
+  // Redirect authenticated users
   useEffect(() => {
-    if (user && isEmailVerified) {
-      navigate('/dashboard');
+    if (user && !otpStep?.isRequired) {
+      console.log('User is authenticated, redirecting...');
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
     }
-  }, [user, isEmailVerified, navigate]);
+  }, [user, otpStep, navigate, location]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    setError('');
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isLoading) return;
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const { error } = await signUp(
+        formData.email,
+        formData.password,
+        formData.firstName,
+        formData.lastName,
+        formData.phoneNumber,
+        verificationMethod
+      );
+
+      if (error) {
+        setError(error.message);
+      }
+    } catch (error: any) {
+      setError(error.message || 'An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isLoading) return;
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const { error } = await signIn(formData.email, formData.password);
+
+      if (error) {
+        setError(error.message);
+      }
+    } catch (error: any) {
+      setError(error.message || 'An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOTPVerificationSuccess = () => {
+    console.log('OTP verification successful, user should be redirected automatically');
+    // The AuthContext will handle the redirect through the useEffect above
+  };
+
+  const handleBackToAuth = () => {
+    clearOTPStep();
+    setError('');
+  };
 
   // Show OTP verification if required
   if (otpStep?.isRequired) {
@@ -54,299 +112,218 @@ const Auth = () => {
         purpose={otpStep.purpose}
         method={otpStep.method}
         phoneNumber={otpStep.phoneNumber}
-        onVerificationSuccess={() => {
-          clearOTPStep();
-          if (otpStep.purpose === 'signin') {
-            navigate('/dashboard');
-          } else {
-            setSignupSuccess(true);
-            setActiveTab('login');
-          }
-        }}
-        onBack={clearOTPStep}
+        onVerificationSuccess={handleOTPVerificationSuccess}
+        onBack={handleBackToAuth}
       />
     );
   }
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    const { error } = await signIn(loginData.email, loginData.password);
-    
-    if (error) {
-      setError(error.message);
-    }
-    
-    setLoading(false);
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSignupSuccess(false);
-
-    if (signupData.password !== signupData.confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
-
-    if (signupData.password.length < 8) {
-      setError('Password must be at least 8 characters long');
-      setLoading(false);
-      return;
-    }
-
-    if (signupData.verificationMethod === 'sms' && !signupData.phoneNumber) {
-      setError('Phone number is required for SMS verification');
-      setLoading(false);
-      return;
-    }
-
-    const { error } = await signUp(
-      signupData.email,
-      signupData.password,
-      signupData.firstName,
-      signupData.lastName,
-      signupData.phoneNumber,
-      signupData.verificationMethod
-    );
-    
-    if (error) {
-      setError(error.message);
-    } else {
-      // Clear the form if OTP step is initiated
-      setSignupData({
-        email: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-        phoneNumber: '',
-        confirmPassword: '',
-        verificationMethod: 'email',
-      });
-    }
-    
-    setLoading(false);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation />
-      
-      <div className="pt-24 pb-16">
-        <div className="max-w-md mx-auto px-4">
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-gray-900">
-                Access Your Account
-              </CardTitle>
-              <p className="text-gray-600">
-                Sign in to track your applications and manage your trips
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="login" className="flex items-center space-x-2">
-                    <LogIn className="h-4 w-4" />
-                    <span>Sign In</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="signup" className="flex items-center space-x-2">
-                    <UserPlus className="h-4 w-4" />
-                    <span>Sign Up</span>
-                  </TabsTrigger>
-                </TabsList>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <Card className="max-w-md w-full">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold text-gray-900">
+            Welcome to Travel App
+          </CardTitle>
+          <p className="text-gray-600">
+            Sign in to your account or create a new one
+          </p>
+        </CardHeader>
+        
+        <CardContent>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="signin" className="flex items-center gap-2">
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </TabsTrigger>
+              <TabsTrigger value="signup" className="flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Sign Up
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="signin" className="space-y-4">
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signin-email">Email</Label>
+                  <Input
+                    id="signin-email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signin-password">Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="signin-password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
 
                 {error && (
-                  <Alert className="mt-4 border-red-200 bg-red-50">
+                  <Alert className="border-red-200 bg-red-50">
                     <AlertDescription className="text-red-800">
                       {error}
                     </AlertDescription>
                   </Alert>
                 )}
 
-                {signupSuccess && (
-                  <Alert className="mt-4 border-green-200 bg-green-50">
-                    <CheckCircle className="h-4 w-4" />
-                    <AlertDescription className="text-green-800">
-                      <div className="space-y-2">
-                        <p className="font-medium">Account verification completed!</p>
-                        <p>You can now sign in to your account using your email and password.</p>
-                      </div>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? 'Signing In...' : 'Sign In'}
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="signup" className="space-y-4">
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      name="firstName"
+                      placeholder="John"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      name="lastName"
+                      placeholder="Doe"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input
+                    id="signup-email"
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="signup-password"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Create a password (min. 8 characters)"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                      minLength={8}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Verification Method</Label>
+                  <RadioGroup
+                    value={verificationMethod}
+                    onValueChange={(value: 'email' | 'sms') => setVerificationMethod(value)}
+                    className="flex flex-col space-y-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="email" id="email" />
+                      <Label htmlFor="email" className="flex items-center gap-2 cursor-pointer">
+                        <Mail className="h-4 w-4" />
+                        Email Verification
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="sms" id="sms" />
+                      <Label htmlFor="sms" className="flex items-center gap-2 cursor-pointer">
+                        <Smartphone className="h-4 w-4" />
+                        SMS Verification
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {verificationMethod === 'sms' && (
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <Input
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      type="tel"
+                      placeholder="+1 (555) 123-4567"
+                      value={formData.phoneNumber}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                )}
+
+                {error && (
+                  <Alert className="border-red-200 bg-red-50">
+                    <AlertDescription className="text-red-800">
+                      {error}
                     </AlertDescription>
                   </Alert>
                 )}
 
-                <TabsContent value="login">
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div>
-                      <Label htmlFor="login-email">Email</Label>
-                      <Input
-                        id="login-email"
-                        type="email"
-                        value={loginData.email}
-                        onChange={(e) => setLoginData({...loginData, email: e.target.value})}
-                        placeholder="your@email.com"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="login-password">Password</Label>
-                      <div className="relative">
-                        <Input
-                          id="login-password"
-                          type={showPassword ? 'text' : 'password'}
-                          value={loginData.password}
-                          onChange={(e) => setLoginData({...loginData, password: e.target.value})}
-                          placeholder="••••••••"
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? 'Signing In...' : 'Sign In'}
-                    </Button>
-                    <p className="text-xs text-gray-500 text-center">
-                      You'll receive a verification code via email to complete your sign-in.
-                    </p>
-                  </form>
-                </TabsContent>
-
-                <TabsContent value="signup">
-                  <form onSubmit={handleSignup} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="first-name">First Name</Label>
-                        <Input
-                          id="first-name"
-                          value={signupData.firstName}
-                          onChange={(e) => setSignupData({...signupData, firstName: e.target.value})}
-                          placeholder="John"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="last-name">Last Name</Label>
-                        <Input
-                          id="last-name"
-                          value={signupData.lastName}
-                          onChange={(e) => setSignupData({...signupData, lastName: e.target.value})}
-                          placeholder="Doe"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="signup-email">Email</Label>
-                      <Input
-                        id="signup-email"
-                        type="email"
-                        value={signupData.email}
-                        onChange={(e) => setSignupData({...signupData, email: e.target.value})}
-                        placeholder="your@email.com"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label>Verification Method</Label>
-                      <RadioGroup
-                        value={signupData.verificationMethod}
-                        onValueChange={(value: 'email' | 'sms') => 
-                          setSignupData({...signupData, verificationMethod: value})
-                        }
-                        className="flex space-x-6 mt-2"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="email" id="email" />
-                          <Label htmlFor="email" className="flex items-center space-x-2 cursor-pointer">
-                            <Mail className="h-4 w-4" />
-                            <span>Email</span>
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="sms" id="sms" />
-                          <Label htmlFor="sms" className="flex items-center space-x-2 cursor-pointer">
-                            <Smartphone className="h-4 w-4" />
-                            <span>SMS</span>
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                    {signupData.verificationMethod === 'sms' && (
-                      <div>
-                        <Label htmlFor="phone-number">Phone Number</Label>
-                        <Input
-                          id="phone-number"
-                          type="tel"
-                          value={signupData.phoneNumber}
-                          onChange={(e) => setSignupData({...signupData, phoneNumber: e.target.value})}
-                          placeholder="+1234567890"
-                          required
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <Label htmlFor="signup-password">Password (min. 8 characters)</Label>
-                      <div className="relative">
-                        <Input
-                          id="signup-password"
-                          type={showPassword ? 'text' : 'password'}
-                          value={signupData.password}
-                          onChange={(e) => setSignupData({...signupData, password: e.target.value})}
-                          placeholder="••••••••"
-                          required
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="confirm-password">Confirm Password</Label>
-                      <Input
-                        id="confirm-password"
-                        type={showPassword ? 'text' : 'password'}
-                        value={signupData.confirmPassword}
-                        onChange={(e) => setSignupData({...signupData, confirmPassword: e.target.value})}
-                        placeholder="••••••••"
-                        required
-                      />
-                    </div>
-                    <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? 'Creating Account...' : 'Create Account'}
-                    </Button>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <p className="text-xs text-blue-700">
-                        <Mail className="h-3 w-3 inline mr-1" />
-                        You'll receive a verification code via {signupData.verificationMethod} to complete your registration.
-                      </p>
-                    </div>
-                  </form>
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      <Footer />
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? 'Creating Account...' : 'Create Account'}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };

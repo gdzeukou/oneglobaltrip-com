@@ -26,6 +26,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { email, code, purpose }: VerifyOTPRequest = await req.json();
 
+    console.log(`Verifying OTP for ${email}, purpose: ${purpose}, code: ${code}`);
+
     // Find the OTP code
     const { data: otpData, error: fetchError } = await supabase
       .from('otp_codes')
@@ -40,6 +42,7 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     if (fetchError || !otpData) {
+      console.log(`Invalid or expired OTP for ${email}: ${fetchError?.message}`);
       return new Response(
         JSON.stringify({ error: 'Invalid or expired verification code' }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -48,6 +51,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Check if max attempts exceeded
     if (otpData.attempts >= otpData.max_attempts) {
+      console.log(`Max attempts exceeded for ${email}`);
       return new Response(
         JSON.stringify({ error: 'Maximum verification attempts exceeded' }),
         { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -65,15 +69,22 @@ const handler = async (req: Request): Promise<Response> => {
       .eq('id', otpData.id);
 
     if (updateError) {
+      console.error('Update error:', updateError);
       throw new Error(`Failed to update OTP code: ${updateError.message}`);
     }
 
     // Clean up old codes for this email
-    await supabase
+    const { error: cleanupError } = await supabase
       .from('otp_codes')
       .delete()
       .eq('user_email', email)
       .neq('id', otpData.id);
+
+    if (cleanupError) {
+      console.error('Cleanup error:', cleanupError);
+    }
+
+    console.log(`OTP verification successful for ${email}`);
 
     return new Response(
       JSON.stringify({ 

@@ -28,11 +28,19 @@ const handler = async (req: Request): Promise<Response> => {
 
     const { email, method, purpose, phoneNumber }: SendOTPRequest = await req.json();
 
-    // Check rate limit
+    console.log(`Sending OTP for ${email}, method: ${method}, purpose: ${purpose}`);
+
+    // Check rate limit - fix the logic
     const { data: rateLimitData, error: rateLimitError } = await supabase
       .rpc('check_otp_rate_limit', { _email: email });
 
-    if (rateLimitError || !rateLimitData) {
+    if (rateLimitError) {
+      console.error('Rate limit check error:', rateLimitError);
+      throw new Error('Failed to check rate limit');
+    }
+
+    if (!rateLimitData) {
+      console.log(`Rate limit exceeded for ${email}`);
       return new Response(
         JSON.stringify({ error: 'Rate limit exceeded. Please wait before requesting another code.' }),
         { status: 429, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -44,16 +52,23 @@ const handler = async (req: Request): Promise<Response> => {
       .rpc('generate_otp_code');
 
     if (codeError || !otpCode) {
+      console.error('Code generation error:', codeError);
       throw new Error('Failed to generate OTP code');
     }
 
-    // Clean up old codes for this email
-    await supabase
+    console.log(`Generated OTP code: ${otpCode} for ${email}`);
+
+    // Clean up old codes for this email and purpose
+    const { error: cleanupError } = await supabase
       .from('otp_codes')
       .delete()
       .eq('user_email', email)
       .eq('purpose', purpose)
       .eq('is_used', false);
+
+    if (cleanupError) {
+      console.error('Cleanup error:', cleanupError);
+    }
 
     // Store OTP code in database
     const { error: insertError } = await supabase
@@ -67,6 +82,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
 
     if (insertError) {
+      console.error('Insert error:', insertError);
       throw new Error(`Failed to store OTP code: ${insertError.message}`);
     }
 
@@ -76,26 +92,31 @@ const handler = async (req: Request): Promise<Response> => {
       
       const actionText = purpose === 'signup' ? 'complete your account registration' : 'sign in to your account';
       
-      await resend.emails.send({
-        from: "Travel App <onboarding@resend.dev>",
-        to: [email],
-        subject: `Your verification code: ${otpCode}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Verification Code</h2>
-            <p>Your verification code to ${actionText} is:</p>
-            <div style="background: #f0f0f0; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px;">
-              <h1 style="color: #2563eb; margin: 0; font-size: 36px; letter-spacing: 8px;">${otpCode}</h1>
+      try {
+        await resend.emails.send({
+          from: "Travel App <onboarding@resend.dev>",
+          to: [email],
+          subject: `Your verification code: ${otpCode}`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2>Verification Code</h2>
+              <p>Your verification code to ${actionText} is:</p>
+              <div style="background: #f0f0f0; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px;">
+                <h1 style="color: #2563eb; margin: 0; font-size: 36px; letter-spacing: 8px;">${otpCode}</h1>
+              </div>
+              <p>This code will expire in 10 minutes.</p>
+              <p>If you didn't request this code, please ignore this email.</p>
+              <p>Best regards,<br>Travel App Team</p>
             </div>
-            <p>This code will expire in 10 minutes.</p>
-            <p>If you didn't request this code, please ignore this email.</p>
-            <p>Best regards,<br>Travel App Team</p>
-          </div>
-        `,
-      });
+          `,
+        });
+        console.log(`Email sent successfully to ${email}`);
+      } catch (emailError) {
+        console.error('Email sending error:', emailError);
+        throw new Error('Failed to send verification email');
+      }
     } else if (method === 'sms') {
       // TODO: Implement SMS sending with Twilio or similar service
-      // For now, we'll return success but note that SMS isn't fully implemented
       console.log(`SMS OTP would be sent to ${phoneNumber}: ${otpCode}`);
     }
 

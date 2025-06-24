@@ -1,11 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Mail, Smartphone, RefreshCw, Clock, CheckCircle, AlertCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface OTPVerificationProps {
   email: string;
@@ -24,6 +25,8 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
   onVerificationSuccess,
   onBack
 }) => {
+  const navigate = useNavigate();
+  const { verifyOTP, sendOTP } = useAuth();
   const [code, setCode] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -62,23 +65,23 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
     setError('');
 
     try {
-      const { data, error } = await supabase.functions.invoke('verify-otp', {
-        body: {
-          email,
-          code,
-          purpose
-        }
-      });
+      console.log('Verifying OTP code...');
+      const { error } = await verifyOTP(email, code, purpose);
 
-      if (error) throw error;
-
-      if (data?.success) {
-        setSuccess('Verification successful!');
-        setTimeout(() => {
-          onVerificationSuccess();
-        }, 1000);
+      if (error) {
+        setError(error.message);
       } else {
-        setError(data?.error || 'Verification failed');
+        setSuccess('Verification successful! Redirecting...');
+        console.log('OTP verification successful, calling onVerificationSuccess');
+        
+        // Call the success callback
+        onVerificationSuccess();
+        
+        // Navigate to dashboard after a short delay
+        setTimeout(() => {
+          console.log('Navigating to dashboard...');
+          navigate('/dashboard', { replace: true });
+        }, 1000);
       }
     } catch (error: any) {
       console.error('OTP verification error:', error);
@@ -96,24 +99,15 @@ const OTPVerification: React.FC<OTPVerificationProps> = ({
     setSuccess('');
 
     try {
-      const { data, error } = await supabase.functions.invoke('send-otp', {
-        body: {
-          email,
-          method,
-          purpose,
-          phoneNumber
-        }
-      });
+      const { error } = await sendOTP(email, method, purpose, phoneNumber);
 
-      if (error) throw error;
-
-      if (data?.success) {
+      if (error) {
+        setError(error.message);
+      } else {
         setSuccess('New verification code sent!');
         setResendCooldown(60);
         setTimeLeft(600);
         setCode('');
-      } else {
-        setError(data?.error || 'Failed to resend code');
       }
     } catch (error: any) {
       console.error('Resend OTP error:', error);
