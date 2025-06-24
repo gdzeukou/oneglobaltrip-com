@@ -87,27 +87,103 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     if (method === 'email') {
-      // Send OTP via email using Resend
-      const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+      // Get user's first name for personalization
+      let firstName = 'Traveler';
       
-      const actionText = purpose === 'signup' ? 'complete your account registration' : 'sign in to your account';
+      // Try to get first name from auth.users first
+      const { data: authUser } = await supabase.auth.admin.getUserByEmail(email);
+      if (authUser?.user?.user_metadata?.first_name) {
+        firstName = authUser.user.user_metadata.first_name;
+      } else {
+        // Fallback to profiles table
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('first_name')
+          .eq('id', authUser?.user?.id)
+          .single();
+        
+        if (profile?.first_name) {
+          firstName = profile.first_name;
+        }
+      }
+
+      // Send OTP via email using Resend with new One Global Trip branding
+      const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
       
       try {
         await resend.emails.send({
-          from: "Travel App <onboarding@resend.dev>",
+          from: "One Global Trip 🌍 <booking@oneglobaltrip.com>",
           to: [email],
-          subject: `Your verification code: ${otpCode}`,
+          subject: "Your One Global Trip Verification Code",
           html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-              <h2>Verification Code</h2>
-              <p>Your verification code to ${actionText} is:</p>
-              <div style="background: #f0f0f0; padding: 20px; text-align: center; margin: 20px 0; border-radius: 8px;">
-                <h1 style="color: #2563eb; margin: 0; font-size: 36px; letter-spacing: 8px;">${otpCode}</h1>
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Your One Global Trip Verification Code</title>
+            </head>
+            <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background-color: #f8fafc;">
+              <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px 32px;">
+                
+                <!-- Header -->
+                <div style="text-align: center; margin-bottom: 32px;">
+                  <h1 style="color: #1e293b; font-size: 28px; font-weight: 700; margin: 0; line-height: 1.2;">
+                    Welcome back to One Global Trip!
+                  </h1>
+                </div>
+
+                <!-- Greeting -->
+                <div style="margin-bottom: 32px;">
+                  <p style="color: #475569; font-size: 16px; line-height: 1.5; margin: 0;">
+                    Hi ${firstName},
+                  </p>
+                </div>
+
+                <!-- Main Content -->
+                <div style="margin-bottom: 32px;">
+                  <p style="color: #475569; font-size: 16px; line-height: 1.5; margin: 0 0 24px 0;">
+                    Here's your secure login code:
+                  </p>
+                  
+                  <!-- Verification Code -->
+                  <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 24px; text-align: center; border-radius: 12px; margin: 24px 0; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);">
+                    <div style="color: #ffffff; font-size: 36px; font-weight: 700; letter-spacing: 8px; font-family: 'Courier New', monospace;">
+                      ${otpCode}
+                    </div>
+                  </div>
+                  
+                  <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 16px 0; text-align: center;">
+                    This code is valid for the next 10 minutes.
+                  </p>
+                </div>
+
+                <!-- Security Notice -->
+                <div style="background-color: #f1f5f9; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 32px;">
+                  <p style="color: #475569; font-size: 14px; line-height: 1.5; margin: 0 0 8px 0;">
+                    If you didn't request this login, no worries — just ignore this message.
+                  </p>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.5; margin: 0;">
+                    If anything feels off, we recommend logging into your account to review activity or update your password as a precaution.
+                  </p>
+                </div>
+
+                <!-- Footer -->
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 24px; text-align: center;">
+                  <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 8px 0;">
+                    We're always here to support your next adventure.
+                  </p>
+                  <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 16px 0;">
+                    — The One Global Trip Team
+                  </p>
+                  <a href="https://oneglobaltrip.com" style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 500;">
+                    🌍 https://oneglobaltrip.com
+                  </a>
+                </div>
+
               </div>
-              <p>This code will expire in 10 minutes.</p>
-              <p>If you didn't request this code, please ignore this email.</p>
-              <p>Best regards,<br>Travel App Team</p>
-            </div>
+            </body>
+            </html>
           `,
         });
         console.log(`Email sent successfully to ${email}`);
