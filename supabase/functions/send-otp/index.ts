@@ -87,24 +87,18 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     if (method === 'email') {
-      // Get user's first name for personalization
+      // Get user's first name for personalization - simplified approach
       let firstName = 'Traveler';
       
-      // Try to get first name from auth.users first
-      const { data: authUser } = await supabase.auth.admin.getUserByEmail(email);
-      if (authUser?.user?.user_metadata?.first_name) {
-        firstName = authUser.user.user_metadata.first_name;
-      } else {
-        // Fallback to profiles table
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('first_name')
-          .eq('id', authUser?.user?.id)
-          .single();
-        
-        if (profile?.first_name) {
-          firstName = profile.first_name;
-        }
+      // Try to get first name from profiles table using email lookup
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('first_name')
+        .eq('id', (await supabase.auth.admin.listUsers()).data.users.find(u => u.email === email)?.id)
+        .single();
+      
+      if (profile?.first_name) {
+        firstName = profile.first_name;
       }
 
       // Send OTP via email using Resend with new One Global Trip branding
