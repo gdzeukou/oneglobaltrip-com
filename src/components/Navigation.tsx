@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { Menu, X, User, LogOut, Settings, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -10,7 +10,7 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isEmailVerified } = useAuth();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -95,6 +95,12 @@ const Navigation = () => {
             {/* Authentication Section */}
             {user ? (
               <div className="flex items-center space-x-3">
+                {!isEmailVerified && (
+                  <div className="flex items-center space-x-1 px-2 py-1 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <AlertCircle className="h-4 w-4 text-yellow-600" />
+                    <span className="text-xs text-yellow-700">Verify Email</span>
+                  </div>
+                )}
                 <Link
                   to="/dashboard"
                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
@@ -196,6 +202,12 @@ const Navigation = () => {
             {/* Mobile Authentication */}
             {user ? (
               <div className="pt-4 border-t border-gray-200/50 mt-4">
+                {!isEmailVerified && (
+                  <div className="flex items-center space-x-2 px-3 py-2 mb-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <AlertCircle className="h-4 w-4 text-yellow-600" />
+                    <span className="text-sm text-yellow-700">Please verify your email address</span>
+                  </div>
+                )}
                 <Link
                   to="/dashboard"
                   className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"

@@ -8,16 +8,17 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, LogIn, UserPlus, Mail } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
 const Auth = () => {
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, isEmailVerified } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
 
   // Login form state
   const [loginData, setLoginData] = useState({
@@ -35,10 +36,10 @@ const Auth = () => {
   });
 
   useEffect(() => {
-    if (user) {
+    if (user && isEmailVerified) {
       navigate('/dashboard');
     }
-  }, [user, navigate]);
+  }, [user, isEmailVerified, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +49,11 @@ const Auth = () => {
     const { error } = await signIn(loginData.email, loginData.password);
     
     if (error) {
-      setError(error.message);
+      if (error.message.includes('Email not confirmed')) {
+        setError('Please verify your email address before signing in. Check your inbox for a verification link.');
+      } else {
+        setError(error.message);
+      }
     }
     
     setLoading(false);
@@ -58,6 +63,7 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSignupSuccess(false);
 
     if (signupData.password !== signupData.confirmPassword) {
       setError('Passwords do not match');
@@ -65,8 +71,8 @@ const Auth = () => {
       return;
     }
 
-    if (signupData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (signupData.password.length < 8) {
+      setError('Password must be at least 8 characters long');
       setLoading(false);
       return;
     }
@@ -81,8 +87,8 @@ const Auth = () => {
     if (error) {
       setError(error.message);
     } else {
+      setSignupSuccess(true);
       setError('');
-      alert('Check your email for the confirmation link!');
     }
     
     setLoading(false);
@@ -120,6 +126,15 @@ const Auth = () => {
                   <Alert className="mt-4 border-red-200 bg-red-50">
                     <AlertDescription className="text-red-800">
                       {error}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {signupSuccess && (
+                  <Alert className="mt-4 border-green-200 bg-green-50">
+                    <Mail className="h-4 w-4" />
+                    <AlertDescription className="text-green-800">
+                      Account created successfully! Please check your email for a verification link before signing in.
                     </AlertDescription>
                   </Alert>
                 )}
@@ -199,7 +214,7 @@ const Auth = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="signup-password">Password</Label>
+                      <Label htmlFor="signup-password">Password (min. 8 characters)</Label>
                       <div className="relative">
                         <Input
                           id="signup-password"
@@ -234,6 +249,9 @@ const Auth = () => {
                     <Button type="submit" className="w-full" disabled={loading}>
                       {loading ? 'Creating Account...' : 'Create Account'}
                     </Button>
+                    <p className="text-xs text-gray-500 text-center">
+                      You'll receive an email to verify your account before you can sign in.
+                    </p>
                   </form>
                 </TabsContent>
               </Tabs>
