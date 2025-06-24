@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Mail, RefreshCw, CheckCircle } from 'lucide-react';
 
 const EmailVerification = () => {
-  const { user, resendVerificationEmail, signOut } = useAuth();
+  const { user, resendVerification, signOut } = useAuth();
   const [isResending, setIsResending] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -20,7 +20,7 @@ const EmailVerification = () => {
     setMessage('');
 
     try {
-      const { error } = await resendVerificationEmail();
+      const { error } = await resendVerification();
       if (error) {
         setError(error.message);
       } else {
@@ -107,7 +107,7 @@ const EmailVerification = () => {
 
           <div className="text-center pt-4">
             <p className="text-xs text-gray-500">
-              Having trouble? Check your spam folder or contact our support team.
+              Having trouble? Check your spam folder or contact our One Global Trip support team.
             </p>
           </div>
         </CardContent>

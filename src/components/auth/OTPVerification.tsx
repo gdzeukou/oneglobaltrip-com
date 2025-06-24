@@ -24,7 +24,7 @@ const OTPVerification = ({
   onVerificationSuccess, 
   onBack 
 }: OTPVerificationProps) => {
-  const { verifyOTP, resendOTP } = useAuth();
+  const { verifyOTP, sendOTP } = useAuth();
   const [otp, setOtp] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
@@ -80,7 +80,7 @@ const OTPVerification = ({
     setError('');
 
     try {
-      const { error } = await resendOTP(email, method, purpose, phoneNumber);
+      const { error } = await sendOTP(email, method, purpose, phoneNumber);
       
       if (error) {
         setError(error.message);
