@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "npm:resend@2.0.0";
@@ -193,22 +194,16 @@ const handler = async (req: Request): Promise<Response> => {
       const twilioSecret = Deno.env.get("twilio");
       if (!twilioSecret) {
         console.error('Twilio credentials not found in environment');
-        throw new Error('SMS service is not configured');
+        throw new Error('SMS service is not configured. Please add your Twilio credentials to the project secrets.');
       }
 
       let twilioConfig;
       try {
-        // Handle both JSON string and direct string formats
-        if (twilioSecret.startsWith('{')) {
-          twilioConfig = JSON.parse(twilioSecret);
-        } else {
-          // If it's a simple string, assume it's the Account SID and guide user to fix it
-          console.error('Twilio secret appears to be in wrong format. Expected JSON object with accountSid, authToken, and fromNumber');
-          throw new Error('SMS service misconfigured. Please update Twilio secret to JSON format: {"accountSid": "...", "authToken": "...", "fromNumber": "..."}');
-        }
+        // Parse the JSON secret - now expecting proper JSON format
+        twilioConfig = JSON.parse(twilioSecret);
       } catch (parseError) {
         console.error('Failed to parse Twilio configuration:', parseError);
-        throw new Error('SMS service configuration error. Please ensure Twilio secret is valid JSON');
+        throw new Error('SMS service configuration error. Please ensure Twilio secret is valid JSON: {"accountSid": "...", "authToken": "...", "fromNumber": "..."}');
       }
 
       const { accountSid, authToken, fromNumber } = twilioConfig;
@@ -219,7 +214,7 @@ const handler = async (req: Request): Promise<Response> => {
         if (!accountSid) missing.push('accountSid');
         if (!authToken) missing.push('authToken'); 
         if (!fromNumber) missing.push('fromNumber');
-        throw new Error(`SMS service missing required fields: ${missing.join(', ')}`);
+        throw new Error(`SMS service missing required fields: ${missing.join(', ')}. Please update your Twilio secret with the correct JSON format.`);
       }
 
       // Send SMS using Twilio REST API
@@ -249,7 +244,8 @@ const handler = async (req: Request): Promise<Response> => {
           // Parse Twilio error for better user feedback
           try {
             const errorJson = JSON.parse(errorData);
-            throw new Error(`SMS failed: ${errorJson.message || 'Unknown Twilio error'}`);
+            const errorMessage = errorJson.message || 'Unknown Twilio error';
+            throw new Error(`SMS failed: ${errorMessage}`);
           } catch {
             throw new Error(`Failed to send SMS: HTTP ${response.status}`);
           }
@@ -263,7 +259,7 @@ const handler = async (req: Request): Promise<Response> => {
         if (smsError.message.includes('SMS failed:')) {
           throw smsError; // Re-throw with original Twilio error message
         }
-        throw new Error('Failed to send SMS verification code');
+        throw new Error('Failed to send SMS verification code. Please check your phone number format and try again.');
       }
     }
 
