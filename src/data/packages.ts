@@ -64,27 +64,52 @@ export const packages: Package[] = [
     tags: ['Business', 'Premium', 'Fast-Track']
   },
   {
-    id: 'france-student',
-    title: 'France Student Visa Package',
-    description: 'Complete student visa package with university applications and accommodation.',
-    price: 1599,
-    originalPrice: 1999,
-    duration: '1-4 years',
+    id: 'campus-france-regular',
+    title: '🎓 Campus France Package — Regular',
+    description: 'Complete Campus France student visa package with full guidance and support. Breakdown: Campus France fee $270 + TLS/VFS & Visa fee $140 + Admin & handling $140 (includes follow-up, document review, email support).',
+    price: 550,
+    duration: 'Up to 21 business days',
     country: 'France',
     highlights: [
-      'Student visa processing',
-      'University application support',
-      'Student accommodation',
-      'Health insurance',
-      'Orientation program'
+      'Campus France application setup & guidance',
+      'Interview scheduling',
+      'France-Visas application assistance',
+      'Visa appointment booking (TLS/VFS)',
+      'Visa document review',
+      'Travel insurance & proof of accommodation guidance',
+      'Full checklist + 1:1 customer support'
     ],
-    specialFeatures: ['University Application Support', 'Student Community Access'],
+    specialFeatures: ['Campus France Certified', 'Complete Student Support'],
     visasRequired: ['France Student Visa'],
     image: '/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png',
     rating: 4.8,
-    reviews: 167,
+    reviews: 145,
     category: 'europe',
-    tags: ['Student', 'Education', 'Long-term']
+    tags: ['Student', 'Campus France', 'Regular']
+  },
+  {
+    id: 'campus-france-expedited',
+    title: '⚡️ Campus France Package — Expedited',
+    description: 'Expedited Campus France student visa package with priority processing. Breakdown: Expedited Campus France fee $460 + TLS/VFS & Visa fee $140 + Admin & handling $150 (includes rush support & fast-tracking steps).',
+    price: 750,
+    duration: '3-5 business days',
+    country: 'France',
+    highlights: [
+      'Expedited Campus France handling',
+      'Priority support',
+      '48h application feedback loop',
+      'Same-week visa appointment booking',
+      'All Regular Package features included',
+      'Fast-track document processing',
+      'Dedicated support agent'
+    ],
+    specialFeatures: ['Expedited Processing', 'Priority Support'],
+    visasRequired: ['France Student Visa'],
+    image: '/lovable-uploads/b3a89cf1-b7be-4c8e-be8f-774de3f62929.png',
+    rating: 4.9,
+    reviews: 87,
+    category: 'europe',
+    tags: ['Student', 'Campus France', 'Expedited', 'Fast-Track']
   },
   {
     id: 'canada-express-entry',
