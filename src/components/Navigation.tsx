@@ -55,8 +55,8 @@ const Navigation = () => {
               to="/"
               className={`px-3 py-2 text-sm font-medium transition-all duration-200 ${
                 isActive('/') 
-                  ? 'text-blue-900 border-b-2 border-blue-900' 
-                  : 'text-gray-700 hover:text-blue-900 hover:scale-105'
+                  ? 'text-deep-blue-900 border-b-2 border-deep-blue-900' 
+                  : 'text-gray-700 hover:text-deep-blue-900 hover:scale-105'
               }`}
             >
               Home
@@ -65,8 +65,8 @@ const Navigation = () => {
               to="/packages"
               className={`px-3 py-2 text-sm font-medium transition-all duration-200 ${
                 isActive('/packages') 
-                  ? 'text-blue-900 border-b-2 border-blue-900' 
-                  : 'text-gray-700 hover:text-blue-900 hover:scale-105'
+                  ? 'text-deep-blue-900 border-b-2 border-deep-blue-900' 
+                  : 'text-gray-700 hover:text-deep-blue-900 hover:scale-105'
               }`}
             >
               Packages
@@ -75,8 +75,8 @@ const Navigation = () => {
               to="/visas"
               className={`px-3 py-2 text-sm font-medium transition-all duration-200 ${
                 isActive('/visas') 
-                  ? 'text-blue-900 border-b-2 border-blue-900' 
-                  : 'text-gray-700 hover:text-blue-900 hover:scale-105'
+                  ? 'text-deep-blue-900 border-b-2 border-deep-blue-900' 
+                  : 'text-gray-700 hover:text-deep-blue-900 hover:scale-105'
               }`}
             >
               Visas
@@ -85,8 +85,8 @@ const Navigation = () => {
               to="/get-started"
               className={`px-3 py-2 text-sm font-medium transition-all duration-200 ${
                 isActive('/get-started') 
-                  ? 'text-blue-900 border-b-2 border-blue-900' 
-                  : 'text-gray-700 hover:text-blue-900 hover:scale-105'
+                  ? 'text-deep-blue-900 border-b-2 border-deep-blue-900' 
+                  : 'text-gray-700 hover:text-deep-blue-900 hover:scale-105'
               }`}
             >
               Get Started
@@ -105,12 +105,12 @@ const Navigation = () => {
                   to="/dashboard"
                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive('/dashboard')
-                      ? 'bg-blue-900 text-white shadow-lg'
-                      : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
+                      ? 'bg-deep-blue-900 text-white shadow-lg'
+                      : 'text-gray-700 hover:bg-blue-50 hover:text-deep-blue-900'
                   }`}
                 >
                   <Avatar className="h-6 w-6">
-                    <AvatarFallback className="bg-blue-600 text-white text-xs">
+                    <AvatarFallback className="bg-deep-blue-800 text-white text-xs">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
@@ -120,7 +120,7 @@ const Navigation = () => {
                   variant="ghost"
                   size="sm"
                   onClick={handleSignOut}
-                  className="text-gray-700 hover:text-blue-900 hover:bg-blue-50 transition-all duration-200"
+                  className="text-gray-700 hover:text-deep-blue-900 hover:bg-blue-50 transition-all duration-200"
                 >
                   <LogOut className="h-4 w-4" />
                 </Button>
@@ -128,7 +128,7 @@ const Navigation = () => {
             ) : (
               <Button
                 asChild
-                className="bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                className="bg-gradient-to-r from-deep-blue-900 to-deep-blue-800 hover:from-deep-blue-800 hover:to-deep-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
               >
                 <Link to="/auth">
                   <User className="h-4 w-4 mr-2" />
@@ -142,7 +142,7 @@ const Navigation = () => {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-blue-900 focus:outline-none relative z-[10000] transition-colors duration-200"
+              className="text-gray-700 hover:text-deep-blue-900 focus:outline-none relative z-[10000] transition-colors duration-200"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -158,8 +158,8 @@ const Navigation = () => {
               to="/"
               className={`block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200 ${
                 isActive('/') 
-                  ? 'text-blue-900 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
+                  ? 'text-deep-blue-900 bg-blue-50' 
+                  : 'text-gray-700 hover:text-deep-blue-900 hover:bg-gray-50'
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -169,8 +169,8 @@ const Navigation = () => {
               to="/packages"
               className={`block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200 ${
                 isActive('/packages') 
-                  ? 'text-blue-900 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
+                  ? 'text-deep-blue-900 bg-blue-50' 
+                  : 'text-gray-700 hover:text-deep-blue-900 hover:bg-gray-50'
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -180,8 +180,8 @@ const Navigation = () => {
               to="/visas"
               className={`block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200 ${
                 isActive('/visas') 
-                  ? 'text-blue-900 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
+                  ? 'text-deep-blue-900 bg-blue-50' 
+                  : 'text-gray-700 hover:text-deep-blue-900 hover:bg-gray-50'
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -191,8 +191,8 @@ const Navigation = () => {
               to="/get-started"
               className={`block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200 ${
                 isActive('/get-started') 
-                  ? 'text-blue-900 bg-blue-50' 
-                  : 'text-gray-700 hover:text-blue-900 hover:bg-gray-50'
+                  ? 'text-deep-blue-900 bg-blue-50' 
+                  : 'text-gray-700 hover:text-deep-blue-900 hover:bg-gray-50'
               }`}
               onClick={() => setIsOpen(false)}
             >
@@ -210,11 +210,11 @@ const Navigation = () => {
                 )}
                 <Link
                   to="/dashboard"
-                  className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                  className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-gray-700 hover:text-deep-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
                   onClick={() => setIsOpen(false)}
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-blue-600 text-white text-sm">
+                    <AvatarFallback className="bg-deep-blue-800 text-white text-sm">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
@@ -225,7 +225,7 @@ const Navigation = () => {
                     handleSignOut();
                     setIsOpen(false);
                   }}
-                  className="flex items-center space-x-3 w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-red-50 rounded-lg transition-all duration-200"
+                  className="flex items-center space-x-3 w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-deep-blue-900 hover:bg-red-50 rounded-lg transition-all duration-200"
                 >
                   <LogOut className="h-5 w-5" />
                   <span>Sign Out</span>
@@ -235,7 +235,7 @@ const Navigation = () => {
               <div className="pt-4 border-t border-gray-200/50 mt-4">
                 <Link
                   to="/auth"
-                  className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
+                  className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-deep-blue-800 hover:text-deep-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
                   onClick={() => setIsOpen(false)}
                 >
                   <User className="h-5 w-5" />

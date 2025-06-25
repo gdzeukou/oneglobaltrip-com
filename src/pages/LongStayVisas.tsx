@@ -59,14 +59,14 @@ const LongStayVisas = () => {
       <meta data-agentive-context-json='{"page":"long-stay-visas","visa_type":"long-stay","services":["residency_visa","work_visa","study_visa","retirement_visa"]}' />
       
       {/* Hero Section with Background Image */}
-      <section className="pt-24 pb-16 relative bg-gradient-to-r from-blue-900 to-blue-800 text-white overflow-hidden">
+      <section className="pt-24 pb-16 relative bg-gradient-to-r from-deep-blue-900 to-deep-blue-800 text-white overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20">
           <OptimizedImage
             src="https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=1920&h=1080&fit=crop&crop=center"
             alt="European cityscape for long-stay visas"
             className="w-full h-full"
             overlay
-            overlayColor="bg-blue-900/60"
+            overlayColor="bg-deep-blue-900/60"
             priority
           />
         </div>
@@ -77,7 +77,7 @@ const LongStayVisas = () => {
           </p>
           <Button 
             onClick={scrollToForm}
-            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold text-lg px-8 py-3 hover-lift pulse-glow animate-scale-in"
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-deep-blue-900 font-bold text-lg px-8 py-3 hover-lift pulse-glow animate-scale-in"
           >
             Get Residency Help
           </Button>
@@ -125,8 +125,8 @@ const LongStayVisas = () => {
       {/* Pay $0 Down Banner */}
       <section className="py-8 bg-yellow-500">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h3 className="text-2xl font-bold text-blue-900 mb-2">PAY $0 DOWN</h3>
-          <p className="text-blue-900">Start your visa application today with no upfront payment required</p>
+          <h3 className="text-2xl font-bold text-deep-blue-900 mb-2">PAY $0 DOWN</h3>
+          <p className="text-deep-blue-900">Start your visa application today with no upfront payment required</p>
         </div>
       </section>
 
@@ -138,7 +138,7 @@ const LongStayVisas = () => {
             <p className="mb-4">Book a 30-minute call with our visa experts to discuss your application.</p>
             <Button
               onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-4 hover-lift"
+              className="w-full bg-deep-blue-800 hover:bg-deep-blue-900 text-white font-semibold mb-4 hover-lift"
             >
               Book Consultation
             </Button>

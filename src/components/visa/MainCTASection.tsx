@@ -77,17 +77,17 @@ const MainCTASection = () => {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="text-xl text-blue-900">{choice.title}</CardTitle>
+                    <CardTitle className="text-xl text-deep-blue-900">{choice.title}</CardTitle>
                     <p className="text-gray-600 text-sm font-medium">{choice.subtitle}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-blue-900">{choice.price}</p>
+                    <p className="text-2xl font-bold text-deep-blue-900">{choice.price}</p>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 mb-4">{choice.description}</p>
-                <Button className="w-full bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 shadow-lg hover-lift">
+                <Button className="w-full bg-gradient-to-r from-deep-blue-900 to-deep-blue-800 hover:from-deep-blue-800 hover:to-deep-blue-700 shadow-lg hover-lift">
                   Start Application
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
@@ -104,7 +104,7 @@ const MainCTASection = () => {
             <Button 
               size="lg"
               variant="outline"
-              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white shadow-lg hover-lift"
+              className="border-deep-blue-800 text-deep-blue-800 hover:bg-deep-blue-800 hover:text-white shadow-lg hover-lift"
               onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
             >
               Book Free Consultation

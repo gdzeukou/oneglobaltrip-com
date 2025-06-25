@@ -47,16 +47,16 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Enhanced Custom Colors */
-    --navy-900: 214 100% 15%;
-    --navy-800: 214 94% 20%;
-    --navy-700: 214 88% 25%;
+    /* Enhanced Custom Colors - Restored Deep Blue */
+    --navy-900: 214 100% 12%;
+    --navy-800: 214 100% 15%;
+    --navy-700: 214 88% 20%;
     --gold-500: 45 100% 60%;
     --gold-600: 45 100% 55%;
     --gold-400: 45 100% 65%;
     
-    /* New Premium Colors */
-    --gradient-primary: linear-gradient(135deg, hsl(214 100% 15%) 0%, hsl(214 88% 25%) 100%);
+    /* Deep Blue Gradient */
+    --gradient-primary: linear-gradient(135deg, hsl(214 100% 12%) 0%, hsl(214 100% 15%) 100%);
     --gradient-accent: linear-gradient(135deg, hsl(45 100% 65%) 0%, hsl(45 100% 55%) 100%);
     --glass-bg: rgba(255, 255, 255, 0.08);
     --glass-border: rgba(255, 255, 255, 0.12);
@@ -263,7 +263,7 @@
   opacity: 1;
 }
 
-/* Premium Button Styles */
+/* Premium Button Styles - Deep Blue Focus */
 .btn-premium {
   background: var(--gradient-primary);
   color: white;
@@ -287,8 +287,8 @@
 
 .btn-premium-outline {
   background: transparent;
-  color: hsl(var(--primary));
-  border: 2px solid hsl(var(--primary));
+  color: hsl(var(--navy-800));
+  border: 2px solid hsl(var(--navy-800));
   padding: 1rem 2rem;
   border-radius: 0.75rem;
   font-weight: 600;
@@ -317,9 +317,16 @@
   opacity: 1;
 }
 
-/* Enhanced Typography */
+/* Enhanced Typography - Deep Blue Gradients */
 .text-gradient-primary {
   background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-primary {
+  background: linear-gradient(135deg, hsl(214 100% 12%) 0%, hsl(214 100% 15%) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -330,6 +337,45 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Deep Blue Utility Classes */
+.bg-deep-blue {
+  background: hsl(214 100% 12%);
+}
+
+.bg-deep-blue-800 {
+  background: hsl(214 100% 15%);
+}
+
+.text-deep-blue {
+  color: hsl(214 100% 12%);
+}
+
+.text-deep-blue-800 {
+  color: hsl(214 100% 15%);
+}
+
+.border-deep-blue {
+  border-color: hsl(214 100% 15%);
+}
+
+/* Hero Text Styling */
+.hero-text {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card Hover Effects */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 /* Optimized Scrollbar */

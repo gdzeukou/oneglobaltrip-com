@@ -19,7 +19,7 @@ const GetStarted = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       {/* Hero Section */}
-      <section className="pt-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white py-16">
+      <section className="pt-20 bg-gradient-to-r from-deep-blue-900 via-deep-blue-800 to-deep-blue-900 text-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Let's Plan Your
