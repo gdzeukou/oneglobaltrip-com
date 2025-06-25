@@ -5,13 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Mail, Smartphone, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Mail, ArrowLeft, RefreshCw } from 'lucide-react';
 
 interface OTPVerificationProps {
   email: string;
   purpose: 'signup' | 'signin';
-  method: 'email' | 'sms';
-  phoneNumber?: string;
   onVerificationSuccess: () => void;
   onBack: () => void;
 }
@@ -19,8 +17,6 @@ interface OTPVerificationProps {
 const OTPVerification = ({ 
   email, 
   purpose, 
-  method, 
-  phoneNumber, 
   onVerificationSuccess, 
   onBack 
 }: OTPVerificationProps) => {
@@ -80,7 +76,7 @@ const OTPVerification = ({
     setError('');
 
     try {
-      const { error } = await sendOTP(email, method, purpose, phoneNumber);
+      const { error } = await sendOTP(email, purpose);
       
       if (error) {
         setError(error.message);
@@ -100,17 +96,13 @@ const OTPVerification = ({
       <Card className="max-w-md w-full">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            {method === 'email' ? (
-              <Mail className="h-6 w-6 text-blue-600" />
-            ) : (
-              <Smartphone className="h-6 w-6 text-blue-600" />
-            )}
+            <Mail className="h-6 w-6 text-blue-600" />
           </div>
           <CardTitle className="text-2xl font-bold text-gray-900">
             Enter Verification Code
           </CardTitle>
           <p className="text-gray-600">
-            We've sent a 6-digit code to {method === 'email' ? email : phoneNumber}
+            We've sent a 6-digit code to {email}
           </p>
         </CardHeader>
         

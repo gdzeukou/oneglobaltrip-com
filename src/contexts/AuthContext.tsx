@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,14 +12,12 @@ interface AuthContextType {
     isRequired: boolean;
     email: string;
     purpose: 'signup' | 'signin';
-    method: 'email' | 'sms';
-    phoneNumber?: string;
   } | null;
-  signUp: (email: string, password: string, firstName?: string, lastName?: string, phoneNumber?: string, verificationMethod?: 'email' | 'sms') => Promise<{ error: any }>;
-  signIn: (email: string, password: string, verificationMethod?: 'email' | 'sms', phoneNumber?: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
+  signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resendVerification: () => Promise<{ error: any }>;
-  sendOTP: (email: string, method: 'email' | 'sms', purpose: 'signup' | 'signin', phoneNumber?: string) => Promise<{ error: any }>;
+  sendOTP: (email: string, purpose: 'signup' | 'signin') => Promise<{ error: any }>;
   verifyOTP: (email: string, code: string, purpose: 'signup' | 'signin') => Promise<{ error: any }>;
   clearOTPStep: () => void;
 }
@@ -43,8 +40,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isRequired: boolean;
     email: string;
     purpose: 'signup' | 'signin';
-    method: 'email' | 'sms';
-    phoneNumber?: string;
   } | null>(null);
 
   const isEmailVerified = user?.email_confirmed_at ? true : false;
@@ -85,16 +80,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const sendOTP = async (email: string, method: 'email' | 'sms', purpose: 'signup' | 'signin', phoneNumber?: string) => {
+  const sendOTP = async (email: string, purpose: 'signup' | 'signin') => {
     try {
-      console.log(`Sending OTP to ${email} via ${method} for ${purpose}`);
+      console.log(`Sending email OTP to ${email} for ${purpose}`);
       
       const { data, error } = await supabase.functions.invoke('send-otp', {
         body: {
           email,
-          method,
-          purpose,
-          phoneNumber
+          purpose
         }
       });
 
@@ -108,9 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setOTPStep({
           isRequired: true,
           email,
-          purpose,
-          method,
-          phoneNumber
+          purpose
         });
       }
 
@@ -154,8 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               options: {
                 data: {
                   first_name: signupData.firstName,
-                  last_name: signupData.lastName,
-                  phone_number: signupData.phoneNumber
+                  last_name: signupData.lastName
                 }
               }
             });
@@ -210,7 +200,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('pendingSignin');
   };
 
-  const signUp = async (email: string, password: string, firstName?: string, lastName?: string, phoneNumber?: string, verificationMethod: 'email' | 'sms' = 'email') => {
+  const signUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
     // Validate inputs
     if (!validateEmail(email)) {
       return { error: { message: 'Please enter a valid email address' } };
@@ -218,10 +208,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (password.length < 8) {
       return { error: { message: 'Password must be at least 8 characters long' } };
-    }
-
-    if (verificationMethod === 'sms' && !phoneNumber) {
-      return { error: { message: 'Phone number is required for SMS verification' } };
     }
 
     try {
@@ -232,12 +218,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: email.toLowerCase().trim(),
         password,
         firstName: firstName?.trim(),
-        lastName: lastName?.trim(),
-        phoneNumber: phoneNumber?.trim()
+        lastName: lastName?.trim()
       }));
 
-      // Send OTP instead of creating account immediately
-      return await sendOTP(email.toLowerCase().trim(), verificationMethod, 'signup', phoneNumber?.trim());
+      // Send OTP
+      return await sendOTP(email.toLowerCase().trim(), 'signup');
     } catch (error) {
       console.error('Signup error:', error);
       localStorage.removeItem('pendingSignup');
@@ -245,7 +230,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signIn = async (email: string, password: string, verificationMethod: 'email' | 'sms' = 'email', phoneNumber?: string) => {
+  const signIn = async (email: string, password: string) => {
     // Validate inputs
     if (!validateEmail(email)) {
       return { error: { message: 'Please enter a valid email address' } };
@@ -253,10 +238,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (!password) {
       return { error: { message: 'Password is required' } };
-    }
-
-    if (verificationMethod === 'sms' && !phoneNumber) {
-      return { error: { message: 'Phone number is required for SMS verification' } };
     }
 
     try {
@@ -268,8 +249,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         password
       }));
 
-      // Send OTP instead of signing in immediately
-      return await sendOTP(email.toLowerCase().trim(), verificationMethod, 'signin', phoneNumber?.trim());
+      // Send OTP
+      return await sendOTP(email.toLowerCase().trim(), 'signin');
     } catch (error) {
       console.error('Signin error:', error);
       localStorage.removeItem('pendingSignin');

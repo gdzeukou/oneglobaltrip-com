@@ -10,9 +10,7 @@ const corsHeaders = {
 
 interface SendOTPRequest {
   email: string;
-  method: 'email' | 'sms';
   purpose: 'signup' | 'signin';
-  phoneNumber?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -26,11 +24,11 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { email, method, purpose, phoneNumber }: SendOTPRequest = await req.json();
+    const { email, purpose }: SendOTPRequest = await req.json();
 
-    console.log(`Sending OTP for ${email}, method: ${method}, purpose: ${purpose}`);
+    console.log(`Sending email OTP for ${email}, purpose: ${purpose}`);
 
-    // Check rate limit - fix the logic
+    // Check rate limit
     const { data: rateLimitData, error: rateLimitError } = await supabase
       .rpc('check_otp_rate_limit', { _email: email });
 
@@ -76,9 +74,9 @@ const handler = async (req: Request): Promise<Response> => {
       .insert({
         user_email: email,
         code: otpCode,
-        verification_method: method,
+        verification_method: 'email',
         purpose: purpose,
-        phone_number: phoneNumber || null
+        phone_number: null
       });
 
     if (insertError) {
@@ -86,187 +84,109 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error(`Failed to store OTP code: ${insertError.message}`);
     }
 
-    if (method === 'email') {
-      // Get user's first name for personalization - simplified approach
-      let firstName = 'Traveler';
-      
-      // Try to get first name from profiles table using email lookup
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('first_name')
-        .eq('id', (await supabase.auth.admin.listUsers()).data.users.find(u => u.email === email)?.id)
-        .single();
-      
-      if (profile?.first_name) {
-        firstName = profile.first_name;
-      }
+    // Get user's first name for personalization
+    let firstName = 'Traveler';
+    
+    // Try to get first name from profiles table using email lookup
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('first_name')
+      .eq('id', (await supabase.auth.admin.listUsers()).data.users.find(u => u.email === email)?.id)
+      .single();
+    
+    if (profile?.first_name) {
+      firstName = profile.first_name;
+    }
 
-      // Send OTP via email using Resend with new One Global Trip branding
-      const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-      
-      try {
-        await resend.emails.send({
-          from: "One Global Trip 🌍 <booking@oneglobaltrip.com>",
-          to: [email],
-          subject: "Your One Global Trip Verification Code",
-          html: `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Your One Global Trip Verification Code</title>
-            </head>
-            <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background-color: #f8fafc;">
-              <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px 32px;">
-                
-                <!-- Header -->
-                <div style="text-align: center; margin-bottom: 32px;">
-                  <h1 style="color: #1e293b; font-size: 28px; font-weight: 700; margin: 0; line-height: 1.2;">
-                    Welcome back to One Global Trip!
-                  </h1>
-                </div>
-
-                <!-- Greeting -->
-                <div style="margin-bottom: 32px;">
-                  <p style="color: #475569; font-size: 16px; line-height: 1.5; margin: 0;">
-                    Hi ${firstName},
-                  </p>
-                </div>
-
-                <!-- Main Content -->
-                <div style="margin-bottom: 32px;">
-                  <p style="color: #475569; font-size: 16px; line-height: 1.5; margin: 0 0 24px 0;">
-                    Here's your secure login code:
-                  </p>
-                  
-                  <!-- Verification Code -->
-                  <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 24px; text-align: center; border-radius: 12px; margin: 24px 0; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);">
-                    <div style="color: #ffffff; font-size: 36px; font-weight: 700; letter-spacing: 8px; font-family: 'Courier New', monospace;">
-                      ${otpCode}
-                    </div>
-                  </div>
-                  
-                  <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 16px 0; text-align: center;">
-                    This code is valid for the next 10 minutes.
-                  </p>
-                </div>
-
-                <!-- Security Notice -->
-                <div style="background-color: #f1f5f9; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 32px;">
-                  <p style="color: #475569; font-size: 14px; line-height: 1.5; margin: 0 0 8px 0;">
-                    If you didn't request this login, no worries — just ignore this message.
-                  </p>
-                  <p style="color: #475569; font-size: 14px; line-height: 1.5; margin: 0;">
-                    If anything feels off, we recommend logging into your account to review activity or update your password as a precaution.
-                  </p>
-                </div>
-
-                <!-- Footer -->
-                <div style="border-top: 1px solid #e2e8f0; padding-top: 24px; text-align: center;">
-                  <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 8px 0;">
-                    We're always here to support your next adventure.
-                  </p>
-                  <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 16px 0;">
-                    — The One Global Trip Team
-                  </p>
-                  <a href="https://oneglobaltrip.com" style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 500;">
-                    🌍 https://oneglobaltrip.com
-                  </a>
-                </div>
-
+    // Send OTP via email using Resend
+    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+    
+    try {
+      await resend.emails.send({
+        from: "One Global Trip 🌍 <booking@oneglobaltrip.com>",
+        to: [email],
+        subject: "Your One Global Trip Verification Code",
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Your One Global Trip Verification Code</title>
+          </head>
+          <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background-color: #f8fafc;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 40px 32px;">
+              
+              <!-- Header -->
+              <div style="text-align: center; margin-bottom: 32px;">
+                <h1 style="color: #1e293b; font-size: 28px; font-weight: 700; margin: 0; line-height: 1.2;">
+                  Welcome back to One Global Trip!
+                </h1>
               </div>
-            </body>
-            </html>
-          `,
-        });
-        console.log(`Email sent successfully to ${email}`);
-      } catch (emailError) {
-        console.error('Email sending error:', emailError);
-        throw new Error('Failed to send verification email');
-      }
-    } else if (method === 'sms') {
-      if (!phoneNumber) {
-        throw new Error('Phone number is required for SMS verification');
-      }
 
-      // Get Twilio credentials from Supabase secrets
-      const twilioSecret = Deno.env.get("twilio");
-      if (!twilioSecret) {
-        console.error('Twilio credentials not found in environment');
-        throw new Error('SMS service is not configured. Please add your Twilio credentials to the project secrets.');
-      }
+              <!-- Greeting -->
+              <div style="margin-bottom: 32px;">
+                <p style="color: #475569; font-size: 16px; line-height: 1.5; margin: 0;">
+                  Hi ${firstName},
+                </p>
+              </div>
 
-      let twilioConfig;
-      try {
-        // Parse the JSON secret - now expecting proper JSON format
-        twilioConfig = JSON.parse(twilioSecret);
-      } catch (parseError) {
-        console.error('Failed to parse Twilio configuration:', parseError);
-        throw new Error('SMS service configuration error. Please ensure Twilio secret is valid JSON: {"accountSid": "...", "authToken": "...", "fromNumber": "..."}');
-      }
+              <!-- Main Content -->
+              <div style="margin-bottom: 32px;">
+                <p style="color: #475569; font-size: 16px; line-height: 1.5; margin: 0 0 24px 0;">
+                  Here's your secure login code:
+                </p>
+                
+                <!-- Verification Code -->
+                <div style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); padding: 24px; text-align: center; border-radius: 12px; margin: 24px 0; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);">
+                  <div style="color: #ffffff; font-size: 36px; font-weight: 700; letter-spacing: 8px; font-family: 'Courier New', monospace;">
+                    ${otpCode}
+                  </div>
+                </div>
+                
+                <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 16px 0; text-align: center;">
+                  This code is valid for the next 10 minutes.
+                </p>
+              </div>
 
-      const { accountSid, authToken, fromNumber } = twilioConfig;
+              <!-- Security Notice -->
+              <div style="background-color: #f1f5f9; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 32px;">
+                <p style="color: #475569; font-size: 14px; line-height: 1.5; margin: 0 0 8px 0;">
+                  If you didn't request this login, no worries — just ignore this message.
+                </p>
+                <p style="color: #475569; font-size: 14px; line-height: 1.5; margin: 0;">
+                  If anything feels off, we recommend logging into your account to review activity or update your password as a precaution.
+                </p>
+              </div>
 
-      if (!accountSid || !authToken || !fromNumber) {
-        console.error('Missing Twilio configuration fields. Required: accountSid, authToken, fromNumber');
-        const missing = [];
-        if (!accountSid) missing.push('accountSid');
-        if (!authToken) missing.push('authToken'); 
-        if (!fromNumber) missing.push('fromNumber');
-        throw new Error(`SMS service missing required fields: ${missing.join(', ')}. Please update your Twilio secret with the correct JSON format.`);
-      }
+              <!-- Footer -->
+              <div style="border-top: 1px solid #e2e8f0; padding-top: 24px; text-align: center;">
+                <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 8px 0;">
+                  We're always here to support your next adventure.
+                </p>
+                <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin: 0 0 16px 0;">
+                  — The One Global Trip Team
+                </p>
+                <a href="https://oneglobaltrip.com" style="color: #3b82f6; text-decoration: none; font-size: 14px; font-weight: 500;">
+                  🌍 https://oneglobaltrip.com
+                </a>
+              </div>
 
-      // Send SMS using Twilio REST API
-      const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
-      const credentials = btoa(`${accountSid}:${authToken}`);
-
-      const messageBody = `Your One Global Trip verification code is: ${otpCode}. This code expires in 10 minutes.`;
-
-      try {
-        const response = await fetch(twilioUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Basic ${credentials}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: new URLSearchParams({
-            To: phoneNumber,
-            From: fromNumber,
-            Body: messageBody,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.text();
-          console.error('Twilio API error:', response.status, errorData);
-          
-          // Parse Twilio error for better user feedback
-          try {
-            const errorJson = JSON.parse(errorData);
-            const errorMessage = errorJson.message || 'Unknown Twilio error';
-            throw new Error(`SMS failed: ${errorMessage}`);
-          } catch {
-            throw new Error(`Failed to send SMS: HTTP ${response.status}`);
-          }
-        }
-
-        const result = await response.json();
-        console.log(`SMS sent successfully to ${phoneNumber}, SID: ${result.sid}`);
-        
-      } catch (smsError) {
-        console.error('SMS sending error:', smsError);
-        if (smsError.message.includes('SMS failed:')) {
-          throw smsError; // Re-throw with original Twilio error message
-        }
-        throw new Error('Failed to send SMS verification code. Please check your phone number format and try again.');
-      }
+            </div>
+          </body>
+          </html>
+        `,
+      });
+      console.log(`Email sent successfully to ${email}`);
+    } catch (emailError) {
+      console.error('Email sending error:', emailError);
+      throw new Error('Failed to send verification email');
     }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: `OTP sent via ${method}`,
+        message: 'OTP sent via email',
         expiresIn: 600 // 10 minutes in seconds
       }),
       {
