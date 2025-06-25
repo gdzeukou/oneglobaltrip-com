@@ -1,16 +1,15 @@
 
-import React, { Suspense, useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SimpleAuthProvider } from "@/contexts/SimpleAuthContext";
-import SimpleProtectedRoute from "@/components/auth/SimpleProtectedRoute";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import { PerformanceMonitor } from "@/utils/performance";
-import { setupRoutePreloading, setupProgressiveImageLoading } from "@/utils/lazyImports";
-import LoadingFallback from "@/components/ui/loading-fallback";
+import { setupRoutePreloading, setupProgressiveImageLoading, LoadingFallback } from "@/utils/lazyImports";
 
 // Lazy imports for better performance
 import {
@@ -42,7 +41,6 @@ import {
   LazyFranceLongStay,
   LazySwitzerlandLongStay,
   LazyNigeriaLongStay,
-  LazySimpleAuth,
 } from "@/utils/lazyImports";
 
 // Enhanced Query Client with better defaults
@@ -94,7 +92,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SimpleAuthProvider>
+      <AuthProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -104,17 +102,12 @@ const App = () => {
                 <Routes>
                   <Route path="/" element={<LazyIndex />} />
                   <Route path="/auth" element={<LazyAuth />} />
-                  <Route path="/simple-auth" element={
-                    <Suspense fallback={<LoadingFallback message="Loading Authentication..." />}>
-                      <LazySimpleAuth />
-                    </Suspense>
-                  } />
                   <Route path="/dashboard" element={
-                    <SimpleProtectedRoute>
+                    <ProtectedRoute>
                       <Suspense fallback={<LoadingFallback message="Loading Dashboard..." />}>
                         <LazyDashboard />
                       </Suspense>
-                    </SimpleProtectedRoute>
+                    </ProtectedRoute>
                   } />
                   <Route path="/packages" element={<LazyPackages />} />
                   <Route path="/booking" element={<LazyBooking />} />
@@ -218,7 +211,7 @@ const App = () => {
             </div>
           </BrowserRouter>
         </TooltipProvider>
-      </SimpleAuthProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
