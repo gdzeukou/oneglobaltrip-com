@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -69,7 +68,7 @@ const UKShortStay = () => {
       <TrustBadges />
 
       <CountrySpecificPricing 
-        country="ukVisa"
+        country="ukVisa6Month"
         title="UK Visitor Visa Pricing"
         description="Transparent pricing with no hidden fees"
       />
