@@ -41,6 +41,8 @@ const EnhancedVisaResults = ({ wizardData, onReset }: EnhancedVisaResultsProps) 
       message={visaResult.message}
       visaType={visaResult.type}
       isSchengen={visaResult.isSchengen || false}
+      nationalVisaCategories={visaResult.nationalVisaCategories}
+      regionalMovement={visaResult.regionalMovement}
       onReset={onReset}
     />
   );

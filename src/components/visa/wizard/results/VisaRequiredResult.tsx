@@ -8,6 +8,7 @@ import VisaAdvantageCard from './components/VisaAdvantageCard';
 import VisaUrgencyAlert from './components/VisaUrgencyAlert';
 import VisaActionButtons from './components/VisaActionButtons';
 import VisaSuccessRate from './components/VisaSuccessRate';
+import NationalVisaCategories from './components/NationalVisaCategories';
 
 interface VisaRequiredResultProps {
   nationality: string;
@@ -15,6 +16,8 @@ interface VisaRequiredResultProps {
   message: string;
   visaType: string;
   isSchengen: boolean;
+  nationalVisaCategories?: any[];
+  regionalMovement?: any;
   onReset: () => void;
 }
 
@@ -24,9 +27,12 @@ const VisaRequiredResult = ({
   message, 
   visaType, 
   isSchengen,
+  nationalVisaCategories,
+  regionalMovement,
   onReset 
 }: VisaRequiredResultProps) => {
   const destinationInfo = destinationCountries.find(c => c.code === destination);
+  const isNationalVisa = visaType === 'national-visa' || visaType.includes('long-stay');
 
   const getVisaTypeName = () => {
     switch (visaType) {
@@ -38,6 +44,12 @@ const VisaRequiredResult = ({
         return 'UK Standard Visitor Visa';
       case 'uk-long-stay':
         return 'UK Long-Stay Visa';
+      case 'usa-long-stay':
+        return 'US Long-Stay Visa';
+      case 'canada-long-stay':
+        return 'Canada Long-Stay Visa';
+      case 'uae-long-stay':
+        return 'UAE Long-Stay Visa';
       case 'eta':
         return destination === 'canada' ? 'Canadian eTA' : 'Electronic Travel Authorization';
       case 'canadian-trv':
@@ -67,7 +79,7 @@ const VisaRequiredResult = ({
           <AlertTriangle className="w-16 h-16 text-orange-500" />
         </div>
         <h3 className="text-2xl font-bold text-orange-800 mb-2">
-          ⚠️ Visa Required
+          {isNationalVisa ? '🏛️ National Visa Required' : '⚠️ Visa Required'}
         </h3>
         <p className="text-lg text-gray-700 mb-4">{message}</p>
         <div className="flex flex-wrap justify-center gap-2 mb-4">
@@ -79,14 +91,35 @@ const VisaRequiredResult = ({
         </div>
       </div>
 
-      {/* Visa Details */}
-      <VisaDetailsCards visaType={visaType} destination={destination} />
+      {/* National Visa Categories for long-stay visas */}
+      {isNationalVisa && nationalVisaCategories && (
+        <NationalVisaCategories 
+          categories={nationalVisaCategories}
+          destination={destination}
+          purpose="long-stay"
+        />
+      )}
 
-      {/* Special advantages based on visa type */}
-      <VisaAdvantageCard visaType={visaType} isSchengen={isSchengen} />
+      {/* Regional Movement Rules for Schengen Type D */}
+      {regionalMovement && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="font-semibold text-blue-800 mb-2">🌍 Regional Movement Rights</h4>
+          <p className="text-sm text-blue-700 mb-2">{regionalMovement.description}</p>
+          <div className="text-xs text-blue-600">
+            <div>• <strong>Travel allowance:</strong> {regionalMovement.allowedTravel}</div>
+            <div>• <strong>Restrictions:</strong> {regionalMovement.restrictions}</div>
+          </div>
+        </div>
+      )}
 
-      {/* Urgency Alert */}
-      <VisaUrgencyAlert visaType={visaType} />
+      {/* Standard visa details for short-stay visas */}
+      {!isNationalVisa && (
+        <>
+          <VisaDetailsCards visaType={visaType} destination={destination} />
+          <VisaAdvantageCard visaType={visaType} isSchengen={isSchengen} />
+          <VisaUrgencyAlert visaType={visaType} />
+        </>
+      )}
 
       {/* Action Buttons */}
       <VisaActionButtons visaType={visaType} onReset={onReset} />

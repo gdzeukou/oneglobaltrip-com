@@ -1,12 +1,21 @@
 import { destinationCountries, schengenCountries, checkVisaRequirement } from '@/data/visaRequirementsDatabase';
+import { getNationalVisaCategories, regionalMovementRules } from './nationalVisaCategories';
 
-// Duration mappings
+// Duration mappings with updated thresholds
 export const durationMappings = {
   'single-short': 30,      // ≤30 days
   'single-medium': 90,     // 31-90 days
   'multiple-short': 90,    // ≤90 days multiple entries
   'multiple-long': 180,    // >90 days multiple entries
   'long-stay': 365         // >90 days long-stay
+};
+
+// Long-stay thresholds by region
+export const longStayThresholds = {
+  schengen: 90,      // 90 days - Type D national visa required
+  uk: 180,           // 6 months
+  usa: 180,          // 6 months
+  default: 90        // Most other countries
 };
 
 // Western passport countries (typically visa-exempt for major destinations)
@@ -81,7 +90,7 @@ export const brazilEVisaCountries = [
   'United States', 'Canada', 'Australia', 'Japan'
 ];
 
-// Enhanced visa requirement check with updated logic
+// Enhanced visa requirement check with updated national visa logic
 export const checkEnhancedVisaRequirement = (
   nationality: string,
   destination: string,
@@ -93,12 +102,38 @@ export const checkEnhancedVisaRequirement = (
   const isSchengenDestination = schengenCountries.includes(destination);
   const destinationInfo = destinationCountries.find(c => c.code === destination);
   
+  // Determine long-stay threshold
+  let longStayThreshold = longStayThresholds.default;
+  if (isSchengenDestination) {
+    longStayThreshold = longStayThresholds.schengen;
+  } else if (['uk', 'usa'].includes(destination)) {
+    longStayThreshold = longStayThresholds[destination as keyof typeof longStayThresholds];
+  }
+  
   // Universal requirements message
-  const universalReqs = "Remember: 6-month valid passport, proof of funds & return ticket required.";
+  const universalReqs = "Remember: valid passport, proof of funds & return ticket required.";
+  
+  // Check if this is a long-stay scenario requiring national visa
+  const requiresNationalVisa = durationDays > longStayThreshold || 
+    ['work', 'study', 'family'].includes(purpose) ||
+    duration === 'long-stay';
   
   // Schengen Area Rules
   if (isSchengenDestination) {
-    if (isWesternPassport && durationDays <= 90 && (purpose === 'tourism' || purpose === 'business')) {
+    if (requiresNationalVisa) {
+      const categories = getNationalVisaCategories(destination, purpose);
+      const movementRules = regionalMovementRules.schengen.typeD;
+      
+      return {
+        required: true,
+        type: 'national-visa',
+        isSchengen: true,
+        message: `For stays longer than 90 days or ${purpose} purposes, you need a ${destinationInfo?.name} national visa (Type D). ${movementRules.description}. ${universalReqs}`,
+        showPackages: false,
+        nationalVisaCategories: categories,
+        regionalMovement: movementRules
+      };
+    } else if (isWesternPassport && durationDays <= 90 && (purpose === 'tourism' || purpose === 'business')) {
       return {
         required: false,
         type: 'visa-free',
@@ -115,29 +150,29 @@ export const checkEnhancedVisaRequirement = (
         message: `You'll need a Schengen visa (Type C) for short stays in ${destinationInfo?.name}. Apply online, book biometrics, and show travel insurance/funds.`,
         showPackages: false
       };
-    } else {
-      return {
-        required: true,
-        type: 'national-visa',
-        isSchengen: true,
-        message: `For stays longer than 90 days, you'll need a ${destinationInfo?.name} national visa (Type D). Work/study requires separate permits.`,
-        showPackages: false
-      };
     }
   }
   
-  // UK Rules
+  // UK Rules with updated 6-month threshold
   if (destination === 'uk') {
-    const maxStayDays = 180; // 6 months
-    
-    if (isWesternPassport && durationDays <= maxStayDays && (purpose === 'tourism' || purpose === 'business')) {
+    if (requiresNationalVisa) {
+      const categories = getNationalVisaCategories(destination, purpose);
+      return {
+        required: true,
+        type: 'uk-long-stay',
+        isSchengen: false,
+        message: `For stays longer than 6 months or ${purpose} purposes, you need a UK long-stay visa. Work/study requires specific permits with pathway to settlement.`,
+        showPackages: false,
+        nationalVisaCategories: categories
+      };
+    } else if (isWesternPassport && durationDays <= 180 && (purpose === 'tourism' || purpose === 'business')) {
       return {
         required: false,
         type: 'visa-free',
         isSchengen: false,
-        message: `No visa required for stays up to 6 months in the UK! Note: UK will soon introduce a cheap online ETA requirement. ${universalReqs}`,
+        message: `No visa required for stays up to 6 months in the UK! Note: UK will soon introduce ETA requirement. ${universalReqs}`,
         showPackages: true,
-        maxStayDays: maxStayDays
+        maxStayDays: 180
       };
     } else if (!isWesternPassport) {
       return {
@@ -147,19 +182,39 @@ export const checkEnhancedVisaRequirement = (
         message: `You'll need a UK Standard Visitor visa. Apply online, book biometrics, and show financial evidence.`,
         showPackages: false
       };
-    } else {
+    }
+  }
+  
+  // USA Rules with updated 6-month threshold
+  if (destination === 'usa') {
+    if (requiresNationalVisa) {
+      const categories = getNationalVisaCategories(destination, purpose);
       return {
         required: true,
-        type: 'uk-long-stay',
+        type: 'usa-long-stay',
         isSchengen: false,
-        message: `For long-term UK stays, you'll need a specific long-stay visa. Work/study requires separate permits.`,
-        showPackages: false
+        message: `For stays longer than 6 months or ${purpose} purposes, you need specific US visas (H-1B, L-1, student visas, etc.). Green card pathway available.`,
+        showPackages: false,
+        nationalVisaCategories: categories
       };
     }
+    // Continue with existing USA logic for short stays...
   }
   
   // Canada Rules
   if (destination === 'canada') {
+    if (requiresNationalVisa) {
+      const categories = getNationalVisaCategories(destination, purpose);
+      return {
+        required: true,
+        type: 'canada-long-stay',
+        isSchengen: false,
+        message: `For ${purpose} purposes or long stays, Canada offers Express Entry and other pathways to permanent residence (~3 years to citizenship).`,
+        showPackages: false,
+        nationalVisaCategories: categories
+      };
+    }
+    // Continue with existing Canada logic...
     if (nationality === 'United States') {
       return {
         required: false,
@@ -190,7 +245,17 @@ export const checkEnhancedVisaRequirement = (
   
   // UAE Rules
   if (destination === 'uae') {
-    if (uaeVisaOnArrivalCountries.includes(nationality)) {
+    if (requiresNationalVisa || purpose === 'work') {
+      const categories = getNationalVisaCategories(destination, purpose);
+      return {
+        required: true,
+        type: 'uae-long-stay',
+        isSchengen: false,
+        message: `For work or long-term residence, UAE offers Golden Visa (5-10 years) and other residence permits. No direct citizenship pathway.`,
+        showPackages: false,
+        nationalVisaCategories: categories
+      };
+    } else if (uaeVisaOnArrivalCountries.includes(nationality)) {
       return {
         required: false,
         type: 'visa-on-arrival',
