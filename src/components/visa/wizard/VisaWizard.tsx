@@ -2,15 +2,25 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Globe, Users, Calendar, MapPin } from 'lucide-react';
+import { ChevronRight, Globe, Users, Calendar, MapPin, Route } from 'lucide-react';
 import CountrySelector from './steps/CountrySelector';
+import MultiDestinationSelector from './steps/MultiDestinationSelector';
+import MultiDestinationCountrySelector from './steps/MultiDestinationCountrySelector';
 import NationalitySelector from './steps/NationalitySelector';
 import PurposeSelector from './steps/PurposeSelector';
 import DurationSelector from './steps/DurationSelector';
 import VisaResults from './results/VisaResults';
+import MultiDestinationResults from './results/MultiDestinationResults';
+
+interface Destination {
+  country: string;
+  purpose: string;
+}
 
 interface WizardData {
+  tripType: string;
   destination: string;
+  destinations: Destination[];
   nationality: string;
   purpose: string;
   duration: string;
@@ -19,18 +29,20 @@ interface WizardData {
 const VisaWizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [wizardData, setWizardData] = useState<WizardData>({
+    tripType: '',
     destination: '',
+    destinations: [{ country: '', purpose: 'tourism' }],
     nationality: '',
     purpose: '',
     duration: ''
   });
 
-  const updateWizardData = (field: keyof WizardData, value: string) => {
+  const updateWizardData = (field: keyof WizardData, value: any) => {
     setWizardData(prev => ({ ...prev, [field]: value }));
   };
 
   const nextStep = () => {
-    if (currentStep < 4) {
+    if (currentStep < getMaxSteps()) {
       setCurrentStep(currentStep + 1);
     }
   };
@@ -43,35 +55,81 @@ const VisaWizard = () => {
 
   const resetWizard = () => {
     setCurrentStep(1);
-    setWizardData({ destination: '', nationality: '', purpose: '', duration: '' });
+    setWizardData({ 
+      tripType: '',
+      destination: '', 
+      destinations: [{ country: '', purpose: 'tourism' }],
+      nationality: '', 
+      purpose: '', 
+      duration: '' 
+    });
+  };
+
+  const getMaxSteps = () => {
+    return wizardData.tripType === 'multiple' ? 4 : 5;
   };
 
   const canProceed = () => {
     switch (currentStep) {
-      case 1: return wizardData.destination !== '';
-      case 2: return wizardData.nationality !== '';
-      case 3: return wizardData.purpose !== '';
-      case 4: return wizardData.duration !== '';
+      case 1: return wizardData.tripType !== '';
+      case 2: 
+        if (wizardData.tripType === 'multiple') {
+          return wizardData.destinations.length > 0 && wizardData.destinations.every(d => d.country && d.purpose);
+        }
+        return wizardData.destination !== '';
+      case 3: return wizardData.nationality !== '';
+      case 4: 
+        if (wizardData.tripType === 'multiple') {
+          return true; // Skip purpose/duration for multi-destination
+        }
+        return wizardData.purpose !== '';
+      case 5: return wizardData.duration !== '';
       default: return false;
     }
   };
 
-  const isComplete = wizardData.destination && wizardData.nationality && wizardData.purpose && wizardData.duration;
+  const isComplete = () => {
+    if (wizardData.tripType === 'multiple') {
+      return wizardData.tripType && 
+             wizardData.destinations.length > 0 && 
+             wizardData.destinations.every(d => d.country && d.purpose) && 
+             wizardData.nationality;
+    }
+    return wizardData.destination && wizardData.nationality && wizardData.purpose && wizardData.duration;
+  };
 
-  const steps = [
-    { number: 1, title: 'Destination', icon: MapPin, completed: wizardData.destination !== '' },
-    { number: 2, title: 'Nationality', icon: Globe, completed: wizardData.nationality !== '' },
-    { number: 3, title: 'Purpose', icon: Users, completed: wizardData.purpose !== '' },
-    { number: 4, title: 'Duration', icon: Calendar, completed: wizardData.duration !== '' },
-  ];
+  const getSteps = () => {
+    const baseSteps = [
+      { number: 1, title: 'Trip Type', icon: Route, completed: wizardData.tripType !== '' },
+    ];
+
+    if (wizardData.tripType === 'multiple') {
+      return [
+        ...baseSteps,
+        { number: 2, title: 'Destinations', icon: MapPin, completed: wizardData.destinations.length > 0 && wizardData.destinations.every(d => d.country && d.purpose) },
+        { number: 3, title: 'Nationality', icon: Globe, completed: wizardData.nationality !== '' },
+      ];
+    }
+
+    return [
+      ...baseSteps,
+      { number: 2, title: 'Destination', icon: MapPin, completed: wizardData.destination !== '' },
+      { number: 3, title: 'Nationality', icon: Globe, completed: wizardData.nationality !== '' },
+      { number: 4, title: 'Purpose', icon: Users, completed: wizardData.purpose !== '' },
+      { number: 5, title: 'Duration', icon: Calendar, completed: wizardData.duration !== '' },
+    ];
+  };
+
+  const steps = getSteps();
 
   return (
     <section className="py-16 bg-gradient-to-br from-blue-50 to-white">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Visa Wizard</h2>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">Enhanced Visa Wizard</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Find out instantly if you need a visa for your destination. Get personalized requirements and start your application in minutes.
+            Plan single or multi-destination trips with confidence. Get personalized visa requirements, 
+            transit guidance, and start your applications instantly.
           </p>
         </div>
 
@@ -128,29 +186,42 @@ const VisaWizard = () => {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Card className="p-8 min-h-[500px]">
-              {!isComplete ? (
+              {!isComplete() ? (
                 <>
                   {/* Step Content */}
                   <div className="mb-8">
                     {currentStep === 1 && (
+                      <MultiDestinationSelector
+                        value={wizardData.tripType}
+                        onChange={(value) => updateWizardData('tripType', value)}
+                      />
+                    )}
+                    {currentStep === 2 && wizardData.tripType === 'single' && (
                       <CountrySelector
                         value={wizardData.destination}
                         onChange={(value) => updateWizardData('destination', value)}
                       />
                     )}
-                    {currentStep === 2 && (
+                    {currentStep === 2 && wizardData.tripType === 'multiple' && (
+                      <MultiDestinationCountrySelector
+                        destinations={wizardData.destinations}
+                        onChange={(value) => updateWizardData('destinations', value)}
+                      />
+                    )}
+                    {((currentStep === 3 && wizardData.tripType === 'multiple') || 
+                      (currentStep === 3 && wizardData.tripType === 'single')) && (
                       <NationalitySelector
                         value={wizardData.nationality}
                         onChange={(value) => updateWizardData('nationality', value)}
                       />
                     )}
-                    {currentStep === 3 && (
+                    {currentStep === 4 && wizardData.tripType === 'single' && (
                       <PurposeSelector
                         value={wizardData.purpose}
                         onChange={(value) => updateWizardData('purpose', value)}
                       />
                     )}
-                    {currentStep === 4 && (
+                    {currentStep === 5 && wizardData.tripType === 'single' && (
                       <DurationSelector
                         value={wizardData.duration}
                         onChange={(value) => updateWizardData('duration', value)}
@@ -170,7 +241,7 @@ const VisaWizard = () => {
                     </Button>
                     
                     <div className="text-sm text-gray-500">
-                      Step {currentStep} of 4
+                      Step {currentStep} of {getMaxSteps()}
                     </div>
 
                     <Button
@@ -184,10 +255,20 @@ const VisaWizard = () => {
                   </div>
                 </>
               ) : (
-                <VisaResults 
-                  wizardData={wizardData} 
-                  onReset={resetWizard}
-                />
+                <>
+                  {wizardData.tripType === 'multiple' ? (
+                    <MultiDestinationResults
+                      nationality={wizardData.nationality}
+                      destinations={wizardData.destinations}
+                      onReset={resetWizard}
+                    />
+                  ) : (
+                    <VisaResults 
+                      wizardData={wizardData} 
+                      onReset={resetWizard}
+                    />
+                  )}
+                </>
               )}
             </Card>
           </div>

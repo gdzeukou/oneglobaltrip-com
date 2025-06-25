@@ -1,4 +1,3 @@
-
 // Comprehensive visa requirements database
 export const destinationCountries = [
   { code: 'schengen', name: 'Schengen Area', flag: '🇪🇺' },
@@ -78,6 +77,76 @@ export const checkVisaRequirement = (nationality: string, destination: string, p
     required: !isExempt,
     type: isExempt ? 'visa-free' : 'tourist-visa'
   };
+};
+
+// Multi-destination specific configurations
+export const multiDestinationOptions = [
+  { value: 'single', label: 'Single Destination' },
+  { value: 'multiple', label: 'Multiple Destinations' },
+];
+
+// Transit visa requirements for common layover countries
+export const transitVisaRequirements = {
+  'uk': ['China', 'India', 'Nigeria', 'Pakistan', 'Bangladesh', 'Sri Lanka'],
+  'schengen': ['India', 'China', 'Nigeria', 'Turkey', 'Russia'],
+  'usa': ['Most countries except VWP nationals'],
+  'canada': ['Same as visitor visa requirements'],
+  'uae': ['Most nationalities visa-free for <24h transit'],
+};
+
+// Check multi-destination visa requirements
+export const checkMultiDestinationVisaRequirement = (nationality: string, destinations: string[], purposes: string[] = []) => {
+  const results = destinations.map((destination, index) => {
+    const purpose = purposes[index] || 'tourism';
+    const singleResult = checkVisaRequirement(nationality, destination, purpose);
+    return {
+      destination,
+      ...singleResult,
+      destinationName: destinationCountries.find(c => c.code === destination)?.name || destination,
+      flag: destinationCountries.find(c => c.code === destination)?.flag || '🌍'
+    };
+  });
+
+  // Check for common transit countries that might require visas
+  const transitWarnings = checkTransitRequirements(nationality, destinations);
+
+  return {
+    destinations: results,
+    transitWarnings,
+    hasVisaRequired: results.some(r => r.required),
+    allVisaFree: results.every(r => !r.required),
+    totalDestinations: results.length
+  };
+};
+
+// Check transit visa requirements for multi-destination trips
+export const checkTransitRequirements = (nationality: string, destinations: string[]) => {
+  const warnings = [];
+  
+  // Common transit scenarios
+  if (destinations.includes('usa') || destinations.includes('canada')) {
+    const transitCountries = transitVisaRequirements['usa'];
+    if (transitCountries.some(country => nationality.includes(country))) {
+      warnings.push({
+        type: 'transit',
+        message: 'You may need a transit visa for connections through USA/Canada',
+        destinations: ['USA', 'Canada']
+      });
+    }
+  }
+
+  if (destinations.some(d => d === 'schengen' || d === 'uk')) {
+    const transitCountries = transitVisaRequirements['schengen'];
+    if (transitCountries.includes(nationality)) {
+      warnings.push({
+        type: 'transit',
+        message: 'Consider transit visa requirements for European connections',
+        destinations: ['Europe']
+      });
+    }
+  }
+
+  return warnings;
 };
 
 // Get relevant packages for destination
