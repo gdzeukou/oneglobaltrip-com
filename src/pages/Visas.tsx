@@ -4,6 +4,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import VisasHero from '@/components/visa/VisasHero';
 import TransparentPricingSection from '@/components/visa/TransparentPricingSection';
+import VisaWizard from '@/components/visa/wizard/VisaWizard';
 import MainCTASection from '@/components/visa/MainCTASection';
 import VisaCategoriesSection from '@/components/visa/VisaCategoriesSection';
 import PopularVisaServicesSection from '@/components/visa/PopularVisaServicesSection';
@@ -29,6 +30,7 @@ const Visas = () => {
       
       <VisasHero />
       <TransparentPricingSection />
+      <VisaWizard />
       <MainCTASection />
       <VisaCategoriesSection />
       <PopularVisaServicesSection />
