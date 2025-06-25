@@ -1,5 +1,5 @@
 
-import { Search, Star, Globe, Award, Plane, Hotel, Ship, Users } from 'lucide-react';
+import { Search, Star, Globe, Award, Plane, Hotel, Ship, Users, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 interface PackagesHeroProps {
@@ -9,114 +9,135 @@ interface PackagesHeroProps {
 
 const PackagesHero = ({ searchTerm, onSearchChange }: PackagesHeroProps) => {
   return (
-    <section className="pt-20 relative bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white py-16 md:py-20 overflow-hidden">
-      {/* Enhanced background elements */}
+    <section className="pt-20 relative bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white py-20 overflow-hidden">
+      {/* Sophisticated background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-20 right-20 w-64 md:w-96 h-64 md:h-96 bg-amber-400/15 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 left-20 w-48 md:w-80 h-48 md:h-80 bg-emerald-400/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 md:w-96 h-72 md:h-96 bg-blue-400/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-blue-900/90 to-indigo-900/95" />
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-20 right-20 w-96 h-96 bg-amber-400/8 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-emerald-400/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-2xl" />
+        </div>
+        {/* Refined geometric accents */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-32 left-32 w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
+          <div className="absolute top-48 right-40 w-1 h-1 bg-white/60 rotate-45" />
+          <div className="absolute bottom-32 left-1/3 w-1.5 h-1.5 bg-emerald-400 rotate-45" />
+          <div className="absolute bottom-48 right-1/3 w-2 h-2 bg-white/40 rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
+        </div>
       </div>
 
-      {/* Subtle geometric patterns */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-32 left-32 w-4 h-4 bg-amber-400 rounded-full animate-bounce" />
-        <div className="absolute top-48 right-40 w-3 h-3 bg-white rotate-45 animate-pulse" />
-        <div className="absolute bottom-32 left-1/3 w-2 h-2 bg-emerald-400 rotate-45 animate-bounce" />
-        <div className="absolute bottom-48 right-1/3 w-3 h-3 bg-blue-300 rounded-full animate-pulse" />
-      </div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
-        <div className="flex items-center justify-center mb-6">
-          <Globe className="h-6 md:h-8 w-6 md:w-8 text-amber-400 mr-3 animate-pulse" />
-          <span className="text-base md:text-lg font-semibold text-amber-300">Premium Travel Concierge</span>
+      <div className="relative z-10 max-w-7xl mx-auto px-4">
+        {/* Premium service indicator */}
+        <div className="flex items-center justify-center mb-8 animate-fade-in">
+          <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20">
+            <Globe className="h-5 w-5 text-amber-400 animate-pulse" />
+            <span className="text-base font-medium text-amber-300 tracking-wide">Premium Travel Concierge</span>
+            <Award className="h-5 w-5 text-amber-400" />
+          </div>
         </div>
         
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-          <span className="block text-white">Luxury Travel</span>
-          <span className="block bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 bg-clip-text text-transparent">
-            Packages
-          </span>
-        </h1>
-        
-        <p className="text-lg md:text-xl lg:text-2xl mb-8 text-slate-200 max-w-3xl mx-auto leading-relaxed">
-          Curated premium travel experiences with complete concierge service. 
-          Flights, hotels, cruises, and unforgettable adventures—all expertly planned for you.
-        </p>
+        {/* Main heading */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <span className="block text-white">Luxury Travel</span>
+            <span className="block text-transparent bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text mt-2">
+              Packages
+            </span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl mb-10 text-white/90 max-w-4xl mx-auto leading-relaxed animate-slide-up" style={{ animationDelay: '0.4s' }}>
+            Curated premium travel experiences with complete concierge service. 
+            Flights, hotels, cruises, and unforgettable adventures—
+            <span className="text-amber-300 font-semibold"> all expertly planned for you</span>.
+          </p>
+        </div>
 
         {/* Travel Services Icons */}
-        <div className="flex flex-wrap justify-center gap-4 md:gap-6 mb-8">
-          <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 rounded-full border border-white/20 hover:bg-white/15 transition-all">
-            <Plane className="h-5 md:h-6 w-5 md:w-6 text-amber-400" />
-            <span className="font-medium text-sm md:text-base">Flights</span>
+        <div className="flex flex-wrap justify-center gap-6 mb-10 animate-scale-in" style={{ animationDelay: '0.6s' }}>
+          <div className="flex items-center space-x-3 bg-white/15 backdrop-blur-sm px-6 py-4 rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+            <div className="p-2 bg-amber-500/20 rounded-full">
+              <Plane className="h-5 w-5 text-amber-300" />
+            </div>
+            <span className="font-medium text-white">Premium Flights</span>
           </div>
-          <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 rounded-full border border-white/20 hover:bg-white/15 transition-all">
-            <Hotel className="h-5 md:h-6 w-5 md:w-6 text-emerald-400" />
-            <span className="font-medium text-sm md:text-base">Hotels</span>
+          
+          <div className="flex items-center space-x-3 bg-white/15 backdrop-blur-sm px-6 py-4 rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+            <div className="p-2 bg-emerald-500/20 rounded-full">
+              <Hotel className="h-5 w-5 text-emerald-300" />
+            </div>
+            <span className="font-medium text-white">Luxury Hotels</span>
           </div>
-          <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 rounded-full border border-white/20 hover:bg-white/15 transition-all">
-            <Ship className="h-5 md:h-6 w-5 md:w-6 text-blue-400" />
-            <span className="font-medium text-sm md:text-base">Cruises</span>
+          
+          <div className="flex items-center space-x-3 bg-white/15 backdrop-blur-sm px-6 py-4 rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+            <div className="p-2 bg-blue-500/20 rounded-full">
+              <Ship className="h-5 w-5 text-blue-300" />
+            </div>
+            <span className="font-medium text-white">Ocean Cruises</span>
           </div>
-          <div className="flex items-center space-x-2 bg-white/10 backdrop-blur-sm px-4 md:px-6 py-3 md:py-4 rounded-full border border-white/20 hover:bg-white/15 transition-all">
-            <Users className="h-5 md:h-6 w-5 md:w-6 text-purple-400" />
-            <span className="font-medium text-sm md:text-base">Group Tours</span>
+          
+          <div className="flex items-center space-x-3 bg-white/15 backdrop-blur-sm px-6 py-4 rounded-2xl border border-white/20 hover:bg-white/20 transition-all duration-300">
+            <div className="p-2 bg-purple-500/20 rounded-full">
+              <Users className="h-5 w-5 text-purple-300" />
+            </div>
+            <span className="font-medium text-white">Group Tours</span>
           </div>
         </div>
         
         {/* Enhanced search bar */}
-        <div className="max-w-2xl mx-auto mb-8 md:mb-12">
+        <div className="max-w-2xl mx-auto mb-12 animate-fade-in" style={{ animationDelay: '0.8s' }}>
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 md:h-6 w-5 md:w-6" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 h-6 w-6" />
             <Input
               type="text"
               placeholder="Search destinations, cruises, tours, adventures..."
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-12 md:pl-14 pr-6 py-3 md:py-4 text-base md:text-lg bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white placeholder:text-slate-300 rounded-xl shadow-2xl focus:ring-2 focus:ring-amber-400 transition-all"
+              className="pl-12 pr-6 py-4 text-lg bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white placeholder:text-white/60 rounded-xl shadow-2xl focus:ring-2 focus:ring-amber-400 focus:border-amber-400 transition-all"
             />
           </div>
         </div>
 
         {/* Enhanced stats grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 md:p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '1s' }}>
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20 text-center">
             <div className="flex items-center justify-center mb-3">
-              <div className="p-2 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full">
-                <Globe className="h-4 md:h-6 w-4 md:w-6 text-white" />
+              <div className="p-3 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full">
+                <Globe className="h-6 w-6 text-white" />
               </div>
             </div>
-            <div className="text-2xl md:text-3xl font-bold text-white mb-1">150+</div>
-            <div className="text-xs md:text-sm text-slate-300">Destinations</div>
+            <div className="text-3xl font-bold text-white mb-2">150+</div>
+            <div className="text-sm text-white/70">Destinations</div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 md:p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20 text-center">
             <div className="flex items-center justify-center mb-3">
-              <div className="p-2 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full">
-                <Users className="h-4 md:h-6 w-4 md:w-6 text-white" />
+              <div className="p-3 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full">
+                <Users className="h-6 w-6 text-white" />
               </div>
             </div>
-            <div className="text-2xl md:text-3xl font-bold text-white mb-1">25K+</div>
-            <div className="text-xs md:text-sm text-slate-300">Happy Travelers</div>
+            <div className="text-3xl font-bold text-white mb-2">25K+</div>
+            <div className="text-sm text-white/70">Happy Travelers</div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 md:p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20 text-center">
             <div className="flex items-center justify-center mb-3">
-              <div className="p-2 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full">
-                <Ship className="h-4 md:h-6 w-4 md:w-6 text-white" />
+              <div className="p-3 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full">
+                <Ship className="h-6 w-6 text-white" />
               </div>
             </div>
-            <div className="text-2xl md:text-3xl font-bold text-white mb-1">500+</div>
-            <div className="text-xs md:text-sm text-slate-300">Cruise Options</div>
+            <div className="text-3xl font-bold text-white mb-2">500+</div>
+            <div className="text-sm text-white/70">Cruise Options</div>
           </div>
           
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 md:p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20">
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20 text-center">
             <div className="flex items-center justify-center mb-3">
-              <div className="p-2 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full">
-                <Award className="h-4 md:h-6 w-4 md:w-6 text-white" />
+              <div className="p-3 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full">
+                <Award className="h-6 w-6 text-white" />
               </div>
             </div>
-            <div className="text-2xl md:text-3xl font-bold text-white mb-1">24/7</div>
-            <div className="text-xs md:text-sm text-slate-300">Concierge Support</div>
+            <div className="text-3xl font-bold text-white mb-2">24/7</div>
+            <div className="text-sm text-white/70">Concierge Support</div>
           </div>
         </div>
       </div>

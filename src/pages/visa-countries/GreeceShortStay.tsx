@@ -4,7 +4,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import VisaPageTemplate from '@/components/visa/pages/VisaPageTemplate';
 import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
-import { MapPin, Plane, Hotel, Camera, Utensils, ArrowRight, Clock, Shield, CheckCircle } from 'lucide-react';
+import { MapPin, Plane, Hotel, Camera, Utensils, ArrowRight, Clock, Shield, CheckCircle, Award, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,54 +15,63 @@ const GreeceShortStay = () => {
       <div className="min-h-screen bg-white">
         <Navigation />
         
-        {/* Hero Section */}
-        <section className="pt-20 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white py-16 overflow-hidden">
+        {/* Enhanced Hero Section */}
+        <section className="pt-20 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white py-20 overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <div className="absolute top-20 right-20 w-64 h-64 bg-blue-400/15 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-20 left-20 w-48 h-48 bg-cyan-400/15 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-blue-900/90 to-indigo-900/95" />
+            <div className="absolute top-20 right-20 w-96 h-96 bg-blue-400/8 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-20 left-20 w-80 h-80 bg-cyan-400/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-2xl" />
           </div>
           
           <div className="relative z-10 max-w-7xl mx-auto px-4">
-            <div className="flex items-center mb-6">
-              <div className="w-16 h-10 bg-gradient-to-b from-blue-600 to-white rounded mr-4"></div>
-              <span className="text-lg font-semibold text-blue-200">Greece • Schengen Area</span>
+            {/* Country indicator */}
+            <div className="flex items-center justify-center mb-8 animate-fade-in">
+              <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20">
+                <div className="w-8 h-5 bg-gradient-to-b from-blue-600 to-white rounded"></div>
+                <span className="text-base font-medium text-blue-200 tracking-wide">Greece • Schengen Area</span>
+                <Award className="h-5 w-5 text-blue-300" />
+              </div>
             </div>
             
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Greece Short-Stay Visa
-              <span className="block text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text">
-                + Travel Packages
-              </span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl mb-8 text-slate-200 max-w-3xl">
-              Get your Schengen visa for Greece plus exclusive travel packages. 
-              From Athens' ancient history to Santorini's stunning sunsets - we handle everything.
-            </p>
+            <div className="text-center mb-12">
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                <span className="block text-white">Greece Short-Stay Visa</span>
+                <span className="block text-transparent bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text mt-2">
+                  + Travel Packages
+                </span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl mb-10 text-white/90 max-w-4xl mx-auto leading-relaxed animate-slide-up" style={{ animationDelay: '0.4s' }}>
+                Get your Schengen visa for Greece plus exclusive travel packages. 
+                From Athens' ancient history to Santorini's stunning sunsets—
+                <span className="text-cyan-300 font-semibold"> we handle everything</span>.
+              </p>
+            </div>
 
-            <div className="flex flex-wrap gap-4 mb-8">
-              <Badge className="bg-green-500/20 text-green-300 border-green-500/30 px-4 py-2">
-                <CheckCircle className="h-4 w-4 mr-2" />
+            <div className="flex flex-wrap justify-center gap-6 mb-12 animate-scale-in" style={{ animationDelay: '0.6s' }}>
+              <Badge className="bg-green-500/20 text-green-300 border-green-500/30 px-6 py-3 text-base rounded-full backdrop-blur-sm">
+                <CheckCircle className="h-5 w-5 mr-2" />
                 Schengen Benefits
               </Badge>
-              <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 px-4 py-2">
-                <Clock className="h-4 w-4 mr-2" />
+              <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 px-6 py-3 text-base rounded-full backdrop-blur-sm">
+                <Clock className="h-5 w-5 mr-2" />
                 90 Days Stay
               </Badge>
-              <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 px-4 py-2">
-                <Shield className="h-4 w-4 mr-2" />
+              <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 px-6 py-3 text-base rounded-full backdrop-blur-sm">
+                <Shield className="h-5 w-5 mr-2" />
                 99% Success Rate
               </Badge>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold px-8 py-4">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in" style={{ animationDelay: '0.8s' }}>
+              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-xl px-12 py-6 rounded-xl shadow-2xl transition-all duration-300 hover:scale-105">
                 Apply for Visa + Package
-                <ArrowRight className="h-5 w-5 ml-2" />
+                <ArrowRight className="h-6 w-6 ml-3" />
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-slate-900 font-bold px-8 py-4">
+              <Button size="lg" variant="outline" className="border-2 border-white/50 text-white hover:bg-white/10 hover:border-white font-bold text-xl px-12 py-6 rounded-xl shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105">
                 Visa Only
-                <Plane className="h-5 w-5 ml-2" />
+                <Plane className="h-6 w-6 ml-3" />
               </Button>
             </div>
           </div>
