@@ -2,13 +2,13 @@
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { OTPStepState } from './types';
+import { OTPStep } from './types';
 
 export const useAuthState = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [otpStep, setOTPStep] = useState<OTPStepState | null>(null);
+  const [otpStep, setOTPStep] = useState<OTPStep | null>(null);
 
   const isEmailVerified = user?.email_confirmed_at ? true : false;
 
