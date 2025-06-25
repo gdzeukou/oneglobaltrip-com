@@ -3,33 +3,33 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Plane, Building, MapPin, FileText, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import OptimizedImage from '@/components/ui/optimized-image';
+import EnhancedImage from '@/components/ui/enhanced-image';
 
 const HeroSection = () => {
   const { user } = useAuth();
 
   return (
     <section className="pt-20 relative min-h-screen bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white overflow-hidden">
-      {/* Background Images with Parallax Effect */}
+      {/* Enhanced Background Images with Better Travel Photos */}
       <div className="absolute inset-0 z-0">
         <div className="grid grid-cols-3 h-full opacity-20">
-          <OptimizedImage
-            src="https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=1200&fit=crop&crop=center"
-            alt="European Architecture"
-            className="h-full"
-            overlay
-            overlayColor="bg-blue-900/60"
-          />
-          <OptimizedImage
-            src="https://images.unsplash.com/photo-1539650116574-75c0c6d73a0e?w=800&h=1200&fit=crop&crop=center"
-            alt="Modern Travel"
-            className="h-full"
-            overlay
-            overlayColor="bg-blue-900/60"
-          />
-          <OptimizedImage
+          <EnhancedImage
             src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=1200&fit=crop&crop=center"
-            alt="Global Destinations"
+            alt="Travelers celebrating adventure"
+            className="h-full"
+            overlay
+            overlayColor="bg-blue-900/60"
+          />
+          <EnhancedImage
+            src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=1200&fit=crop&crop=center"
+            alt="Mountain adventure and exploration"
+            className="h-full"
+            overlay
+            overlayColor="bg-blue-900/60"
+          />
+          <EnhancedImage
+            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&h=1200&fit=crop&crop=center"
+            alt="Beach paradise vacation"
             className="h-full"
             overlay
             overlayColor="bg-blue-900/60"
@@ -53,12 +53,12 @@ const HeroSection = () => {
           ) : (
             <>
               <h1 className="text-4xl md:text-6xl font-bold mb-6 hero-text">
-                Your Gateway to the World
-                <span className="block text-yellow-500 animate-float">Starts Here</span>
+                Turn Travel Dreams Into
+                <span className="block text-yellow-500 animate-float">Reality</span>
               </h1>
               <p className="text-xl md:text-2xl mb-8 text-blue-100 max-w-3xl mx-auto animate-slide-up">
-                From quick getaways to permanent moves - we handle visas, flights, and accommodations 
-                so you can focus on your journey ahead
+                From weekend escapes to life-changing adventures - we handle visas, flights, and accommodations 
+                so you can focus on creating memories that last forever
               </p>
             </>
           )}
@@ -190,10 +190,12 @@ const HeroSection = () => {
         )}
       </div>
 
-      {/* Floating elements for visual appeal */}
+      {/* Enhanced floating elements */}
       <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-500/20 rounded-full animate-float" style={{ animationDelay: '1s' }} />
       <div className="absolute bottom-20 right-10 w-16 h-16 bg-white/10 rounded-full animate-float" style={{ animationDelay: '2s' }} />
       <div className="absolute top-1/2 right-20 w-12 h-12 bg-yellow-400/30 rounded-full animate-float" style={{ animationDelay: '0.5s' }} />
+      <div className="absolute top-1/3 left-1/4 w-8 h-8 bg-blue-300/30 rounded-full animate-float" style={{ animationDelay: '2.5s' }} />
+      <div className="absolute bottom-1/3 right-1/4 w-10 h-10 bg-yellow-300/20 rounded-full animate-float" style={{ animationDelay: '3s' }} />
     </section>
   );
 };

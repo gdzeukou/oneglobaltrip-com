@@ -1,3 +1,4 @@
+
 import { Package, PackageCategory } from '@/types/package';
 
 export const categories: PackageCategory[] = [
@@ -11,7 +12,7 @@ export const categories: PackageCategory[] = [
   { id: 'multi-country', name: 'Multi-Country', icon: 'Map' }
 ];
 
-// Europe Express packages
+// Enhanced Europe Express packages with better images
 export const packages: Package[] = [
   {
     id: "london-paris-rome",
@@ -22,12 +23,12 @@ export const packages: Package[] = [
     price: 3299,
     originalPrice: 4199,
     duration: "11 days",
-    image: "/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png",
+    image: "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop&crop=center",
     category: "cultural",
     rating: 4.8,
     reviews: 127,
     reviewCount: 127,
-    countries: ["uk", "france", "italy"], // Updated to use country codes
+    countries: ["uk", "france", "italy"],
     cities: ["London", "Paris", "Rome"],
     highlights: [
       "Skip-the-line access to Tower of London, Eiffel Tower & Colosseum",
@@ -73,7 +74,7 @@ export const packages: Package[] = [
     duration: '10 Days',
     price: 4299,
     originalPrice: 4899,
-    image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop&crop=center',
+    image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center',
     description: 'Experience three of Europe\'s most iconic capitals on this carefully curated 10-day journey. Perfect for couples and first-time Europe travelers seeking a comprehensive introduction to European culture, history, and cuisine. From London\'s royal heritage to Paris\'s artistic treasures and Rome\'s ancient wonders, this signature tour combines the best of each destination with seamless transportation, expert guides, and authentic local experiences.',
     highlights: [
       'Explore London with Go City London Pass covering 80+ top attractions including Tower of London, Westminster Abbey, and Thames River Cruise',
@@ -102,7 +103,9 @@ export const packages: Package[] = [
     visasRequired: ['Schengen Visa', 'UK Visa'],
     rating: 4.9,
     reviews: 247,
+    reviewCount: 247,
     countries: ['United Kingdom', 'France', 'Italy'],
+    cities: ['London', 'Paris', 'Rome'],
     features: [
       'Private Transfers', 
       'Expert Guides', 
@@ -126,6 +129,22 @@ export const packages: Package[] = [
       'culinary-experiences',
       'romantic',
       'comprehensive'
+    ],
+    difficulty: "Easy",
+    groupSize: "8-16 people",
+    included: [
+      "9 nights accommodation in premium 4-star hotels",
+      "Daily gourmet breakfast",
+      "5 lunches including special culinary experiences",
+      "3 dinners including welcome and farewell meals",
+      "Eurostar Standard Premier tickets",
+      "Domestic flights where applicable",
+      "All ground transportation in luxury vehicles",
+      "Expert local guides and tour directors",
+      "Skip-the-line tickets to all major attractions",
+      "Comprehensive sightseeing and cultural activities",
+      "Wine tastings and culinary experiences",
+      "24/7 customer support and assistance"
     ]
   }
 ];

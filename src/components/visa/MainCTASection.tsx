@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
-import OptimizedImage from '@/components/ui/optimized-image';
+import EnhancedImage from '@/components/ui/enhanced-image';
 
 const MainCTASection = () => {
   const navigate = useNavigate();
@@ -13,60 +13,72 @@ const MainCTASection = () => {
       id: 'schengen',
       title: 'Schengen Visa Pack',
       subtitle: '27 European Countries',
-      description: 'Access 27 European countries with a single visa application',
+      description: 'Access 27 European countries with a single visa application. Perfect for exploring multiple destinations.',
       price: 'from $193',
       image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=600&h=400&fit=crop&crop=center',
       alt: 'European landmarks for Schengen visa',
       badge: 'POPULAR',
       badgeColor: 'bg-red-500',
-      route: '/visas/short-stay/schengen'
+      route: '/visas/short-stay/schengen',
+      features: ['90-day validity', 'Multiple entries', 'Fast processing']
     },
     {
       id: 'portugal',
       title: 'Portugal Long-Stay Visa',
       subtitle: 'Work, Study & Residence',
-      description: 'Long-term visa for Portugal with comprehensive support',
+      description: 'Long-term visa for Portugal with comprehensive support for work permits and residency applications.',
       price: 'from $240',
       image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&h=400&fit=crop&crop=center',
       alt: 'Portuguese architecture for Portugal visa',
       badge: 'TRENDING',
-      badgeColor: 'bg-red-500',
-      route: '/visas/long-stay/portugal'
+      badgeColor: 'bg-green-500',
+      route: '/visas/long-stay/portugal',
+      features: ['Work authorization', 'Path to residency', 'Family inclusion']
     }
   ];
 
   return (
     <section id="main-cta-section" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Most Popular Choices</h2>
+        <div className="text-center mb-12 animate-fade-in">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Most Popular Choices</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Start your visa application today with our most requested services
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
-          {popularChoices.map((choice) => (
-            <Card key={choice.id} className="overflow-hidden hover-lift group cursor-pointer relative" onClick={() => navigate(choice.route)}>
+          {popularChoices.map((choice, index) => (
+            <Card key={choice.id} className="overflow-hidden hover-lift group cursor-pointer relative card-hover animate-scale-in" style={{ animationDelay: `${index * 0.2}s` }} onClick={() => navigate(choice.route)}>
               <div className="absolute top-4 right-4 z-10">
-                <span className={`${choice.badgeColor} text-white px-3 py-1 text-sm font-bold rounded-full`}>
+                <span className={`${choice.badgeColor} text-white px-3 py-1 text-sm font-bold rounded-full shadow-lg`}>
                   {choice.badge}
                 </span>
               </div>
-              <div className="relative h-48">
-                <OptimizedImage
+              <div className="relative h-48 overflow-hidden">
+                <EnhancedImage
                   src={choice.image}
                   alt={choice.alt}
                   className="w-full h-full group-hover:scale-110 transition-transform duration-500"
                   overlay
                   overlayColor="bg-black/20"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="absolute bottom-4 left-4">
+                  <div className="flex flex-wrap gap-2">
+                    {choice.features.map((feature, idx) => (
+                      <span key={idx} className="text-xs bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full">
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
                     <CardTitle className="text-xl text-blue-900">{choice.title}</CardTitle>
-                    <p className="text-gray-600 text-sm">{choice.subtitle}</p>
+                    <p className="text-gray-600 text-sm font-medium">{choice.subtitle}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-2xl font-bold text-blue-900">{choice.price}</p>
@@ -75,7 +87,7 @@ const MainCTASection = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 mb-4">{choice.description}</p>
-                <Button className="w-full bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700">
+                <Button className="w-full bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 shadow-lg hover-lift">
                   Start Application
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
@@ -84,18 +96,20 @@ const MainCTASection = () => {
           ))}
         </div>
 
-        <div className="text-center">
-          <p className="text-lg text-gray-600 mb-6">
-            Need help choosing? Our visa experts are here to guide you.
-          </p>
-          <Button 
-            size="lg"
-            variant="outline"
-            className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
-            onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
-          >
-            Book Free Consultation
-          </Button>
+        <div className="text-center animate-fade-in" style={{ animationDelay: '0.5s' }}>
+          <div className="bg-gradient-to-r from-blue-50 to-yellow-50 rounded-xl p-8 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 mb-6">
+              Need help choosing the right visa? Our experts have processed over 10,000 successful applications.
+            </p>
+            <Button 
+              size="lg"
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white shadow-lg hover-lift"
+              onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
+            >
+              Book Free Consultation
+            </Button>
+          </div>
         </div>
       </div>
     </section>
