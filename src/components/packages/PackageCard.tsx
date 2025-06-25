@@ -1,5 +1,5 @@
 
-import { MapPin, Calendar, Users, Star, Heart, ArrowRight } from 'lucide-react';
+import { MapPin, Calendar, Users, Star, Heart, ArrowRight, Plane, Train } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,11 +30,15 @@ const PackageCard = ({ package: pkg }: PackageCardProps) => {
     return countryImages[countryName as keyof typeof countryImages] || originalImage;
   };
 
+  // Determine if this is a multi-country package
+  const isMultiCountry = pkg.countries && pkg.countries.length > 1;
+  const displayCountry = isMultiCountry ? `${pkg.countries?.length} Countries` : pkg.country;
+
   return (
     <Card className="overflow-hidden hover-lift group card-hover bg-white shadow-lg">
       <div className="relative">
         <OptimizedImage
-          src={getDestinationImage(pkg.country, pkg.image)}
+          src={getDestinationImage(pkg.country.split(',')[0], pkg.image)}
           alt={pkg.title}
           className="w-full h-64 group-hover:scale-110 transition-transform duration-500"
           overlay
@@ -44,6 +48,22 @@ const PackageCard = ({ package: pkg }: PackageCardProps) => {
           <Badge className="bg-yellow-500 text-blue-900 font-bold">
             From ${pkg.price.toLocaleString()}
           </Badge>
+        </div>
+        {pkg.originalPrice && (
+          <div className="absolute top-4 right-4 mt-8">
+            <Badge variant="outline" className="bg-white/90 text-gray-600 line-through text-xs">
+              ${pkg.originalPrice.toLocaleString()}
+            </Badge>
+          </div>
+        )}
+        {isMultiCountry && (
+          <div className="absolute bottom-4 right-4 bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
+            <Plane className="h-3 w-3" />
+            <Train className="h-3 w-3" />
+          </div>
+        )}
+        <div className="absolute bottom-4 left-4 bg-white/90 px-3 py-1 rounded-full text-sm font-medium">
+          {pkg.duration}
         </div>
         <button className="absolute top-4 left-4 p-2 bg-white/80 rounded-full hover:bg-white transition-colors hover-lift">
           <Heart className="h-5 w-5 text-gray-600" />
@@ -69,7 +89,7 @@ const PackageCard = ({ package: pkg }: PackageCardProps) => {
           </div>
           <div className="flex items-center space-x-2 text-sm text-gray-600">
             <MapPin className="h-4 w-4" />
-            <span>{pkg.country}</span>
+            <span>{displayCountry}</span>
           </div>
           <div className="flex items-center space-x-2 text-sm text-gray-600">
             <Users className="h-4 w-4" />
@@ -95,7 +115,7 @@ const PackageCard = ({ package: pkg }: PackageCardProps) => {
         
         <Button asChild className="w-full bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 hover-lift">
           <Link to={`/booking?package=${pkg.id}`}>
-            Book This Package
+            Start Planning
             <ArrowRight className="h-4 w-4 ml-2" />
           </Link>
         </Button>
