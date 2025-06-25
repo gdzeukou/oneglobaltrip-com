@@ -8,6 +8,7 @@ import VisaWizard from '@/components/visa/wizard/VisaWizard';
 import MainCTASection from '@/components/visa/MainCTASection';
 import VisaCategoriesSection from '@/components/visa/VisaCategoriesSection';
 import PopularVisaServicesSection from '@/components/visa/PopularVisaServicesSection';
+import EnhancedVisaPagesPreview from '@/components/visa/EnhancedVisaPagesPreview';
 
 const Visas = () => {
   // Direct users to most important CTA on page load
@@ -31,6 +32,7 @@ const Visas = () => {
       <VisasHero />
       <TransparentPricingSection />
       <VisaWizard />
+      <EnhancedVisaPagesPreview />
       <MainCTASection />
       <VisaCategoriesSection />
       <PopularVisaServicesSection />
