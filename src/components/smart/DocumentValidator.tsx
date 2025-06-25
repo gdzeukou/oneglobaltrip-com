@@ -63,14 +63,14 @@ const validateDocument = (file: File): Promise<DocumentValidation> => {
 export const DocumentValidator = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [validations, setValidations] = useState<Record<string, DocumentValidation>>({});
-  const [isValidating, setIsValidating] = useState<Record<string, boolean>>({});
+  const [validatingFiles, setValidatingFiles] = useState<Record<string, boolean>>({});
 
   const handleFileUpload = async (uploadedFiles: FileList) => {
     const newFiles = Array.from(uploadedFiles);
     setFiles(prev => [...prev, ...newFiles]);
 
     for (const file of newFiles) {
-      setIsValidating(prev => ({ ...prev, [file.name]: true }));
+      setValidatingFiles(prev => ({ ...prev, [file.name]: true }));
       
       try {
         const validation = await validateDocument(file);
@@ -86,7 +86,7 @@ export const DocumentValidator = () => {
           } 
         }));
       } finally {
-        setIsValidating(prev => ({ ...prev, [file.name]: false }));
+        setValidatingFiles(prev => ({ ...prev, [file.name]: false }));
       }
     }
   };
@@ -138,7 +138,7 @@ export const DocumentValidator = () => {
           <h4 className="font-semibold text-gray-900">Uploaded Documents</h4>
           {files.map((file) => {
             const validation = validations[file.name];
-            const isValidating = isValidating[file.name];
+            const isValidating = validatingFiles[file.name];
 
             return (
               <motion.div

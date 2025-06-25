@@ -11,6 +11,9 @@ import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
 import VisaRecommendations from '@/components/smart/VisaRecommendations';
+import InteractiveMap from '@/components/interactive/InteractiveMap';
+import ProgressTracker from '@/components/tracking/ProgressTracker';
+import SmartChatbot from '@/components/chat/SmartChatbot';
 
 const Index = () => {
   return (
@@ -19,13 +22,16 @@ const Index = () => {
       <HeroSection />
       <TrustIndicators />
       <VisaRecommendations />
+      <InteractiveMap />
       <ServicesSection />
       <PromoSection />
       <StartTripSection />
+      <ProgressTracker />
       <WhyChooseUsSection />
       <TestimonialsSection />
       <CTASection />
       <Footer />
+      <SmartChatbot />
     </div>
   );
 };
