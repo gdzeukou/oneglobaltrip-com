@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, MapPin } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface CountryTileProps {
@@ -40,15 +40,16 @@ const CountryTile = ({ name, image, type }: CountryTileProps) => {
     <Link to={linkTo} className="block">
       <Card className="hover-lift overflow-hidden group cursor-pointer">
         <div className="relative h-40">
-          <img
-            src={image}
-            alt={`${name} visa`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="absolute bottom-3 left-3 right-3">
-            <h3 className="text-white font-bold text-lg mb-1">{name}</h3>
-            <p className="text-white/90 text-sm capitalize">{type.replace('-', ' ')} Visa</p>
+          <div className="w-full h-full bg-gradient-to-br from-deep-blue-900 via-deep-blue-800 to-blue-700 flex items-center justify-center relative overflow-hidden group-hover:from-deep-blue-800 group-hover:to-blue-600 transition-all duration-300">
+            <div className="absolute inset-0">
+              <div className="absolute top-2 right-2 w-16 h-16 bg-yellow-500/10 rounded-full blur-xl" />
+              <div className="absolute bottom-2 left-2 w-12 h-12 bg-blue-400/10 rounded-full blur-lg" />
+            </div>
+            <div className="relative z-10 text-center text-white">
+              <MapPin className="h-8 w-8 mx-auto mb-2 text-yellow-400" />
+              <h3 className="text-lg font-bold mb-1">{name}</h3>
+              <p className="text-blue-200 text-sm capitalize">{type.replace('-', ' ')} Visa</p>
+            </div>
           </div>
         </div>
         <CardContent className="p-4">
@@ -63,4 +64,3 @@ const CountryTile = ({ name, image, type }: CountryTileProps) => {
 };
 
 export default CountryTile;
-

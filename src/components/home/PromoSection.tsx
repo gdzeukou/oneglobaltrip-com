@@ -1,10 +1,10 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { ExternalLink, Plane, MapPin, Camera } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import EnhancedImage from '@/components/ui/enhanced-image';
 
 const PromoSection = () => {
   const featuredTrips = [
@@ -15,7 +15,6 @@ const PromoSection = () => {
       price: "$2,499",
       paymentInfo: "No payments until 30 days before departure",
       description: "Experience iconic landmarks, world-class cuisine, and rich cultural heritage across three magnificent capitals.",
-      image: "https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center",
       highlights: ["Skip-the-line Louvre & Colosseum", "High-speed rail travel", "Local culinary experiences"]
     },
     {
@@ -25,7 +24,6 @@ const PromoSection = () => {
       price: "$1,899",
       paymentInfo: "Reserve with $0 today",
       description: "Dance the night away at Rio's famous carnival while soaking up the vibrant culture and stunning beaches.",
-      image: "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=800&h=600&fit=crop&crop=center",
       highlights: ["VIP carnival access", "Copacabana beachfront", "Samba dance lessons"]
     },
     {
@@ -35,7 +33,6 @@ const PromoSection = () => {
       price: "$2,799",
       paymentInfo: "Pay later, travel worry-free",
       description: "Immerse yourself in ancient traditions, cutting-edge technology, and incredible street food across three dynamic cities.",
-      image: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop&crop=center",
       highlights: ["Traditional temple visits", "Modern city skylines", "Authentic street food tours"]
     }
   ];
@@ -78,14 +75,16 @@ const PromoSection = () => {
                 </Badge>
               </div>
               <div className="aspect-video overflow-hidden relative">
-                <EnhancedImage 
-                  src={trip.image} 
-                  alt={`${trip.title} - ${trip.subtitle}`}
-                  className="w-full h-full transition-transform duration-500 group-hover:scale-110"
-                  overlay
-                  overlayColor="bg-black/20"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="w-full h-full bg-gradient-to-br from-deep-blue-900 via-deep-blue-800 to-blue-700 flex items-center justify-center relative overflow-hidden group-hover:from-deep-blue-800 group-hover:to-blue-600 transition-all duration-500">
+                  <div className="absolute inset-0">
+                    <div className="absolute top-4 right-4 w-32 h-32 bg-yellow-500/10 rounded-full blur-2xl" />
+                    <div className="absolute bottom-4 left-4 w-24 h-24 bg-blue-400/10 rounded-full blur-xl" />
+                  </div>
+                  <div className="relative z-10 text-center text-white">
+                    <MapPin className="h-12 w-12 mx-auto mb-3 text-yellow-400" />
+                    <h4 className="text-lg font-bold">{trip.title}</h4>
+                  </div>
+                </div>
                 <div className="absolute bottom-4 left-4 text-white">
                   <div className="flex flex-wrap gap-1">
                     {trip.highlights.slice(0, 2).map((highlight, idx) => (
@@ -133,13 +132,12 @@ const PromoSection = () => {
                       </Badge>
                     </div>
                     <div className="aspect-video overflow-hidden">
-                      <EnhancedImage 
-                        src={trip.image} 
-                        alt={`${trip.title} - ${trip.subtitle}`}
-                        className="w-full h-full"
-                        overlay
-                        overlayColor="bg-black/10"
-                      />
+                      <div className="w-full h-full bg-gradient-to-br from-deep-blue-900 via-deep-blue-800 to-blue-700 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <MapPin className="h-12 w-12 mx-auto mb-3 text-yellow-400" />
+                          <h4 className="text-lg font-bold">{trip.title}</h4>
+                        </div>
+                      </div>
                     </div>
                     <div className="p-6">
                       <h3 className="text-xl font-bold text-gray-900 mb-2">{trip.title}</h3>

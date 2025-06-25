@@ -9,7 +9,8 @@ import {
   Clock, 
   CreditCard,
   Globe,
-  Sparkles
+  Sparkles,
+  MapPin
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -66,7 +67,9 @@ const EnhancedVisaPagesPreview = () => {
             <Card key={index} className="border-2 hover:border-purple-300 transition-all duration-300 hover:shadow-lg">
               <CardContent className="p-6">
                 <div className="text-center mb-4">
-                  <div className="text-4xl mb-2">{page.flag}</div>
+                  <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-deep-blue-900 to-blue-700 rounded-full flex items-center justify-center">
+                    <MapPin className="h-8 w-8 text-yellow-400" />
+                  </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">
                     {page.title}
                   </h3>

@@ -5,7 +5,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Package } from '@/types/package';
-import OptimizedImage from '@/components/ui/optimized-image';
 
 interface FeaturedPackagesProps {
   packages: Package[];
@@ -48,13 +47,16 @@ const FeaturedPackages = ({ packages }: FeaturedPackagesProps) => {
           {featuredPackages.map((pkg, index) => (
             <Card key={pkg.id} className="overflow-hidden hover-lift group bg-white shadow-lg card-hover animate-scale-in" style={{ animationDelay: `${index * 0.15}s` }}>
               <div className="relative">
-                <OptimizedImage
-                  src={pkg.image}
-                  alt={pkg.title}
-                  className="w-full h-48 group-hover:scale-110 transition-transform duration-500"
-                  overlay
-                  overlayColor="bg-black/10"
-                />
+                <div className="w-full h-48 bg-gradient-to-br from-deep-blue-900 via-deep-blue-800 to-blue-700 flex items-center justify-center relative overflow-hidden group-hover:from-deep-blue-800 group-hover:to-blue-600 transition-all duration-500">
+                  <div className="absolute inset-0">
+                    <div className="absolute top-2 right-2 w-16 h-16 bg-yellow-500/10 rounded-full blur-xl" />
+                    <div className="absolute bottom-2 left-2 w-12 h-12 bg-blue-400/10 rounded-full blur-lg" />
+                  </div>
+                  <div className="relative z-10 text-center text-white">
+                    <MapPin className="h-8 w-8 mx-auto mb-2 text-yellow-400" />
+                    <p className="text-sm font-medium">{pkg.country}</p>
+                  </div>
+                </div>
                 <div className="absolute top-4 right-4">
                   <Badge className="bg-yellow-500 text-blue-900 font-bold">
                     From ${pkg.price.toLocaleString()}

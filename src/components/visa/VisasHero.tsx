@@ -1,38 +1,31 @@
 
-import { Shield, Clock, Users } from 'lucide-react';
-import EnhancedImage from '@/components/ui/enhanced-image';
+import { Shield, Clock, Users, Sparkles } from 'lucide-react';
 
 const VisasHero = () => {
   return (
     <section className="pt-20 relative bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white py-16 overflow-hidden">
-      {/* Enhanced Background with Professional Travel Photos */}
+      {/* Enhanced Background with Clean Geometric Patterns */}
       <div className="absolute inset-0 z-0">
-        <div className="grid grid-cols-3 h-full opacity-20">
-          <EnhancedImage
-            src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&h=1200&fit=crop&crop=center"
-            alt="Airport travel and documents"
-            className="h-full"
-            overlay
-            overlayColor="bg-blue-900/60"
-          />
-          <EnhancedImage
-            src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=1200&fit=crop&crop=center"
-            alt="Happy travelers with passports"
-            className="h-full"
-            overlay
-            overlayColor="bg-blue-900/60"
-          />
-          <EnhancedImage
-            src="https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=800&h=1200&fit=crop&crop=center"
-            alt="International travel experience"
-            className="h-full"
-            overlay
-            overlayColor="bg-blue-900/60"
-          />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/95 via-blue-800/90 to-blue-900/95" />
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-20 right-20 w-80 h-80 bg-yellow-500/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 left-20 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl" />
+        </div>
+        {/* Professional geometric patterns */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-32 left-32 w-6 h-6 bg-yellow-400 rounded-full" />
+          <div className="absolute top-48 right-40 w-4 h-4 bg-white/40 rotate-45" />
+          <div className="absolute bottom-32 left-1/3 w-3 h-3 bg-yellow-400 rotate-45" />
+          <div className="absolute bottom-48 right-1/3 w-5 h-5 bg-white/30 rounded-full" />
         </div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
+        <div className="flex items-center justify-center mb-6">
+          <Sparkles className="h-8 w-8 text-yellow-500 mr-3 animate-pulse" />
+          <span className="text-lg font-medium text-yellow-400">Professional Visa Services</span>
+        </div>
+        
         <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
           Visa Services
           <span className="block text-yellow-500 animate-float">For Every Journey</span>

@@ -7,8 +7,7 @@ import MultiStepForm from '@/components/visa/MultiStepForm';
 import CountryTile from '@/components/visa/CountryTile';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
-import OptimizedImage from '@/components/ui/optimized-image';
-import { getCountryImage } from '@/utils/countryImages';
+import { MapPin, Sparkles } from 'lucide-react';
 
 const LongStayVisas = () => {
   const [searchParams] = useSearchParams();
@@ -33,14 +32,14 @@ const LongStayVisas = () => {
   }, [preSelectedCountry]);
 
   const countries = [
-    { name: 'Portugal', image: getCountryImage('Portugal') },
-    { name: 'Norway', image: getCountryImage('Norway') },
-    { name: 'Denmark', image: getCountryImage('Denmark') },
-    { name: 'Finland', image: getCountryImage('Finland') },
-    { name: 'Nigeria', image: getCountryImage('Nigeria') },
-    { name: 'France', image: getCountryImage('France') },
-    { name: 'Germany', image: getCountryImage('Germany') },
-    { name: 'Switzerland', image: getCountryImage('Switzerland') }
+    { name: 'Portugal', image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop&crop=center' },
+    { name: 'Norway', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&crop=center' },
+    { name: 'Denmark', image: 'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=800&h=600&fit=crop&crop=center' },
+    { name: 'Finland', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=center' },
+    { name: 'Nigeria', image: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800&h=600&fit=crop&crop=center' },
+    { name: 'France', image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center' },
+    { name: 'Germany', image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop&crop=center' },
+    { name: 'Switzerland', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&crop=center' }
   ];
 
   const scrollToForm = () => {
@@ -58,19 +57,27 @@ const LongStayVisas = () => {
       <meta data-agentive-context="visa" />
       <meta data-agentive-context-json='{"page":"long-stay-visas","visa_type":"long-stay","services":["residency_visa","work_visa","study_visa","retirement_visa"]}' />
       
-      {/* Hero Section with Background Image */}
+      {/* Hero Section with Clean Design */}
       <section className="pt-24 pb-16 relative bg-gradient-to-r from-deep-blue-900 to-deep-blue-800 text-white overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-20">
-          <OptimizedImage
-            src="https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=1920&h=1080&fit=crop&crop=center"
-            alt="European cityscape for long-stay visas"
-            className="w-full h-full"
-            overlay
-            overlayColor="bg-deep-blue-900/60"
-            priority
-          />
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-deep-blue-900/95 via-deep-blue-800/90 to-deep-blue-900/95" />
+          <div className="absolute top-0 left-0 w-full h-full">
+            <div className="absolute top-20 right-20 w-80 h-80 bg-yellow-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-20 left-20 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl" />
+          </div>
+          {/* Professional geometric patterns */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-32 left-32 w-6 h-6 bg-yellow-400 rounded-full" />
+            <div className="absolute top-48 right-40 w-4 h-4 bg-white/40 rotate-45" />
+            <div className="absolute bottom-32 left-1/3 w-3 h-3 bg-yellow-400 rotate-45" />
+            <div className="absolute bottom-48 right-1/3 w-5 h-5 bg-white/30 rounded-full" />
+          </div>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
+          <div className="flex items-center justify-center mb-6">
+            <Sparkles className="h-8 w-8 text-yellow-500 mr-3 animate-pulse" />
+            <span className="text-lg font-medium text-yellow-400">Long-Stay Solutions</span>
+          </div>
           <h1 className="text-5xl font-bold mb-6 hero-text animate-fade-in">Long-Stay & Residency Visas Without the Guesswork</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto animate-slide-up">
             Work, study, retire, or live abroad—One Global Trip has you covered with expert guidance every step of the way.
@@ -95,11 +102,17 @@ const LongStayVisas = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {countries.map((country, index) => (
               <div key={country.name} className="animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                <CountryTile
-                  name={country.name}
-                  image={country.image}
-                  type="long-stay"
-                />
+                <div className="bg-gradient-to-br from-deep-blue-900 to-blue-700 rounded-xl h-40 flex items-center justify-center text-white relative overflow-hidden hover-lift cursor-pointer group">
+                  <div className="absolute inset-0">
+                    <div className="absolute top-2 right-2 w-16 h-16 bg-yellow-500/10 rounded-full blur-xl" />
+                    <div className="absolute bottom-2 left-2 w-12 h-12 bg-blue-400/10 rounded-full blur-lg" />
+                  </div>
+                  <div className="relative z-10 text-center">
+                    <MapPin className="h-8 w-8 mx-auto mb-2 text-yellow-400" />
+                    <h3 className="text-lg font-bold">{country.name}</h3>
+                    <p className="text-blue-200 text-sm">Long-Stay Visa</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
