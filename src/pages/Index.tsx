@@ -7,6 +7,7 @@ import TrustIndicators from '@/components/home/TrustIndicators';
 import ServicesSection from '@/components/home/ServicesSection';
 import PromoSection from '@/components/home/PromoSection';
 import StartTripSection from '@/components/home/StartTripSection';
+import TravelDreamsCTA from '@/components/home/TravelDreamsCTA';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
@@ -19,6 +20,7 @@ const Index = () => {
       <TrustIndicators />
       <ServicesSection />
       <PromoSection />
+      <TravelDreamsCTA />
       <StartTripSection />
       <WhyChooseUsSection />
       <TestimonialsSection />
