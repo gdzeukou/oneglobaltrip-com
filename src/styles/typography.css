@@ -1,0 +1,65 @@
+
+/* Typography Styles */
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-display: swap;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  /* Single font family for all headings for better performance */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: hsl(var(--foreground));
+  }
+
+  /* Improved contrast ratios for accessibility */
+  h1 { 
+    font-size: clamp(2.25rem, 5vw, 4rem); 
+    font-weight: 800;
+    color: hsl(var(--foreground));
+  }
+  h2 { 
+    font-size: clamp(1.875rem, 4vw, 2.75rem); 
+    font-weight: 700;
+    color: hsl(var(--foreground));
+  }
+  h3 { 
+    font-size: clamp(1.5rem, 3vw, 2.25rem); 
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+  
+  p, li, span {
+    line-height: 1.7;
+    letter-spacing: -0.005em;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Responsive Typography */
+  @media (max-width: 768px) {
+    body {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+  }
+
+  @media (max-width: 640px) {
+    body {
+      font-size: 15px;
+    }
+    
+    h1, h2, h3 {
+      line-height: 1.1;
+    }
+  }
+}
