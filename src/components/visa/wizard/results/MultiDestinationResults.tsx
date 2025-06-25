@@ -1,10 +1,19 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, CheckCircle, AlertTriangle, ArrowRight, Package, AlertCircle } from 'lucide-react';
-import { checkMultiDestinationVisaRequirement, destinationCountries } from '@/data/visaRequirementsDatabase';
+import { Card, CardContent } from '@/components/ui/card';
+import { RefreshCw, CheckCircle, AlertTriangle, ArrowRight, MapPin, Users } from 'lucide-react';
+import { 
+  checkMultiDestinationVisaRequirement, 
+  getSchengenConsulateRecommendation,
+  destinationCountries,
+  schengenCountries,
+  SchengenTripData
+} from '@/data/visaRequirementsDatabase';
 import { Link } from 'react-router-dom';
+import SchengenTripPlanner from '../steps/SchengenTripPlanner';
+import ConsulateRecommendation from './ConsulateRecommendation';
 
 interface Destination {
   country: string;
@@ -18,159 +27,276 @@ interface MultiDestinationResultsProps {
 }
 
 const MultiDestinationResults = ({ nationality, destinations, onReset }: MultiDestinationResultsProps) => {
+  const [schengenTripData, setSchengenTripData] = useState<Partial<SchengenTripData>>({});
+  const [showSchengenPlanner, setShowSchengenPlanner] = useState(false);
+
   const countries = destinations.map(d => d.country);
   const purposes = destinations.map(d => d.purpose);
   const visaCheck = checkMultiDestinationVisaRequirement(nationality, countries, purposes);
+
+  // Check if there are Schengen countries
+  const schengenDestinations = destinations.filter(d => 
+    schengenCountries.includes(d.country)
+  );
+  const nonSchengenDestinations = destinations.filter(d => 
+    !schengenCountries.includes(d.country)
+  );
+
+  const hasMultipleSchengenCountries = schengenDestinations.length > 1;
+  const schengenPurpose = schengenDestinations[0]?.purpose || 'tourism';
+
+  // Generate consulate recommendation if we have complete Schengen trip data
+  const consulateRecommendation = hasMultipleSchengenCountries && 
+    schengenTripData.selectedCountries && 
+    schengenTripData.entryPoint
+    ? getSchengenConsulateRecommendation({
+        selectedCountries: schengenTripData.selectedCountries,
+        nightsDistribution: schengenTripData.nightsDistribution || {},
+        businessLocation: schengenTripData.businessLocation,
+        entryPoint: schengenTripData.entryPoint,
+        purpose: schengenPurpose
+      })
+    : null;
+
+  const handleBookConsultation = () => {
+    window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank');
+  };
 
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">
-          Multi-Destination Visa Requirements
+        <h3 className="text-2xl font-bold text-gray-900 mb-4">
+          Your Multi-Destination Visa Requirements
         </h3>
         <div className="flex flex-wrap justify-center gap-2 mb-4">
-          <Badge variant="outline">Nationality: {nationality}</Badge>
-          <Badge variant="outline">{visaCheck.totalDestinations} Destinations</Badge>
+          <Badge variant="outline" className="flex items-center space-x-1">
+            <Users className="w-3 h-3" />
+            <span>Nationality: {nationality}</span>
+          </Badge>
+          <Badge variant="outline" className="flex items-center space-x-1">
+            <MapPin className="w-3 h-3" />
+            <span>{destinations.length} Destinations</span>
+          </Badge>
         </div>
       </div>
 
-      {/* Individual Destination Results */}
-      <div className="space-y-4">
-        <h4 className="text-lg font-semibold text-gray-900">Visa Requirements by Destination:</h4>
-        {visaCheck.destinations.map((result, index) => (
-          <div key={index} className="border rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-3">
-                <span className="text-2xl">{result.flag}</span>
-                <div>
-                  <h5 className="font-semibold text-gray-900">{result.destinationName}</h5>
-                  <p className="text-sm text-gray-600">Purpose: {destinations[index].purpose}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                {!result.required ? (
-                  <>
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <Badge className="bg-green-100 text-green-800">No Visa Required</Badge>
-                  </>
-                ) : (
-                  <>
-                    <AlertTriangle className="w-5 h-5 text-orange-500" />
-                    <Badge className="bg-orange-100 text-orange-800">Visa Required</Badge>
-                  </>
-                )}
-              </div>
+      {/* Schengen Trip Planning */}
+      {hasMultipleSchengenCountries && (
+        <Card className="border-2 border-blue-200 bg-blue-50">
+          <CardContent className="p-6">
+            <div className="text-center mb-6">
+              <h4 className="text-xl font-bold text-blue-900 mb-2">
+                🇪🇺 Multiple Schengen Countries Detected
+              </h4>
+              <p className="text-blue-700">
+                You need only one Schengen visa, but we need to determine the correct consulate for your application.
+              </p>
             </div>
-          </div>
-        ))}
+
+            {!showSchengenPlanner ? (
+              <div className="text-center">
+                <Button 
+                  onClick={() => setShowSchengenPlanner(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Plan Your Schengen Trip
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            ) : (
+              <SchengenTripPlanner
+                selectedCountries={schengenDestinations.map(d => d.country)}
+                tripData={schengenTripData}
+                purpose={schengenPurpose}
+                onChange={setSchengenTripData}
+              />
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Consulate Recommendation */}
+      {consulateRecommendation && (
+        <ConsulateRecommendation 
+          recommendation={consulateRecommendation}
+          onBookConsultation={handleBookConsultation}
+        />
+      )}
+
+      {/* Overall Status */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card className={`border-2 ${visaCheck.allVisaFree ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50'}`}>
+          <CardContent className="p-6 text-center">
+            {visaCheck.allVisaFree ? (
+              <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
+            ) : (
+              <AlertTriangle className="w-12 h-12 text-orange-600 mx-auto mb-4" />
+            )}
+            <h4 className="font-bold text-lg mb-2">
+              {visaCheck.allVisaFree ? 'All Visa-Free' : 'Visas Required'}
+            </h4>
+            <p className="text-sm">
+              {visaCheck.allVisaFree 
+                ? 'No visas needed for any destination'
+                : `${visaCheck.destinations.filter(d => d.required).length} destinations require visas`
+              }
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6 text-center">
+            <MapPin className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+            <h4 className="font-bold text-lg mb-2">Total Destinations</h4>
+            <p className="text-2xl font-bold text-blue-600">{visaCheck.totalDestinations}</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6 text-center">
+            <Users className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+            <h4 className="font-bold text-lg mb-2">Schengen Countries</h4>
+            <p className="text-2xl font-bold text-purple-600">{schengenDestinations.length}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Detailed Results by Destination */}
+      <div className="space-y-4">
+        <h4 className="text-xl font-bold text-gray-900">Visa Requirements by Destination</h4>
+        
+        {/* Schengen Group */}
+        {schengenDestinations.length > 0 && (
+          <Card className="border-blue-200">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h5 className="text-lg font-semibold text-blue-900">🇪🇺 Schengen Area</h5>
+                <Badge className="bg-blue-100 text-blue-800">
+                  {schengenDestinations.length} {schengenDestinations.length === 1 ? 'country' : 'countries'}
+                </Badge>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                {schengenDestinations.map((destination, index) => {
+                  const countryInfo = destinationCountries.find(c => c.code === destination.country);
+                  const visaResult = visaCheck.destinations.find(d => d.destination === destination.country);
+                  
+                  return (
+                    <div key={index} className="bg-white border border-blue-200 rounded-lg p-4">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <span className="text-xl">{countryInfo?.flag}</span>
+                        <span className="font-medium">{countryInfo?.name}</span>
+                      </div>
+                      <div className="text-sm text-gray-600 mb-2">
+                        Purpose: {destination.purpose}
+                      </div>
+                      <Badge variant={visaResult?.required ? 'destructive' : 'secondary'}>
+                        {visaResult?.required ? 'Visa Required' : 'Visa Free'}
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm text-blue-700">
+                  <strong>Good news!</strong> One Schengen visa allows travel to all Schengen countries. 
+                  {hasMultipleSchengenCountries && !consulateRecommendation && 
+                    ' Complete the trip planner above to get your consulate recommendation.'
+                  }
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Non-Schengen Countries */}
+        {nonSchengenDestinations.map((destination, index) => {
+          const countryInfo = destinationCountries.find(c => c.code === destination.country);
+          const visaResult = visaCheck.destinations.find(d => d.destination === destination.country);
+          
+          return (
+            <Card key={index} className={`border ${visaResult?.required ? 'border-red-200' : 'border-green-200'}`}>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-2xl">{countryInfo?.flag}</span>
+                    <div>
+                      <h5 className="text-lg font-semibold">{countryInfo?.name}</h5>
+                      <p className="text-sm text-gray-600">Purpose: {destination.purpose}</p>
+                    </div>
+                  </div>
+                  <Badge variant={visaResult?.required ? 'destructive' : 'secondary'}>
+                    {visaResult?.required ? 'Visa Required' : 'Visa Free'}
+                  </Badge>
+                </div>
+
+                {visaResult?.required ? (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <p className="text-red-800 mb-2">
+                      You need a visa for {countryInfo?.name}. Start your application as soon as possible.
+                    </p>
+                    <Link to="/visas/short-stay">
+                      <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
+                        Start {countryInfo?.name} Visa Application
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <p className="text-green-800">
+                      No visa required for {countryInfo?.name}. Ensure your passport is valid for at least 6 months.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Transit Warnings */}
       {visaCheck.transitWarnings.length > 0 && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-start space-x-3">
-            <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
-            <div>
-              <h5 className="font-semibold text-yellow-800 mb-2">Transit Visa Considerations</h5>
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardContent className="p-6">
+            <h4 className="font-bold text-yellow-800 mb-4">⚠️ Transit Visa Considerations</h4>
+            <div className="space-y-2">
               {visaCheck.transitWarnings.map((warning, index) => (
-                <p key={index} className="text-sm text-yellow-700 mb-1">
+                <div key={index} className="text-yellow-700">
                   • {warning.message}
-                </p>
+                </div>
               ))}
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Overall Results */}
-      <div className="border-2 border-dashed border-gray-200 rounded-lg p-8">
-        {visaCheck.allVisaFree ? (
-          // All Visa-Free
-          <div className="text-center space-y-6">
-            <div className="flex justify-center">
-              <CheckCircle className="w-16 h-16 text-green-500" />
-            </div>
-            <div>
-              <h4 className="text-2xl font-bold text-green-800 mb-2">
-                🎉 Amazing! No Visas Required!
-              </h4>
-              <p className="text-lg text-gray-700 mb-4">
-                You can travel to all {visaCheck.totalDestinations} destinations without any visas for your planned trip purposes.
-              </p>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                <h5 className="font-semibold text-green-800 mb-2">What you need to know:</h5>
-                <ul className="text-sm text-green-700 space-y-1 text-left">
-                  <li>• Ensure your passport is valid for at least 6 months for each destination</li>
-                  <li>• Check entry/exit requirements between countries</li>
-                  <li>• Consider travel insurance for multi-destination coverage</li>
-                  <li>• Verify any health requirements (vaccinations) for each country</li>
-                </ul>
+      {/* Call to Action */}
+      {visaCheck.hasVisaRequired && (
+        <Card className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+          <CardContent className="p-6 text-center">
+            <h4 className="text-xl font-bold mb-4">Ready to Start Your Applications?</h4>
+            <p className="mb-6">
+              Don't let visa requirements delay your multi-destination adventure. 
+              Our experts can help coordinate all your applications.
+            </p>
+            <div className="space-y-3">
+              <Button 
+                size="lg" 
+                className="bg-yellow-500 hover:bg-yellow-600 text-blue-900 font-bold"
+                onClick={handleBookConsultation}
+              >
+                Get Expert Help for All Visas
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              <div className="text-sm text-blue-100">
+                ✓ Coordinated applications ✓ Timeline management ✓ Document review
               </div>
             </div>
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-              <h5 className="text-xl font-bold text-blue-900 mb-4 flex items-center justify-center">
-                <Package className="w-5 h-5 mr-2" />
-                Multi-Destination Travel Packages
-              </h5>
-              <p className="text-blue-800 mb-4">
-                Perfect for visa-free travel! Explore our curated multi-destination packages.
-              </p>
-              <Link to="/packages">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Explore Multi-Destination Packages
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        ) : (
-          // Some Visas Required
-          <div className="text-center space-y-6">
-            <div className="flex justify-center">
-              <AlertTriangle className="w-16 h-16 text-orange-500" />
-            </div>
-            <div>
-              <h4 className="text-2xl font-bold text-orange-800 mb-2">
-                ⚠️ Complex Visa Requirements Detected
-              </h4>
-              <p className="text-lg text-gray-700 mb-4">
-                Your multi-destination trip requires {visaCheck.destinations.filter(d => d.required).length} visa(s) 
-                out of {visaCheck.totalDestinations} destinations.
-              </p>
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-                <h5 className="font-semibold text-red-800 mb-2">⏰ Important for Multi-Destination Trips:</h5>
-                <ul className="text-sm text-red-700 space-y-1 text-left">
-                  <li>• Start applications early - some destinations have longer processing times</li>
-                  <li>• Consider the order of your travel - some visas require proof of onward travel</li>
-                  <li>• Account for passport submission periods when planning your timeline</li>
-                  <li>• Some countries require visas to be used within specific timeframes</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg p-6">
-              <h5 className="text-xl font-bold mb-4">Expert Multi-Destination Visa Planning</h5>
-              <p className="mb-4">
-                Complex itineraries need expert guidance. Our specialists will coordinate all your visa applications 
-                and ensure optimal timing for your multi-destination trip.
-              </p>
-              <div className="space-y-3">
-                <Link to="/get-started">
-                  <Button size="lg" className="bg-yellow-500 hover:bg-yellow-600 text-blue-900 font-bold">
-                    Get Expert Multi-Destination Planning
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-                <div className="text-sm text-blue-100">
-                  ✓ Coordinated applications ✓ Timeline optimization ✓ Transit visa guidance
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Reset Button */}
       <div className="text-center pt-6 border-t">
