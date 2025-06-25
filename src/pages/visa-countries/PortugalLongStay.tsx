@@ -6,12 +6,14 @@ import Footer from '@/components/Footer';
 import EnhancedMultiStepForm from '@/components/visa/EnhancedMultiStepForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
+import PortugalLongStayRequirements from '@/components/visa/PortugalLongStayRequirements';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, AlertTriangle, FileText, Clock, Euro } from 'lucide-react';
+import { Shield, AlertTriangle } from 'lucide-react';
 
 const PortugalLongStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('Work');
   const location = useLocation();
 
   useEffect(() => {
@@ -107,7 +109,7 @@ const PortugalLongStay = () => {
             <Card className="border hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-start space-x-3">
-                  <Euro className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
+                  <Shield className="h-6 w-6 text-green-600 flex-shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold mb-1">Emergency Coverage</h3>
                     <p className="text-green-600 font-semibold text-sm mb-1">Emergency repatriation included</p>
@@ -158,31 +160,10 @@ const PortugalLongStay = () => {
 
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Portugal Visa Requirements
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="text-center p-6">
-              <FileText className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Valid Passport</h3>
-              <p className="text-sm text-gray-600">Must be valid for at least 3 months beyond stay</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Shield className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Health Insurance</h3>
-              <p className="text-sm text-gray-600">€30,000 minimum coverage required</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Clock className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Processing Time</h3>
-              <p className="text-sm text-gray-600">60-90 days average</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Euro className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Financial Proof</h3>
-              <p className="text-sm text-gray-600">Sufficient funds demonstration</p>
-            </Card>
-          </div>
+          <PortugalLongStayRequirements 
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
         </div>
       </section>
 
