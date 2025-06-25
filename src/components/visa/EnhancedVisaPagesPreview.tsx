@@ -9,8 +9,7 @@ import {
   Clock, 
   CreditCard,
   Globe,
-  Sparkles,
-  MapPin
+  Sparkles
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -20,6 +19,7 @@ const EnhancedVisaPagesPreview = () => {
       title: 'France Short-Stay Visa',
       country: 'France',
       flag: '🇫🇷',
+      flagImage: '/lovable-uploads/3899113e-88c9-4fb6-955c-8470060214d2.png',
       path: '/visas/short-stay/france',
       type: 'Schengen',
       features: ['Smart Consulate Selection', 'Multi-Country Planning', 'Real-time Requirements'],
@@ -30,6 +30,7 @@ const EnhancedVisaPagesPreview = () => {
       title: 'UK Visitor Visa',
       country: 'United Kingdom',
       flag: '🇬🇧',
+      flagImage: '/lovable-uploads/095a1851-f65a-4f3b-8207-a2776ba52926.png',
       path: '/visas/short-stay/uk',
       type: 'Standard',
       features: ['Digital Application', 'Priority Service', 'Biometric Booking'],
@@ -40,6 +41,7 @@ const EnhancedVisaPagesPreview = () => {
       title: 'Canada Visitor Visa',
       country: 'Canada',
       flag: '🇨🇦',
+      flagImage: '/lovable-uploads/d0f88a42-90d0-4ee9-a45f-d6473acfec6c.png',
       path: '/visas/short-stay/canada',
       type: 'eTA/Visitor',
       features: ['Online Processing', 'Family Applications', 'Express Entry'],
@@ -67,8 +69,12 @@ const EnhancedVisaPagesPreview = () => {
             <Card key={index} className="border-2 hover:border-purple-300 transition-all duration-300 hover:shadow-lg">
               <CardContent className="p-6">
                 <div className="text-center mb-4">
-                  <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-deep-blue-900 to-blue-700 rounded-full flex items-center justify-center">
-                    <MapPin className="h-8 w-8 text-yellow-400" />
+                  <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-deep-blue-900 to-blue-700 rounded-full flex items-center justify-center overflow-hidden">
+                    <img 
+                      src={page.flagImage} 
+                      alt={`${page.country} flag`}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">
                     {page.title}
