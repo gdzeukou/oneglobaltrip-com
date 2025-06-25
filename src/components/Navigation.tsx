@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, LogOut, Settings, AlertCircle } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
+import { useSimpleAuth } from '@/contexts/SimpleAuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
@@ -10,7 +9,7 @@ const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut, isEmailVerified } = useAuth();
+  const { user, signOut, isEmailVerified } = useSimpleAuth();
 
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -130,7 +129,7 @@ const Navigation = () => {
                 asChild
                 className="bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
               >
-                <Link to="/auth">
+                <Link to="/simple-auth">
                   <User className="h-4 w-4 mr-2" />
                   Sign In
                 </Link>
@@ -234,7 +233,7 @@ const Navigation = () => {
             ) : (
               <div className="pt-4 border-t border-gray-200/50 mt-4">
                 <Link
-                  to="/auth"
+                  to="/simple-auth"
                   className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
                   onClick={() => setIsOpen(false)}
                 >
