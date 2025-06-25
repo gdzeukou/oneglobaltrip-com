@@ -33,13 +33,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleSendOTP = async (email: string, purpose: 'signup' | 'signin') => {
     try {
+      console.log(`Handling send OTP for ${email}, purpose: ${purpose}`);
       const result = await sendOTP(email, purpose);
+      console.log('Send OTP result:', result);
+      
       if (!result.error) {
+        console.log('Setting OTP step state');
         setOTPStep({
           isRequired: true,
           email,
           purpose
         });
+      } else {
+        console.error('Send OTP failed:', result.error);
       }
       return result;
     } catch (error: any) {
@@ -50,9 +56,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleVerifyOTP = async (email: string, code: string, purpose: 'signup' | 'signin') => {
     try {
+      console.log(`Handling verify OTP for ${email}, purpose: ${purpose}`);
       const result = await verifyOTP(email, code, purpose);
+      console.log('Verify OTP result:', result);
+      
       if (!result.error) {
+        console.log('OTP verified successfully, clearing OTP step');
         setOTPStep(null);
+      } else {
+        console.error('Verify OTP failed:', result.error);
       }
       return result;
     } catch (error: any) {
@@ -91,6 +103,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     verifyOTP: handleVerifyOTP,
     clearOTPStep,
   };
+
+  console.log('AuthContext current state:', { 
+    hasUser: !!user, 
+    hasSession: !!session, 
+    loading, 
+    otpStep: otpStep ? `${otpStep.purpose} for ${otpStep.email}` : 'none' 
+  });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -28,6 +28,7 @@ const OTPVerification = ({
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
 
   useEffect(() => {
+    console.log('OTP Verification component mounted for:', email, purpose);
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 0) {
@@ -39,7 +40,7 @@ const OTPVerification = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [email, purpose]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -53,6 +54,7 @@ const OTPVerification = ({
       return;
     }
 
+    console.log('Verifying OTP:', otp, 'for email:', email);
     setIsVerifying(true);
     setError('');
 
@@ -60,11 +62,14 @@ const OTPVerification = ({
       const { error } = await verifyOTP(email, otp, purpose);
       
       if (error) {
+        console.error('OTP verification failed:', error);
         setError(error.message);
       } else {
+        console.log('OTP verification successful');
         onVerificationSuccess();
       }
     } catch (error: any) {
+      console.error('OTP verification error:', error);
       setError(error.message || 'Verification failed');
     } finally {
       setIsVerifying(false);
@@ -72,6 +77,7 @@ const OTPVerification = ({
   };
 
   const handleResend = async () => {
+    console.log('Resending OTP for:', email, purpose);
     setIsResending(true);
     setError('');
 
@@ -79,12 +85,15 @@ const OTPVerification = ({
       const { error } = await sendOTP(email, purpose);
       
       if (error) {
+        console.error('Resend OTP failed:', error);
         setError(error.message);
       } else {
+        console.log('OTP resent successfully');
         setTimeLeft(600); // Reset timer
         setOtp(''); // Clear current OTP
       }
     } catch (error: any) {
+      console.error('Resend OTP error:', error);
       setError(error.message || 'Failed to resend code');
     } finally {
       setIsResending(false);
@@ -92,17 +101,17 @@ const OTPVerification = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <Card className="max-w-md w-full">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center px-4">
+      <Card className="max-w-md w-full glass-colorful border-2 border-white/30 shadow-2xl">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-            <Mail className="h-6 w-6 text-blue-600" />
+          <div className="mx-auto mb-4 w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+            <Mail className="h-6 w-6 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
+          <CardTitle className="text-2xl font-bold gradient-text-primary">
             Enter Verification Code
           </CardTitle>
           <p className="text-gray-600">
-            We've sent a 6-digit code to {email}
+            We've sent a 6-digit code to <span className="font-semibold text-purple-700">{email}</span>
           </p>
         </CardHeader>
         
@@ -112,7 +121,10 @@ const OTPVerification = ({
               <InputOTP
                 maxLength={6}
                 value={otp}
-                onChange={setOtp}
+                onChange={(value) => {
+                  console.log('OTP input changed:', value);
+                  setOtp(value);
+                }}
                 onComplete={handleVerify}
               >
                 <InputOTPGroup>
@@ -128,7 +140,7 @@ const OTPVerification = ({
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Code expires in <span className="font-mono font-semibold">{formatTime(timeLeft)}</span>
+                Code expires in <span className="font-mono font-semibold text-purple-700">{formatTime(timeLeft)}</span>
               </p>
             </div>
           </div>
@@ -145,7 +157,7 @@ const OTPVerification = ({
             <Button 
               onClick={handleVerify} 
               disabled={isVerifying || otp.length !== 6}
-              className="w-full"
+              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
             >
               {isVerifying ? 'Verifying...' : 'Verify Code'}
             </Button>
@@ -154,7 +166,7 @@ const OTPVerification = ({
               <Button
                 variant="ghost"
                 onClick={onBack}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-purple-700 hover:text-purple-900 hover:bg-purple-50"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back
@@ -164,7 +176,7 @@ const OTPVerification = ({
                 variant="ghost"
                 onClick={handleResend}
                 disabled={isResending || timeLeft > 540} // Allow resend after 1 minute
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-purple-700 hover:text-purple-900 hover:bg-purple-50"
               >
                 {isResending ? (
                   <RefreshCw className="h-4 w-4 animate-spin" />

@@ -18,10 +18,7 @@ export const sendOTP = async (email: string, purpose: 'signup' | 'signin') => {
       throw error;
     }
 
-    if (data?.success) {
-      console.log('OTP sent successfully');
-    }
-
+    console.log('OTP send response:', data);
     return { error: data?.error ? { message: data.error } : null };
   } catch (error: any) {
     console.error('Send OTP error:', error);
@@ -31,7 +28,7 @@ export const sendOTP = async (email: string, purpose: 'signup' | 'signin') => {
 
 export const verifyOTP = async (email: string, code: string, purpose: 'signup' | 'signin') => {
   try {
-    console.log(`Verifying OTP for ${email}, purpose: ${purpose}`);
+    console.log(`Verifying OTP for ${email}, purpose: ${purpose}, code: ${code}`);
     
     const { data, error } = await supabase.functions.invoke('verify-otp', {
       body: {
@@ -45,6 +42,8 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
       console.error('Verify OTP error:', error);
       throw error;
     }
+
+    console.log('OTP verify response:', data);
 
     if (data?.success) {
       console.log('OTP verification successful');
@@ -130,7 +129,9 @@ export const performSignUp = async (email: string, password: string, firstName?:
     }));
 
     // Send OTP
-    return await sendOTP(email.toLowerCase().trim(), 'signup');
+    const result = await sendOTP(email.toLowerCase().trim(), 'signup');
+    console.log('Signup OTP result:', result);
+    return result;
   } catch (error) {
     console.error('Signup error:', error);
     localStorage.removeItem('pendingSignup');
@@ -158,7 +159,9 @@ export const performSignIn = async (email: string, password: string) => {
     }));
 
     // Send OTP
-    return await sendOTP(email.toLowerCase().trim(), 'signin');
+    const result = await sendOTP(email.toLowerCase().trim(), 'signin');
+    console.log('Signin OTP result:', result);
+    return result;
   } catch (error) {
     console.error('Signin error:', error);
     localStorage.removeItem('pendingSignin');
