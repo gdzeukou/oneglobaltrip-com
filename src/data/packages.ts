@@ -17,6 +17,7 @@ export const packages: Package[] = [
     id: "london-paris-rome",
     title: "London, Paris & Rome Classic",
     shortDescription: "Experience three iconic European capitals in one unforgettable journey",
+    country: "United Kingdom, France, Italy",
     description: "Discover the rich history, stunning architecture, and vibrant culture of London, Paris, and Rome. This carefully crafted 11-day adventure takes you through three of Europe's most beloved capitals, offering the perfect blend of guided tours and free time to explore at your own pace.",
     price: 3299,
     originalPrice: 4199,
@@ -24,6 +25,7 @@ export const packages: Package[] = [
     image: "/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png",
     category: "cultural",
     rating: 4.8,
+    reviews: 127,
     reviewCount: 127,
     countries: ["uk", "france", "italy"], // Updated to use country codes
     cities: ["London", "Paris", "Rome"],
