@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
@@ -28,13 +28,13 @@ export const MobileOptimizedNav = ({ items, className }: MobileOptimizedNavProps
     );
   };
 
-  const menuVariants = {
+  const menuVariants: Variants = {
     closed: {
       opacity: 0,
       height: 0,
       transition: {
         duration: 0.3,
-        ease: "easeInOut"
+        ease: [0.4, 0.0, 0.2, 1]
       }
     },
     open: {
@@ -42,12 +42,12 @@ export const MobileOptimizedNav = ({ items, className }: MobileOptimizedNavProps
       height: "auto",
       transition: {
         duration: 0.3,
-        ease: "easeInOut"
+        ease: [0.4, 0.0, 0.2, 1]
       }
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     closed: { opacity: 0, x: -20 },
     open: { opacity: 1, x: 0 }
   };

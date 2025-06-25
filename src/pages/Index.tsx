@@ -10,6 +10,7 @@ import StartTripSection from '@/components/home/StartTripSection';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
+import VisaRecommendations from '@/components/smart/VisaRecommendations';
 
 const Index = () => {
   return (
@@ -17,6 +18,7 @@ const Index = () => {
       <Navigation />
       <HeroSection />
       <TrustIndicators />
+      <VisaRecommendations />
       <ServicesSection />
       <PromoSection />
       <StartTripSection />
