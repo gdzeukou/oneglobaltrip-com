@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { useFormSubmission } from './useFormSubmission';
+import { useSecureFormSubmission } from './useSecureFormSubmission';
 
 interface FormData {
   name: string;
@@ -58,7 +57,7 @@ export const useUnifiedForm = (
     validateFormData,
     checkSubmissionRateLimit,
     handleSubmissionError
-  } = useFormSubmission();
+  } = useSecureFormSubmission();
 
   const totalSteps = type === 'package-booking' ? 4 : 3;
 
@@ -103,14 +102,14 @@ export const useUnifiedForm = (
   };
 
   const handleSubmit = async () => {
-    console.log('=== UNIFIED FORM SUBMISSION START ===');
+    console.log('=== SECURE UNIFIED FORM SUBMISSION START ===');
 
-    // Enhanced validation
+    // Enhanced validation with security checks
     if (!validateFormData(formData)) {
       return;
     }
 
-    // Check rate limit (non-blocking)
+    // Check rate limit (enhanced security)
     const canSubmit = await checkSubmissionRateLimit(formData.email);
     if (!canSubmit) {
       return;
@@ -119,11 +118,11 @@ export const useUnifiedForm = (
     setIsSubmitting(true);
 
     try {
-      // Critical: Save to database (must succeed)
+      // Critical: Save to database with enhanced security
       await saveFormSubmission(type, formData);
-      console.log('✅ Database save successful - form submission complete');
+      console.log('✅ Secure database save successful');
 
-      // Non-critical: Send welcome email (failure doesn't affect success)
+      // Non-critical: Send welcome email
       const emailSent = await sendWelcomeEmail(formData, type);
 
       // Show success message
@@ -152,7 +151,7 @@ export const useUnifiedForm = (
         }
       }, 1000);
 
-      console.log('✅ Form submission flow completed successfully');
+      console.log('✅ Secure form submission flow completed successfully');
 
     } catch (error) {
       handleSubmissionError(error);
