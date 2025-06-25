@@ -164,7 +164,7 @@ const GreeceShortStay = () => {
 
         {/* Visa Pricing */}
         <CountrySpecificPricing 
-          country="schengen" 
+          country="schengenShortStay" 
           title="Greece Visa Pricing"
           description="Transparent pricing for your Greece Schengen visa application"
         />

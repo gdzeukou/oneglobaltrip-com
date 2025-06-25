@@ -164,7 +164,7 @@ const ItalyShortStay = () => {
 
         {/* Visa Pricing */}
         <CountrySpecificPricing 
-          country="schengen" 
+          country="schengenShortStay" 
           title="Italy Visa Pricing"
           description="Transparent pricing for your Italy Schengen visa application"
         />
