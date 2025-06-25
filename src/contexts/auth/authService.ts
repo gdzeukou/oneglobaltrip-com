@@ -77,26 +77,21 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
           console.log('User account created successfully');
         }
       } else {
-        // For signin, authenticate the user
-        const pendingSignin = localStorage.getItem('pendingSignin');
-        if (pendingSignin) {
-          const signinData = JSON.parse(pendingSignin);
-          console.log('Signing in user after OTP verification');
-          
-          const { error: authError } = await supabase.auth.signInWithPassword({
-            email: signinData.email,
-            password: signinData.password
-          });
+        // For signin, authenticate the user with OTP
+        console.log('Completing signin with OTP');
+        
+        const { data: authData, error: authError } = await supabase.auth.verifyOtp({
+          email,
+          token: code,
+          type: 'email'
+        });
 
-          localStorage.removeItem('pendingSignin');
-          
-          if (authError) {
-            console.error('Signin error after OTP:', authError);
-            return { error: authError };
-          }
-
-          console.log('User signed in successfully');
+        if (authError) {
+          console.error('Supabase signin error after OTP:', authError);
+          return { error: authError };
         }
+
+        console.log('User signed in successfully via OTP:', authData);
       }
     }
 
@@ -139,32 +134,21 @@ export const performSignUp = async (email: string, password: string, firstName?:
   }
 };
 
-export const performSignIn = async (email: string, password: string) => {
+export const performSignIn = async (email: string) => {
   // Validate inputs
   if (!validateEmail(email)) {
     return { error: { message: 'Please enter a valid email address' } };
   }
 
-  if (!password) {
-    return { error: { message: 'Password is required' } };
-  }
-
   try {
     console.log('Starting signin process for:', email);
     
-    // Store signin data for after OTP verification
-    localStorage.setItem('pendingSignin', JSON.stringify({
-      email: email.toLowerCase().trim(),
-      password
-    }));
-
-    // Send OTP
+    // Send OTP directly - no password needed for OTP signin
     const result = await sendOTP(email.toLowerCase().trim(), 'signin');
     console.log('Signin OTP result:', result);
     return result;
   } catch (error) {
     console.error('Signin error:', error);
-    localStorage.removeItem('pendingSignin');
     return { error: { message: 'An unexpected error occurred during sign in' } };
   }
 };

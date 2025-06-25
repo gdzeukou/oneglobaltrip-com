@@ -14,7 +14,7 @@ import OTPVerification from '@/components/auth/OTPVerification';
 const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signUp, signIn, otpStep, verifyOTP, clearOTPStep } = useAuth();
+  const { user, signUp, signIn, otpStep, clearOTPStep } = useAuth();
   
   const [activeTab, setActiveTab] = useState('signin');
   const [showPassword, setShowPassword] = useState(false);
@@ -77,7 +77,8 @@ const Auth = () => {
     setError('');
 
     try {
-      const { error } = await signIn(formData.email, formData.password);
+      // Only send email for OTP signin
+      const { error } = await signIn(formData.email);
 
       if (error) {
         setError(error.message);
@@ -97,6 +98,7 @@ const Auth = () => {
   const handleBackToAuth = () => {
     clearOTPStep();
     setError('');
+    setIsLoading(false);
   };
 
   // Show OTP verification if required
@@ -151,34 +153,6 @@ const Auth = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="signin-password"
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Enter your password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-
                 {error && (
                   <Alert className="border-red-200 bg-red-50">
                     <AlertDescription className="text-red-800">
@@ -188,7 +162,7 @@ const Auth = () => {
                 )}
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Signing In...' : 'Sign In'}
+                  {isLoading ? 'Sending Code...' : 'Send Verification Code'}
                 </Button>
               </form>
             </TabsContent>

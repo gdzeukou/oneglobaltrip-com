@@ -89,6 +89,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Simplified sign-in that only requires email
+  const handleSignIn = async (email: string) => {
+    return await performSignIn(email);
+  };
+
   const value = {
     user,
     session,
@@ -96,7 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isEmailVerified,
     otpStep,
     signUp: performSignUp,
-    signIn: performSignIn,
+    signIn: handleSignIn,
     signOut: handleSignOut,
     resendVerification: () => performResendVerification(user?.email),
     sendOTP: handleSendOTP,

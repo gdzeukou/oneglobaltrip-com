@@ -124,8 +124,11 @@ const OTPVerification = ({
                 onChange={(value) => {
                   console.log('OTP input changed:', value);
                   setOtp(value);
+                  if (value.length === 6) {
+                    // Auto-verify when 6 digits are entered
+                    setTimeout(() => handleVerify(), 100);
+                  }
                 }}
-                onComplete={handleVerify}
               >
                 <InputOTPGroup>
                   <InputOTPSlot index={0} />
