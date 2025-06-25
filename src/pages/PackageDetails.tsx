@@ -1,11 +1,12 @@
 
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, MapPin, Users, Star, CheckCircle, Plane, Train, Clock } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, Star, CheckCircle, Plane, Train, Clock, Camera, Utensils, Bed, Map, Info } from 'lucide-react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { packages } from '@/data/packages';
 import OptimizedImage from '@/components/ui/optimized-image';
 
@@ -32,6 +33,110 @@ const PackageDetails = () => {
   }
 
   const isMultiCountry = packageData.countries && packageData.countries.length > 1;
+
+  // Enhanced itinerary data
+  const itinerary = [
+    {
+      day: "Day 1-3",
+      city: "London",
+      title: "Royal London & English Countryside",
+      highlights: [
+        "Private transfer from Heathrow Airport to your 4-star central London hotel",
+        "Go City London Pass: Access to 80+ attractions including Tower of London, Westminster Abbey",
+        "Guided walking tour of Westminster & Royal Parks",
+        "Full-day Cotswolds excursion with traditional pub lunch",
+        "Evening at leisure - Optional West End show (additional cost)"
+      ],
+      accommodation: "4-star central London hotel (3 nights)",
+      meals: "Daily breakfast, 1 lunch in Cotswolds",
+      transportation: "Private airport transfer, comfortable coach for Cotswolds tour"
+    },
+    {
+      day: "Day 4-6",
+      city: "Paris",
+      title: "City of Light & Loire Valley Castles",
+      highlights: [
+        "Eurostar high-speed train from London St. Pancras to Paris Gare du Nord (2h 15min)",
+        "Private transfer to your boutique hotel in central Paris",
+        "Skip-the-line Louvre Museum tour with expert guide",
+        "Seine River cruise with champagne at sunset",
+        "Full-day Loire Valley castle tour: Chambord & Chenonceau with wine tasting",
+        "Evening stroll through Montmartre with local guide"
+      ],
+      accommodation: "4-star boutique hotel in Saint-Germain (3 nights)",
+      meals: "Daily breakfast, château lunch in Loire Valley, farewell dinner",
+      transportation: "Eurostar train, private transfers, luxury coach for Loire Valley"
+    },
+    {
+      day: "Day 7-10",
+      city: "Rome",
+      title: "Eternal City & Vatican Treasures",
+      highlights: [
+        "Flight from Paris CDG to Rome Fiumicino (2h 20min)",
+        "Private transfer to your hotel near Spanish Steps",
+        "Skip-the-line Colosseum & Roman Forum tour with archaeologist guide",
+        "Private Vatican Museums, Sistine Chapel & St. Peter's Basilica tour",
+        "Cooking class in Trastevere with local chef",
+        "Day trip to Tuscany: Siena & San Gimignano with wine tasting",
+        "Farewell aperitivo with panoramic city views"
+      ],
+      accommodation: "4-star elegant hotel near Spanish Steps (4 nights)",
+      meals: "Daily breakfast, cooking class meal, Tuscan lunch, farewell dinner",
+      transportation: "Flight, private transfers, comfortable coach for Tuscany tour"
+    }
+  ];
+
+  const inclusions = [
+    {
+      category: "Accommodation",
+      items: [
+        "10 nights in carefully selected 4-star hotels",
+        "Central locations in all three cities",
+        "Daily breakfast buffet",
+        "Welcome amenities and concierge services"
+      ]
+    },
+    {
+      category: "Transportation",
+      items: [
+        "Round-trip flights: Paris to Rome",
+        "Eurostar train: London to Paris (Standard Premier class)",
+        "Private airport/station transfers in all cities",
+        "Comfortable coaches for all excursions",
+        "All transportation between activities included"
+      ]
+    },
+    {
+      category: "Tours & Activities",
+      items: [
+        "Go City London Pass (80+ attractions)",
+        "Skip-the-line access to major attractions",
+        "Expert local guides for all tours",
+        "Small group sizes (max 16 people)",
+        "Headsets provided for all guided tours"
+      ]
+    },
+    {
+      category: "Meals & Dining",
+      items: [
+        "Daily breakfast at hotels",
+        "4 lunches including château and Tuscan experiences",
+        "2 special dinners including farewell meal",
+        "Wine tastings in Loire Valley and Tuscany",
+        "Cooking class with chef in Rome"
+      ]
+    }
+  ];
+
+  const exclusions = [
+    "International flights to London and from Rome",
+    "Travel insurance (strongly recommended)",
+    "Meals not mentioned in the itinerary",
+    "Optional activities and excursions",
+    "Personal expenses and shopping",
+    "Tips for guides and drivers (optional)",
+    "Visa fees (assistance provided)"
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -121,107 +226,320 @@ const PackageDetails = () => {
             </div>
           </div>
 
-          {/* Content Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Highlights */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span>Trip Highlights</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {packageData.highlights.map((highlight, index) => (
-                    <li key={index} className="flex items-start space-x-3">
-                      <span className="text-green-600 font-bold mt-1">✓</span>
-                      <span className="text-gray-700">{highlight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+          {/* Detailed Information Tabs */}
+          <Tabs defaultValue="itinerary" className="mb-8">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="itinerary">Day by Day</TabsTrigger>
+              <TabsTrigger value="inclusions">What's Included</TabsTrigger>
+              <TabsTrigger value="highlights">Highlights</TabsTrigger>
+              <TabsTrigger value="practical">Practical Info</TabsTrigger>
+              <TabsTrigger value="booking">Booking Details</TabsTrigger>
+            </TabsList>
 
-            {/* What's Included */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Star className="h-5 w-5 text-yellow-500" />
-                  <span>What's Included</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3">
-                  {packageData.specialFeatures.map((feature, index) => (
-                    <li key={index} className="flex items-start space-x-3">
-                      <span className="text-yellow-500 font-bold mt-1">★</span>
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+            <TabsContent value="itinerary" className="space-y-6">
+              <div className="grid gap-6">
+                {itinerary.map((day, index) => (
+                  <Card key={index} className="overflow-hidden">
+                    <CardHeader className="bg-gradient-to-r from-blue-50 to-yellow-50">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="text-xl text-blue-900">{day.day}</CardTitle>
+                          <p className="text-lg font-semibold text-gray-800">{day.city} - {day.title}</p>
+                        </div>
+                        <Badge className="bg-blue-100 text-blue-800">{day.city}</Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                            <Camera className="h-4 w-4 mr-2 text-blue-600" />
+                            Daily Highlights
+                          </h4>
+                          <ul className="space-y-2">
+                            {day.highlights.map((highlight, idx) => (
+                              <li key={idx} className="flex items-start space-x-2">
+                                <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                <span className="text-gray-700 text-sm">{highlight}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="space-y-4">
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
+                              <Bed className="h-4 w-4 mr-2 text-blue-600" />
+                              Accommodation
+                            </h4>
+                            <p className="text-gray-700 text-sm">{day.accommodation}</p>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
+                              <Utensils className="h-4 w-4 mr-2 text-blue-600" />
+                              Meals Included
+                            </h4>
+                            <p className="text-gray-700 text-sm">{day.meals}</p>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
+                              <Map className="h-4 w-4 mr-2 text-blue-600" />
+                              Transportation
+                            </h4>
+                            <p className="text-gray-700 text-sm">{day.transportation}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
 
-            {/* Visa Requirements */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Clock className="h-5 w-5 text-blue-600" />
-                  <span>Visa Requirements</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <p className="text-gray-700 mb-4">Required visas for this trip:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {packageData.visasRequired.map((visa, index) => (
-                      <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                        {visa}
-                      </Badge>
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-600 mt-4">
-                    We'll help you with the visa application process and provide guidance on required documents.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Countries Covered */}
-            {isMultiCountry && (
-              <Card>
+            <TabsContent value="inclusions" className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                {inclusions.map((section, index) => (
+                  <Card key={index}>
+                    <CardHeader>
+                      <CardTitle className="text-lg text-blue-900">{section.category}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2">
+                        {section.items.map((item, idx) => (
+                          <li key={idx} className="flex items-start space-x-2">
+                            <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            <span className="text-gray-700 text-sm">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              
+              <Card className="border-red-200 bg-red-50">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <MapPin className="h-5 w-5 text-red-500" />
-                    <span>Countries Covered</span>
+                  <CardTitle className="text-lg text-red-800 flex items-center">
+                    <Info className="h-5 w-5 mr-2" />
+                    Not Included
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {packageData.countries?.map((country, index) => (
-                      <Badge key={index} className="bg-gray-100 text-gray-800">
-                        {country}
-                      </Badge>
+                  <ul className="space-y-2">
+                    {exclusions.map((exclusion, index) => (
+                      <li key={index} className="flex items-start space-x-2">
+                        <span className="text-red-600 font-bold mt-1">✗</span>
+                        <span className="text-red-700 text-sm">{exclusion}</span>
+                      </li>
                     ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="highlights">
+              <div className="grid md:grid-cols-2 gap-8">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <span>Trip Highlights</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {packageData.highlights.map((highlight, index) => (
+                        <li key={index} className="flex items-start space-x-3">
+                          <span className="text-green-600 font-bold mt-1">✓</span>
+                          <span className="text-gray-700">{highlight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <Star className="h-5 w-5 text-yellow-500" />
+                      <span>Special Features</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {packageData.specialFeatures.map((feature, index) => (
+                        <li key={index} className="flex items-start space-x-3">
+                          <span className="text-yellow-500 font-bold mt-1">★</span>
+                          <span className="text-gray-700">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="practical" className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center space-x-2">
+                      <Clock className="h-5 w-5 text-blue-600" />
+                      <span>Visa Requirements</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <p className="text-gray-700 mb-4">Required visas for this trip:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {packageData.visasRequired.map((visa, index) => (
+                          <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                            {visa}
+                          </Badge>
+                        ))}
+                      </div>
+                      <p className="text-sm text-gray-600 mt-4">
+                        We'll provide complete visa assistance including document checklists, application guidance, and appointment booking support.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {isMultiCountry && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <MapPin className="h-5 w-5 text-red-500" />
+                        <span>Countries Covered</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap gap-2">
+                        {packageData.countries?.map((country, index) => (
+                          <Badge key={index} className="bg-gray-100 text-gray-800">
+                            {country}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Best Time to Travel</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-700 mb-2"><strong>Peak Season:</strong> June - August (warm weather, longer days, higher prices)</p>
+                    <p className="text-gray-700 mb-2"><strong>Shoulder Season:</strong> April-May, September-October (mild weather, fewer crowds)</p>
+                    <p className="text-gray-700"><strong>Winter:</strong> November-March (cooler weather, indoor attractions, lowest prices)</p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Packing Essentials</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="text-sm space-y-1 text-gray-700">
+                      <li>• Comfortable walking shoes</li>
+                      <li>• Weather-appropriate clothing</li>
+                      <li>• Travel adapters (Type G for UK, Type C/E for Europe)</li>
+                      <li>• Portable phone charger</li>
+                      <li>• Camera with extra memory cards</li>
+                      <li>• Travel insurance documents</li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="booking" className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Pricing Details</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-700">Base Price (per person):</span>
+                        <span className="font-semibold">${packageData.price.toLocaleString()}</span>
+                      </div>
+                      {packageData.originalPrice && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-700">Regular Price:</span>
+                          <span className="line-through text-gray-500">${packageData.originalPrice.toLocaleString()}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between items-center text-green-600">
+                        <span className="font-medium">You Save:</span>
+                        <span className="font-bold">${(packageData.originalPrice! - packageData.price).toLocaleString()}</span>
+                      </div>
+                      <div className="pt-3 border-t">
+                        <p className="text-sm text-gray-600">*Based on double occupancy. Single supplement available.</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Booking Process</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ol className="space-y-2 text-sm text-gray-700">
+                      <li className="flex items-start space-x-2">
+                        <span className="bg-blue-100 text-blue-800 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">1</span>
+                        <span>Complete our travel preferences form</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="bg-blue-100 text-blue-800 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">2</span>
+                        <span>Receive personalized itinerary within 24 hours</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="bg-blue-100 text-blue-800 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">3</span>
+                        <span>Secure your trip with a small deposit</span>
+                      </li>
+                      <li className="flex items-start space-x-2">
+                        <span className="bg-blue-100 text-blue-800 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">4</span>
+                        <span>We handle all bookings and visa assistance</span>
+                      </li>
+                    </ol>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card className="bg-gradient-to-r from-green-50 to-blue-50">
+                <CardContent className="p-6">
+                  <div className="text-center">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Free Cancellation</h3>
+                    <p className="text-gray-600 mb-4">Cancel up to 30 days before departure for a full refund</p>
+                    <p className="text-sm text-gray-500">Terms and conditions apply. Travel insurance recommended.</p>
                   </div>
                 </CardContent>
               </Card>
-            )}
-          </div>
+            </TabsContent>
+          </Tabs>
 
           {/* Call to Action */}
-          <Card className="mt-8 bg-gradient-to-r from-blue-50 to-yellow-50">
+          <Card className="bg-gradient-to-r from-blue-50 to-yellow-50">
             <CardContent className="p-8 text-center">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Ready to Start Planning?</h2>
               <p className="text-gray-600 mb-6">
                 Get personalized recommendations and let us handle all the details for your perfect European adventure.
               </p>
-              <Button asChild size="lg" className="bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700">
-                <Link to={`/booking?package=${packageData.id}`}>
-                  Start Planning Your Trip
-                </Link>
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button asChild size="lg" className="bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700">
+                  <Link to={`/booking?package=${packageData.id}`}>
+                    Start Planning Your Trip
+                  </Link>
+                </Button>
+                <Button variant="outline" size="lg">
+                  <Link to="/get-started">
+                    Get Free Consultation
+                  </Link>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -23,26 +23,58 @@ export const packages: Package[] = [
     price: 4299,
     originalPrice: 4899,
     image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&h=600&fit=crop&crop=center',
-    description: 'Experience three of Europe\'s most iconic capitals on this carefully curated 10-day journey. Perfect for couples and first-time Europe travelers seeking a comprehensive introduction to European culture, history, and cuisine.',
+    description: 'Experience three of Europe\'s most iconic capitals on this carefully curated 10-day journey. Perfect for couples and first-time Europe travelers seeking a comprehensive introduction to European culture, history, and cuisine. From London\'s royal heritage to Paris\'s artistic treasures and Rome\'s ancient wonders, this signature tour combines the best of each destination with seamless transportation, expert guides, and authentic local experiences.',
     highlights: [
-      'Explore London with Go City London Pass + Cotswolds Day Trip',
-      'Take the Eurostar to Paris for a Louvre Tour and Loire Valley castles',
-      'Fly to Rome for the Colosseum, Vatican & Sistine Chapel',
-      'Private transfers and guided tours throughout',
-      'Train & flight between destinations included'
+      'Explore London with Go City London Pass covering 80+ top attractions including Tower of London, Westminster Abbey, and Thames River Cruise',
+      'Take the luxurious Eurostar high-speed train from London to Paris in Standard Premier class with complimentary meal service',
+      'Skip-the-line access to the Louvre Museum with expert art historian guide and small group size (max 12 people)',
+      'Full-day Loire Valley castle tour visiting Château de Chambord and Château de Chenonceau with wine tasting',
+      'Scenic Cotswolds countryside excursion with traditional pub lunch and village exploration',
+      'Private Vatican Museums, Sistine Chapel, and St. Peter\'s Basilica tour with licensed archaeologist guide',
+      'Skip-the-line Colosseum and Roman Forum tour with underground chambers access',
+      'Traditional cooking class in Rome\'s Trastevere district with local chef and market visit',
+      'Full-day Tuscany excursion to Siena and San Gimignano with wine estate lunch',
+      'Seine River cruise at sunset with champagne and panoramic views of illuminated Paris landmarks'
     ],
     specialFeatures: [
-      'Private transfers, hotels, guided tours, and optional excursions',
-      'Eurostar high-speed train experience',
-      'Skip-the-line access to major attractions',
-      'Professional local guides in each city',
-      'Flexible optional excursions'
+      'Private airport and station transfers in luxury vehicles with professional English-speaking drivers',
+      'Carefully selected 4-star hotels in prime central locations with daily breakfast and concierge services',
+      'Expert local guides with art history, archaeology, or cultural backgrounds for all major tours',
+      'Small group experiences with maximum 16 participants for personalized attention',
+      'Skip-the-line access to all major attractions to maximize your time and avoid crowds',
+      'Eurostar Standard Premier class with spacious seats, complimentary meals, and lounge access',
+      'Flexible itinerary with optional activities and free time for personal exploration',
+      'Comprehensive pre-departure travel packet with detailed itineraries, packing lists, and cultural insights',
+      '24/7 local support phone line with English-speaking representatives in each destination',
+      'Carefully planned meal experiences including château lunch, cooking class, and farewell dinners'
     ],
     visasRequired: ['Schengen Visa', 'UK Visa'],
     rating: 4.9,
     reviews: 247,
     countries: ['United Kingdom', 'France', 'Italy'],
-    features: ['Private Transfers', 'Guided Tours', 'Skip-the-Line Access', 'Train Travel', 'Flight Included'],
-    tags: ['couples', 'first-time-europe', 'signature-tour', 'multi-country', 'cultural']
+    features: [
+      'Private Transfers', 
+      'Expert Guides', 
+      'Skip-the-Line Access', 
+      'Eurostar Train', 
+      'Flight Included',
+      'Cooking Class',
+      'Wine Tastings',
+      'Small Groups',
+      'Central Hotels',
+      '24/7 Support'
+    ],
+    tags: [
+      'couples', 
+      'first-time-europe', 
+      'signature-tour', 
+      'multi-country', 
+      'cultural',
+      'luxury-touches',
+      'art-history',
+      'culinary-experiences',
+      'romantic',
+      'comprehensive'
+    ]
   }
 ];
