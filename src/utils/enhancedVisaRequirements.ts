@@ -10,7 +10,7 @@ export const durationMappings = {
   'long-stay': 365         // >90 days long-stay
 };
 
-// Enhanced visa requirement check with duration logic
+// Enhanced visa requirement check with corrected visa types
 export const checkEnhancedVisaRequirement = (
   nationality: string,
   destination: string,
@@ -20,6 +20,7 @@ export const checkEnhancedVisaRequirement = (
   const durationDays = durationMappings[duration as keyof typeof durationMappings] || 0;
   const isUSCitizen = nationality === 'United States';
   const isSchengenDestination = schengenCountries.includes(destination);
+  const destinationInfo = destinationCountries.find(c => c.code === destination);
   
   // US Citizen Logic
   if (isUSCitizen) {
@@ -30,16 +31,16 @@ export const checkEnhancedVisaRequirement = (
           required: false,
           type: 'visa-free',
           isSchengen: true,
-          message: "Great news—U.S. passport holders don't need a visa for up to 90 days in the Schengen Area!",
+          message: `Great news—U.S. passport holders don't need a visa for up to 90 days in the Schengen Area!`,
           showPackages: true,
           maxStayDays: 90
         };
       } else {
         return {
           required: true,
-          type: 'long-stay-visa',
+          type: 'national-visa',
           isSchengen: true,
-          message: `Trips longer than 90 days require a ${destination} national visa. Let's start your application.`,
+          message: `For stays longer than 90 days, you'll need a ${destinationInfo?.name} national visa (Type D). Let's start your application.`,
           showPackages: false
         };
       }
@@ -47,8 +48,7 @@ export const checkEnhancedVisaRequirement = (
     
     // UK Rules
     if (destination === 'uk') {
-      const maxStayMonths = 6;
-      const maxStayDays = maxStayMonths * 30;
+      const maxStayDays = 180; // 6 months
       
       if (durationDays <= maxStayDays && (purpose === 'tourism' || purpose === 'business')) {
         return {
@@ -62,12 +62,23 @@ export const checkEnhancedVisaRequirement = (
       } else {
         return {
           required: true,
-          type: 'uk-visa',
+          type: 'uk-long-stay',
           isSchengen: false,
-          message: "You'll need a UK visa. Let's gather your details.",
+          message: "For long-term UK stays, you'll need a specific UK long-stay visa. Let's get started.",
           showPackages: false
         };
       }
+    }
+    
+    // Nigeria - Special e-Visa handling
+    if (destination === 'nigeria') {
+      return {
+        required: true,
+        type: 'nigeria-evisa',
+        isSchengen: false,
+        message: "You'll need a Nigeria e-Visa. We can help you with the online application process.",
+        showPackages: false
+      };
     }
     
     // Non-Schengen EU/EEA (Ireland, Croatia, Bulgaria, Romania, Cyprus)
@@ -78,7 +89,7 @@ export const checkEnhancedVisaRequirement = (
           required: false,
           type: 'visa-free',
           isSchengen: false,
-          message: `Great news—U.S. passport holders don't need a visa for up to 90 days in ${destination}!`,
+          message: `Great news—U.S. passport holders don't need a visa for up to 90 days in ${destinationInfo?.name}!`,
           showPackages: true,
           maxStayDays: 90
         };
@@ -87,18 +98,54 @@ export const checkEnhancedVisaRequirement = (
           required: true,
           type: 'national-visa',
           isSchengen: false,
-          message: `You'll need a ${destination} visa. Let's get started on your application.`,
+          message: `For long-term stays, you'll need a ${destinationInfo?.name} national visa. Let's get started.`,
           showPackages: false
         };
       }
     }
   }
   
-  // Fallback for non-US citizens or other destinations
+  // Non-US Citizens - Use fallback with corrected visa types
   const basicResult = checkVisaRequirement(nationality, destination, purpose);
+  
+  // Correct visa type assignment for non-US citizens
+  if (isSchengenDestination) {
+    if (durationDays <= 90) {
+      return {
+        ...basicResult,
+        type: basicResult.required ? 'schengen-visa' : 'visa-free',
+        message: basicResult.required 
+          ? `You'll need a Schengen visa (Type C) for short stays in ${destinationInfo?.name}. Let's start your application.`
+          : `Great news! You don't need a visa for short stays in the Schengen Area.`,
+        showPackages: !basicResult.required,
+        maxStayDays: basicResult.required ? undefined : 90
+      };
+    } else {
+      return {
+        required: true,
+        type: 'national-visa',
+        isSchengen: true,
+        message: `For stays longer than 90 days, you'll need a ${destinationInfo?.name} national visa (Type D). Let's start your application.`,
+        showPackages: false
+      };
+    }
+  }
+  
+  if (destination === 'uk') {
+    return {
+      ...basicResult,
+      type: basicResult.required ? 'uk-standard-visitor' : 'visa-free',
+      message: basicResult.required 
+        ? `You'll need a UK Standard Visitor visa. Let's get started on your application.`
+        : `Great news! You don't need a visa for UK visits.`,
+      showPackages: !basicResult.required
+    };
+  }
+  
+  // Default for other countries
   return {
     ...basicResult,
-    message: `To visit ${destination} for ${purpose}, you'll need a visa. Let's get started on your application now.`,
+    message: `To visit ${destinationInfo?.name} for ${purpose}, you'll need a visa. Let's get started on your application now.`,
     showPackages: false
   };
 };
@@ -130,6 +177,11 @@ export const getDestinationPackagesEnhanced = (destination: string) => {
       { id: 'uk-royal', title: 'London Royal Experience', price: 2799 },
       { id: 'uk-scotland', title: 'Scotland Highlands', price: 3199 },
       { id: 'uk-isles', title: 'British Isles Explorer', price: 3699 }
+    ],
+    'nigeria': [
+      { id: 'nigeria-lagos', title: 'Lagos Business & Culture', price: 1899 },
+      { id: 'nigeria-abuja', title: 'Abuja Capital Experience', price: 1699 },
+      { id: 'nigeria-cultural', title: 'Nigerian Cultural Heritage', price: 2199 }
     ]
   };
   

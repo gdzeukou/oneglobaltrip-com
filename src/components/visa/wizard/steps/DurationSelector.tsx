@@ -11,7 +11,7 @@ interface DurationSelectorProps {
 const enhancedStayDurations = [
   { value: 'single-short', label: 'Up to 30 days (single entry)', description: 'Perfect for short vacations' },
   { value: 'single-medium', label: '31-90 days (single entry)', description: 'Extended travel or business trips' },
-  { value: 'multiple-short', label: 'Up to 90 days (multiple entries)', description: 'Multiple trips within 90 days' },
+  { value: 'multiple-short', label: 'Up to 90 days (multiple entries)', description: 'Multiple trips within 90 days total' },
   { value: 'multiple-long', label: 'More than 90 days (multiple entries)', description: 'Long-term travel plans' },
   { value: 'long-stay', label: 'More than 90 days (residence/work)', description: 'Work, study, or long-term residence' }
 ];
@@ -22,6 +22,12 @@ const DurationSelector = ({ value, onChange }: DurationSelectorProps) => {
       <div className="text-center">
         <h3 className="text-2xl font-bold text-gray-900 mb-2">How long will you stay?</h3>
         <p className="text-gray-600">Duration affects visa requirements and processing times</p>
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-sm text-blue-800">
+            <strong>Important:</strong> For Schengen Area, 90 days is the key threshold between 
+            short-stay visas (Type C) and long-stay national visas (Type D).
+          </p>
+        </div>
       </div>
       
       <div className="space-y-4">
