@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -6,12 +5,14 @@ import Footer from '@/components/Footer';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
+import GermanyLongStayRequirements from '@/components/visa/GermanyLongStayRequirements';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Heart, AlertTriangle, FileText, Clock, Euro } from 'lucide-react';
 
 const GermanyLongStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
+  const [selectedPurpose, setSelectedPurpose] = useState('Work');
   const location = useLocation();
 
   useEffect(() => {
@@ -155,33 +156,13 @@ const GermanyLongStay = () => {
         </div>
       </section>
 
+      {/* Dynamic Requirements Section */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Germany Visa Requirements
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="text-center p-6">
-              <FileText className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Valid Passport</h3>
-              <p className="text-sm text-gray-600">Must be valid for intended stay duration</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Shield className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">German Insurance</h3>
-              <p className="text-sm text-gray-600">€30,000+ German-standard</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Clock className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Processing Time</h3>
-              <p className="text-sm text-gray-600">60-120 days average</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Euro className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Financial Proof</h3>
-              <p className="text-sm text-gray-600">Blocked account or income proof</p>
-            </Card>
-          </div>
+          <GermanyLongStayRequirements 
+            selectedCategory={selectedPurpose}
+            onCategoryChange={setSelectedPurpose}
+          />
         </div>
       </section>
 
