@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';
-import { getRequirementsByCategory, getAllCategories, RequirementItem } from '@/utils/schengenRequirements';
+import { getUKRequirementsByCategory, getAllUKCategories, RequirementItem } from '@/utils/ukVisaRequirements';
 
-interface SchengenRequirementsProps {
+interface UKRequirementsProps {
   selectedCategory?: string;
   onCategoryChange?: (category: string) => void;
 }
@@ -64,35 +64,33 @@ const RequirementCard = ({ requirement }: { requirement: RequirementItem }) => {
   );
 };
 
-const SchengenRequirements = ({ selectedCategory = 'Tourism', onCategoryChange }: SchengenRequirementsProps) => {
-  const categories = getAllCategories();
-  const requirements = getRequirementsByCategory(selectedCategory);
+const UKRequirements = ({ selectedCategory = 'Tourism', onCategoryChange }: UKRequirementsProps) => {
+  const categories = getAllUKCategories();
+  const requirements = getUKRequirementsByCategory(selectedCategory);
   const IconComponent = requirements.icon;
 
   return (
     <div className="space-y-8">
-      {/* Category Selector */}
       <div className="text-center">
         <h2 className="text-3xl font-bold mb-6 text-gray-900">
-          Schengen Visa Requirements
+          UK Visitor Visa Requirements
         </h2>
         <p className="text-gray-600 mb-8">
-          Requirements vary by visa purpose. Select your travel category below to see specific requirements.
+          Requirements vary by visit purpose. Select your category below to see specific requirements.
         </p>
         
         <Tabs value={selectedCategory} onValueChange={onCategoryChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 gap-1">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 gap-1">
             {categories.map((category) => (
               <TabsTrigger key={category} value={category} className="text-xs">
-                {category.replace('/', '/')}
+                {category}
               </TabsTrigger>
             ))}
           </TabsList>
         </Tabs>
       </div>
 
-      {/* Selected Category Info */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
+      <div className="bg-gradient-to-r from-blue-50 to-red-50 border border-blue-200 rounded-lg p-6">
         <div className="flex items-center justify-center gap-4 mb-4">
           <IconComponent className="h-8 w-8 text-blue-600" />
           <h3 className="text-2xl font-bold text-gray-900">{requirements.name}</h3>
@@ -114,10 +112,9 @@ const SchengenRequirements = ({ selectedCategory = 'Tourism', onCategoryChange }
         </div>
       </div>
 
-      {/* Common Requirements */}
       <div>
         <h3 className="text-xl font-bold mb-6 text-gray-900 text-center">
-          Common Requirements (All Categories)
+          Standard Requirements (All Categories)
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {requirements.commonRequirements.map((requirement, index) => (
@@ -126,7 +123,6 @@ const SchengenRequirements = ({ selectedCategory = 'Tourism', onCategoryChange }
         </div>
       </div>
 
-      {/* Category-Specific Requirements */}
       {requirements.specificRequirements.length > 0 && (
         <div>
           <h3 className="text-xl font-bold mb-6 text-gray-900 text-center">
@@ -140,22 +136,21 @@ const SchengenRequirements = ({ selectedCategory = 'Tourism', onCategoryChange }
         </div>
       )}
 
-      {/* Important Notes */}
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
         <h4 className="font-bold text-yellow-800 mb-2 flex items-center gap-2">
           <AlertCircle className="h-5 w-5" />
-          Important Notes
+          Important Notes for UK Visa
         </h4>
         <ul className="text-sm text-yellow-700 space-y-1">
-          <li>• All documents must be original or certified copies</li>
-          <li>• Documents in foreign languages must be translated and legalized</li>
-          <li>• Additional documents may be requested during processing</li>
-          <li>• Processing times may vary depending on consulate workload</li>
-          <li>• Visa approval is not guaranteed even with complete documentation</li>
+          <li>• All documents must be in English or officially translated</li>
+          <li>• Biometric appointment required at Visa Application Centre</li>
+          <li>• Processing times may be longer during peak seasons</li>
+          <li>• Additional documents may be requested during assessment</li>
+          <li>• Visa approval depends on individual circumstances</li>
         </ul>
       </div>
     </div>
   );
 };
 
-export default SchengenRequirements;
+export default UKRequirements;

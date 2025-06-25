@@ -6,12 +6,13 @@ import Footer from '@/components/Footer';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
+import UKRequirements from '@/components/visa/UKRequirements';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Clock, Users, FileText } from 'lucide-react';
 
 const UKShortStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
+  const [selectedPurpose, setSelectedPurpose] = useState('Tourism');
   const location = useLocation();
 
   useEffect(() => {
@@ -22,20 +23,20 @@ const UKShortStay = () => {
     {
       name: 'London',
       image: '/lovable-uploads/143774ee-f153-4307-a278-d6ccd66f7385.png',
-      description: 'Historic capital with iconic landmarks, world-class museums, and royal heritage',
-      highlights: ['Big Ben', 'Tower Bridge', 'British Museum', 'Buckingham Palace']
+      description: 'Historic capital with Big Ben, Tower Bridge, and world-class museums',
+      highlights: ['Big Ben', 'Tower Bridge', 'British Museum', 'Thames River']
     },
     {
       name: 'Edinburgh',
       image: '/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png',
-      description: 'Scotland\'s stunning capital with medieval architecture and festival culture',
-      highlights: ['Edinburgh Castle', 'Royal Mile', 'Arthur\'s Seat', 'Princes Street']
+      description: 'Scottish capital with castle, festivals, and stunning architecture',
+      highlights: ['Edinburgh Castle', 'Royal Mile', 'Arthur\'s Seat', 'Festivals']
     },
     {
       name: 'Bath',
       image: '/lovable-uploads/be2a8c66-48a9-4a0d-be71-08376760b905.png',
-      description: 'UNESCO World Heritage city famous for Roman baths and Georgian architecture',
-      highlights: ['Roman Baths', 'Bath Abbey', 'Royal Crescent', 'Pulteney Bridge']
+      description: 'Georgian city famous for Roman baths and beautiful architecture',
+      highlights: ['Roman Baths', 'Georgian Architecture', 'Bath Abbey', 'Jane Austen']
     }
   ];
 
@@ -50,15 +51,15 @@ const UKShortStay = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      <section className="pt-24 pb-16 bg-gradient-to-r from-red-700 to-blue-800 text-white">
+      <section className="pt-24 pb-16 bg-gradient-to-r from-blue-600 to-red-600 text-white">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">UK Visitor Visa</h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Explore the United Kingdom with its rich history, stunning landscapes, and vibrant culture. From London's royal palaces to Scotland's highlands and Wales' castles.
+            Explore the United Kingdom's rich history, vibrant culture, and stunning landscapes. From London's iconic landmarks to Scotland's highlands.
           </p>
           <Button 
             onClick={scrollToForm}
-            className="bg-white hover:bg-gray-100 text-red-800 font-bold text-lg px-8 py-3"
+            className="bg-white hover:bg-gray-100 text-blue-700 font-bold text-lg px-8 py-3"
           >
             Start UK Visa Application
           </Button>
@@ -68,31 +69,15 @@ const UKShortStay = () => {
       <TrustBadges />
 
       <CountrySpecificPricing 
-        country="ukVisa6Month"
-        title="UK Visa Pricing - 6 Month"
-        description="Choose between 6-month or 5-year visa options"
+        country="ukVisa"
+        title="UK Visitor Visa Pricing"
+        description="Transparent pricing with no hidden fees"
       />
-
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">UK 5-Year Visa Option</h2>
-            <p className="text-xl text-gray-600">For frequent travelers to the UK</p>
-          </div>
-          <div className="max-w-4xl mx-auto">
-            <CountrySpecificPricing 
-              country="ukVisa5Year"
-              title=""
-              description=""
-            />
-          </div>
-        </div>
-      </section>
 
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Discover the United Kingdom
+            Explore UK's Historic Cities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cities.map((city) => (
@@ -112,7 +97,7 @@ const UKShortStay = () => {
                   <p className="text-gray-600 mb-4">{city.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {city.highlights.map((highlight) => (
-                      <span key={highlight} className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">
+                      <span key={highlight} className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
                         {highlight}
                       </span>
                     ))}
@@ -124,33 +109,13 @@ const UKShortStay = () => {
         </div>
       </section>
 
+      {/* Dynamic Requirements Section */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            UK Visa Requirements
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="text-center p-6">
-              <FileText className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Valid Passport</h3>
-              <p className="text-sm text-gray-600">Must be valid for entire stay</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Clock className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Processing Time</h3>
-              <p className="text-sm text-gray-600">15-20 working days</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Users className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Stay Duration</h3>
-              <p className="text-sm text-gray-600">Up to 6 months</p>
-            </Card>
-            <Card className="text-center p-6">
-              <MapPin className="h-12 w-12 text-red-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Entry Type</h3>
-              <p className="text-sm text-gray-600">Multiple entry allowed</p>
-            </Card>
-          </div>
+          <UKRequirements 
+            selectedCategory={selectedPurpose}
+            onCategoryChange={setSelectedPurpose}
+          />
         </div>
       </section>
 
@@ -169,8 +134,8 @@ const UKShortStay = () => {
 
       <section className="py-8 bg-yellow-500">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h3 className="text-2xl font-bold text-red-800 mb-2">PAY $0 DOWN</h3>
-          <p className="text-red-800">Start your UK visa application today with no upfront payment required</p>
+          <h3 className="text-2xl font-bold text-blue-800 mb-2">PAY $0 DOWN</h3>
+          <p className="text-blue-800">Start your UK visa application today with no upfront payment required</p>
         </div>
       </section>
 
