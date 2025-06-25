@@ -33,17 +33,6 @@ export const LazyFranceLongStay = lazy(() => import('@/pages/visa-countries/Fran
 export const LazySwitzerlandLongStay = lazy(() => import('@/pages/visa-countries/SwitzerlandLongStay'));
 export const LazyNigeriaLongStay = lazy(() => import('@/pages/visa-countries/NigeriaLongStay'));
 
-// Loading component for Suspense fallback
-export const LoadingFallback = ({ message = "Loading..." }: { message?: string }) => (
-  <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-white">
-    <div className="text-center">
-      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-      <p className="text-lg font-medium text-gray-700">{message}</p>
-      <p className="text-sm text-gray-500 mt-2">Preparing your experience...</p>
-    </div>
-  </div>
-);
-
 // Preload utility for route prefetching
 export const preloadComponent = (importFn: () => Promise<any>) => {
   const componentImport = importFn();

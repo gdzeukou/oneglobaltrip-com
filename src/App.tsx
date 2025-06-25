@@ -9,7 +9,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import NotFound from "./pages/NotFound";
 import { PerformanceMonitor } from "@/utils/performance";
-import { setupRoutePreloading, setupProgressiveImageLoading, LoadingFallback } from "@/utils/lazyImports";
+import { setupRoutePreloading, setupProgressiveImageLoading } from "@/utils/lazyImports";
+import LoadingFallback from "@/components/ui/loading-fallback";
 
 // Lazy imports for better performance
 import {
