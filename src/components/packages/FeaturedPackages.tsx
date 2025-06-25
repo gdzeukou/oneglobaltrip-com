@@ -91,7 +91,7 @@ const FeaturedPackages = ({ packages }: FeaturedPackagesProps) => {
                 </div>
                 
                 <Button asChild className="w-full bg-gradient-to-r from-blue-900 to-blue-800 hover:from-blue-800 hover:to-blue-700 hover-lift">
-                  <Link to={`/booking?package=${pkg.id}`}>
+                  <Link to={`/packages/${pkg.id}`}>
                     View Details
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Link>
