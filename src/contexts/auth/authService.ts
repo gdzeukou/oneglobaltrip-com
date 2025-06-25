@@ -60,6 +60,7 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
             email: signupData.email,
             password: signupData.password,
             options: {
+              emailRedirectTo: `${window.location.origin}/`,
               data: {
                 first_name: signupData.firstName,
                 last_name: signupData.lastName

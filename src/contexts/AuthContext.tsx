@@ -32,23 +32,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   } = useAuthState();
 
   const handleSendOTP = async (email: string, purpose: 'signup' | 'signin') => {
-    const result = await sendOTP(email, purpose);
-    if (!result.error) {
-      setOTPStep({
-        isRequired: true,
-        email,
-        purpose
-      });
+    try {
+      const result = await sendOTP(email, purpose);
+      if (!result.error) {
+        setOTPStep({
+          isRequired: true,
+          email,
+          purpose
+        });
+      }
+      return result;
+    } catch (error: any) {
+      console.error('Error sending OTP:', error);
+      return { error: { message: error.message || 'Failed to send verification code' } };
     }
-    return result;
   };
 
   const handleVerifyOTP = async (email: string, code: string, purpose: 'signup' | 'signin') => {
-    const result = await verifyOTP(email, code, purpose);
-    if (!result.error) {
-      setOTPStep(null);
+    try {
+      const result = await verifyOTP(email, code, purpose);
+      if (!result.error) {
+        setOTPStep(null);
+      }
+      return result;
+    } catch (error: any) {
+      console.error('Error verifying OTP:', error);
+      return { error: { message: error.message || 'Verification failed' } };
     }
-    return result;
   };
 
   const clearOTPStep = () => {
@@ -59,8 +69,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const handleSignOut = async () => {
-    await performSignOut();
-    setOTPStep(null);
+    try {
+      await performSignOut();
+      setOTPStep(null);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   const value = {
