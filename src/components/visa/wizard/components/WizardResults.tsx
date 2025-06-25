@@ -1,6 +1,7 @@
 
 import React from 'react';
 import VisaResults from '../results/VisaResults';
+import EnhancedVisaResults from '../results/EnhancedVisaResults';
 import MultiDestinationResults from '../results/MultiDestinationResults';
 import { WizardData } from '../hooks/useVisaWizardData';
 
@@ -20,8 +21,9 @@ const WizardResults = ({ wizardData, onReset }: WizardResultsProps) => {
     );
   }
 
+  // Use enhanced results for single destination trips
   return (
-    <VisaResults 
+    <EnhancedVisaResults 
       wizardData={wizardData} 
       onReset={onReset}
     />
