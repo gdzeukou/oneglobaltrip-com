@@ -7,6 +7,7 @@ import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
 import UAERequirements from '@/components/visa/UAERequirements';
+import DynamicVisaChecklist from '@/components/visa/pages/DynamicVisaChecklist';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -45,6 +46,10 @@ const UAEShortStay = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleStartApplication = () => {
+    scrollToForm();
   };
 
   return (
@@ -111,6 +116,16 @@ const UAEShortStay = () => {
 
       {/* Dynamic Requirements Section */}
       <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+            UAE Visa Requirements
+          </h2>
+          <DynamicVisaChecklist onStartApplication={handleStartApplication} />
+        </div>
+      </section>
+
+      {/* Detailed Requirements Section */}
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <UAERequirements 
             selectedCategory={selectedVisaType}

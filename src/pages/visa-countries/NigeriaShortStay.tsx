@@ -6,9 +6,9 @@ import Footer from '@/components/Footer';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
+import DynamicVisaChecklist from '@/components/visa/pages/DynamicVisaChecklist';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, Clock, Users, FileText } from 'lucide-react';
 
 const NigeriaShortStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
@@ -44,6 +44,10 @@ const NigeriaShortStay = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleStartApplication = () => {
+    scrollToForm();
   };
 
   return (
@@ -108,33 +112,13 @@ const NigeriaShortStay = () => {
         </div>
       </section>
 
+      {/* Dynamic Requirements Section */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Nigeria e-Visa Requirements
+            Nigeria Visa Requirements
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="text-center p-6">
-              <FileText className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Valid Passport</h3>
-              <p className="text-sm text-gray-600">Must be valid for at least 6 months</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Clock className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Processing Time</h3>
-              <p className="text-sm text-gray-600">5-7 business days</p>
-            </Card>
-            <Card className="text-center p-6">
-              <Users className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Stay Duration</h3>
-              <p className="text-sm text-gray-600">Up to 90 days</p>
-            </Card>
-            <Card className="text-center p-6">
-              <MapPin className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="font-bold mb-2">Entry Type</h3>
-              <p className="text-sm text-gray-600">Single or multiple entry</p>
-            </Card>
-          </div>
+          <DynamicVisaChecklist onStartApplication={handleStartApplication} />
         </div>
       </section>
 
@@ -154,7 +138,7 @@ const NigeriaShortStay = () => {
       <section className="py-8 bg-yellow-500">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h3 className="text-2xl font-bold text-green-800 mb-2">PAY $0 DOWN</h3>
-          <p className="text-green-800">Start your Nigeria e-visa application today with no upfront payment required</p>
+          <p className="text-green-800">Start your Nigeria e-Visa application today with no upfront payment required</p>
         </div>
       </section>
 
