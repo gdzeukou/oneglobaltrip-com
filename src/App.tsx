@@ -34,6 +34,12 @@ const NigeriaShortStay = lazy(() => import("./pages/visa-countries/NigeriaShortS
 const UKShortStay = lazy(() => import("./pages/visa-countries/UKShortStay"));
 const UK5YearShortStay = lazy(() => import("./pages/visa-countries/UK5YearShortStay"));
 
+// New special country pages
+const FranceShortStay = lazy(() => import("./pages/visa-countries/FranceShortStay"));
+const NetherlandsShortStay = lazy(() => import("./pages/visa-countries/NetherlandsShortStay"));
+const ItalyShortStay = lazy(() => import("./pages/visa-countries/ItalyShortStay"));
+const GreeceShortStay = lazy(() => import("./pages/visa-countries/GreeceShortStay"));
+
 // Long-stay visa pages
 const FranceLongStay = lazy(() => import("./pages/visa-countries/FranceLongStay"));
 const GermanyLongStay = lazy(() => import("./pages/visa-countries/GermanyLongStay"));
@@ -54,7 +60,14 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ErrorBoundary>
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={
+              <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-white">
+                <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                  <p className="text-lg font-medium text-gray-700">Loading...</p>
+                </div>
+              </div>
+            }>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/visas" element={<Visas />} />
@@ -72,6 +85,10 @@ const App = () => (
                 
                 {/* Short-stay visa country routes */}
                 <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
+                <Route path="/visas/short-stay/france" element={<FranceShortStay />} />
+                <Route path="/visas/short-stay/netherlands" element={<NetherlandsShortStay />} />
+                <Route path="/visas/short-stay/italy" element={<ItalyShortStay />} />
+                <Route path="/visas/short-stay/greece" element={<GreeceShortStay />} />
                 <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
                 <Route path="/visas/short-stay/uae" element={<UAEShortStay />} />
                 <Route path="/visas/short-stay/canada" element={<CanadaShortStay />} />
