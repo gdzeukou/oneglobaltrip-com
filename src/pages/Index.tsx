@@ -11,7 +11,7 @@ import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
 import VisaRecommendations from '@/components/smart/VisaRecommendations';
-import InteractiveMap from '@/components/interactive/InteractiveMap';
+import EnhancedInteractiveMap from '@/components/interactive/EnhancedInteractiveMap';
 import ProgressTracker from '@/components/tracking/ProgressTracker';
 import SmartChatbot from '@/components/chat/SmartChatbot';
 
@@ -22,7 +22,7 @@ const Index = () => {
       <HeroSection />
       <TrustIndicators />
       <VisaRecommendations />
-      <InteractiveMap />
+      <EnhancedInteractiveMap />
       <ServicesSection />
       <PromoSection />
       <StartTripSection />

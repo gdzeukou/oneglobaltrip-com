@@ -19,7 +19,7 @@ export const performSimpleSignUp = async (email: string, password: string, first
       email: email.toLowerCase().trim(),
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/`,
+        emailRedirectTo: `${window.location.origin}/dashboard`,
         data: {
           first_name: firstName?.trim(),
           last_name: lastName?.trim()
@@ -29,6 +29,18 @@ export const performSimpleSignUp = async (email: string, password: string, first
 
     if (error) {
       console.error('Signup error:', error);
+      
+      // Provide user-friendly error messages
+      if (error.message.includes('already registered')) {
+        return { error: { message: 'An account with this email already exists. Please sign in instead.' } };
+      }
+      if (error.message.includes('invalid email')) {
+        return { error: { message: 'Please enter a valid email address.' } };
+      }
+      if (error.message.includes('weak password')) {
+        return { error: { message: 'Password is too weak. Please use at least 8 characters with letters and numbers.' } };
+      }
+      
       return { error };
     }
 
@@ -36,7 +48,7 @@ export const performSimpleSignUp = async (email: string, password: string, first
     return { error: null };
   } catch (error: any) {
     console.error('Signup error:', error);
-    return { error: { message: 'An unexpected error occurred during sign up' } };
+    return { error: { message: 'An unexpected error occurred during sign up. Please try again.' } };
   }
 };
 
@@ -60,6 +72,18 @@ export const performSimpleSignIn = async (email: string, password: string) => {
 
     if (error) {
       console.error('Signin error:', error);
+      
+      // Provide user-friendly error messages
+      if (error.message.includes('Invalid login credentials')) {
+        return { error: { message: 'Invalid email or password. Please check your credentials and try again.' } };
+      }
+      if (error.message.includes('Email not confirmed')) {
+        return { error: { message: 'Please check your email and click the confirmation link before signing in.' } };
+      }
+      if (error.message.includes('too many requests')) {
+        return { error: { message: 'Too many login attempts. Please wait a few minutes before trying again.' } };
+      }
+      
       return { error };
     }
 
@@ -67,7 +91,7 @@ export const performSimpleSignIn = async (email: string, password: string) => {
     return { error: null };
   } catch (error: any) {
     console.error('Signin error:', error);
-    return { error: { message: 'An unexpected error occurred during sign in' } };
+    return { error: { message: 'An unexpected error occurred during sign in. Please try again.' } };
   }
 };
 
@@ -82,6 +106,6 @@ export const performSignOut = async () => {
     return { error: null };
   } catch (error: any) {
     console.error('Error signing out:', error);
-    return { error: { message: 'Failed to sign out' } };
+    return { error: { message: 'Failed to sign out. Please try again.' } };
   }
 };
