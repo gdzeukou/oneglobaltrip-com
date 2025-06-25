@@ -3,6 +3,7 @@ import { Clock, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Package } from '@/types/package';
+import PackageVisaWizard from './PackageVisaWizard';
 
 interface PackageDetailsPracticalInfoProps {
   packageData: Package;
@@ -13,31 +14,10 @@ const PackageDetailsPracticalInfo = ({ packageData }: PackageDetailsPracticalInf
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="flex items-center space-x-2 text-base sm:text-lg">
-              <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-              <span>Visa Requirements</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6 pt-0">
-            <div className="space-y-3">
-              <p className="text-gray-700 mb-4 text-sm sm:text-base">Required visas for this trip:</p>
-              <div className="flex flex-wrap gap-2">
-                {packageData.visasRequired.map((visa, index) => (
-                  <Badge key={index} variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 text-xs sm:text-sm">
-                    {visa}
-                  </Badge>
-                ))}
-              </div>
-              <p className="text-xs sm:text-sm text-gray-600 mt-4">
-                We'll provide complete visa assistance including document checklists, application guidance, and appointment booking support.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Visa Requirements Wizard - Now Interactive */}
+      <PackageVisaWizard packageData={packageData} />
 
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
         {isMultiCountry && (
           <Card>
             <CardHeader className="p-4 sm:p-6">

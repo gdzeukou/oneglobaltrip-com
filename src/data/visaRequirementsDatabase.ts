@@ -138,6 +138,13 @@ export const visaExemptions = {
   ]
 };
 
+// Countries that require UK ETA (Electronic Travel Authorization)
+export const ukETARequiredCountries = [
+  'United States', 'Canada', 'Australia', 'New Zealand', 'Japan',
+  'South Korea', 'Singapore', 'Malaysia', 'Brunei', 'Israel',
+  'UAE', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain', 'Oman'
+];
+
 // Check if visa is required
 export const checkVisaRequirement = (nationality: string, destination: string, purpose: string = 'tourism') => {
   // Check if destination is Schengen
@@ -153,6 +160,34 @@ export const checkVisaRequirement = (nationality: string, destination: string, p
       type: isExempt ? 'visa-free' : 'schengen-visa',
       isSchengen: true
     };
+  }
+  
+  // Special case for UK ETA
+  if (destination === 'uk') {
+    const needsETA = ukETARequiredCountries.includes(nationality);
+    const exemptCountries = visaExemptions.uk || [];
+    const isVisaExempt = exemptCountries.includes(nationality);
+    
+    if (needsETA && isVisaExempt) {
+      return {
+        required: true,
+        type: 'eta',
+        isSchengen: false,
+        special: 'Electronic Travel Authorization required'
+      };
+    } else if (!isVisaExempt) {
+      return {
+        required: true,
+        type: 'tourist-visa',
+        isSchengen: false
+      };
+    } else {
+      return {
+        required: false,
+        type: 'visa-free',
+        isSchengen: false
+      };
+    }
   }
   
   // For non-Schengen countries

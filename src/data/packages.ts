@@ -1,4 +1,3 @@
-
 import { Package, PackageCategory } from '@/types/package';
 
 export const categories: PackageCategory[] = [
@@ -14,6 +13,56 @@ export const categories: PackageCategory[] = [
 
 // Europe Express packages
 export const packages: Package[] = [
+  {
+    id: "london-paris-rome",
+    title: "London, Paris & Rome Classic",
+    shortDescription: "Experience three iconic European capitals in one unforgettable journey",
+    description: "Discover the rich history, stunning architecture, and vibrant culture of London, Paris, and Rome. This carefully crafted 11-day adventure takes you through three of Europe's most beloved capitals, offering the perfect blend of guided tours and free time to explore at your own pace.",
+    price: 3299,
+    originalPrice: 4199,
+    duration: "11 days",
+    image: "/lovable-uploads/44149117-d839-409c-9984-58ab8271cacf.png",
+    category: "cultural",
+    rating: 4.8,
+    reviewCount: 127,
+    countries: ["uk", "france", "italy"], // Updated to use country codes
+    cities: ["London", "Paris", "Rome"],
+    highlights: [
+      "Skip-the-line access to Tower of London, Eiffel Tower & Colosseum",
+      "Expert local guides in all three cities",
+      "Central 4-star hotels with breakfast included",
+      "Eurostar journey from London to Paris",
+      "Small group experience (max 16 travelers)",
+      "Wine tasting in a Roman enoteca",
+      "Seine River cruise in Paris",
+      "Traditional afternoon tea in London"
+    ],
+    specialFeatures: [
+      "UNESCO World Heritage site visits",
+      "Photography workshops with local artists",
+      "Exclusive after-hours museum access",
+      "Local cooking class in Rome",
+      "Private coach transfers between attractions",
+      "24/7 English-speaking tour director"
+    ],
+    visasRequired: ["UK ETA (for US citizens)", "Schengen visa (if required)"],
+    difficulty: "Easy",
+    groupSize: "8-16 people",
+    included: [
+      "10 nights accommodation in 4-star hotels",
+      "Daily breakfast buffet",
+      "4 lunches including special experiences",
+      "2 dinners including farewell meal",
+      "Eurostar tickets (London-Paris)",
+      "Flights (Paris-Rome)",
+      "All ground transportation",
+      "Expert local guides",
+      "Skip-the-line tickets to major attractions",
+      "Go City London Pass",
+      "Seine River cruise",
+      "Wine tasting experience"
+    ]
+  },
   {
     id: 'london-paris-rome-signature',
     title: 'London, Paris & Rome – 10-Day Signature Tour',
