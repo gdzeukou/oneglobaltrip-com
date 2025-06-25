@@ -38,18 +38,19 @@ export const LazyNigeriaLongStay = lazy(() => import('../pages/visa-countries/Ni
 // Performance optimization utilities
 export const setupRoutePreloading = () => {
   // Preload critical routes on hover
-  const preloadRoutes = {
-    '/packages': LazyPackages,
-    '/visas': LazyVisas,
-    '/simple-auth': LazySimpleAuth,
-    '/dashboard': LazyDashboard,
-  };
+  const preloadRoutes = [
+    { path: '/packages', component: LazyPackages },
+    { path: '/visas', component: LazyVisas },
+    { path: '/simple-auth', component: LazySimpleAuth },
+    { path: '/dashboard', component: LazyDashboard },
+  ];
 
-  Object.entries(preloadRoutes).forEach(([route, component]) => {
-    const links = document.querySelectorAll(`a[href="${route}"]`);
+  preloadRoutes.forEach(({ path, component }) => {
+    const links = document.querySelectorAll(`a[href="${path}"]`);
     links.forEach(link => {
       link.addEventListener('mouseenter', () => {
-        component(); // Trigger lazy loading
+        // Trigger lazy loading by calling the lazy component function
+        import(`../pages/${component.name.replace('Lazy', '')}`);
       }, { once: true });
     });
   });

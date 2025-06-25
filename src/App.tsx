@@ -1,4 +1,5 @@
-import { Suspense, useEffect } from 'react';
+
+import React, { Suspense, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -41,10 +42,8 @@ import {
   LazyFranceLongStay,
   LazySwitzerlandLongStay,
   LazyNigeriaLongStay,
+  LazySimpleAuth,
 } from "@/utils/lazyImports";
-
-// Lazy load SimpleAuth
-const LazySimpleAuth = React.lazy(() => import("./pages/SimpleAuth"));
 
 // Enhanced Query Client with better defaults
 const queryClient = new QueryClient({
