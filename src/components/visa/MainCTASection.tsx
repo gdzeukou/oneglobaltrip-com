@@ -3,7 +3,6 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
-import EnhancedImage from '@/components/ui/enhanced-image';
 
 const MainCTASection = () => {
   const navigate = useNavigate();
@@ -15,8 +14,8 @@ const MainCTASection = () => {
       subtitle: '27 European Countries',
       description: 'Access 27 European countries with a single visa application. Perfect for exploring multiple destinations.',
       price: 'from $193',
-      image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=600&h=400&fit=crop&crop=center',
-      alt: 'European landmarks for Schengen visa',
+      image: '/lovable-uploads/a70031da-92cd-4c64-bc4e-e490944cd7aa.png',
+      alt: 'European Union flag waving in front of classical European architecture',
       badge: 'POPULAR',
       badgeColor: 'bg-red-500',
       route: '/visas/short-stay/schengen',
@@ -28,8 +27,8 @@ const MainCTASection = () => {
       subtitle: 'Work, Study & Residence',
       description: 'Long-term visa for Portugal with comprehensive support for work permits and residency applications.',
       price: 'from $240',
-      image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&h=400&fit=crop&crop=center',
-      alt: 'Portuguese architecture for Portugal visa',
+      image: '/lovable-uploads/9c32b030-f008-4022-995f-0151ebec23ae.png',
+      alt: 'Beautiful view of Portuguese architecture and cityscape from historic window',
       badge: 'TRENDING',
       badgeColor: 'bg-green-500',
       route: '/visas/long-stay/portugal',
@@ -56,12 +55,10 @@ const MainCTASection = () => {
                 </span>
               </div>
               <div className="relative h-48 overflow-hidden">
-                <EnhancedImage
+                <img
                   src={choice.image}
                   alt={choice.alt}
-                  className="w-full h-full group-hover:scale-110 transition-transform duration-500"
-                  overlay
-                  overlayColor="bg-black/20"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 <div className="absolute bottom-4 left-4">
