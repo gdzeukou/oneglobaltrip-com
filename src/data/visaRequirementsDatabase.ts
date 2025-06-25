@@ -107,26 +107,78 @@ export const stayDurations = [
   { value: 'long-stay', label: 'Long-stay (>90 days)' },
 ];
 
-// Visa-exempt countries for major destinations
+// Updated visa-exempt countries with comprehensive lists
 export const visaExemptions = {
-  // For Schengen countries, use any Schengen country code as key
+  // Schengen countries - Western passport holders
   schengen: [
     'United States', 'Canada', 'Australia', 'United Kingdom', 'Japan', 
     'South Korea', 'New Zealand', 'Israel', 'Singapore', 'Malaysia', 'Brunei',
-    'Chile', 'Uruguay', 'Argentina', 'Brazil', 'Mexico', 'Panama'
+    'Chile', 'Uruguay', 'Argentina', 'Brazil', 'Mexico', 'Panama', 'Costa Rica',
+    'Honduras', 'El Salvador', 'Nicaragua', 'Guatemala', 'Venezuela', 'Colombia',
+    'Peru', 'Paraguay', 'Bolivia', 'Ecuador', 'Barbados', 'Antigua and Barbuda',
+    'Bahamas', 'Dominica', 'Grenada', 'Saint Kitts and Nevis', 'Saint Lucia',
+    'Saint Vincent and the Grenadines', 'Trinidad and Tobago', 'Seychelles',
+    'Mauritius', 'Taiwan', 'Hong Kong', 'Macao', 'Montenegro', 'Serbia',
+    'North Macedonia', 'Albania', 'Bosnia and Herzegovina', 'Moldova', 'Ukraine',
+    'Georgia'
   ],
   uk: [
     'United States', 'Canada', 'Australia', 'New Zealand', 'Japan',
-    'South Korea', 'Israel', 'Singapore', 'Malaysia', 'Brunei'
+    'South Korea', 'Israel', 'Singapore', 'Malaysia', 'Brunei',
+    // EU countries
+    'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+    'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+    'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+    'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+    'Switzerland', 'Bulgaria', 'Romania', 'Cyprus'
+  ],
+  // Canada eTA required countries
+  canada_eta: [
+    'United Kingdom', 'Ireland', 'Australia', 'New Zealand', 'Japan', 'South Korea',
+    'Israel', 'Singapore', 'Malaysia', 'Brunei', 'Chile', 'Taiwan',
+    // EU countries
+    'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+    'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+    'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+    'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+    'Switzerland', 'Bulgaria', 'Romania', 'Cyprus'
+  ],
+  // UAE Visa-on-Arrival countries (~70 countries)
+  uae: [
+    'United States', 'Canada', 'Australia', 'New Zealand', 'United Kingdom',
+    'Ireland', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Brunei',
+    'Hong Kong', 'Taiwan', 'Macao', 'Seychelles', 'Mauritius',
+    // EU countries
+    'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+    'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+    'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+    'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+    'Switzerland', 'Bulgaria', 'Romania', 'Cyprus',
+    'Chile', 'Uruguay', 'Argentina', 'Brazil', 'Mexico', 'Kazakhstan',
+    'Russia', 'Ukraine', 'Moldova', 'Georgia', 'Armenia', 'Serbia', 'Montenegro',
+    'North Macedonia', 'Albania', 'Bosnia and Herzegovina'
+  ],
+  // Brazil visa-free (most of Europe & Latin America)
+  brazil: [
+    'Argentina', 'Uruguay', 'Paraguay', 'Chile', 'Bolivia', 'Peru', 'Ecuador',
+    'Colombia', 'Venezuela', 'Guyana', 'Suriname', 'French Guiana',
+    // EU countries
+    'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+    'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+    'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+    'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+    'Switzerland', 'Bulgaria', 'Romania', 'Cyprus', 'Ireland', 'United Kingdom'
+  ],
+  // Nigeria ECOWAS visa-free
+  nigeria_ecowas: [
+    'Benin', 'Burkina Faso', 'Cape Verde', 'Ivory Coast', 'Gambia', 'Ghana',
+    'Guinea', 'Guinea-Bissau', 'Liberia', 'Mali', 'Niger', 'Senegal',
+    'Sierra Leone', 'Togo'
   ],
   usa: [
     'United Kingdom', 'Canada', 'Australia', 'New Zealand', 'Japan',
     'South Korea', 'Germany', 'France', 'Italy', 'Spain', 'Netherlands',
     'Sweden', 'Norway', 'Denmark', 'Finland', 'Switzerland'
-  ],
-  canada: [
-    'United States', 'United Kingdom', 'Australia', 'New Zealand', 'Japan',
-    'South Korea', 'Germany', 'France', 'Italy', 'Spain', 'Netherlands'
   ],
   australia: [
     'New Zealand', 'United States', 'Canada', 'United Kingdom', 'Japan',
@@ -138,11 +190,38 @@ export const visaExemptions = {
   ]
 };
 
-// Countries that require UK ETA (Electronic Travel Authorization)
+// Countries that require UK ETA (Electronic Travel Authorization) - coming soon
 export const ukETARequiredCountries = [
   'United States', 'Canada', 'Australia', 'New Zealand', 'Japan',
   'South Korea', 'Singapore', 'Malaysia', 'Brunei', 'Israel',
-  'UAE', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain', 'Oman'
+  'UAE', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain', 'Oman',
+  // EU countries
+  'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+  'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+  'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+  'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+  'Switzerland', 'Bulgaria', 'Romania', 'Cyprus'
+];
+
+// India e-Visa eligible countries (170+ countries)
+export const indiaEVisaCountries = [
+  'United States', 'Canada', 'Australia', 'New Zealand', 'United Kingdom',
+  'Ireland', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Thailand',
+  'Indonesia', 'Philippines', 'Vietnam', 'China', 'Russia', 'Brazil',
+  'Argentina', 'Chile', 'Mexico', 'South Africa', 'Egypt', 'Morocco',
+  'Turkey', 'Israel', 'UAE', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain',
+  'Oman', 'Jordan', 'Lebanon', 'Georgia', 'Armenia', 'Azerbaijan', 'Kazakhstan',
+  // EU countries and many others
+  'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+  'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+  'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+  'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+  'Switzerland', 'Bulgaria', 'Romania', 'Cyprus'
+];
+
+// Brazil e-Visa countries (starting April 2025)
+export const brazilEVisaCountries = [
+  'United States', 'Canada', 'Australia', 'Japan'
 ];
 
 // Check if visa is required
@@ -162,23 +241,23 @@ export const checkVisaRequirement = (nationality: string, destination: string, p
     };
   }
   
-  // Special case for UK ETA
+  // Special handling for specific countries
   if (destination === 'uk') {
-    const needsETA = ukETARequiredCountries.includes(nationality);
     const exemptCountries = visaExemptions.uk || [];
     const isVisaExempt = exemptCountries.includes(nationality);
+    const needsETA = ukETARequiredCountries.includes(nationality);
     
     if (needsETA && isVisaExempt) {
       return {
         required: true,
         type: 'eta',
         isSchengen: false,
-        special: 'Electronic Travel Authorization required'
+        special: 'UK ETA (Electronic Travel Authorization) coming soon'
       };
     } else if (!isVisaExempt) {
       return {
         required: true,
-        type: 'tourist-visa',
+        type: 'uk-standard-visitor',
         isSchengen: false
       };
     } else {
@@ -190,11 +269,65 @@ export const checkVisaRequirement = (nationality: string, destination: string, p
     }
   }
   
-  // For non-Schengen countries
+  if (destination === 'canada') {
+    if (nationality === 'United States') {
+      return { required: false, type: 'visa-free', isSchengen: false };
+    }
+    const etaCountries = visaExemptions.canada_eta || [];
+    if (etaCountries.includes(nationality)) {
+      return { required: true, type: 'eta', isSchengen: false };
+    }
+    return { required: true, type: 'canadian-trv', isSchengen: false };
+  }
+  
+  if (destination === 'uae') {
+    const voaCountries = visaExemptions.uae || [];
+    const isExempt = voaCountries.includes(nationality);
+    return {
+      required: !isExempt,
+      type: isExempt ? 'visa-on-arrival' : 'uae-e-visa',
+      isSchengen: false
+    };
+  }
+  
+  if (destination === 'brazil') {
+    const exemptCountries = visaExemptions.brazil || [];
+    const needsEVisa = brazilEVisaCountries.includes(nationality);
+    const isExempt = exemptCountries.includes(nationality);
+    
+    if (needsEVisa) {
+      return { required: true, type: 'brazil-e-visa', isSchengen: false };
+    }
+    return {
+      required: !isExempt,
+      type: isExempt ? 'visa-free' : 'brazil-visa',
+      isSchengen: false
+    };
+  }
+  
+  if (destination === 'india') {
+    const eVisaEligible = indiaEVisaCountries.includes(nationality);
+    return {
+      required: true,
+      type: eVisaEligible ? 'india-e-visa' : 'india-visa',
+      isSchengen: false
+    };
+  }
+  
+  if (destination === 'nigeria') {
+    const ecowasCountries = visaExemptions.nigeria_ecowas || [];
+    const isEcowas = ecowasCountries.includes(nationality);
+    return {
+      required: !isEcowas,
+      type: isEcowas ? 'visa-free' : 'nigeria-visa-on-arrival',
+      isSchengen: false
+    };
+  }
+  
+  // For other destinations, use existing logic
   const exemptCountries = visaExemptions[destination as keyof typeof visaExemptions] || [];
   const isExempt = exemptCountries.includes(nationality);
   
-  // Special cases for certain purposes
   if (purpose === 'study' || purpose === 'business' && !isExempt) {
     return { required: true, type: purpose, isSchengen: false };
   }

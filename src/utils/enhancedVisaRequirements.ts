@@ -1,4 +1,3 @@
-
 import { destinationCountries, schengenCountries, checkVisaRequirement } from '@/data/visaRequirementsDatabase';
 
 // Duration mappings
@@ -10,7 +9,79 @@ export const durationMappings = {
   'long-stay': 365         // >90 days long-stay
 };
 
-// Enhanced visa requirement check with corrected visa types
+// Western passport countries (typically visa-exempt for major destinations)
+export const westernPassportCountries = [
+  'United States', 'Canada', 'Australia', 'New Zealand', 'United Kingdom',
+  'Ireland', 'Japan', 'South Korea', 'Singapore', 'Israel',
+  // EU/Schengen countries
+  'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+  'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+  'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+  'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+  'Switzerland',
+  // Other Western countries
+  'Chile', 'Uruguay', 'Argentina', 'Brazil', 'Mexico', 'Costa Rica'
+];
+
+// UAE Visa-on-Arrival countries (~70 countries)
+export const uaeVisaOnArrivalCountries = [
+  'United States', 'Canada', 'Australia', 'New Zealand', 'United Kingdom',
+  'Ireland', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Brunei',
+  'Hong Kong', 'Taiwan', 'Macao', 'Seychelles', 'Mauritius',
+  // EU countries
+  'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+  'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+  'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+  'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+  'Switzerland', 'Bulgaria', 'Romania', 'Cyprus',
+  // Others
+  'Chile', 'Uruguay', 'Argentina', 'Brazil', 'Mexico', 'Kazakhstan',
+  'Russia', 'Ukraine', 'Moldova', 'Georgia', 'Armenia', 'Serbia', 'Montenegro',
+  'North Macedonia', 'Albania', 'Bosnia and Herzegovina', 'Andorra', 'Monaco',
+  'San Marino', 'Vatican City'
+];
+
+// Canada eTA required countries (visa-exempt but need eTA)
+export const canadaETACountries = [
+  'United Kingdom', 'Ireland', 'Australia', 'New Zealand', 'Japan', 'South Korea',
+  'Israel', 'Singapore', 'Malaysia', 'Brunei', 'Chile', 'Taiwan',
+  // EU countries
+  'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+  'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+  'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+  'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+  'Switzerland', 'Bulgaria', 'Romania', 'Cyprus'
+];
+
+// India e-Visa eligible countries (170+ countries)
+export const indiaEVisaCountries = [
+  'United States', 'Canada', 'Australia', 'New Zealand', 'United Kingdom',
+  'Ireland', 'Japan', 'South Korea', 'Singapore', 'Malaysia', 'Thailand',
+  'Indonesia', 'Philippines', 'Vietnam', 'China', 'Russia', 'Brazil',
+  'Argentina', 'Chile', 'Mexico', 'South Africa', 'Egypt', 'Morocco',
+  'Turkey', 'Israel', 'UAE', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain',
+  'Oman', 'Jordan', 'Lebanon', 'Georgia', 'Armenia', 'Azerbaijan', 'Kazakhstan',
+  // EU countries and many others - this is a representative list
+  'Austria', 'Belgium', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+  'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy',
+  'Latvia', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands',
+  'Norway', 'Poland', 'Portugal', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+  'Switzerland', 'Bulgaria', 'Romania', 'Cyprus'
+];
+
+// ECOWAS countries (visa-free for Nigeria)
+export const ecowasCountries = [
+  'Benin', 'Burkina Faso', 'Cape Verde', 'Ivory Coast', 'Gambia', 'Ghana',
+  'Guinea', 'Guinea-Bissau', 'Liberia', 'Mali', 'Niger', 'Nigeria', 'Senegal',
+  'Sierra Leone', 'Togo'
+];
+
+// Brazil e-Visa countries (starting April 2025)
+export const brazilEVisaCountries = [
+  'United States', 'Canada', 'Australia', 'Japan'
+];
+
+// Enhanced visa requirement check with updated logic
 export const checkEnhancedVisaRequirement = (
   nationality: string,
   destination: string,
@@ -18,135 +89,206 @@ export const checkEnhancedVisaRequirement = (
   duration: string
 ) => {
   const durationDays = durationMappings[duration as keyof typeof durationMappings] || 0;
-  const isUSCitizen = nationality === 'United States';
+  const isWesternPassport = westernPassportCountries.includes(nationality);
   const isSchengenDestination = schengenCountries.includes(destination);
   const destinationInfo = destinationCountries.find(c => c.code === destination);
   
-  // US Citizen Logic
-  if (isUSCitizen) {
-    // Schengen Area Rules
-    if (isSchengenDestination) {
-      if (durationDays <= 90 && (purpose === 'tourism' || purpose === 'business')) {
-        return {
-          required: false,
-          type: 'visa-free',
-          isSchengen: true,
-          message: `Great news—U.S. passport holders don't need a visa for up to 90 days in the Schengen Area!`,
-          showPackages: true,
-          maxStayDays: 90
-        };
-      } else {
-        return {
-          required: true,
-          type: 'national-visa',
-          isSchengen: true,
-          message: `For stays longer than 90 days, you'll need a ${destinationInfo?.name} national visa (Type D). Let's start your application.`,
-          showPackages: false
-        };
-      }
-    }
-    
-    // UK Rules
-    if (destination === 'uk') {
-      const maxStayDays = 180; // 6 months
-      
-      if (durationDays <= maxStayDays && (purpose === 'tourism' || purpose === 'business')) {
-        return {
-          required: false,
-          type: 'visa-free',
-          isSchengen: false,
-          message: "No visa required for U.S. travelers staying up to 6 months in the UK!",
-          showPackages: true,
-          maxStayDays: maxStayDays
-        };
-      } else {
-        return {
-          required: true,
-          type: 'uk-long-stay',
-          isSchengen: false,
-          message: "For long-term UK stays, you'll need a specific UK long-stay visa. Let's get started.",
-          showPackages: false
-        };
-      }
-    }
-    
-    // Nigeria - Special e-Visa handling
-    if (destination === 'nigeria') {
+  // Universal requirements message
+  const universalReqs = "Remember: 6-month valid passport, proof of funds & return ticket required.";
+  
+  // Schengen Area Rules
+  if (isSchengenDestination) {
+    if (isWesternPassport && durationDays <= 90 && (purpose === 'tourism' || purpose === 'business')) {
+      return {
+        required: false,
+        type: 'visa-free',
+        isSchengen: true,
+        message: `Great news—your passport allows visa-free entry to the Schengen Area for up to 90 days within any 180-day period! ${universalReqs}`,
+        showPackages: true,
+        maxStayDays: 90
+      };
+    } else if (!isWesternPassport && durationDays <= 90) {
       return {
         required: true,
-        type: 'nigeria-evisa',
-        isSchengen: false,
-        message: "You'll need a Nigeria e-Visa. We can help you with the online application process.",
+        type: 'schengen-visa',
+        isSchengen: true,
+        message: `You'll need a Schengen visa (Type C) for short stays in ${destinationInfo?.name}. Apply online, book biometrics, and show travel insurance/funds.`,
         showPackages: false
-      };
-    }
-    
-    // Non-Schengen EU/EEA (Ireland, Croatia, Bulgaria, Romania, Cyprus)
-    const nonSchengenEU = ['ireland', 'croatia', 'bulgaria', 'romania', 'cyprus'];
-    if (nonSchengenEU.includes(destination)) {
-      if (durationDays <= 90 && (purpose === 'tourism' || purpose === 'business')) {
-        return {
-          required: false,
-          type: 'visa-free',
-          isSchengen: false,
-          message: `Great news—U.S. passport holders don't need a visa for up to 90 days in ${destinationInfo?.name}!`,
-          showPackages: true,
-          maxStayDays: 90
-        };
-      } else {
-        return {
-          required: true,
-          type: 'national-visa',
-          isSchengen: false,
-          message: `For long-term stays, you'll need a ${destinationInfo?.name} national visa. Let's get started.`,
-          showPackages: false
-        };
-      }
-    }
-  }
-  
-  // Non-US Citizens - Use fallback with corrected visa types
-  const basicResult = checkVisaRequirement(nationality, destination, purpose);
-  
-  // Correct visa type assignment for non-US citizens
-  if (isSchengenDestination) {
-    if (durationDays <= 90) {
-      return {
-        ...basicResult,
-        type: basicResult.required ? 'schengen-visa' : 'visa-free',
-        message: basicResult.required 
-          ? `You'll need a Schengen visa (Type C) for short stays in ${destinationInfo?.name}. Let's start your application.`
-          : `Great news! You don't need a visa for short stays in the Schengen Area.`,
-        showPackages: !basicResult.required,
-        maxStayDays: basicResult.required ? undefined : 90
       };
     } else {
       return {
         required: true,
         type: 'national-visa',
         isSchengen: true,
-        message: `For stays longer than 90 days, you'll need a ${destinationInfo?.name} national visa (Type D). Let's start your application.`,
+        message: `For stays longer than 90 days, you'll need a ${destinationInfo?.name} national visa (Type D). Work/study requires separate permits.`,
         showPackages: false
       };
     }
   }
   
+  // UK Rules
   if (destination === 'uk') {
-    return {
-      ...basicResult,
-      type: basicResult.required ? 'uk-standard-visitor' : 'visa-free',
-      message: basicResult.required 
-        ? `You'll need a UK Standard Visitor visa. Let's get started on your application.`
-        : `Great news! You don't need a visa for UK visits.`,
-      showPackages: !basicResult.required
-    };
+    const maxStayDays = 180; // 6 months
+    
+    if (isWesternPassport && durationDays <= maxStayDays && (purpose === 'tourism' || purpose === 'business')) {
+      return {
+        required: false,
+        type: 'visa-free',
+        isSchengen: false,
+        message: `No visa required for stays up to 6 months in the UK! Note: UK will soon introduce a cheap online ETA requirement. ${universalReqs}`,
+        showPackages: true,
+        maxStayDays: maxStayDays
+      };
+    } else if (!isWesternPassport) {
+      return {
+        required: true,
+        type: 'uk-standard-visitor',
+        isSchengen: false,
+        message: `You'll need a UK Standard Visitor visa. Apply online, book biometrics, and show financial evidence.`,
+        showPackages: false
+      };
+    } else {
+      return {
+        required: true,
+        type: 'uk-long-stay',
+        isSchengen: false,
+        message: `For long-term UK stays, you'll need a specific long-stay visa. Work/study requires separate permits.`,
+        showPackages: false
+      };
+    }
+  }
+  
+  // Canada Rules
+  if (destination === 'canada') {
+    if (nationality === 'United States') {
+      return {
+        required: false,
+        type: 'visa-free',
+        isSchengen: false,
+        message: `US citizens can enter Canada visa-free with valid passport. ${universalReqs}`,
+        showPackages: true,
+        maxStayDays: 180
+      };
+    } else if (canadaETACountries.includes(nationality)) {
+      return {
+        required: true,
+        type: 'eta',
+        isSchengen: false,
+        message: `You need a Canadian eTA (Electronic Travel Authorization) - $7 CAD online application. Quick approval, valid for 5 years. ${universalReqs}`,
+        showPackages: false
+      };
+    } else {
+      return {
+        required: true,
+        type: 'canadian-trv',
+        isSchengen: false,
+        message: `You need a Canadian Temporary Resident Visa (TRV). File online application and get up to 6 months stay. ${universalReqs}`,
+        showPackages: false
+      };
+    }
+  }
+  
+  // UAE Rules
+  if (destination === 'uae') {
+    if (uaeVisaOnArrivalCountries.includes(nationality)) {
+      return {
+        required: false,
+        type: 'visa-on-arrival',
+        isSchengen: false,
+        message: `Great news! You get a free 30-90 day visa-on-arrival in the UAE. Just walk in with your passport! ${universalReqs}`,
+        showPackages: true,
+        maxStayDays: 90
+      };
+    } else {
+      return {
+        required: true,
+        type: 'uae-e-visa',
+        isSchengen: false,
+        message: `You need a sponsor-backed UAE e-Visa (30-60 days, extendable once). Book through hotels or tour operators. ${universalReqs}`,
+        showPackages: false
+      };
+    }
+  }
+  
+  // Brazil Rules
+  if (destination === 'brazil') {
+    if (isWesternPassport && !brazilEVisaCountries.includes(nationality)) {
+      return {
+        required: false,
+        type: 'visa-free',
+        isSchengen: false,
+        message: `Visa-free entry to Brazil for up to 90 days per trip, 180 days per year! ${universalReqs}`,
+        showPackages: true,
+        maxStayDays: 90
+      };
+    } else if (brazilEVisaCountries.includes(nationality)) {
+      return {
+        required: true,
+        type: 'brazil-e-visa',
+        isSchengen: false,
+        message: `Brazil e-Visa required (starting April 2025) - approximately $80 USD, quick online process. 90 days per trip, 180 days/year max. ${universalReqs}`,
+        showPackages: false
+      };
+    } else {
+      return {
+        required: true,
+        type: 'brazil-visa',
+        isSchengen: false,
+        message: `Brazil visa required - apply through consulate. 90 days per trip, 180 days/year max. ${universalReqs}`,
+        showPackages: false
+      };
+    }
+  }
+  
+  // India Rules
+  if (destination === 'india') {
+    if (indiaEVisaCountries.includes(nationality)) {
+      return {
+        required: true,
+        type: 'india-e-visa',
+        isSchengen: false,
+        message: `India e-Visa available online for 170+ countries! Usually 30-90 day single-entry stays. Quick processing. ${universalReqs}`,
+        showPackages: false
+      };
+    } else {
+      return {
+        required: true,
+        type: 'india-visa',
+        isSchengen: false,
+        message: `India visa required - apply through consulate. Various stay durations available. ${universalReqs}`,
+        showPackages: false
+      };
+    }
+  }
+  
+  // Nigeria Rules
+  if (destination === 'nigeria') {
+    if (ecowasCountries.includes(nationality)) {
+      return {
+        required: false,
+        type: 'visa-free',
+        isSchengen: false,
+        message: `ECOWAS citizens enter Nigeria visa-free! ${universalReqs}`,
+        showPackages: true,
+        maxStayDays: 90
+      };
+    } else {
+      return {
+        required: true,
+        type: 'nigeria-visa-on-arrival',
+        isSchengen: false,
+        message: `Nigeria offers pre-approved "Visa on Arrival" - apply online first, then collect at airport. Usually 30-90 day stays. ${universalReqs}`,
+        showPackages: false
+      };
+    }
   }
   
   // Default for other countries
+  const basicResult = checkVisaRequirement(nationality, destination, purpose);
   return {
     ...basicResult,
-    message: `To visit ${destinationInfo?.name} for ${purpose}, you'll need a visa. Let's get started on your application now.`,
-    showPackages: false
+    message: `Check specific visa requirements for ${destinationInfo?.name}. ${universalReqs}`,
+    showPackages: !basicResult.required
   };
 };
 
