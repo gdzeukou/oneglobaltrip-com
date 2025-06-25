@@ -51,18 +51,21 @@ const CanadaShortStay = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-white">
       <Navigation />
       
-      <section className="pt-24 pb-16 bg-gradient-to-r from-red-600 to-red-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">Canada Visitor Visa</h1>
+      <section className="pt-24 pb-16 bg-gradient-to-r from-red-600 to-red-800 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-700/20"></div>
+        <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
+          <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white to-red-100 bg-clip-text text-transparent">
+            Canada Visitor Visa
+          </h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
             Experience breathtaking natural beauty, vibrant cities, and warm Canadian hospitality. From Niagara Falls to the Rocky Mountains, Canada offers unforgettable adventures.
           </p>
           <Button 
             onClick={scrollToForm}
-            className="bg-white hover:bg-gray-100 text-red-700 font-bold text-lg px-8 py-3"
+            className="bg-white hover:bg-gray-100 text-red-700 font-bold text-lg px-8 py-3 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
           >
             Start Canada Visa Application
           </Button>
@@ -77,35 +80,40 @@ const CanadaShortStay = () => {
         description="Transparent pricing with no hidden fees"
       />
 
-      <section className="py-16">
+      <section className="py-16 bg-gradient-to-br from-white to-red-50/50">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Explore Canada's Vibrant Cities
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {cities.map((city) => (
-              <Card key={city.name} className="overflow-hidden hover-lift">
+              <Card key={city.name} className="group relative overflow-hidden bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105 cursor-pointer">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-red-700/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
                 <div className="relative h-48">
                   <img
                     src={city.image}
                     alt={city.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-black/40" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                   <div className="absolute bottom-4 left-4">
-                    <h3 className="text-white text-xl font-bold">{city.name}</h3>
+                    <h3 className="text-white text-xl font-bold group-hover:text-yellow-300 transition-colors duration-300">{city.name}</h3>
                   </div>
                 </div>
-                <CardContent className="p-6">
-                  <p className="text-gray-600 mb-4">{city.description}</p>
+                <CardContent className="p-6 relative z-10">
+                  <p className="text-gray-600 mb-4 group-hover:text-gray-700 transition-colors duration-300">{city.description}</p>
                   <div className="flex flex-wrap gap-2">
                     {city.highlights.map((highlight) => (
-                      <span key={highlight} className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm">
+                      <span key={highlight} className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm group-hover:bg-red-200 transition-colors duration-300">
                         {highlight}
                       </span>
                     ))}
                   </div>
                 </CardContent>
+                
+                {/* Hover shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000 pointer-events-none" />
               </Card>
             ))}
           </div>
@@ -113,7 +121,7 @@ const CanadaShortStay = () => {
       </section>
 
       {/* Dynamic Requirements Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-gradient-to-br from-gray-50 to-red-50/30">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Canada Visa Requirements
@@ -122,7 +130,7 @@ const CanadaShortStay = () => {
         </div>
       </section>
 
-      <section id="visa-form" className="py-16">
+      <section id="visa-form" className="py-16 bg-gradient-to-br from-white to-red-50/50">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
             Start Your Canada Visa Application
@@ -135,28 +143,29 @@ const CanadaShortStay = () => {
         </div>
       </section>
 
-      <section className="py-8 bg-yellow-500">
-        <div className="max-w-7xl mx-auto px-4 text-center">
+      <section className="py-8 bg-gradient-to-r from-yellow-400 to-yellow-500 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-orange-500/20"></div>
+        <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
           <h3 className="text-2xl font-bold text-red-800 mb-2">PAY $0 DOWN</h3>
           <p className="text-red-800">Start your Canada visa application today with no upfront payment required</p>
         </div>
       </section>
 
       {showCalendly && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-4">Schedule Your Consultation</h3>
-            <p className="mb-4">Book a 30-minute call with our visa experts to discuss your Canada application.</p>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 max-w-md w-full shadow-2xl border border-white/20">
+            <h3 className="text-xl font-bold mb-4 text-gray-900">Schedule Your Consultation</h3>
+            <p className="mb-6 text-gray-700">Book a 30-minute call with our visa experts to discuss your Canada application.</p>
             <Button
               onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold mb-4 shadow-lg hover:shadow-xl transition-all duration-300"
             >
               Book Consultation
             </Button>
             <Button 
               variant="outline" 
               onClick={() => setShowCalendly(false)}
-              className="w-full mt-4"
+              className="w-full hover:bg-gray-50 transition-colors duration-300"
             >
               Close
             </Button>
