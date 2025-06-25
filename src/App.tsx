@@ -70,15 +70,22 @@ const App = () => (
                 <Route path="/admin-v2" element={<Admin />} />
                 <Route path="/concierge" element={<Concierge />} />
                 
-                {/* Visa country routes */}
+                {/* Short-stay visa country routes */}
                 <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
+                <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
+                <Route path="/visas/short-stay/uae" element={<UAEShortStay />} />
+                <Route path="/visas/short-stay/canada" element={<CanadaShortStay />} />
+                <Route path="/visas/short-stay/brazil" element={<BrazilShortStay />} />
+                <Route path="/visas/short-stay/nigeria" element={<NigeriaShortStay />} />
+                <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
+                <Route path="/visas/short-stay/uk-5-year" element={<UK5YearShortStay />} />
+                
+                {/* Legacy routes for compatibility */}
                 <Route path="/visa-countries/IndiaShortStay" element={<IndiaShortStay />} />
                 <Route path="/visa-countries/UAEShortStay" element={<UAEShortStay />} />
                 <Route path="/visa-countries/CanadaShortStay" element={<CanadaShortStay />} />
                 <Route path="/visa-countries/BrazilShortStay" element={<BrazilShortStay />} />
                 <Route path="/visa-countries/NigeriaShortStay" element={<NigeriaShortStay />} />
-                <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
-                <Route path="/visas/short-stay/uk-5-year" element={<UK5YearShortStay />} />
                 
                 {/* Long-stay visa routes */}
                 <Route path="/visas/long-stay/france" element={<FranceLongStay />} />
