@@ -1,3 +1,5 @@
+
+import { Suspense, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,91 +7,213 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import Packages from "./pages/Packages";
-import Booking from "./pages/Booking";
 import NotFound from "./pages/NotFound";
-import GetStarted from "./pages/GetStarted";
-import Admin from "./pages/Admin";
-import AdminDashboard from "./pages/AdminDashboard";
-import Visas from "./pages/Visas";
-import ShortStayVisas from "./pages/ShortStayVisas";
-import LongStayVisas from "./pages/LongStayVisas";
-import Concierge from "./pages/Concierge";
+import { PerformanceMonitor } from "@/utils/performance";
+import { setupRoutePreloading, setupProgressiveImageLoading, LoadingFallback } from "@/utils/lazyImports";
 
-// Visa country pages
-import SchengenShortStay from "./pages/visa-countries/SchengenShortStay";
-import UKShortStay from "./pages/visa-countries/UKShortStay";
-import UK5YearShortStay from "./pages/visa-countries/UK5YearShortStay";
-import CanadaShortStay from "./pages/visa-countries/CanadaShortStay";
-import BrazilShortStay from "./pages/visa-countries/BrazilShortStay";
-import NigeriaShortStay from "./pages/visa-countries/NigeriaShortStay";
-import UAEShortStay from "./pages/visa-countries/UAEShortStay";
-import IndiaShortStay from "./pages/visa-countries/IndiaShortStay";
-import PortugalLongStay from "./pages/visa-countries/PortugalLongStay";
-import NorwayLongStay from "./pages/visa-countries/NorwayLongStay";
-import DenmarkLongStay from "./pages/visa-countries/DenmarkLongStay";
-import FinlandLongStay from "./pages/visa-countries/FinlandLongStay";
-import GermanyLongStay from "./pages/visa-countries/GermanyLongStay";
-import FranceLongStay from "./pages/visa-countries/FranceLongStay";
-import SwitzerlandLongStay from "./pages/visa-countries/SwitzerlandLongStay";
-import NigeriaLongStay from "./pages/visa-countries/NigeriaLongStay";
+// Lazy imports for better performance
+import {
+  LazyIndex,
+  LazyAuth,
+  LazyDashboard,
+  LazyPackages,
+  LazyBooking,
+  LazyGetStarted,
+  LazyAdmin,
+  LazyAdminDashboard,
+  LazyVisas,
+  LazyShortStayVisas,
+  LazyLongStayVisas,
+  LazyConcierge,
+  LazySchengenShortStay,
+  LazyUKShortStay,
+  LazyUK5YearShortStay,
+  LazyCanadaShortStay,
+  LazyBrazilShortStay,
+  LazyNigeriaShortStay,
+  LazyUAEShortStay,
+  LazyIndiaShortStay,
+  LazyPortugalLongStay,
+  LazyNorwayLongStay,
+  LazyDenmarkLongStay,
+  LazyFinlandLongStay,
+  LazyGermanyLongStay,
+  LazyFranceLongStay,
+  LazySwitzerlandLongStay,
+  LazyNigeriaLongStay,
+} from "@/utils/lazyImports";
 
-const queryClient = new QueryClient();
+// Enhanced Query Client with better defaults
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+      retry: (failureCount, error: any) => {
+        // Don't retry 4xx errors
+        if (error?.status >= 400 && error?.status < 500) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+    },
+    mutations: {
+      retry: 1,
+      onError: (error) => {
+        console.error('Mutation error:', error);
+      },
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/packages" element={<Packages />} />
-            <Route path="/booking" element={<Booking />} />
-            <Route path="/get-started" element={<GetStarted />} />
-            <Route path="/concierge" element={<Concierge />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/visas" element={<Visas />} />
-            <Route path="/visas/short-stay" element={<ShortStayVisas />} />
-            <Route path="/visas/long-stay" element={<LongStayVisas />} />
-            
-            {/* Short-stay visa country routes */}
-            <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
-            <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
-            <Route path="/visas/short-stay/uk-5year" element={<UK5YearShortStay />} />
-            <Route path="/visas/short-stay/canada" element={<CanadaShortStay />} />
-            <Route path="/visas/short-stay/brazil" element={<BrazilShortStay />} />
-            <Route path="/visas/short-stay/nigeria" element={<NigeriaShortStay />} />
-            <Route path="/visas/short-stay/uae" element={<UAEShortStay />} />
-            <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
-            
-            {/* Long-stay visa country routes */}
-            <Route path="/visas/long-stay/portugal" element={<PortugalLongStay />} />
-            <Route path="/visas/long-stay/norway" element={<NorwayLongStay />} />
-            <Route path="/visas/long-stay/denmark" element={<DenmarkLongStay />} />
-            <Route path="/visas/long-stay/finland" element={<FinlandLongStay />} />
-            <Route path="/visas/long-stay/germany" element={<GermanyLongStay />} />
-            <Route path="/visas/long-stay/france" element={<FranceLongStay />} />
-            <Route path="/visas/long-stay/switzerland" element={<SwitzerlandLongStay />} />
-            <Route path="/visas/long-stay/nigeria" element={<NigeriaLongStay />} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  useEffect(() => {
+    // Initialize performance monitoring
+    const performanceMonitor = PerformanceMonitor.getInstance();
+    
+    // Log performance metrics after page load
+    setTimeout(() => {
+      performanceMonitor.logMetrics();
+      const score = performanceMonitor.getPageSpeedScore();
+      console.log(`📊 Page Speed Score: ${score}/100`);
+    }, 3000);
+
+    // Setup progressive enhancements
+    setupRoutePreloading();
+    setupProgressiveImageLoading();
+
+    // Cleanup on unmount
+    return () => {
+      performanceMonitor.cleanup();
+    };
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <div className="min-h-screen w-full optimize-performance">
+              <Suspense fallback={<LoadingFallback message="Loading One Global Trip..." />}>
+                <Routes>
+                  <Route path="/" element={<LazyIndex />} />
+                  <Route path="/auth" element={<LazyAuth />} />
+                  <Route path="/dashboard" element={
+                    <ProtectedRoute>
+                      <Suspense fallback={<LoadingFallback message="Loading Dashboard..." />}>
+                        <LazyDashboard />
+                      </Suspense>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/packages" element={<LazyPackages />} />
+                  <Route path="/booking" element={<LazyBooking />} />
+                  <Route path="/get-started" element={<LazyGetStarted />} />
+                  <Route path="/concierge" element={<LazyConcierge />} />
+                  <Route path="/admin" element={<LazyAdmin />} />
+                  <Route path="/admin/dashboard" element={<LazyAdminDashboard />} />
+                  
+                  {/* Visa Routes */}
+                  <Route path="/visas" element={<LazyVisas />} />
+                  <Route path="/visas/short-stay" element={<LazyShortStayVisas />} />
+                  <Route path="/visas/long-stay" element={<LazyLongStayVisas />} />
+                  
+                  {/* Short-stay visa country routes */}
+                  <Route path="/visas/short-stay/schengen" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Schengen Visa Info..." />}>
+                      <LazySchengenShortStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/short-stay/uk" element={
+                    <Suspense fallback={<LoadingFallback message="Loading UK Visa Info..." />}>
+                      <LazyUKShortStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/short-stay/uk-5year" element={
+                    <Suspense fallback={<LoadingFallback message="Loading UK 5-Year Visa Info..." />}>
+                      <LazyUK5YearShortStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/short-stay/canada" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Canada Visa Info..." />}>
+                      <LazyCanadaShortStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/short-stay/brazil" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Brazil Visa Info..." />}>
+                      <LazyBrazilShortStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/short-stay/nigeria" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Nigeria Visa Info..." />}>
+                      <LazyNigeriaShortStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/short-stay/uae" element={
+                    <Suspense fallback={<LoadingFallback message="Loading UAE Visa Info..." />}>
+                      <LazyUAEShortStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/short-stay/india" element={
+                    <Suspense fallback={<LoadingFallback message="Loading India Visa Info..." />}>
+                      <LazyIndiaShortStay />
+                    </Suspense>
+                  } />
+                  
+                  {/* Long-stay visa country routes */}
+                  <Route path="/visas/long-stay/portugal" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Portugal Visa Info..." />}>
+                      <LazyPortugalLongStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/long-stay/norway" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Norway Visa Info..." />}>
+                      <LazyNorwayLongStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/long-stay/denmark" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Denmark Visa Info..." />}>
+                      <LazyDenmarkLongStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/long-stay/finland" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Finland Visa Info..." />}>
+                      <LazyFinlandLongStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/long-stay/germany" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Germany Visa Info..." />}>
+                      <LazyGermanyLongStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/long-stay/france" element={
+                    <Suspense fallback={<LoadingFallback message="Loading France Visa Info..." />}>
+                      <LazyFranceLongStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/long-stay/switzerland" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Switzerland Visa Info..." />}>
+                      <LazySwitzerlandLongStay />
+                    </Suspense>
+                  } />
+                  <Route path="/visas/long-stay/nigeria" element={
+                    <Suspense fallback={<LoadingFallback message="Loading Nigeria Long-Stay Visa Info..." />}>
+                      <LazyNigeriaLongStay />
+                    </Suspense>
+                  } />
+                  
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </div>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
