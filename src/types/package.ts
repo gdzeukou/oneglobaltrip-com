@@ -2,6 +2,7 @@
 export interface Package {
   id: string; // Changed from number to string to match usage
   title: string;
+  shortDescription?: string; // Added shortDescription as optional property
   country: string;
   category: string;
   duration: string;
