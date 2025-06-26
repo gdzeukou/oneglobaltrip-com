@@ -3,7 +3,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { User } from '@supabase/supabase-js';
+
+interface User {
+  id: string;
+  email?: string;
+}
 
 interface NavLink {
   name: string;
