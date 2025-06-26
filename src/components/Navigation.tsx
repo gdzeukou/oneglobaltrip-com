@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, User, LogOut, Settings, AlertCircle } from 'lucide-react';
@@ -105,7 +104,7 @@ const Navigation = () => {
                   to="/dashboard"
                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive('/dashboard')
-                      ? 'bg-deep-blue-900 text-white shadow-lg'
+                      ? 'bg-deep-blue-900 text-white'
                       : 'text-gray-700 hover:bg-blue-50 hover:text-deep-blue-900'
                   }`}
                 >
@@ -128,7 +127,7 @@ const Navigation = () => {
             ) : (
               <Button
                 asChild
-                className="bg-gradient-to-r from-deep-blue-900 to-deep-blue-800 hover:from-deep-blue-800 hover:to-deep-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                className="bg-deep-blue-900 hover:bg-deep-blue-800 text-white transition-colors duration-200"
               >
                 <Link to="/auth">
                   <User className="h-4 w-4 mr-2" />
