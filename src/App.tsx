@@ -62,10 +62,10 @@ const App = () => (
         <BrowserRouter>
           <ErrorBoundary>
             <Suspense fallback={
-              <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-50 to-white">
+              <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
                 <div className="text-center">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-                  <p className="text-lg font-medium text-gray-700">Loading...</p>
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-tech-cyan-400 mb-4"></div>
+                  <p className="text-lg font-medium text-white font-space-grotesk">Loading your experience...</p>
                 </div>
               </div>
             }>

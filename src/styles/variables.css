@@ -1,6 +1,8 @@
 
 /* CSS Custom Properties and Theme Variables */
 
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -32,16 +34,25 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
     
-    /* Premium Travel Brand Colors */
-    --travel-primary: 214 100% 15%;
-    --travel-accent: 45 100% 60%;
-    --travel-luxury: 271 81% 56%;
-    --travel-premium: 25 95% 53%;
+    /* High-Tech Design System Colors */
+    --tech-primary: 214 100% 50%;
+    --tech-secondary: 190 100% 50%;
+    --tech-accent: 152 100% 50%;
+    --glass-overlay: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --neon-glow: rgba(0, 255, 136, 0.5);
     
-    /* Vibrant White Gradient Colors for Blue Backgrounds */
-    --vibrant-white-primary: linear-gradient(135deg, #ffffff 0%, #f8fafc 25%, #ffffff 50%, #f1f5f9 75%, #ffffff 100%);
-    --vibrant-white-secondary: linear-gradient(120deg, #ffffff 0%, #e2e8f0 30%, #ffffff 70%, #f8fafc 100%);
-    --vibrant-white-accent: linear-gradient(90deg, #ffffff 0%, #f0f9ff 50%, #ffffff 100%);
+    /* Glass Effect Variables */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    --glass-backdrop: blur(16px);
+    
+    /* Animation Variables */
+    --transition-tech: cubic-bezier(0.25, 0.8, 0.25, 1);
+    --duration-fast: 200ms;
+    --duration-normal: 300ms;
+    --duration-slow: 500ms;
   }
 
   .dark {
@@ -72,5 +83,37 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Dark mode glass effects */
+    --glass-bg: rgba(0, 0, 0, 0.3);
+    --glass-border: rgba(255, 255, 255, 0.1);
   }
+}
+
+/* High-Tech Utility Classes */
+.glass-effect {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-backdrop);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.tech-button {
+  @apply rounded-button transition-all duration-200 ease-tech;
+  @apply hover:animate-button-lift focus:ring-2 focus:ring-tech-blue-500/50;
+}
+
+.tech-card {
+  @apply rounded-card shadow-elevation-1 transition-all duration-300 ease-tech;
+  @apply hover:animate-card-hover hover:shadow-elevation-4;
+}
+
+.neon-accent::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon-glow), transparent);
+  animation: neon-underline 0.3s var(--transition-tech) forwards;
 }
