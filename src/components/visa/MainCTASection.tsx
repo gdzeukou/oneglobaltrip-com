@@ -1,111 +1,136 @@
 
-import { ArrowRight } from 'lucide-react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useNavigate } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { 
+  ArrowRight, 
+  CheckCircle, 
+  Clock, 
+  Shield, 
+  Users,
+  Star,
+  Sparkles
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const MainCTASection = () => {
-  const navigate = useNavigate();
-
-  const popularChoices = [
+  const benefits = [
     {
-      id: 'schengen',
-      title: 'Schengen Visa Pack',
-      subtitle: '27 European Countries',
-      description: 'Access 27 European countries with a single visa application. Perfect for exploring multiple destinations.',
-      price: 'from $193',
-      image: '/lovable-uploads/a70031da-92cd-4c64-bc4e-e490944cd7aa.png',
-      alt: 'European Union flag waving in front of classical European architecture',
-      badge: 'POPULAR',
-      badgeColor: 'bg-red-500',
-      route: '/visas/short-stay/schengen',
-      features: ['90-day validity', 'Multiple entries', 'Fast processing']
+      icon: Shield,
+      title: "100% Approval Guarantee",
+      description: "We guarantee your visa approval or provide a full refund"
     },
     {
-      id: 'portugal',
-      title: 'Portugal Long-Stay Visa',
-      subtitle: 'Work, Study & Residence',
-      description: 'Long-term visa for Portugal with comprehensive support for work permits and residency applications.',
-      price: 'from $240',
-      image: '/lovable-uploads/9c32b030-f008-4022-995f-0151ebec23ae.png',
-      alt: 'Beautiful view of Portuguese architecture and cityscape from historic window',
-      badge: 'TRENDING',
-      badgeColor: 'bg-green-500',
-      route: '/visas/long-stay/portugal',
-      features: ['Work authorization', 'Path to residency', 'Family inclusion']
+      icon: Clock,
+      title: "Fast Processing",
+      description: "Express services available for urgent travel needs"
+    },
+    {
+      icon: Users,
+      title: "Expert Support",
+      description: "Dedicated visa specialists guide you through every step"
     }
   ];
 
   return (
-    <section id="main-cta-section" className="py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Most Popular Choices</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Start your visa application today with our most requested services
+    <section id="main-cta-section" className="py-20 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-purple-400/10 to-pink-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-amber-400/5 to-orange-400/5 rounded-full blur-2xl" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <div className="flex items-center justify-center space-x-2 mb-6">
+            <Sparkles className="w-8 h-8 text-amber-400 animate-pulse" />
+            <h2 className="text-4xl md:text-5xl font-bold text-white">
+              Start Your Journey Today
+            </h2>
+            <Star className="w-8 h-8 text-amber-400 fill-current" />
+          </div>
+          <p className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+            Join thousands of satisfied travelers who trusted us with their visa applications. 
+            <span className="text-amber-300 font-semibold"> Your dream destination is just one step away.</span>
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
-          {popularChoices.map((choice, index) => (
-            <Card key={choice.id} className="overflow-hidden hover-lift group cursor-pointer relative card-hover animate-scale-in" style={{ animationDelay: `${index * 0.2}s` }} onClick={() => navigate(choice.route)}>
-              <div className="absolute top-4 right-4 z-10">
-                <span className={`${choice.badgeColor} text-white px-3 py-1 text-sm font-bold rounded-full shadow-lg`}>
-                  {choice.badge}
-                </span>
+        {/* Main CTA Card */}
+        <div className="max-w-4xl mx-auto mb-16">
+          <Card className="bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-3xl overflow-hidden hover:shadow-3xl transition-all duration-500 group">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 via-transparent to-purple-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+            
+            <CardContent className="relative z-10 p-12 text-center">
+              <div className="mb-8">
+                <h3 className="text-3xl font-bold text-gray-900 mb-4 group-hover:text-gray-800 transition-colors duration-300">
+                  Ready to Apply for Your Visa?
+                </h3>
+                <p className="text-lg text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+                  Get started with our intelligent visa wizard or speak directly with our experts
+                </p>
               </div>
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={choice.image}
-                  alt={choice.alt}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                <div className="absolute bottom-4 left-4">
-                  <div className="flex flex-wrap gap-2">
-                    {choice.features.map((feature, idx) => (
-                      <span key={idx} className="text-xs bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full">
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-xl text-deep-blue-900">{choice.title}</CardTitle>
-                    <p className="text-gray-600 text-sm font-medium">{choice.subtitle}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-deep-blue-900">{choice.price}</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 mb-4">{choice.description}</p>
-                <Button className="w-full bg-gradient-to-r from-deep-blue-900 to-deep-blue-800 hover:from-deep-blue-800 hover:to-deep-blue-700 shadow-lg hover-lift">
-                  Start Application
-                  <ArrowRight className="h-4 w-4 ml-2" />
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                <Link to="/get-started">
+                  <Button size="lg" className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                    Start Visa Application
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                  </Button>
+                </Link>
+                
+                <Button size="lg" variant="outline" className="border-2 border-gray-300 hover:border-blue-500 text-gray-700 hover:text-blue-600 font-semibold px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105">
+                  <Users className="w-5 h-5 mr-2" />
+                  Speak with Expert
                 </Button>
+              </div>
+
+              <div className="text-sm text-gray-500 group-hover:text-gray-600 transition-colors duration-300">
+                ⭐ Trusted by 50,000+ travelers worldwide
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Benefits Grid */}
+        <div className="grid md:grid-cols-3 gap-8">
+          {benefits.map((benefit, index) => (
+            <Card key={index} className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl overflow-hidden hover:bg-white/15 hover:border-white/30 transition-all duration-300 group">
+              <CardContent className="p-6 text-center">
+                <div className="bg-white/20 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <benefit.icon className="w-8 h-8 text-white" />
+                </div>
+                <h4 className="text-lg font-semibold text-white mb-2 group-hover:text-gray-100 transition-colors duration-300">
+                  {benefit.title}
+                </h4>
+                <p className="text-white/80 text-sm group-hover:text-white/90 transition-colors duration-300">
+                  {benefit.description}
+                </p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        <div className="text-center animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <div className="bg-gradient-to-r from-blue-50 to-yellow-50 rounded-xl p-8 max-w-3xl mx-auto">
-            <p className="text-lg text-gray-600 mb-6">
-              Need help choosing the right visa? Our experts have processed over 10,000 successful applications.
-            </p>
-            <Button 
-              size="lg"
-              variant="outline"
-              className="border-deep-blue-800 text-deep-blue-800 hover:bg-deep-blue-800 hover:text-white shadow-lg hover-lift"
-              onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
-            >
-              Book Free Consultation
-            </Button>
+        {/* Success metrics */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 max-w-4xl mx-auto">
+          <div className="text-center bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div className="text-3xl font-bold text-white mb-2">100%</div>
+            <div className="text-sm text-white/70">Success Rate</div>
+          </div>
+          
+          <div className="text-center bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div className="text-3xl font-bold text-white mb-2">50K+</div>
+            <div className="text-sm text-white/70">Visas Processed</div>
+          </div>
+          
+          <div className="text-center bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div className="text-3xl font-bold text-white mb-2">180+</div>
+            <div className="text-sm text-white/70">Countries</div>
+          </div>
+          
+          <div className="text-center bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div className="text-3xl font-bold text-white mb-2">24/7</div>
+            <div className="text-sm text-white/70">Support</div>
           </div>
         </div>
       </div>
