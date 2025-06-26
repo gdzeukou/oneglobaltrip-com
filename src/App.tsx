@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { AuthProvider } from '@/contexts/AuthContext';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 // Lazy load pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -78,10 +79,26 @@ const App = () => (
                 <Route path="/visas/short-stay" element={<ShortStayVisas />} />
                 <Route path="/visas/long-stay" element={<LongStayVisas />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin-v2" element={<Admin />} />
-                <Route path="/concierge" element={<Concierge />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin" element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin-v2" element={
+                  <ProtectedRoute>
+                    <Admin />
+                  </ProtectedRoute>
+                } />
+                <Route path="/concierge" element={
+                  <ProtectedRoute>
+                    <Concierge />
+                  </ProtectedRoute>
+                } />
                 
                 {/* Short-stay visa country routes */}
                 <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
