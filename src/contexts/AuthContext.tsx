@@ -10,6 +10,8 @@ import {
   performSignInWithGoogle
 } from './auth/authService';
 
+console.log('AuthContext.tsx: Loading');
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -27,12 +29,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
+    console.error('useAuth must be used within an AuthProvider');
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  console.log('AuthProvider: Rendering');
+  
   const {
     user,
     session,
@@ -40,8 +45,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isEmailVerified
   } = useAuthState();
 
+  console.log('AuthProvider: Auth state', { 
+    hasUser: !!user, 
+    hasSession: !!session, 
+    loading,
+    userEmail: user?.email
+  });
+
   const handleSignOut = async () => {
     try {
+      console.log('AuthProvider: Signing out');
       await performSignOut();
     } catch (error) {
       console.error('Error signing out:', error);
@@ -60,12 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     resendVerification: () => performResendVerification(user?.email),
   };
 
-  console.log('AuthContext current state:', { 
-    hasUser: !!user, 
-    hasSession: !!session, 
-    loading,
-    userEmail: user?.email
-  });
+  console.log('AuthProvider: Providing context value');
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
