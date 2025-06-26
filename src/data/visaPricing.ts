@@ -1,64 +1,80 @@
-export const visaPricingData: Record<VisaPricingKey, VisaPricingTier[]> = {
-  schengenShortStay: [
-    {
-      name: "Self-Service",
-      price: "€89",
-      originalPrice: "€150",
-      features: [
-        "Document checklist & requirements",
-        "Application form guidance",
-        "Appointment booking assistance",
-        "Basic email support"
-      ],
-      popular: false,
-      ctaText: "Choose Self-Service"
-    },
-    {
-      name: "Full Assistance",
-      price: "€189",
-      originalPrice: "€300",
-      features: [
-        "Everything in Self-Service",
-        "Form completion service",
-        "Document review & feedback",
-        "Priority appointment booking",
-        "Phone & WhatsApp support",
-        "Application tracking"
-      ],
-      popular: true,
-      ctaText: "Choose Full Assistance"
-    }
-  ],
-  schengen: [
-    {
-      name: "Self-Service",
-      price: "€89",
-      originalPrice: "€150",
-      features: [
-        "Document checklist & requirements",
-        "Application form guidance",
-        "Appointment booking assistance",
-        "Basic email support"
-      ],
-      popular: false,
-      ctaText: "Choose Self-Service"
-    },
-    {
-      name: "Full Assistance",
-      price: "€189",
-      originalPrice: "€300",
-      features: [
-        "Everything in Self-Service",
-        "Form completion service",
-        "Document review & feedback",
-        "Priority appointment booking",
-        "Phone & WhatsApp support",
-        "Application tracking"
-      ],
-      popular: true,
-      ctaText: "Choose Full Assistance"
-    }
-  ],
+
+// Type definitions
+export interface VisaPricingTier {
+  name: string;
+  price: string;
+  originalPrice: string;
+  features: string[];
+  popular: boolean;
+  ctaText: string;
+}
+
+export interface VisaPricingData {
+  service: string;
+  totalPrice: string;
+  consularFee: string;
+  centerFee: string;
+  centerType: 'VFS' | 'BLS' | 'TLS' | 'Processing' | 'Biometrics' | 'Application';
+  serviceFee: string;
+  included: string[];
+}
+
+export type VisaPricingKey = 
+  | 'schengenShortStay' 
+  | 'schengen'
+  | 'canadaEntry'
+  | 'nigeriaVisa'
+  | 'ukVisa6Month'
+  | 'ukVisa5Year'
+  | 'brazilEVisa'
+  | 'longStayEuropeBrazil'
+  | 'uaeVisa'
+  | 'indiaVisa'
+  | 'portugalLongStay'
+  | 'norwayLongStay'
+  | 'denmarkLongStay'
+  | 'finlandLongStay'
+  | 'germanyLongStay'
+  | 'franceLongStay'
+  | 'switzerlandLongStay';
+
+export const visaPricingData: Record<VisaPricingKey, VisaPricingData> = {
+  schengenShortStay: {
+    service: 'Schengen Short-Stay Visa',
+    totalPrice: '€189',
+    consularFee: '€80',
+    centerFee: '€89',
+    centerType: 'VFS' as const,
+    serviceFee: '€20',
+    included: [
+      'Document checklist & requirements',
+      'Application form guidance',
+      'Appointment booking assistance',
+      'Form completion service',
+      'Document review & feedback',
+      'Priority appointment booking',
+      'Phone & WhatsApp support',
+      'Application tracking'
+    ]
+  },
+  schengen: {
+    service: 'Schengen Visa',
+    totalPrice: '€189',
+    consularFee: '€80',
+    centerFee: '€89',
+    centerType: 'VFS' as const,
+    serviceFee: '€20',
+    included: [
+      'Document checklist & requirements',
+      'Application form guidance',
+      'Appointment booking assistance',
+      'Form completion service',
+      'Document review & feedback',
+      'Priority appointment booking',
+      'Phone & WhatsApp support',
+      'Application tracking'
+    ]
+  },
   canadaEntry: {
     service: 'Canada Entry (Visitor/eTA)',
     totalPrice: '$300',
