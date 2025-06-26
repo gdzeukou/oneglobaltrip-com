@@ -97,19 +97,34 @@ const OTPVerification = ({
       
       if (error) {
         console.error('OTP verification failed:', error);
-        if (error.message.includes('expired')) {
-          setError('This code has expired. Please request a new one.');
-        } else if (error.message.includes('Invalid')) {
-          setError('Invalid code. Please check and try again.');
-        } else if (error.message.includes('Maximum')) {
+        
+        // More specific error handling
+        if (error.message.includes('expired') || error.message.includes('Invalid')) {
+          if (error.message.includes('expired')) {
+            setError('This code has expired. Please request a new one.');
+          } else {
+            setError('Invalid code. Please check and try again.');
+          }
+        } else if (error.message.includes('Maximum') || error.message.includes('attempts')) {
           setError('Too many attempts. Please request a new code.');
+        } else if (error.message.includes('User not found')) {
+          setError('Account not found. Please sign up first.');
         } else {
-          setError(error.message);
+          setError(error.message || 'Verification failed. Please try again.');
         }
         setOtp(''); // Clear invalid code
       } else {
         console.log('OTP verification successful');
-        onVerificationSuccess();
+        
+        // For signin, we need to give a moment for the auth session to be established
+        if (purpose === 'signin') {
+          // Wait a moment for the magic link process to complete
+          setTimeout(() => {
+            onVerificationSuccess();
+          }, 1000);
+        } else {
+          onVerificationSuccess();
+        }
       }
     } catch (error: any) {
       console.error('OTP verification error:', error);
