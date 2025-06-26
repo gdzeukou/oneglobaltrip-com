@@ -4,24 +4,28 @@ import { validateEmail } from '@/utils/validation';
 
 export const performSignInWithGoogle = async () => {
   try {
-    console.log('Starting Google sign-in process');
+    console.log('Starting Google OAuth sign-in process');
     
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`
+        redirectTo: `${window.location.origin}/dashboard`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        }
       }
     });
 
     if (error) {
-      console.error('Google sign-in error:', error);
+      console.error('Google OAuth error:', error);
       return { error };
     }
 
-    console.log('Google sign-in initiated successfully');
+    console.log('Google OAuth initiated successfully');
     return { data, error: null };
   } catch (error: any) {
-    console.error('Google sign-in error:', error);
+    console.error('Google OAuth error:', error);
     return { error: { message: error.message || 'Failed to sign in with Google' } };
   }
 };
