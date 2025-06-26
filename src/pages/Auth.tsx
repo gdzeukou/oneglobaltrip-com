@@ -14,7 +14,7 @@ import OTPVerification from '@/components/auth/OTPVerification';
 const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, signUp, signIn, otpStep, clearOTPStep } = useAuth();
+  const { user, signUp, sendOTP, otpStep, clearOTPStep } = useAuth();
   
   const [activeTab, setActiveTab] = useState('signin');
   const [showPassword, setShowPassword] = useState(false);
@@ -31,6 +31,7 @@ const Auth = () => {
 
   // Redirect authenticated users
   useEffect(() => {
+    console.log('Auth page effect - user:', !!user, 'otpStep:', otpStep);
     if (user && !otpStep?.isRequired) {
       console.log('User is authenticated, redirecting...');
       const from = location.state?.from?.pathname || '/dashboard';
@@ -48,6 +49,7 @@ const Auth = () => {
     e.preventDefault();
     if (isLoading) return;
 
+    console.log('Starting signup process for:', formData.email);
     setIsLoading(true);
     setError('');
 
@@ -60,11 +62,16 @@ const Auth = () => {
       );
 
       if (error) {
+        console.error('Signup error:', error);
         setError(error.message);
+        setIsLoading(false);
+      } else {
+        console.log('Signup OTP sent successfully');
+        // Don't set loading to false here - let the OTP step handle it
       }
     } catch (error: any) {
+      console.error('Signup exception:', error);
       setError(error.message || 'An unexpected error occurred');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -73,29 +80,38 @@ const Auth = () => {
     e.preventDefault();
     if (isLoading) return;
 
+    console.log('Starting signin process for:', formData.email);
     setIsLoading(true);
     setError('');
 
     try {
-      // Only send email for OTP signin
-      const { error } = await signIn(formData.email);
+      // Send OTP for signin
+      const { error } = await sendOTP(formData.email, 'signin');
 
       if (error) {
+        console.error('Signin OTP error:', error);
         setError(error.message);
+        setIsLoading(false);
+      } else {
+        console.log('Signin OTP sent successfully');
+        // Don't set loading to false here - let the OTP step handle it
       }
     } catch (error: any) {
+      console.error('Signin exception:', error);
       setError(error.message || 'An unexpected error occurred');
-    } finally {
       setIsLoading(false);
     }
   };
 
   const handleOTPVerificationSuccess = () => {
-    console.log('OTP verification successful, user should be redirected automatically');
-    // The AuthContext will handle the redirect through the useEffect above
+    console.log('OTP verification successful, redirecting...');
+    setIsLoading(false);
+    const from = location.state?.from?.pathname || '/dashboard';
+    navigate(from, { replace: true });
   };
 
   const handleBackToAuth = () => {
+    console.log('Going back to auth form');
     clearOTPStep();
     setError('');
     setIsLoading(false);
@@ -103,6 +119,7 @@ const Auth = () => {
 
   // Show OTP verification if required
   if (otpStep?.isRequired) {
+    console.log('Showing OTP verification for:', otpStep.email);
     return (
       <OTPVerification
         email={otpStep.email}
@@ -112,6 +129,8 @@ const Auth = () => {
       />
     );
   }
+
+  console.log('Rendering auth form, loading:', isLoading);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -150,6 +169,7 @@ const Auth = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -179,6 +199,7 @@ const Auth = () => {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
+                      disabled={isLoading}
                     />
                   </div>
                   <div className="space-y-2">
@@ -190,6 +211,7 @@ const Auth = () => {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -204,6 +226,7 @@ const Auth = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -219,6 +242,7 @@ const Auth = () => {
                       onChange={handleInputChange}
                       required
                       minLength={8}
+                      disabled={isLoading}
                     />
                     <Button
                       type="button"
@@ -226,6 +250,7 @@ const Auth = () => {
                       size="sm"
                       className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                       onClick={() => setShowPassword(!showPassword)}
+                      disabled={isLoading}
                     >
                       {showPassword ? (
                         <EyeOff className="h-4 w-4" />

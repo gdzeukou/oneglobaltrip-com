@@ -89,9 +89,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Simplified sign-in that only requires email
-  const handleSignIn = async (email: string) => {
-    return await performSignIn(email);
+  const handleSignUp = async (email: string, password: string, firstName?: string, lastName?: string) => {
+    try {
+      console.log('AuthContext: Starting signup for:', email);
+      const result = await performSignUp(email, password, firstName, lastName);
+      
+      if (!result.error) {
+        console.log('AuthContext: Signup OTP sent, setting OTP step');
+        setOTPStep({
+          isRequired: true,
+          email,
+          purpose: 'signup'
+        });
+      }
+      
+      return result;
+    } catch (error: any) {
+      console.error('AuthContext: Signup error:', error);
+      return { error: { message: error.message || 'Signup failed' } };
+    }
   };
 
   const value = {
@@ -100,8 +116,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     isEmailVerified,
     otpStep,
-    signUp: performSignUp,
-    signIn: handleSignIn,
+    signUp: handleSignUp,
+    signIn: performSignIn, // This will be handled by sendOTP
     signOut: handleSignOut,
     resendVerification: () => performResendVerification(user?.email),
     sendOTP: handleSendOTP,

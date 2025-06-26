@@ -26,9 +26,12 @@ const OTPVerification = ({
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState('');
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
+  const [canResend, setCanResend] = useState(false);
 
   useEffect(() => {
     console.log('OTP Verification component mounted for:', email, purpose);
+    
+    // Timer for expiration
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 0) {
@@ -39,8 +42,37 @@ const OTPVerification = ({
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    // Timer for resend availability (30 seconds)
+    const resendTimer = setTimeout(() => {
+      setCanResend(true);
+    }, 30000);
+
+    // Focus on the first input
+    const firstInput = document.querySelector('input[inputmode="numeric"]') as HTMLInputElement;
+    if (firstInput) {
+      firstInput.focus();
+    }
+
+    return () => {
+      clearInterval(timer);
+      clearTimeout(resendTimer);
+    };
   }, [email, purpose]);
+
+  // Handle paste events for the entire code
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      const pastedData = e.clipboardData?.getData('text');
+      if (pastedData && /^\d{6}$/.test(pastedData)) {
+        setOtp(pastedData);
+        // Auto-verify after a short delay
+        setTimeout(() => handleVerify(pastedData), 100);
+      }
+    };
+
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
+  }, []);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -48,29 +80,41 @@ const OTPVerification = ({
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  const handleVerify = async () => {
-    if (otp.length !== 6) {
+  const handleVerify = async (code?: string) => {
+    const codeToVerify = code || otp;
+    
+    if (codeToVerify.length !== 6) {
       setError('Please enter the complete 6-digit code');
       return;
     }
 
-    console.log('Verifying OTP:', otp, 'for email:', email);
+    console.log('Verifying OTP:', codeToVerify, 'for email:', email);
     setIsVerifying(true);
     setError('');
 
     try {
-      const { error } = await verifyOTP(email, otp, purpose);
+      const { error } = await verifyOTP(email, codeToVerify, purpose);
       
       if (error) {
         console.error('OTP verification failed:', error);
-        setError(error.message);
+        if (error.message.includes('expired')) {
+          setError('This code has expired. Please request a new one.');
+        } else if (error.message.includes('Invalid')) {
+          setError('Invalid code. Please check and try again.');
+        } else if (error.message.includes('Maximum')) {
+          setError('Too many attempts. Please request a new code.');
+        } else {
+          setError(error.message);
+        }
+        setOtp(''); // Clear invalid code
       } else {
         console.log('OTP verification successful');
         onVerificationSuccess();
       }
     } catch (error: any) {
       console.error('OTP verification error:', error);
-      setError(error.message || 'Verification failed');
+      setError(error.message || 'Verification failed. Please try again.');
+      setOtp(''); // Clear on error
     } finally {
       setIsVerifying(false);
     }
@@ -80,6 +124,7 @@ const OTPVerification = ({
     console.log('Resending OTP for:', email, purpose);
     setIsResending(true);
     setError('');
+    setCanResend(false);
 
     try {
       const { error } = await sendOTP(email, purpose);
@@ -91,6 +136,11 @@ const OTPVerification = ({
         console.log('OTP resent successfully');
         setTimeLeft(600); // Reset timer
         setOtp(''); // Clear current OTP
+        
+        // Reset resend availability after 30 seconds
+        setTimeout(() => {
+          setCanResend(true);
+        }, 30000);
       }
     } catch (error: any) {
       console.error('Resend OTP error:', error);
@@ -124,11 +174,13 @@ const OTPVerification = ({
                 onChange={(value) => {
                   console.log('OTP input changed:', value);
                   setOtp(value);
+                  setError(''); // Clear error on input
                   if (value.length === 6) {
                     // Auto-verify when 6 digits are entered
-                    setTimeout(() => handleVerify(), 100);
+                    setTimeout(() => handleVerify(value), 100);
                   }
                 }}
+                disabled={isVerifying}
               >
                 <InputOTPGroup>
                   <InputOTPSlot index={0} />
@@ -145,6 +197,9 @@ const OTPVerification = ({
               <p className="text-sm text-gray-600">
                 Code expires in <span className="font-mono font-semibold text-purple-700">{formatTime(timeLeft)}</span>
               </p>
+              <p className="text-xs text-gray-500 mt-1">
+                You can paste the entire code at once
+              </p>
             </div>
           </div>
 
@@ -158,7 +213,7 @@ const OTPVerification = ({
 
           <div className="space-y-3">
             <Button 
-              onClick={handleVerify} 
+              onClick={() => handleVerify()} 
               disabled={isVerifying || otp.length !== 6}
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
             >
@@ -170,6 +225,7 @@ const OTPVerification = ({
                 variant="ghost"
                 onClick={onBack}
                 className="flex items-center gap-2 text-purple-700 hover:text-purple-900 hover:bg-purple-50"
+                disabled={isVerifying}
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back
@@ -178,7 +234,7 @@ const OTPVerification = ({
               <Button
                 variant="ghost"
                 onClick={handleResend}
-                disabled={isResending || timeLeft > 540} // Allow resend after 1 minute
+                disabled={isResending || !canResend}
                 className="flex items-center gap-2 text-purple-700 hover:text-purple-900 hover:bg-purple-50"
               >
                 {isResending ? (
@@ -186,7 +242,7 @@ const OTPVerification = ({
                 ) : (
                   <RefreshCw className="h-4 w-4" />
                 )}
-                Resend Code
+                {canResend ? 'Resend Code' : 'Resend (30s)'}
               </Button>
             </div>
           </div>

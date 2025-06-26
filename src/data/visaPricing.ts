@@ -1,35 +1,64 @@
-
-export const visaPricingData = {
-  schengenShortStay: {
-    service: 'Schengen Short-Stay (≤90 d)',
-    totalPrice: '$193',
-    consularFee: '$103',
-    centerFee: '$55',
-    centerType: 'VFS' as const,
-    serviceFee: '$35',
-    included: [
-      'Appointment booking at VFS Global centers',
-      'Form fill + document checklist preparation',
-      'Fee payments on client\'s behalf',
-      'Application tracking updates via SMS/email',
-      'Dedicated agent support throughout process'
-    ]
-  },
-  schengenFullAssistance: {
-    service: 'Schengen Full Assistance',
-    totalPrice: '$75',
-    consularFee: '$0',
-    centerFee: '$0',
-    centerType: 'VFS' as const,
-    serviceFee: '$75',
-    included: [
-      'VFS Global appointment booking assistance',
-      'Complete paperwork preparation and review',
-      'Document checklist with requirements guide',
-      'Pre-submission application verification',
-      'Expert consultation on visa requirements'
-    ]
-  },
+export const visaPricingData: Record<VisaPricingKey, VisaPricingTier[]> = {
+  schengenShortStay: [
+    {
+      name: "Self-Service",
+      price: "€89",
+      originalPrice: "€150",
+      features: [
+        "Document checklist & requirements",
+        "Application form guidance",
+        "Appointment booking assistance",
+        "Basic email support"
+      ],
+      popular: false,
+      ctaText: "Choose Self-Service"
+    },
+    {
+      name: "Full Assistance",
+      price: "€189",
+      originalPrice: "€300",
+      features: [
+        "Everything in Self-Service",
+        "Form completion service",
+        "Document review & feedback",
+        "Priority appointment booking",
+        "Phone & WhatsApp support",
+        "Application tracking"
+      ],
+      popular: true,
+      ctaText: "Choose Full Assistance"
+    }
+  ],
+  schengen: [
+    {
+      name: "Self-Service",
+      price: "€89",
+      originalPrice: "€150",
+      features: [
+        "Document checklist & requirements",
+        "Application form guidance",
+        "Appointment booking assistance",
+        "Basic email support"
+      ],
+      popular: false,
+      ctaText: "Choose Self-Service"
+    },
+    {
+      name: "Full Assistance",
+      price: "€189",
+      originalPrice: "€300",
+      features: [
+        "Everything in Self-Service",
+        "Form completion service",
+        "Document review & feedback",
+        "Priority appointment booking",
+        "Phone & WhatsApp support",
+        "Application tracking"
+      ],
+      popular: true,
+      ctaText: "Choose Full Assistance"
+    }
+  ],
   canadaEntry: {
     service: 'Canada Entry (Visitor/eTA)',
     totalPrice: '$300',
