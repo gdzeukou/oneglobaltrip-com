@@ -1,5 +1,5 @@
 
-import { MapPin, Calendar, Users, Star, Heart, ArrowRight, Ship, Plane, Camera } from 'lucide-react';
+import { MapPin, Calendar, Users, Star, ArrowRight, Sparkles, Heart, Ship, Plane, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -71,16 +71,6 @@ const FeaturedPackages = ({ packages }: FeaturedPackagesProps) => {
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'cruise': return 'from-blue-600 to-cyan-600';
-      case 'tour': return 'from-purple-600 to-indigo-600';
-      case 'cultural': return 'from-orange-500 to-red-500';
-      case 'family': return 'from-pink-500 to-rose-500';
-      default: return 'from-slate-600 to-slate-700';
-    }
-  };
-
   return (
     <section className="py-20 bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <div className="max-w-7xl mx-auto px-4">
@@ -103,24 +93,21 @@ const FeaturedPackages = ({ packages }: FeaturedPackagesProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {featuredPackages.map((pkg, index) => {
             const IconComponent = getCategoryIcon(pkg.category || 'tour');
-            const gradientColor = getCategoryColor(pkg.category || 'tour');
             
             return (
               <Card key={pkg.id} className="overflow-hidden hover:shadow-2xl group bg-white shadow-lg border-0 rounded-2xl transition-all duration-300 hover:scale-105 animate-scale-in" style={{ animationDelay: `${index * 0.15}s` }}>
                 <div className="relative">
-                  <div className={`w-full h-56 bg-gradient-to-br ${gradientColor} flex items-center justify-center relative overflow-hidden group-hover:scale-110 transition-transform duration-500`}>
-                    <div className="absolute inset-0">
-                      <div className="absolute top-2 right-2 w-20 h-20 bg-white/10 rounded-full blur-xl" />
-                      <div className="absolute bottom-2 left-2 w-16 h-16 bg-white/10 rounded-full blur-lg" />
-                    </div>
-                    <div className="relative z-10 text-center text-white">
-                      <IconComponent className="h-12 w-12 mx-auto mb-3 text-white" />
-                      <p className="text-sm font-medium opacity-90">{pkg.country}</p>
+                  <div className="w-full h-56 bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center relative overflow-hidden">
+                    <div className="text-center text-white">
+                      <div className="p-3 bg-white/10 backdrop-blur-sm rounded-2xl mb-3 mx-auto w-fit">
+                        <IconComponent className="h-8 w-8 text-white" />
+                      </div>
+                      <p className="text-sm font-medium">{pkg.country}</p>
                     </div>
                   </div>
                   
                   <div className="absolute top-4 right-4">
-                    <Badge className="bg-white/90 text-slate-900 font-bold backdrop-blur-sm">
+                    <Badge className="bg-white text-slate-900 font-bold">
                       From ${pkg.price.toLocaleString()}
                     </Badge>
                   </div>
@@ -129,7 +116,7 @@ const FeaturedPackages = ({ packages }: FeaturedPackagesProps) => {
                     {pkg.duration}
                   </div>
                   
-                  <button className="absolute top-4 left-4 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors group-hover:scale-110 duration-300">
+                  <button className="absolute top-4 left-4 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors duration-300">
                     <Heart className="h-4 w-4 text-slate-600" />
                   </button>
                 </div>
@@ -156,16 +143,17 @@ const FeaturedPackages = ({ packages }: FeaturedPackagesProps) => {
                     </div>
                   </div>
 
-                  {/* Highlights */}
-                  <div className="flex flex-wrap gap-1 mb-6">
+                  {/* Simple highlights */}
+                  <div className="space-y-2 mb-6">
                     {(pkg.highlights || []).slice(0, 3).map((highlight, idx) => (
-                      <span key={idx} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-full">
-                        {highlight}
-                      </span>
+                      <div key={idx} className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-xs text-slate-600">{highlight}</span>
+                      </div>
                     ))}
                   </div>
                   
-                  <Button asChild className={`w-full bg-gradient-to-r ${gradientColor} hover:shadow-lg text-white font-semibold transition-all duration-300`}>
+                  <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
                     <Link to={`/packages/${pkg.id}`}>
                       View Details
                       <ArrowRight className="h-4 w-4 ml-2" />
