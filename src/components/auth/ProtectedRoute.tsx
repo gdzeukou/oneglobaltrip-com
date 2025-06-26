@@ -10,7 +10,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireEmailVerification = true }: ProtectedRouteProps) => {
-  const { user, isEmailVerified, loading, otpStep } = useAuth();
+  const { user, isEmailVerified, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -19,11 +19,6 @@ const ProtectedRoute = ({ children, requireEmailVerification = true }: Protected
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
-  }
-
-  // If OTP verification is required, redirect to auth page
-  if (otpStep?.isRequired) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   // If no user, redirect to auth page
