@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -35,8 +36,8 @@ function App() {
                 <Route path="/bookings" element={<Bookings />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/admin" element={<Admin />} />
-                <Route path="*" element={<NotFound />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </AuthProvider>
           </QueryClientProvider>  
