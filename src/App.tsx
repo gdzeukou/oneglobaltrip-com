@@ -51,93 +51,104 @@ const NorwayLongStay = lazy(() => import("./pages/visa-countries/NorwayLongStay"
 const SwitzerlandLongStay = lazy(() => import("./pages/visa-countries/SwitzerlandLongStay"));
 const NigeriaLongStay = lazy(() => import("./pages/visa-countries/NigeriaLongStay"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
+
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-tech-cyan-400 mb-4"></div>
+      <p className="text-lg font-medium text-white font-space-grotesk">Loading your experience...</p>
+    </div>
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ErrorBoundary>
-            <Suspense fallback={
-              <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
-                <div className="text-center">
-                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-tech-cyan-400 mb-4"></div>
-                  <p className="text-lg font-medium text-white font-space-grotesk">Loading your experience...</p>
-                </div>
-              </div>
-            }>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/visas" element={<Visas />} />
-                <Route path="/packages" element={<Packages />} />
-                <Route path="/packages/:id" element={<PackageDetails />} />
-                <Route path="/booking" element={<Booking />} />
-                <Route path="/get-started" element={<GetStarted />} />
-                <Route path="/visas/short-stay" element={<ShortStayVisas />} />
-                <Route path="/visas/long-stay" element={<LongStayVisas />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/admin" element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/admin-v2" element={
-                  <ProtectedRoute>
-                    <Admin />
-                  </ProtectedRoute>
-                } />
-                <Route path="/concierge" element={
-                  <ProtectedRoute>
-                    <Concierge />
-                  </ProtectedRoute>
-                } />
-                
-                {/* Short-stay visa country routes */}
-                <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
-                <Route path="/visas/short-stay/france" element={<FranceShortStay />} />
-                <Route path="/visas/short-stay/netherlands" element={<NetherlandsShortStay />} />
-                <Route path="/visas/short-stay/italy" element={<ItalyShortStay />} />
-                <Route path="/visas/short-stay/greece" element={<GreeceShortStay />} />
-                <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
-                <Route path="/visas/short-stay/uae" element={<UAEShortStay />} />
-                <Route path="/visas/short-stay/canada" element={<CanadaShortStay />} />
-                <Route path="/visas/short-stay/brazil" element={<BrazilShortStay />} />
-                <Route path="/visas/short-stay/nigeria" element={<NigeriaShortStay />} />
-                <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
-                <Route path="/visas/short-stay/uk-5-year" element={<UK5YearShortStay />} />
-                
-                {/* Legacy routes for compatibility */}
-                <Route path="/visa-countries/IndiaShortStay" element={<IndiaShortStay />} />
-                <Route path="/visa-countries/UAEShortStay" element={<UAEShortStay />} />
-                <Route path="/visa-countries/CanadaShortStay" element={<CanadaShortStay />} />
-                <Route path="/visa-countries/BrazilShortStay" element={<BrazilShortStay />} />
-                <Route path="/visa-countries/NigeriaShortStay" element={<NigeriaShortStay />} />
-                
-                {/* Long-stay visa routes */}
-                <Route path="/visas/long-stay/france" element={<FranceLongStay />} />
-                <Route path="/visas/long-stay/germany" element={<GermanyLongStay />} />
-                <Route path="/visas/long-stay/portugal" element={<PortugalLongStay />} />
-                <Route path="/visas/long-stay/denmark" element={<DenmarkLongStay />} />
-                <Route path="/visas/long-stay/finland" element={<FinlandLongStay />} />
-                <Route path="/visas/long-stay/norway" element={<NorwayLongStay />} />
-                <Route path="/visas/long-stay/switzerland" element={<SwitzerlandLongStay />} />
-                <Route path="/visa-countries/NigeriaLongStay" element={<NigeriaLongStay />} />
-                
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </ErrorBoundary>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+    <BrowserRouter>
+      <ErrorBoundary>
+        <AuthProvider>
+          <TooltipProvider>
+            <div className="w-full">
+              <Toaster />
+              <Sonner />
+              <Suspense fallback={<LoadingSpinner />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/visas" element={<Visas />} />
+                  <Route path="/packages" element={<Packages />} />
+                  <Route path="/packages/:id" element={<PackageDetails />} />
+                  <Route path="/booking" element={<Booking />} />
+                  <Route path="/get-started" element={<GetStarted />} />
+                  <Route path="/visas/short-stay" element={<ShortStayVisas />} />
+                  <Route path="/visas/long-stay" element={<LongStayVisas />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/dashboard" element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin" element={
+                    <ProtectedRoute>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin-v2" element={
+                    <ProtectedRoute>
+                      <Admin />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/concierge" element={
+                    <ProtectedRoute>
+                      <Concierge />
+                    </ProtectedRoute>
+                  } />
+                  
+                  {/* Short-stay visa country routes */}
+                  <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
+                  <Route path="/visas/short-stay/france" element={<FranceShortStay />} />
+                  <Route path="/visas/short-stay/netherlands" element={<NetherlandsShortStay />} />
+                  <Route path="/visas/short-stay/italy" element={<ItalyShortStay />} />
+                  <Route path="/visas/short-stay/greece" element={<GreeceShortStay />} />
+                  <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
+                  <Route path="/visas/short-stay/uae" element={<UAEShortStay />} />
+                  <Route path="/visas/short-stay/canada" element={<CanadaShortStay />} />
+                  <Route path="/visas/short-stay/brazil" element={<BrazilShortStay />} />
+                  <Route path="/visas/short-stay/nigeria" element={<NigeriaShortStay />} />
+                  <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
+                  <Route path="/visas/short-stay/uk-5-year" element={<UK5YearShortStay />} />
+                  
+                  {/* Legacy routes for compatibility */}
+                  <Route path="/visa-countries/IndiaShortStay" element={<IndiaShortStay />} />
+                  <Route path="/visa-countries/UAEShortStay" element={<UAEShortStay />} />
+                  <Route path="/visa-countries/CanadaShortStay" element={<CanadaShortStay />} />
+                  <Route path="/visa-countries/BrazilShortStay" element={<BrazilShortStay />} />
+                  <Route path="/visa-countries/NigeriaShortStay" element={<NigeriaShortStay />} />
+                  
+                  {/* Long-stay visa routes */}
+                  <Route path="/visas/long-stay/france" element={<FranceLongStay />} />
+                  <Route path="/visas/long-stay/germany" element={<GermanyLongStay />} />
+                  <Route path="/visas/long-stay/portugal" element={<PortugalLongStay />} />
+                  <Route path="/visas/long-stay/denmark" element={<DenmarkLongStay />} />
+                  <Route path="/visas/long-stay/finland" element={<FinlandLongStay />} />
+                  <Route path="/visas/long-stay/norway" element={<NorwayLongStay />} />
+                  <Route path="/visas/long-stay/switzerland" element={<SwitzerlandLongStay />} />
+                  <Route path="/visa-countries/NigeriaLongStay" element={<NigeriaLongStay />} />
+                  
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </div>
+          </TooltipProvider>
+        </AuthProvider>
+      </ErrorBoundary>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 

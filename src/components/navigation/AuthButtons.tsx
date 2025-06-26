@@ -2,11 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-
-interface User {
-  id: string;
-  email?: string;
-}
+import { User } from '@supabase/supabase-js';
 
 interface AuthButtonsProps {
   user: User | null;

@@ -1,7 +1,7 @@
 
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import Navigation from '@/components/Navigation';
+import TechNavigation from '@/components/TechNavigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -23,14 +23,14 @@ const PackageDetails = () => {
   if (!packageData) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navigation />
+        <TechNavigation />
         <div className="pt-20 pb-12">
           <div className="max-w-4xl mx-auto px-4 text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">Package Not Found</h1>
             <p className="text-gray-600 mb-8">The package you're looking for doesn't exist.</p>
-            <Button asChild>
-              <Link to="/packages">View All Packages</Link>
-            </Button>
+            <Link to="/packages">
+              <Button>View All Packages</Button>
+            </Link>
           </div>
         </div>
         <Footer />
@@ -40,17 +40,17 @@ const PackageDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation />
+      <TechNavigation />
       
       <div className="pt-20 pb-12">
         <div className="max-w-6xl mx-auto px-4">
           {/* Back Button */}
-          <Button variant="ghost" asChild className="mb-6">
-            <Link to="/packages" className="flex items-center space-x-2">
+          <Link to="/packages" className="flex items-center space-x-2 mb-6">
+            <Button variant="ghost" className="flex items-center space-x-2">
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Packages</span>
-            </Link>
-          </Button>
+            </Button>
+          </Link>
 
           {/* Hero Section */}
           <PackageDetailsHero packageData={packageData} />

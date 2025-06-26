@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext } from 'react';
-import { AuthContextType } from './auth/types';
+import { User, Session } from '@supabase/supabase-js';
 import { useAuthState } from './auth/useAuthState';
 import {
   performSignUp,
@@ -10,7 +10,19 @@ import {
   performSignInWithGoogle
 } from './auth/authService';
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+interface AuthContextType {
+  user: User | null;
+  session: Session | null;
+  loading: boolean;
+  isEmailVerified: boolean;
+  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<any>;
+  signIn: (email: string, password: string) => Promise<any>;
+  signInWithGoogle: () => Promise<any>;
+  signOut: () => Promise<void>;
+  resendVerification: (userEmail?: string) => Promise<any>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -36,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const value = {
+  const value: AuthContextType = {
     user,
     session,
     loading,
@@ -51,7 +63,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   console.log('AuthContext current state:', { 
     hasUser: !!user, 
     hasSession: !!session, 
-    loading
+    loading,
+    userEmail: user?.email
   });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
