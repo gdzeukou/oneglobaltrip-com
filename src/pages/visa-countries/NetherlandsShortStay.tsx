@@ -164,7 +164,7 @@ const NetherlandsShortStay = () => {
 
         {/* Visa Pricing */}
         <CountrySpecificPricing 
-          country="schengenShortStay" 
+          country="schengen" 
           title="Netherlands Visa Pricing"
           description="Transparent pricing for your Netherlands Schengen visa application"
         />

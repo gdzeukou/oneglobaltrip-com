@@ -2,31 +2,103 @@
 import { supabase } from '@/integrations/supabase/client';
 import { validateEmail } from '@/utils/validation';
 
-export const performSignInWithGoogle = async () => {
+export const sendOTP = async (email: string, purpose: 'signup' | 'signin') => {
   try {
-    console.log('Starting Google OAuth sign-in process');
+    console.log(`Sending email OTP to ${email} for ${purpose}`);
     
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        }
+    const { data, error } = await supabase.functions.invoke('send-otp', {
+      body: {
+        email,
+        purpose
       }
     });
 
     if (error) {
-      console.error('Google OAuth error:', error);
-      return { error };
+      console.error('Send OTP error:', error);
+      throw error;
     }
 
-    console.log('Google OAuth initiated successfully');
-    return { data, error: null };
+    console.log('OTP send response:', data);
+    return { error: data?.error ? { message: data.error } : null };
   } catch (error: any) {
-    console.error('Google OAuth error:', error);
-    return { error: { message: error.message || 'Failed to sign in with Google' } };
+    console.error('Send OTP error:', error);
+    return { error: { message: error.message || 'Failed to send verification code' } };
+  }
+};
+
+export const verifyOTP = async (email: string, code: string, purpose: 'signup' | 'signin') => {
+  try {
+    console.log(`Verifying OTP for ${email}, purpose: ${purpose}, code: ${code}`);
+    
+    const { data, error } = await supabase.functions.invoke('verify-otp', {
+      body: {
+        email,
+        code,
+        purpose
+      }
+    });
+
+    if (error) {
+      console.error('Verify OTP error:', error);
+      throw error;
+    }
+
+    console.log('OTP verify response:', data);
+
+    if (data?.success) {
+      console.log('OTP verification successful');
+      
+      if (purpose === 'signup') {
+        // For signup, create the user account
+        const pendingSignup = localStorage.getItem('pendingSignup');
+        if (pendingSignup) {
+          const signupData = JSON.parse(pendingSignup);
+          console.log('Creating user account after OTP verification');
+          
+          const { data: authData, error: authError } = await supabase.auth.signUp({
+            email: signupData.email,
+            password: signupData.password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/`,
+              data: {
+                first_name: signupData.firstName,
+                last_name: signupData.lastName
+              }
+            }
+          });
+
+          localStorage.removeItem('pendingSignup');
+          
+          if (authError) {
+            console.error('Signup error after OTP:', authError);
+            return { error: authError };
+          }
+
+          console.log('User account created successfully');
+        }
+      } else {
+        // For signin, authenticate the user with OTP
+        console.log('Completing signin with OTP');
+        
+        const { data: authData, error: authError } = await supabase.auth.verifyOtp({
+          email,
+          token: code,
+          type: 'email'
+        });
+
+        if (authError) {
+          console.error('Supabase signin error after OTP:', authError);
+          return { error: authError };
+        }
+
+        console.log('User signed in successfully via OTP:', authData);
+      }
+    }
+
+    return { error: data?.error ? { message: data.error } : null };
+  } catch (error: any) {
+    console.error('Verify OTP error:', error);
+    return { error: { message: error.message || 'Verification failed' } };
   }
 };
 
@@ -43,32 +115,26 @@ export const performSignUp = async (email: string, password: string, firstName?:
   try {
     console.log('Starting signup process for:', email);
     
-    const { data, error } = await supabase.auth.signUp({
+    // Store signup data for after OTP verification
+    localStorage.setItem('pendingSignup', JSON.stringify({
       email: email.toLowerCase().trim(),
       password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: {
-          first_name: firstName?.trim(),
-          last_name: lastName?.trim()
-        }
-      }
-    });
+      firstName: firstName?.trim(),
+      lastName: lastName?.trim()
+    }));
 
-    if (error) {
-      console.error('Signup error:', error);
-      return { error };
-    }
-
-    console.log('Signup successful:', data);
-    return { data, error: null };
-  } catch (error: any) {
+    // Send OTP
+    const result = await sendOTP(email.toLowerCase().trim(), 'signup');
+    console.log('Signup OTP result:', result);
+    return result;
+  } catch (error) {
     console.error('Signup error:', error);
-    return { error: { message: error.message || 'An unexpected error occurred during sign up' } };
+    localStorage.removeItem('pendingSignup');
+    return { error: { message: 'An unexpected error occurred during sign up' } };
   }
 };
 
-export const performSignIn = async (email: string, password: string) => {
+export const performSignIn = async (email: string) => {
   // Validate inputs
   if (!validateEmail(email)) {
     return { error: { message: 'Please enter a valid email address' } };
@@ -77,21 +143,13 @@ export const performSignIn = async (email: string, password: string) => {
   try {
     console.log('Starting signin process for:', email);
     
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.toLowerCase().trim(),
-      password
-    });
-
-    if (error) {
-      console.error('Signin error:', error);
-      return { error };
-    }
-
-    console.log('Signin successful:', data);
-    return { data, error: null };
-  } catch (error: any) {
+    // Send OTP directly - no password needed for OTP signin
+    const result = await sendOTP(email.toLowerCase().trim(), 'signin');
+    console.log('Signin OTP result:', result);
+    return result;
+  } catch (error) {
     console.error('Signin error:', error);
-    return { error: { message: error.message || 'An unexpected error occurred during sign in' } };
+    return { error: { message: 'An unexpected error occurred during sign in' } };
   }
 };
 
@@ -99,6 +157,8 @@ export const performSignOut = async () => {
   try {
     console.log('Signing out user');
     await supabase.auth.signOut();
+    localStorage.removeItem('pendingSignup');
+    localStorage.removeItem('pendingSignin');
   } catch (error) {
     console.error('Error signing out:', error);
   }
@@ -114,7 +174,7 @@ export const performResendVerification = async (userEmail?: string) => {
       type: 'signup',
       email: userEmail,
       options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`
+        emailRedirectTo: `${window.location.origin}/`
       }
     });
     return { error };

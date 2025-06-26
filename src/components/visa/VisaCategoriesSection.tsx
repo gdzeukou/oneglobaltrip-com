@@ -15,12 +15,12 @@ const VisaCategoriesSection = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
           {/* Short-Stay Card */}
-          <Card className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+          <Card className="hover-lift border-2 hover:border-blue-500 transition-colors">
             <CardHeader className="text-center pb-4">
-              <div className="bg-blue-50 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center border border-blue-100">
+              <div className="bg-blue-100 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                 <Plane className="h-10 w-10 text-blue-600" />
               </div>
-              <CardTitle className="text-2xl text-gray-900">Short-Stay Visas</CardTitle>
+              <CardTitle className="text-2xl text-blue-900">Short-Stay Visas</CardTitle>
               <p className="text-gray-600">Perfect for tourism, business trips, and short visits</p>
             </CardHeader>
             <CardContent>
@@ -42,7 +42,7 @@ const VisaCategoriesSection = () => {
                   <span>Starting from $175</span>
                 </div>
               </div>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors duration-200" asChild>
+              <Button className="w-full" asChild>
                 <Link to="/visas/short-stay">
                   Explore Short-Stay Visas
                   <ArrowRight className="h-4 w-4 ml-2" />
@@ -52,12 +52,12 @@ const VisaCategoriesSection = () => {
           </Card>
 
           {/* Long-Stay Card */}
-          <Card className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
+          <Card className="hover-lift border-2 hover:border-purple-500 transition-colors">
             <CardHeader className="text-center pb-4">
-              <div className="bg-purple-50 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center border border-purple-100">
+              <div className="bg-purple-100 rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                 <Building className="h-10 w-10 text-purple-600" />
               </div>
-              <CardTitle className="text-2xl text-gray-900">Long-Stay & Residency</CardTitle>
+              <CardTitle className="text-2xl text-purple-900">Long-Stay & Residency</CardTitle>
               <p className="text-gray-600">For work, study, family reunion, and permanent moves</p>
             </CardHeader>
             <CardContent>
@@ -79,7 +79,7 @@ const VisaCategoriesSection = () => {
                   <span>Starting from $240</span>
                 </div>
               </div>
-              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 rounded-lg transition-colors duration-200" asChild>
+              <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
                 <Link to="/visas/long-stay">
                   Explore Long-Stay Visas
                   <ArrowRight className="h-4 w-4 ml-2" />

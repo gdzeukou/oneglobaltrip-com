@@ -38,41 +38,41 @@ const VisaPricingCard = ({ visaData }: VisaPricingCardProps) => {
   };
 
   return (
-    <Card className="w-full bg-white shadow-lg hover:shadow-xl transition-all duration-300">
+    <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-xl font-bold text-slate-900">Pricing Breakdown</CardTitle>
+        <CardTitle className="text-lg text-blue-900">Pricing Breakdown</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-semibold">Visa Service</TableHead>
-              <TableHead className="font-semibold">Total Price</TableHead>
-              <TableHead className="font-semibold">Consular Fee</TableHead>
-              <TableHead className="font-semibold">{getCenterFeeLabel()}</TableHead>
-              <TableHead className="font-semibold">Our Service Fee</TableHead>
-              <TableHead className="font-semibold">Refund / Reapply Policy</TableHead>
+              <TableHead>Visa Service</TableHead>
+              <TableHead>Total Price</TableHead>
+              <TableHead>Consular Fee</TableHead>
+              <TableHead>{getCenterFeeLabel()}</TableHead>
+              <TableHead>Our Service Fee</TableHead>
+              <TableHead>Refund / Reapply Policy</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell className="font-medium">{visaData.service}</TableCell>
-              <TableCell className="font-bold text-lg">{visaData.totalPrice}</TableCell>
+              <TableCell>{visaData.service}</TableCell>
+              <TableCell className="font-bold">{visaData.totalPrice}</TableCell>
               <TableCell>{visaData.consularFee}</TableCell>
               <TableCell>{visaData.centerFee}</TableCell>
               <TableCell>{visaData.serviceFee}</TableCell>
-              <TableCell className="text-green-600 font-medium">100% refund OR free reapply</TableCell>
+              <TableCell>100% refund OR free reapply</TableCell>
             </TableRow>
           </TableBody>
         </Table>
 
-        <div className="mt-8">
-          <h4 className="text-lg font-semibold text-slate-900 mb-4">What's Included:</h4>
-          <div className="space-y-3">
+        <div className="mt-6">
+          <h4 className="font-semibold text-gray-900 mb-3">Included:</h4>
+          <div className="space-y-2">
             {visaData.included.map((item, index) => (
-              <div key={index} className="flex items-center space-x-3">
-                <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                <span className="text-slate-700">{item}</span>
+              <div key={index} className="flex items-center space-x-2">
+                <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                <span className="text-sm text-gray-700">{item}</span>
               </div>
             ))}
           </div>

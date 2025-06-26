@@ -1,189 +1,285 @@
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { 
-  ArrowRight, 
-  CheckCircle, 
-  Clock, 
-  Users,
-  Globe,
-  Star
-} from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { useNavigate } from 'react-router-dom';
 
 const PopularVisaServicesSection = () => {
-  const services = [
+  const navigate = useNavigate();
+
+  const shortStayVisas = [
     {
-      title: 'Schengen Tourist Visa',
-      description: 'Visit 27 European countries with one visa',
-      flag: '🇪🇺',
-      price: 'From $105',
-      processing: '15-20 days',
-      popularity: 'Most Popular',
-      features: ['Multi-country travel', 'Fast processing', '90-day validity'],
-      path: '/visas/short-stay/schengen',
-      accentColor: 'blue'
+      id: 'schengen',
+      name: 'Schengen Visa Pack',
+      countries: '27 European Countries',
+      price: 193,
+      processingTime: '10-15 days',
+      validityPeriod: '90 days',
+      description: 'Access to 27 European countries with a single visa',
+      type: 'short-stay',
+      popular: true
     },
     {
-      title: 'UK Visitor Visa',
-      description: 'Explore England, Scotland, Wales & Northern Ireland',
-      flag: '🇬🇧',
-      price: 'From $125',
-      processing: '3 weeks',
-      popularity: 'Trending',
-      features: ['6-month validity', 'Multiple entries', 'Family friendly'],
-      path: '/visas/short-stay/uk',
-      accentColor: 'green'
+      id: 'uk',
+      name: 'UK Visa Pass - 6 Month',
+      countries: 'United Kingdom',
+      price: 480,
+      processingTime: '15-20 days',
+      validityPeriod: '6 months',
+      description: 'Standard visitor visa for tourism and business',
+      type: 'short-stay'
     },
     {
-      title: 'Canada Visitor Visa',
-      description: 'Experience the beauty of Canada',
-      flag: '🇨🇦',
-      price: 'From $130',
-      processing: '2-4 weeks',
-      popularity: 'High Demand',
-      features: ['Up to 10 years', 'Work opportunities', 'Path to residency'],
-      path: '/visas/short-stay/canada',
-      accentColor: 'red'
+      id: 'uk-5year',
+      name: 'UK Visa Pass - 5 Year',
+      countries: 'United Kingdom',
+      price: 995,
+      processingTime: '15-20 days',
+      validityPeriod: '5 years',
+      description: 'Long-term visitor visa for multiple entries',
+      type: 'short-stay'
     },
     {
-      title: 'USA B1/B2 Visa',
-      description: 'Business and tourism visa for the United States',
-      flag: '🇺🇸',
-      price: 'From $185',
-      processing: '3-5 weeks',
-      popularity: 'Premium',
-      features: ['10-year validity', 'Business & tourism', 'Multiple entries'],
-      path: '/visas/short-stay/usa',
-      accentColor: 'purple'
+      id: 'brazil',
+      name: 'Brazil eVisa',
+      countries: 'Brazil',
+      price: 175,
+      processingTime: '5-10 days',
+      validityPeriod: '90 days',
+      description: 'Electronic visa for tourism purposes',
+      type: 'short-stay'
     },
     {
-      title: 'Australia Tourist Visa',
-      description: 'Discover the land down under',
-      flag: '🇦🇺',
-      price: 'From $165',
-      processing: '2-3 weeks',
-      popularity: 'Popular',
-      features: ['12-month validity', 'Multiple entries', 'Work holiday option'],
-      path: '/visas/short-stay/australia',
-      accentColor: 'amber'
+      id: 'canada',
+      name: 'Canada Entry Visa',
+      countries: 'Canada',
+      price: 300,
+      processingTime: '2-4 weeks',
+      validityPeriod: '6 months',
+      description: 'Visitor visa and eTA for Canada',
+      type: 'short-stay'
     },
     {
-      title: 'Dubai/UAE Visa',
-      description: 'Experience luxury and innovation in the UAE',
-      flag: '🇦🇪',
-      price: 'From $95',
-      processing: '5-7 days',
-      popularity: 'Fast Track',
-      features: ['90-day validity', 'Quick processing', 'Multiple entries'],
-      path: '/visas/short-stay/uae',
-      accentColor: 'orange'
+      id: 'nigeria',
+      name: 'Nigeria Visa',
+      countries: 'Nigeria',
+      price: 290,
+      processingTime: '5-7 days',
+      validityPeriod: '90 days',
+      description: 'Tourist and business visa for Nigeria',
+      type: 'short-stay'
+    },
+    {
+      id: 'uae',
+      name: 'UAE Tourist Visa',
+      countries: 'United Arab Emirates',
+      price: 250,
+      processingTime: '3-5 days',
+      validityPeriod: '30-90 days',
+      description: 'Tourist visa for UAE and Dubai',
+      type: 'short-stay'
+    },
+    {
+      id: 'india',
+      name: 'India e-Visa',
+      countries: 'India',
+      price: 180,
+      processingTime: '3-5 days',
+      validityPeriod: '60 days',
+      description: 'Electronic visa for India tourism',
+      type: 'short-stay'
     }
   ];
 
-  const getBadgeColor = (popularity: string) => {
-    switch (popularity) {
-      case 'Most Popular': return 'bg-blue-100 text-blue-800';
-      case 'Trending': return 'bg-green-100 text-green-800';
-      case 'High Demand': return 'bg-red-100 text-red-800';
-      case 'Premium': return 'bg-purple-100 text-purple-800';
-      case 'Fast Track': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+  const longStayVisas = [
+    {
+      id: 'portugal-longstay',
+      name: 'Portugal Long-Stay',
+      countries: 'Portugal',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'Long-stay visa for work, study, or residence',
+      type: 'long-stay',
+      popular: true
+    },
+    {
+      id: 'norway-longstay',
+      name: 'Norway Long-Stay',
+      countries: 'Norway',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'Long-stay visa for work or study',
+      type: 'long-stay'
+    },
+    {
+      id: 'denmark-longstay',
+      name: 'Denmark Long-Stay',
+      countries: 'Denmark',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'Long-stay visa for work or study',
+      type: 'long-stay'
+    },
+    {
+      id: 'finland-longstay',
+      name: 'Finland Long-Stay',
+      countries: 'Finland',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'Long-stay visa with Finnish insurance',
+      type: 'long-stay'
+    },
+    {
+      id: 'germany-longstay',
+      name: 'Germany Long-Stay',
+      countries: 'Germany',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'German long-stay visa for work/study',
+      type: 'long-stay'
+    },
+    {
+      id: 'france-longstay',
+      name: 'France Long-Stay',
+      countries: 'France',
+      price: 240,
+      processingTime: '60-90 days',
+      validityPeriod: '1 year+',
+      description: 'French long-stay visa for work/study',
+      type: 'long-stay'
     }
-  };
+  ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+    <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <Globe className="w-6 h-6 text-blue-600" />
-            <h2 className="text-4xl font-bold text-gray-900">Popular Visa Services</h2>
-            <Star className="w-6 h-6 text-amber-500 fill-current" />
-          </div>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Choose from our most requested visa services with guaranteed approval and expert support.
-          </p>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Popular Visa Services</h2>
+          <p className="text-xl text-gray-600">See what we can help you with</p>
         </div>
 
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8">
-          {services.map((service, index) => (
-            <Card key={index} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="text-3xl">{service.flag}</div>
-                  <Badge className={`${getBadgeColor(service.popularity)} border-0 font-medium`}>
-                    {service.popularity}
-                  </Badge>
-                </div>
-                
-                <CardTitle className="text-xl font-bold text-gray-900 mb-2">
-                  {service.title}
-                </CardTitle>
-                <p className="text-gray-600 text-sm">
-                  {service.description}
-                </p>
-              </CardHeader>
+        <Tabs defaultValue="short-stay" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="short-stay">Short-Stay Visas</TabsTrigger>
+            <TabsTrigger value="long-stay">Long-Stay & Residency</TabsTrigger>
+          </TabsList>
 
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-blue-600">
-                      {service.price}
-                    </div>
-                    <div className="text-xs text-gray-500">Total price</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-gray-700 flex items-center justify-center">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {service.processing}
-                    </div>
-                    <div className="text-xs text-gray-500">Processing</div>
-                  </div>
-                </div>
+          <TabsContent value="short-stay">
+            <Carousel className="w-full max-w-5xl mx-auto">
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {shortStayVisas.map((visa) => (
+                  <CarouselItem key={visa.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                    <Card className="hover-lift relative h-full">
+                      {visa.popular && (
+                        <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded">
+                          POPULAR
+                        </div>
+                      )}
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-lg text-blue-900">{visa.name}</CardTitle>
+                          <Badge className="bg-blue-500 text-white">
+                            ${visa.price}
+                          </Badge>
+                        </div>
+                        <p className="text-gray-600 text-sm">{visa.countries}</p>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-700 mb-4 text-sm">{visa.description}</p>
+                        <div className="space-y-1 text-xs mb-4">
+                          <div className="flex justify-between">
+                            <span>Processing:</span>
+                            <span className="font-medium">{visa.processingTime}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Validity:</span>
+                            <span className="font-medium">{visa.validityPeriod}</span>
+                          </div>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => {
+                            if (visa.id === 'schengen') {
+                              navigate('/visas/short-stay/schengen');
+                            } else if (visa.id === 'uk-5year') {
+                              navigate('/visas/short-stay/uk-5year');
+                            } else {
+                              navigate(`/visas/short-stay/${visa.id}`);
+                            }
+                          }}
+                        >
+                          Apply Now
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </TabsContent>
 
-                <div className="space-y-2 mb-6">
-                  {service.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-center space-x-2">
-                      <CheckCircle className="w-4 h-4 text-green-600" />
-                      <span className="text-sm text-gray-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <Link to={service.path}>
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-colors duration-200">
-                    Apply Now
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Call to action */}
-        <div className="mt-16 text-center">
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-8">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Can't Find Your Destination?
-            </h3>
-            <p className="text-lg text-gray-600 mb-6">
-              We process visas for 180+ countries worldwide. Let our experts help you find the right visa.
-            </p>
-            <div className="space-x-4">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium">
-                <Users className="w-4 h-4 mr-2" />
-                Speak with Expert
-              </Button>
-              <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-lg font-medium">
-                Browse All Countries
-              </Button>
-            </div>
-          </div>
-        </div>
+          <TabsContent value="long-stay">
+            <Carousel className="w-full max-w-5xl mx-auto">
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {longStayVisas.map((visa) => (
+                  <CarouselItem key={visa.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+                    <Card className="hover-lift relative h-full">
+                      {visa.popular && (
+                        <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 text-xs font-bold rounded">
+                          POPULAR
+                        </div>
+                      )}
+                      <CardHeader>
+                        <div className="flex items-center justify-between">
+                          <CardTitle className="text-lg text-purple-900">{visa.name}</CardTitle>
+                          <Badge className="bg-purple-500 text-white">
+                            ${visa.price}
+                          </Badge>
+                        </div>
+                        <p className="text-gray-600 text-sm">{visa.countries}</p>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-700 mb-4 text-sm">{visa.description}</p>
+                        <div className="space-y-1 text-xs mb-4">
+                          <div className="flex justify-between">
+                            <span>Processing:</span>
+                            <span className="font-medium">{visa.processingTime}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Validity:</span>
+                            <span className="font-medium">{visa.validityPeriod}</span>
+                          </div>
+                        </div>
+                        <Button 
+                          size="sm" 
+                          className="w-full bg-purple-600 hover:bg-purple-700"
+                          onClick={() => {
+                            const country = visa.id.split('-')[0];
+                            navigate(`/visas/long-stay/${country}`);
+                          }}
+                        >
+                          Apply Now
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </TabsContent>
+        </Tabs>
       </div>
     </section>
   );

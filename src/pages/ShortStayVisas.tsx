@@ -1,6 +1,7 @@
+
 import { useEffect, useState } from 'react';
 import { useSearchParams, useLocation } from 'react-router-dom';
-import TechNavigation from '@/components/TechNavigation';
+import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MultiStepForm from '@/components/visa/MultiStepForm';
 import CountryTile from '@/components/visa/CountryTile';
@@ -53,7 +54,7 @@ const ShortStayVisas = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <TechNavigation />
+      <Navigation />
       
       {/* Meta tags for Agentive context */}
       <meta data-agentive-context="visa" />

@@ -1,167 +1,120 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
+import React, { createContext, useContext } from 'react';
+import { AuthContextType } from './auth/types';
+import { useAuthState } from './auth/useAuthState';
+import {
+  sendOTP,
+  verifyOTP,
+  performSignUp,
+  performSignIn,
+  performSignOut,
+  performResendVerification
+} from './auth/authService';
 
-console.log('AuthContext.tsx: Loading');
-
-interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  loading: boolean;
-  isEmailVerified: boolean;
-  signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<any>;
-  signIn: (email: string, password: string) => Promise<any>;
-  signInWithGoogle: () => Promise<any>;
-  signOut: () => Promise<void>;
-  resendVerification: (userEmail?: string) => Promise<any>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    console.error('useAuth must be used within an AuthProvider');
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  console.log('AuthProvider: Rendering');
-  
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const isEmailVerified = user?.email_confirmed_at ? true : false;
-
-  useEffect(() => {
-    console.log('AuthProvider: Setting up auth state listeners');
-    
-    try {
-      // Get initial session first
-      const getInitialSession = async () => {
-        try {
-          const { data: { session }, error } = await supabase.auth.getSession();
-          if (error) {
-            console.error('AuthProvider: Error getting initial session:', error);
-          } else {
-            console.log('AuthProvider: Initial session check:', session?.user?.email || 'No session');
-            setSession(session);
-            setUser(session?.user ?? null);
-          }
-        } catch (error) {
-          console.error('AuthProvider: Error in getSession:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      // Set up auth state listener
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (event, session) => {
-          console.log('AuthProvider: Auth state change:', event, session?.user?.email || 'No user');
-          
-          setSession(session);
-          setUser(session?.user ?? null);
-          setLoading(false);
-        }
-      );
-
-      // Get initial session
-      getInitialSession();
-
-      return () => {
-        console.log('AuthProvider: Cleaning up auth subscription');
-        subscription.unsubscribe();
-      };
-    } catch (error) {
-      console.error('AuthProvider: Error setting up auth:', error);
-      setLoading(false);
-    }
-  }, []);
-
-  // Simplified auth functions
-  const handleSignUp = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signUp({ email, password });
-      return { error };
-    } catch (error) {
-      console.error('AuthProvider: Sign up error:', error);
-      return { error };
-    }
-  };
-
-  const handleSignIn = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      return { error };
-    } catch (error) {
-      console.error('AuthProvider: Sign in error:', error);
-      return { error };
-    }
-  };
-
-  const handleSignInWithGoogle = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-      return { error };
-    } catch (error) {
-      console.error('AuthProvider: Google sign in error:', error);
-      return { error };
-    }
-  };
-
-  const handleSignOut = async () => {
-    try {
-      console.log('AuthProvider: Signing out');
-      await supabase.auth.signOut();
-    } catch (error) {
-      console.error('AuthProvider: Error signing out:', error);
-    }
-  };
-
-  const handleResendVerification = async (userEmail?: string) => {
-    try {
-      const email = userEmail || user?.email;
-      if (!email) return { error: 'No email provided' };
-      
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: email,
-      });
-      return { error };
-    } catch (error) {
-      console.error('AuthProvider: Resend verification error:', error);
-      return { error };
-    }
-  };
-
-  const value: AuthContextType = {
+  const {
     user,
     session,
     loading,
     isEmailVerified,
-    signUp: handleSignUp,
-    signIn: handleSignIn,
-    signInWithGoogle: handleSignInWithGoogle,
-    signOut: handleSignOut,
-    resendVerification: handleResendVerification,
+    otpStep,
+    setOTPStep
+  } = useAuthState();
+
+  const handleSendOTP = async (email: string, purpose: 'signup' | 'signin') => {
+    try {
+      console.log(`Handling send OTP for ${email}, purpose: ${purpose}`);
+      const result = await sendOTP(email, purpose);
+      console.log('Send OTP result:', result);
+      
+      if (!result.error) {
+        console.log('Setting OTP step state');
+        setOTPStep({
+          isRequired: true,
+          email,
+          purpose
+        });
+      } else {
+        console.error('Send OTP failed:', result.error);
+      }
+      return result;
+    } catch (error: any) {
+      console.error('Error sending OTP:', error);
+      return { error: { message: error.message || 'Failed to send verification code' } };
+    }
   };
 
-  console.log('AuthProvider: Providing context value', { 
+  const handleVerifyOTP = async (email: string, code: string, purpose: 'signup' | 'signin') => {
+    try {
+      console.log(`Handling verify OTP for ${email}, purpose: ${purpose}`);
+      const result = await verifyOTP(email, code, purpose);
+      console.log('Verify OTP result:', result);
+      
+      if (!result.error) {
+        console.log('OTP verified successfully, clearing OTP step');
+        setOTPStep(null);
+      } else {
+        console.error('Verify OTP failed:', result.error);
+      }
+      return result;
+    } catch (error: any) {
+      console.error('Error verifying OTP:', error);
+      return { error: { message: error.message || 'Verification failed' } };
+    }
+  };
+
+  const clearOTPStep = () => {
+    console.log('Clearing OTP step');
+    setOTPStep(null);
+    localStorage.removeItem('pendingSignup');
+    localStorage.removeItem('pendingSignin');
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await performSignOut();
+      setOTPStep(null);
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
+  // Simplified sign-in that only requires email
+  const handleSignIn = async (email: string) => {
+    return await performSignIn(email);
+  };
+
+  const value = {
+    user,
+    session,
+    loading,
+    isEmailVerified,
+    otpStep,
+    signUp: performSignUp,
+    signIn: handleSignIn,
+    signOut: handleSignOut,
+    resendVerification: () => performResendVerification(user?.email),
+    sendOTP: handleSendOTP,
+    verifyOTP: handleVerifyOTP,
+    clearOTPStep,
+  };
+
+  console.log('AuthContext current state:', { 
     hasUser: !!user, 
     hasSession: !!session, 
-    loading,
-    userEmail: user?.email
+    loading, 
+    otpStep: otpStep ? `${otpStep.purpose} for ${otpStep.email}` : 'none' 
   });
 
-  try {
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-  } catch (error) {
-    console.error('AuthProvider: Error rendering provider:', error);
-    throw error;
-  }
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

@@ -46,12 +46,6 @@ additional_redirect_urls = ["https://127.0.0.1:3000"]
 jwt_expiry = 3600
 enable_signup = true
 
-[auth.external.google]
-enabled = true
-client_id = "163349512593-04vfhpl0mui5jjuh49bbqjm9mim2p9dg.apps.googleusercontent.com"
-secret = "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"
-redirect_uri = "http://127.0.0.1:54328/auth/v1/callback"
-
 [functions.send-welcome-email]
 verify_jwt = false
 
