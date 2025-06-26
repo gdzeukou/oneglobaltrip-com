@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import Navigation from '@/components/Navigation';
+import TechNavigation from '@/components/TechNavigation';
 import Footer from '@/components/Footer';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
@@ -52,7 +51,7 @@ const CanadaShortStay = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-white">
-      <Navigation />
+      <TechNavigation />
       
       <section className="pt-24 pb-16 bg-gradient-to-r from-red-600 to-red-800 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-700/20"></div>
