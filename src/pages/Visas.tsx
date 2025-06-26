@@ -74,8 +74,11 @@ const Visas = () => {
                   ensuring you get exactly the right visa for your journey.
                 </p>
               </div>
-              <div className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 p-8 hover:shadow-3xl transition-all duration-500">
-                <VisaWizard />
+              <div className="bg-white/95 backdrop-blur-md rounded-3xl shadow-xl border border-blue-100/50 p-8 hover:shadow-2xl hover:border-blue-200/70 transition-all duration-500 group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-50/20 via-transparent to-purple-50/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative z-10">
+                  <VisaWizard />
+                </div>
               </div>
             </div>
           </div>
