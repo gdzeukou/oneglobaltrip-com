@@ -46,6 +46,28 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    
+    // When using asChild, we need to ensure we're passing a single child to Slot
+    if (asChild) {
+      // If children is an array or has multiple elements, wrap them in a single element
+      const childrenArray = React.Children.toArray(children)
+      if (childrenArray.length > 1) {
+        return (
+          <Comp
+            className={cn(buttonVariants({ variant, size, className }))}
+            ref={ref}
+            {...props}
+          >
+            <span className="inline-flex items-center justify-center gap-2">
+              {children}
+              {/* Shimmer effect overlay */}
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-700 pointer-events-none" />
+            </span>
+          </Comp>
+        )
+      }
+    }
+    
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}

@@ -58,30 +58,28 @@ const HeroSection = () => {
 
           {/* Enhanced CTA section */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-            <Button 
-              size="lg"
-              variant="default"
-              className="font-bold text-xl px-12 py-6 group relative overflow-hidden"
-              asChild
-            >
-              <Link to="/get-started">
+            <Link to="/get-started">
+              <Button 
+                size="lg"
+                variant="default"
+                className="font-bold text-xl px-12 py-6 group relative overflow-hidden"
+              >
                 <Sparkles className="h-6 w-6 mr-3 group-hover:animate-spin" />
                 Start Planning
                 <ArrowRight className="h-6 w-6 ml-3 group-hover:translate-x-1 transition-transform duration-200" />
-              </Link>
-            </Button>
+              </Button>
+            </Link>
 
-            <Button 
-              size="lg"
-              variant="glass"
-              className="font-bold text-xl px-12 py-6 group"
-              asChild
-            >
-              <Link to="/packages">
+            <Link to="/packages">
+              <Button 
+                size="lg"
+                variant="glass"
+                className="font-bold text-xl px-12 py-6 group"
+              >
                 <Play className="h-6 w-6 mr-3 group-hover:scale-110 transition-transform duration-200" />
                 Free Consultation
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
 
           {/* Enhanced stats section */}
