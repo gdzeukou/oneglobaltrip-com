@@ -28,6 +28,66 @@ const Auth = () => {
     lastName: ''
   });
 
+  // Load Google Sign-In script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    script.onload = () => {
+      // Initialize Google One-Tap
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: '163349512593-04vfhpl0mui5jjuh49bbqjm9mim2p9dg.apps.googleusercontent.com',
+          callback: handleGoogleCallback,
+          auto_select: false,
+        });
+
+        // Render the sign-in button
+        window.google.accounts.id.renderButton(
+          document.getElementById('google-signin-button'),
+          {
+            type: 'standard',
+            size: 'large',
+            theme: 'outline',
+            text: 'signin_with',
+            shape: 'rectangular',
+            logo_alignment: 'left',
+            width: '100%'
+          }
+        );
+      }
+    };
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  const handleGoogleCallback = async (response: any) => {
+    try {
+      console.log('Google callback response:', response);
+      setIsLoading(true);
+      setError('');
+
+      // Handle the Google JWT token here
+      // You can send this to your backend or handle it directly with Supabase
+      const { credential } = response;
+      
+      // For now, we'll use the existing OAuth flow
+      const { error } = await signInWithGoogle();
+      if (error) {
+        setError('Failed to sign in with Google');
+      }
+    } catch (error: any) {
+      setError(error.message || 'An error occurred with Google sign-in');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Redirect authenticated users
   useEffect(() => {
     if (user) {
@@ -100,7 +160,6 @@ const Auth = () => {
       if (error) {
         setError(error.message);
       }
-      // Note: Google OAuth will redirect, so we don't need to handle success here
     } catch (error: any) {
       setError(error.message || 'An unexpected error occurred');
     } finally {
@@ -121,7 +180,10 @@ const Auth = () => {
         </CardHeader>
         
         <CardContent className="space-y-6">
-          {/* Google Sign In Button */}
+          {/* Google Sign-In Button (Pre-built) */}
+          <div id="google-signin-button" className="w-full"></div>
+
+          {/* Fallback Google Sign In Button */}
           <Button
             onClick={handleGoogleSignIn}
             disabled={isLoading}
@@ -146,7 +208,7 @@ const Auth = () => {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            <span>{isLoading ? 'Signing in...' : 'Continue with Google'}</span>
+            <span>{isLoading ? 'Signing in...' : 'Continue with Google (OAuth)'}</span>
           </Button>
 
           <div className="relative">
