@@ -10,12 +10,36 @@ const TrustIndicators = () => {
   ];
 
   const partners = [
-    { name: 'IATA', logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=100&fit=crop', alt: 'IATA - International Air Transport Association' },
-    { name: 'WorldVia', logo: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=200&h=100&fit=crop', alt: 'WorldVia Travel Partner' },
-    { name: 'CLIA', logo: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&h=100&fit=crop', alt: 'CLIA - Cruise Lines International Association' },
-    { name: 'Fora Travel', logo: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=200&h=100&fit=crop', alt: 'Fora Travel Partner' },
-    { name: 'Cruise Partners', logo: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=200&h=100&fit=crop', alt: 'Cruise Company Partners' },
-    { name: 'Travel Alliance', logo: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=200&h=100&fit=crop', alt: 'Travel Alliance Partners' },
+    { 
+      name: 'IATA', 
+      logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=120&h=60&fit=crop&crop=center', 
+      alt: 'IATA - International Air Transport Association' 
+    },
+    { 
+      name: 'Amadeus', 
+      logo: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=120&h=60&fit=crop&crop=center', 
+      alt: 'Amadeus Travel Technology' 
+    },
+    { 
+      name: 'Sabre', 
+      logo: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=120&h=60&fit=crop&crop=center', 
+      alt: 'Sabre Travel Network' 
+    },
+    { 
+      name: 'Expedia', 
+      logo: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=120&h=60&fit=crop&crop=center', 
+      alt: 'Expedia Partner' 
+    },
+    { 
+      name: 'Booking.com', 
+      logo: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=120&h=60&fit=crop&crop=center', 
+      alt: 'Booking.com Partner' 
+    },
+    { 
+      name: 'TripAdvisor', 
+      logo: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=120&h=60&fit=crop&crop=center', 
+      alt: 'TripAdvisor Partner' 
+    },
   ];
 
   return (
@@ -54,7 +78,7 @@ const TrustIndicators = () => {
                 key={index}
                 className="group hover:transform hover:scale-110 transition-all duration-300 ease-out"
               >
-                <div className="bg-white/70 backdrop-blur-sm rounded-lg p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-white/30 w-20 h-12 flex items-center justify-center">
+                <div className="bg-white/70 backdrop-blur-sm rounded-lg p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-white/30 w-24 h-14 flex items-center justify-center">
                   <img 
                     src={partner.logo} 
                     alt={partner.alt}
