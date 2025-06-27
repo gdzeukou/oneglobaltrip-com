@@ -25,7 +25,7 @@ import AuthCallback from "./pages/AuthCallback";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import ErrorPage from "./pages/ErrorPage";
-import { ShortStayVisas, LongStayVisas } from "./utils/lazyImports";
+import { LazyShortStayVisas, LazyLongStayVisas } from "./utils/lazyImports";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Visa country pages
@@ -71,8 +71,8 @@ const App = () => (
             <Route path="/packages/paris-explore-package" element={<ParisExplorePackage />} />
             <Route path="/packages/:id" element={<PackageDetails />} />
             <Route path="/visas" element={<Visas />} />
-            <Route path="/visas/short-stay" element={<ShortStayVisas />} />
-            <Route path="/visas/long-stay" element={<LongStayVisas />} />
+            <Route path="/visas/short-stay" element={<LazyShortStayVisas />} />
+            <Route path="/visas/long-stay" element={<LazyLongStayVisas />} />
             <Route path="/visas/pricing" element={<VisaPricingPage />} />
             
             {/* Short Stay Visa Routes */}
