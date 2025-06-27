@@ -12,16 +12,16 @@ export interface CarouselSlide {
 export const heroSlides: CarouselSlide[] = [
   {
     id: '1',
-    image: '/lovable-uploads/82a7689d-5b8f-4da5-90f7-039d2ceefe64.png',
+    image: '/lovable-uploads/76b4c74b-7cfd-460f-b5a4-0bfaf3b3c01c.png',
     destination: 'Santorini',
     teaser: 'Sunsets in Santorini',
     ctaText: 'Explore Deals',
     ctaLink: '/packages?destination=santorini',
-    alt: 'Beautiful Santorini sunset with white-washed buildings and blue domes overlooking the Aegean Sea'
+    alt: 'Beautiful Santorini with white-washed buildings and blue domes overlooking the Aegean Sea under a cloudy blue sky'
   },
   {
     id: '2',
-    image: '/lovable-uploads/73138664-5eac-4bdb-bd23-292b7cd838bd.png',
+    image: '/lovable-uploads/e3775e5c-54c8-429f-8982-ce162dce3071.png',
     destination: 'Paris',
     teaser: 'See Paris in Bloom',
     ctaText: 'Explore Deals',
@@ -30,12 +30,12 @@ export const heroSlides: CarouselSlide[] = [
   },
   {
     id: '3',
-    image: '/lovable-uploads/efe38805-430b-4eea-b406-7b3d5e188592.png',
+    image: '/lovable-uploads/6db4cf55-8097-495e-a53e-83e87927aa82.png',
     destination: 'London',
     teaser: 'Royal London Adventures',
     ctaText: 'Explore Deals',
     ctaLink: '/packages?destination=london',
-    alt: 'London cityscape with Big Ben and Thames River during twilight blue hour'
+    alt: 'London bridge with St. Pauls Cathedral during a stunning purple sunset with modern architectural details'
   },
   {
     id: '4',
