@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -6,22 +5,32 @@ const parisImages = [
   {
     id: '1',
     src: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?auto=format&fit=crop&w=1920&q=80',
-    alt: 'Eiffel Tower at sunset with golden lighting over Paris cityscape'
+    alt: 'Romantic sunset view of Eiffel Tower with golden lighting over Paris cityscape'
   },
   {
     id: '2',
-    src: 'https://images.unsplash.com/photo-1431274172761-fca41d930114?auto=format&fit=crop&w=1920&q=80',
-    alt: 'Louvre Museum pyramid with classical architecture in Paris'
+    src: 'https://images.unsplash.com/photo-1549144511-f099e773c147?auto=format&fit=crop&w=1920&q=80',
+    alt: 'Seine River with historic bridges and charming Parisian architecture'
   },
   {
     id: '3',
-    src: 'https://images.unsplash.com/photo-1549144511-f099e773c147?auto=format&fit=crop&w=1920&q=80',
-    alt: 'Seine River with historic bridges and Parisian buildings'
+    src: 'https://images.unsplash.com/photo-1571115764595-644a1f56a55c?auto=format&fit=crop&w=1920&q=80',
+    alt: 'Romantic Parisian café scene with outdoor seating and classic bistro atmosphere'
   },
   {
     id: '4',
+    src: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=1920&q=80',
+    alt: 'Beautiful Parisian brunch spread with croissants, coffee and fresh pastries'
+  },
+  {
+    id: '5',
     src: 'https://images.unsplash.com/photo-1524396309943-e03f5249f002?auto=format&fit=crop&w=1920&q=80',
-    alt: 'Champs-Élysées and Arc de Triomphe with bustling Parisian street life'
+    alt: 'Champs-Élysées and Arc de Triomphe with elegant Parisian street life'
+  },
+  {
+    id: '6',
+    src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=80',
+    alt: 'Romantic couple walking through charming Montmartre cobblestone streets'
   }
 ];
 

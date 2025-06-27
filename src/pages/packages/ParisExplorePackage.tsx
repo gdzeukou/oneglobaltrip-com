@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -34,9 +35,19 @@ const ParisExplorePackage = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="pt-20 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white py-16">
-        <div className="max-w-6xl mx-auto px-4">
+      {/* Hero Section with Background Image */}
+      <section className="relative pt-20 bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 text-white py-16 overflow-hidden">
+        {/* Hero Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1500673922987-e212871fec22?auto=format&fit=crop&w=1920&q=80"
+            alt="Beautiful romantic Paris evening with Eiffel Tower lights"
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/70 to-indigo-900/80" />
+        </div>
+        
+        <div className="relative z-10 max-w-6xl mx-auto px-4">
           <div className="flex items-center mb-6">
             <div className="w-12 h-8 bg-gradient-to-r from-blue-600 to-white to-red-600 rounded mr-4"></div>
             <span className="text-lg font-semibold text-blue-200">Paris • Single City Trip</span>
