@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles, Plane, Globe, Star, Shield } from 'lucide-react';
@@ -6,13 +7,6 @@ import { Link } from 'react-router-dom';
 const TravelDreamsCTA = () => {
   return (
     <section className="py-16 md:py-20 bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-800 text-white relative overflow-hidden animate-gradient">
-      {/* Enhanced colorful background elements */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-10 left-10 w-48 md:w-72 h-48 md:h-72 bg-pink-500/20 rounded-full blur-3xl animate-colorful-float" />
-        <div className="absolute bottom-10 right-10 w-64 md:w-96 h-64 md:h-96 bg-yellow-400/20 rounded-full blur-3xl animate-colorful-float" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-56 md:w-80 h-56 md:h-80 bg-green-400/15 rounded-full blur-2xl animate-colorful-float" style={{ animationDelay: '2s' }} />
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
         <div className="flex items-center justify-center mb-6">
           <Sparkles className="h-6 md:h-8 w-6 md:w-8 text-yellow-400 mr-3 animate-pulse" />
