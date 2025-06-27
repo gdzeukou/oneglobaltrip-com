@@ -3,10 +3,12 @@ import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import OptionalAddOns from '@/components/packages/OptionalAddOns';
+import ParisSlideshow from '@/components/packages/ParisSlideshow';
+import ParisTestimonials from '@/components/packages/ParisTestimonials';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Clock, Users, Star, Check, X } from 'lucide-react';
+import { MapPin, Clock, Users, Star, Check, X, Phone, Mail } from 'lucide-react';
 
 const ParisExplorePackage = () => {
   const included = [
@@ -17,10 +19,7 @@ const ParisExplorePackage = () => {
     "Seine River cruise",
     "Metro travel card (3 days)",
     "Professional English-speaking guide",
-    "24/7 customer support",
-    "International flights to/from Paris",
-    "Travel insurance (comprehensive coverage)",
-    "Lunch and dinner recommendations at local restaurants"
+    "24/7 customer support"
   ];
 
   const notIncluded = [
@@ -72,7 +71,7 @@ const ParisExplorePackage = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold px-8 py-4">
+            <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold px-8 py-4 text-lg">
               Book Now - $1,299 per person
             </Button>
             <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-slate-900 font-bold px-8 py-4">
@@ -82,8 +81,23 @@ const ParisExplorePackage = () => {
         </div>
       </section>
 
-      {/* What's Included / Not Included */}
+      {/* Paris Slideshow */}
       <section className="py-16 bg-slate-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Experience the Magic of Paris
+            </h2>
+            <p className="text-xl text-slate-600">
+              From iconic landmarks to charming neighborhoods, discover what makes Paris unforgettable
+            </p>
+          </div>
+          <ParisSlideshow />
+        </div>
+      </section>
+
+      {/* What's Included / Not Included */}
+      <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
@@ -132,10 +146,16 @@ const ParisExplorePackage = () => {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-700 font-medium">
-                    💡 Note: Many of these items can be customized and added to your package upon request. Contact us for personalized options!
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700 font-medium mb-2">
+                    💡 <strong>Available Upon Request:</strong>
                   </p>
+                  <ul className="text-sm text-blue-600 space-y-1">
+                    <li>• International flights to/from Paris</li>
+                    <li>• Comprehensive travel insurance</li>
+                    <li>• Airport transfers and additional transportation</li>
+                    <li>• Customized dining experiences and restaurant recommendations</li>
+                  </ul>
                 </div>
               </CardContent>
             </Card>
@@ -145,6 +165,46 @@ const ParisExplorePackage = () => {
 
       {/* Optional Add-Ons Section */}
       <OptionalAddOns />
+
+      {/* Testimonials Section */}
+      <ParisTestimonials />
+
+      {/* Enhanced Call to Action */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Fall in Love with Paris?
+          </h2>
+          <p className="text-xl mb-8 text-blue-100">
+            Join thousands of satisfied travelers who've discovered the magic of Paris with One Global Trip. 
+            Book now and create memories that will last a lifetime.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+            <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-4 text-lg">
+              Book Your Paris Adventure Now
+            </Button>
+            <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 font-bold px-8 py-4">
+              Get Free Consultation
+            </Button>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center text-blue-100">
+            <div className="flex items-center">
+              <Phone className="h-5 w-5 mr-2" />
+              <span>24/7 Customer Support</span>
+            </div>
+            <div className="flex items-center">
+              <Mail className="h-5 w-5 mr-2" />
+              <span>Free Trip Planning</span>
+            </div>
+            <div className="flex items-center">
+              <Star className="h-5 w-5 mr-2" />
+              <span>5-Star Service Guarantee</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <Footer />
     </div>

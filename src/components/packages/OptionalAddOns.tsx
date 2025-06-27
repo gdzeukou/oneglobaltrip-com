@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Coffee, Wine, Utensils, DollarSign, Star, Plus } from 'lucide-react';
+import { Coffee, Wine, Utensils, DollarSign, Star, Plus, MapPin, Waves } from 'lucide-react';
 
 interface AddOn {
   id: string;
@@ -20,13 +20,30 @@ const OptionalAddOns = () => {
 
   const addOns: AddOn[] = [
     {
+      id: 'versailles-trip',
+      icon: MapPin,
+      title: 'Palace of Versailles Day Trip',
+      description: 'Full-day guided tour of the magnificent Palace and Gardens of Versailles with transportation included',
+      price: 'Add $89 per person',
+      isFree: false,
+      isRecommended: true
+    },
+    {
+      id: 'seine-dinner-cruise',
+      icon: Waves,
+      title: 'Seine River Dinner Cruise',
+      description: 'Romantic 3-course dinner cruise along the Seine with live music and champagne',
+      price: 'Add $125 per person',
+      isFree: false,
+      isRecommended: true
+    },
+    {
       id: 'cafe-stop',
       icon: Coffee,
       title: 'Classic Parisian Café Stop',
       description: 'Enjoy coffee & a croissant at a historic café near the Eiffel Tower',
       price: 'Add $20 per person',
-      isFree: false,
-      isRecommended: true
+      isFree: false
     },
     {
       id: 'wine-cheese',
@@ -34,13 +51,12 @@ const OptionalAddOns = () => {
       title: 'Wine & Cheese Pairing Experience',
       description: 'Hosted at a charming local wine cellar in Saint-Germain-des-Prés',
       price: 'Add $45 per person',
-      isFree: false,
-      isRecommended: true
+      isFree: false
     },
     {
       id: 'dinner-recommendation',
       icon: Utensils,
-      title: 'Romantic Dinner Recommendation (Free Concierge Option)',
+      title: 'Restaurant Recommendations (Free Concierge)',
       description: 'We suggest 3 top-rated restaurants based on your taste and budget',
       price: 'Free – reservation handled by client',
       isFree: true
@@ -64,9 +80,9 @@ const OptionalAddOns = () => {
   };
 
   return (
-    <section className="py-10 bg-gradient-to-br from-blue-50 to-indigo-50">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-8">
+    <section className="py-12 bg-gradient-to-br from-blue-50 to-indigo-50">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="text-center mb-10">
           <div className="flex items-center justify-center mb-3">
             <Star className="h-6 w-6 text-amber-500 mr-2" />
             <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
@@ -74,14 +90,14 @@ const OptionalAddOns = () => {
             </h2>
           </div>
           <p className="text-lg text-slate-600 font-medium">
-            (Highly Recommended)
+            Enhance Your Paris Experience
           </p>
           <p className="text-base text-slate-500 mt-1 max-w-2xl mx-auto">
-            Enhance your Paris experience with these carefully curated extras
+            Carefully curated extras to make your trip unforgettable
           </p>
         </div>
 
-        <div className="grid gap-4 md:gap-5">
+        <div className="grid gap-4">
           {addOns.map((addOn) => {
             const IconComponent = addOn.icon;
             const isSelected = selectedAddOns.includes(addOn.id);
@@ -98,19 +114,19 @@ const OptionalAddOns = () => {
                 <CardContent className="p-4">
                   <div className="flex items-start space-x-3">
                     {/* Icon */}
-                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
+                    <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
                       addOn.isFree 
                         ? 'bg-green-100 text-green-600' 
                         : 'bg-blue-100 text-blue-600'
                     }`}>
-                      <IconComponent className="h-6 w-6" />
+                      <IconComponent className="h-5 w-5" />
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center space-x-2">
-                          <h3 className="text-lg md:text-xl font-bold text-slate-900 leading-tight">
+                          <h3 className="text-lg font-bold text-slate-900 leading-tight">
                             {addOn.title}
                           </h3>
                           {addOn.isRecommended && (
@@ -137,11 +153,11 @@ const OptionalAddOns = () => {
                             id={addOn.id}
                             checked={isSelected}
                             onCheckedChange={() => handleAddOnToggle(addOn.id)}
-                            className="h-5 w-5"
+                            className="h-4 w-4"
                           />
                           <label 
                             htmlFor={addOn.id}
-                            className="text-base font-medium text-slate-700 cursor-pointer select-none"
+                            className="text-sm font-medium text-slate-700 cursor-pointer select-none"
                           >
                             Add to My Package
                           </label>
@@ -176,18 +192,6 @@ const OptionalAddOns = () => {
             </div>
           </div>
         )}
-
-        {/* Call to Action */}
-        <div className="mt-6 text-center">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-4 text-white">
-            <h3 className="text-xl font-bold mb-1">
-              Ready to Enhance Your Paris Adventure?
-            </h3>
-            <p className="text-base opacity-90">
-              These add-ons are designed to create unforgettable memories and provide authentic Parisian experiences
-            </p>
-          </div>
-        </div>
       </div>
     </section>
   );
