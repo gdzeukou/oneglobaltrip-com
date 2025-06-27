@@ -12,33 +12,33 @@ const TrustIndicators = () => {
   const partners = [
     { 
       name: 'IATA', 
-      logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=120&h=60&fit=crop&crop=center', 
-      alt: 'IATA - International Air Transport Association' 
+      displayName: 'IATA',
+      color: 'from-blue-600 to-blue-800'
     },
     { 
       name: 'Amadeus', 
-      logo: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=120&h=60&fit=crop&crop=center', 
-      alt: 'Amadeus Travel Technology' 
+      displayName: 'Amadeus',
+      color: 'from-purple-600 to-purple-800'
     },
     { 
       name: 'Sabre', 
-      logo: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=120&h=60&fit=crop&crop=center', 
-      alt: 'Sabre Travel Network' 
+      displayName: 'Sabre',
+      color: 'from-red-600 to-red-800'
     },
     { 
       name: 'Expedia', 
-      logo: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=120&h=60&fit=crop&crop=center', 
-      alt: 'Expedia Partner' 
+      displayName: 'Expedia',
+      color: 'from-yellow-600 to-orange-600'
     },
     { 
       name: 'Booking.com', 
-      logo: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=120&h=60&fit=crop&crop=center', 
-      alt: 'Booking.com Partner' 
+      displayName: 'Booking',
+      color: 'from-blue-500 to-cyan-600'
     },
     { 
       name: 'TripAdvisor', 
-      logo: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=120&h=60&fit=crop&crop=center', 
-      alt: 'TripAdvisor Partner' 
+      displayName: 'TripAdvisor',
+      color: 'from-green-600 to-green-800'
     },
   ];
 
@@ -78,12 +78,10 @@ const TrustIndicators = () => {
                 key={index}
                 className="group hover:transform hover:scale-110 transition-all duration-300 ease-out"
               >
-                <div className="bg-white/70 backdrop-blur-sm rounded-lg p-3 shadow-md hover:shadow-lg transition-all duration-300 border border-white/30 w-24 h-14 flex items-center justify-center">
-                  <img 
-                    src={partner.logo} 
-                    alt={partner.alt}
-                    className="max-w-full max-h-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-                  />
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 border border-white/30 w-28 h-16 flex items-center justify-center">
+                  <div className={`text-lg font-bold bg-gradient-to-r ${partner.color} bg-clip-text text-transparent text-center leading-tight`}>
+                    {partner.displayName}
+                  </div>
                 </div>
               </div>
             ))}
