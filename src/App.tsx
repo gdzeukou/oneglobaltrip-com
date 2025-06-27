@@ -18,6 +18,10 @@ import Bookings from '@/pages/Bookings';
 import Profile from '@/pages/Profile';
 import Admin from '@/pages/Admin';
 import AuthCallback from '@/pages/AuthCallback';
+import Packages from '@/pages/Packages';
+import PackageDetails from '@/pages/PackageDetails';
+import Visas from '@/pages/Visas';
+import GetStarted from '@/pages/GetStarted';
 
 function App() {
   return (
@@ -28,6 +32,10 @@ function App() {
             <AuthProvider>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/packages" element={<Packages />} />
+                <Route path="/packages/:id" element={<PackageDetails />} />
+                <Route path="/visas" element={<Visas />} />
+                <Route path="/get-started" element={<GetStarted />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/dashboard" element={<Dashboard />} />
