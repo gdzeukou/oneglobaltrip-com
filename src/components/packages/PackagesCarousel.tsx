@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,7 @@ const packageSlides: PackageSlide[] = [
     description: 'Experience the City of Light with guided tours and luxury stays',
     price: 'From $1,299',
     ctaText: 'Explore Deals',
-    ctaLink: '/packages?destination=paris',
+    ctaLink: '/packages/paris-explore-package',
     alt: 'Eiffel Tower and Parisian streets with cafes and architecture'
   },
   {
