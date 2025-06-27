@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,12 +17,12 @@ interface CarouselSlide {
 const heroSlides: CarouselSlide[] = [
   {
     id: '1',
-    image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?auto=format&fit=crop&w=1920&q=80',
+    image: '/lovable-uploads/73138664-5eac-4bdb-bd23-292b7cd838bd.png',
     destination: 'Paris',
     teaser: 'See Paris in Bloom',
     ctaText: 'Explore Deals',
     ctaLink: '/packages?destination=paris',
-    alt: 'Eiffel Tower and Parisian cityscape during golden hour with cherry blossoms'
+    alt: 'Eiffel Tower standing majestically against a clear blue sky with Parisian cityscape and green parks'
   },
   {
     id: '2',
