@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import VisasHero from '@/components/visa/VisasHero';
+import VisasCarousel from '@/components/visa/VisasCarousel';
 import TransparentPricingSection from '@/components/visa/TransparentPricingSection';
 import VisaWizard from '@/components/visa/wizard/VisaWizard';
 import MainCTASection from '@/components/visa/MainCTASection';
@@ -29,7 +29,10 @@ const Visas = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      <VisasHero />
+      <div className="container mx-auto px-4 py-8">
+        <VisasCarousel />
+      </div>
+      
       <TransparentPricingSection />
       <VisaWizard />
       <EnhancedVisaPagesPreview />

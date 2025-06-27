@@ -1,7 +1,7 @@
 
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import PackagesHero from '@/components/packages/PackagesHero';
+import PackagesCarousel from '@/components/packages/PackagesCarousel';
 import FeaturedPackages from '@/components/packages/FeaturedPackages';
 import PackagesFilters from '@/components/packages/PackagesFilters';
 import PackagesGrid from '@/components/packages/PackagesGrid';
@@ -24,10 +24,9 @@ const Packages = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      <PackagesHero 
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-      />
+      <div className="container mx-auto px-4 py-8">
+        <PackagesCarousel />
+      </div>
 
       <FeaturedPackages packages={packages} />
 
