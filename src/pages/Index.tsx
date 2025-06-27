@@ -2,7 +2,7 @@
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import HeroSection from '@/components/home/HeroSection';
+import HeroCarousel from '@/components/home/HeroCarousel';
 import TrustIndicators from '@/components/home/TrustIndicators';
 import ServicesSection from '@/components/home/ServicesSection';
 import PromoSection from '@/components/home/PromoSection';
@@ -16,7 +16,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      <HeroSection />
+      <HeroCarousel />
       <TrustIndicators />
       <ServicesSection />
       <PromoSection />

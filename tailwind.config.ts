@@ -112,6 +112,10 @@ export default {
 						opacity: '1',
 						transform: 'scale(1)'
 					}
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-200% 0' },
+					'100%': { backgroundPosition: '200% 0' }
 				}
 			},
 			animation: {
@@ -119,10 +123,14 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
 				'scale-in': 'scale-in 0.5s ease-out forwards',
+				'shimmer': 'shimmer 2s linear infinite',
 			},
 			boxShadow: {
 				'premium': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
 				'premium-hover': '0 32px 64px -12px rgba(0, 0, 0, 0.25)',
+			},
+			transitionDuration: {
+				'600': '600ms',
 			}
 		}
 	},
