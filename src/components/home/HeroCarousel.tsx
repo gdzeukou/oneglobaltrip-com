@@ -17,6 +17,15 @@ interface CarouselSlide {
 const heroSlides: CarouselSlide[] = [
   {
     id: '1',
+    image: '/lovable-uploads/82a7689d-5b8f-4da5-90f7-039d2ceefe64.png',
+    destination: 'Santorini',
+    teaser: 'Sunsets in Santorini',
+    ctaText: 'Explore Deals',
+    ctaLink: '/packages?destination=santorini',
+    alt: 'Beautiful Santorini sunset with white-washed buildings and blue domes overlooking the Aegean Sea'
+  },
+  {
+    id: '2',
     image: '/lovable-uploads/73138664-5eac-4bdb-bd23-292b7cd838bd.png',
     destination: 'Paris',
     teaser: 'See Paris in Bloom',
@@ -25,22 +34,13 @@ const heroSlides: CarouselSlide[] = [
     alt: 'Eiffel Tower standing majestically against a clear blue sky with Parisian cityscape and green parks'
   },
   {
-    id: '2',
-    image: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?auto=format&fit=crop&w=1920&q=80',
-    destination: 'Santorini',
-    teaser: 'Sunsets in Santorini',
-    ctaText: 'Explore Deals',
-    ctaLink: '/packages?destination=santorini',
-    alt: 'White-washed buildings with blue domes overlooking the Aegean Sea at sunset'
-  },
-  {
     id: '3',
-    image: 'https://images.unsplash.com/photo-1520986606214-8b456906c813?auto=format&fit=crop&w=1920&q=80',
+    image: '/lovable-uploads/efe38805-430b-4eea-b406-7b3d5e188592.png',
     destination: 'London',
     teaser: 'Royal London Adventures',
     ctaText: 'Explore Deals',
     ctaLink: '/packages?destination=london',
-    alt: 'Big Ben and London Eye with Thames River during twilight blue hour'
+    alt: 'London cityscape with Big Ben and Thames River during twilight blue hour'
   },
   {
     id: '4',
