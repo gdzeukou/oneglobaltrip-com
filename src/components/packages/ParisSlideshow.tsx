@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import EnhancedImage from '@/components/ui/enhanced-image-refactored';
 
 const parisImages = [
   {
@@ -29,6 +28,7 @@ const parisImages = [
 const ParisSlideshow = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [imagesLoaded, setImagesLoaded] = useState<boolean[]>(new Array(parisImages.length).fill(false));
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % parisImages.length);
@@ -41,6 +41,14 @@ const ParisSlideshow = () => {
   const goToSlide = useCallback((index: number) => {
     setCurrentSlide(index);
   }, []);
+
+  const handleImageLoad = (index: number) => {
+    setImagesLoaded(prev => {
+      const newState = [...prev];
+      newState[index] = true;
+      return newState;
+    });
+  };
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -64,13 +72,18 @@ const ParisSlideshow = () => {
               index === currentSlide ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            <EnhancedImage
+            {!imagesLoaded[index] && (
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 animate-pulse flex items-center justify-center">
+                <div className="text-white text-lg font-semibold">Loading Paris...</div>
+              </div>
+            )}
+            <img
               src={image.src}
               alt={image.alt}
               className="w-full h-full object-cover"
-              priority={index === 0}
-              sizes="100vw"
-              aspectRatio="16/9"
+              onLoad={() => handleImageLoad(index)}
+              onError={() => console.log(`Failed to load image ${index + 1}`)}
+              style={{ display: imagesLoaded[index] ? 'block' : 'none' }}
             />
           </div>
         ))}
