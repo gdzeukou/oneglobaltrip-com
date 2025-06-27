@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import EnhancedImage from '@/components/ui/enhanced-image';
+import EnhancedImage from '@/components/ui/enhanced-image-refactored';
 
 interface PackageSlide {
   id: string;
