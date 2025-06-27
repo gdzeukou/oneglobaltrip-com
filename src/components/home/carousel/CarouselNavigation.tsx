@@ -12,18 +12,18 @@ const CarouselNavigation = ({ onPrevSlide, onNextSlide }: CarouselNavigationProp
     <>
       <button
         onClick={onPrevSlide}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50"
+        className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 md:p-3 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50 z-10"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" />
+        <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
       </button>
 
       <button
         onClick={onNextSlide}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 md:p-4 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50"
+        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 md:p-3 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50 z-10"
         aria-label="Next slide"
       >
-        <ChevronRight className="h-6 w-6 md:h-8 md:w-8" />
+        <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
       </button>
     </>
   );

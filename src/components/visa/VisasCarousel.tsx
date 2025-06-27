@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -153,9 +154,9 @@ const VisasCarousel = () => {
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
 
-      {/* Content overlay */}
+      {/* Content overlay with proper padding for arrows */}
       <div className="absolute inset-0 flex items-end justify-start">
-        <div className="w-full p-6 md:p-8 lg:p-12">
+        <div className="w-full p-6 md:p-8 lg:p-12 pr-16 md:pr-20 pl-16 md:pl-20">
           <div 
             className={`transition-all duration-600 ease-out ${
               isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
@@ -184,21 +185,21 @@ const VisasCarousel = () => {
         </div>
       </div>
 
-      {/* Navigation arrows */}
+      {/* Navigation arrows with better positioning */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50"
+        className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 md:p-3 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50 z-10"
         aria-label="Previous visa service"
       >
-        <ChevronLeft className="h-6 w-6" />
+        <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50"
+        className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-2 md:p-3 rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50 z-10"
         aria-label="Next visa service"
       >
-        <ChevronRight className="h-6 w-6" />
+        <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
       </button>
 
       {/* Dot indicators */}

@@ -13,7 +13,7 @@ interface CarouselSlideContentProps {
 const CarouselSlideContent = ({ slide, isTransitioning }: CarouselSlideContentProps) => {
   return (
     <div className="absolute inset-0 flex items-end justify-start">
-      <div className="w-full p-6 md:p-12 lg:p-16">
+      <div className="w-full p-6 md:p-12 lg:p-16 pr-16 md:pr-20 pl-16 md:pl-20">
         <div 
           className={`transition-all duration-600 ease-out ${
             isTransitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
