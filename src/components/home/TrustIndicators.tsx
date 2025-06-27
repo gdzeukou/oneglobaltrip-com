@@ -53,7 +53,7 @@ const TrustIndicators = () => {
               className="group hover:transform hover:scale-105 transition-all duration-500 ease-out"
             >
               <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-premium hover:shadow-premium-hover transition-all duration-500 border border-slate-200/50">
-                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent mb-2 font-serif">
+                <div className="text-4xl md:text-5xl font-bold bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 bg-clip-text text-transparent mb-2 font-sans">
                   {stat.number}
                 </div>
                 <div className="text-slate-600 font-medium text-base tracking-wide uppercase letter-spacing-wide">
@@ -66,7 +66,7 @@ const TrustIndicators = () => {
 
         {/* Partners Section */}
         <div className="text-center">
-          <h3 className="text-2xl font-bold text-slate-800 mb-2 font-serif tracking-wide">Trusted by Industry Leaders</h3>
+          <h3 className="text-2xl font-bold text-slate-800 mb-2 font-sans tracking-wide">Trusted by Industry Leaders</h3>
           <p className="text-slate-600 mb-10 text-lg">Partnerships that ensure excellence in every journey</p>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6 items-center justify-items-center max-w-4xl mx-auto">
             {partners.map((partner, index) => (
@@ -75,7 +75,7 @@ const TrustIndicators = () => {
                 className="group hover:transform hover:scale-110 transition-all duration-500 ease-out"
               >
                 <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-premium hover:shadow-premium-hover transition-all duration-500 border border-slate-200/30 w-36 h-20 flex items-center justify-center">
-                  <div className={`text-xl font-bold bg-gradient-to-r ${partner.color} bg-clip-text text-transparent text-center leading-tight font-serif tracking-wide`}>
+                  <div className={`text-xl font-bold bg-gradient-to-r ${partner.color} bg-clip-text text-transparent text-center leading-tight font-sans tracking-wide`}>
                     {partner.displayName}
                   </div>
                 </div>
