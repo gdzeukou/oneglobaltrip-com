@@ -64,24 +64,24 @@ const OptionalAddOns = () => {
   };
 
   return (
-    <section className="py-12 bg-gradient-to-br from-blue-50 to-indigo-50">
+    <section className="py-10 bg-gradient-to-br from-blue-50 to-indigo-50">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-10">
-          <div className="flex items-center justify-center mb-4">
-            <Star className="h-8 w-8 text-amber-500 mr-3" />
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-3">
+            <Star className="h-6 w-6 text-amber-500 mr-2" />
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
               Optional Add-Ons
             </h2>
           </div>
-          <p className="text-xl text-slate-600 font-medium">
+          <p className="text-lg text-slate-600 font-medium">
             (Highly Recommended)
           </p>
-          <p className="text-lg text-slate-500 mt-2 max-w-2xl mx-auto">
+          <p className="text-base text-slate-500 mt-1 max-w-2xl mx-auto">
             Enhance your Paris experience with these carefully curated extras
           </p>
         </div>
 
-        <div className="grid gap-6 md:gap-8">
+        <div className="grid gap-4 md:gap-5">
           {addOns.map((addOn) => {
             const IconComponent = addOn.icon;
             const isSelected = selectedAddOns.includes(addOn.id);
@@ -95,53 +95,53 @@ const OptionalAddOns = () => {
                     : 'border-gray-200 hover:border-gray-300'
                 } ${addOn.isRecommended ? 'ring-2 ring-amber-200' : ''}`}
               >
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
+                <CardContent className="p-4">
+                  <div className="flex items-start space-x-3">
                     {/* Icon */}
-                    <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center ${
+                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
                       addOn.isFree 
                         ? 'bg-green-100 text-green-600' 
                         : 'bg-blue-100 text-blue-600'
                     }`}>
-                      <IconComponent className="h-8 w-8" />
+                      <IconComponent className="h-6 w-6" />
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center space-x-3">
-                          <h3 className="text-xl md:text-2xl font-bold text-slate-900 leading-tight">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <h3 className="text-lg md:text-xl font-bold text-slate-900 leading-tight">
                             {addOn.title}
                           </h3>
                           {addOn.isRecommended && (
-                            <Badge className="bg-amber-100 text-amber-700 border-amber-300 text-sm font-medium">
+                            <Badge className="bg-amber-100 text-amber-700 border-amber-300 text-xs font-medium">
                               Recommended
                             </Badge>
                           )}
                         </div>
                       </div>
                       
-                      <p className="text-lg text-slate-600 mb-4 leading-relaxed">
+                      <p className="text-base text-slate-600 mb-3 leading-relaxed">
                         {addOn.description}
                       </p>
                       
                       <div className="flex items-center justify-between">
-                        <div className={`text-lg font-bold ${
+                        <div className={`text-base font-bold ${
                           addOn.isFree ? 'text-green-600' : 'text-blue-600'
                         }`}>
                           {addOn.price}
                         </div>
                         
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2">
                           <Checkbox
                             id={addOn.id}
                             checked={isSelected}
                             onCheckedChange={() => handleAddOnToggle(addOn.id)}
-                            className="h-6 w-6"
+                            className="h-5 w-5"
                           />
                           <label 
                             htmlFor={addOn.id}
-                            className="text-lg font-medium text-slate-700 cursor-pointer select-none"
+                            className="text-base font-medium text-slate-700 cursor-pointer select-none"
                           >
                             Add to My Package
                           </label>
@@ -157,19 +157,19 @@ const OptionalAddOns = () => {
 
         {/* Summary */}
         {selectedAddOns.length > 0 && (
-          <div className="mt-8 p-6 bg-white rounded-xl shadow-lg border-2 border-blue-200">
+          <div className="mt-6 p-4 bg-white rounded-xl shadow-lg border-2 border-blue-200">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                <h3 className="text-lg font-bold text-slate-900 mb-1">
                   Selected Add-Ons ({selectedAddOns.length})
                 </h3>
-                <p className="text-lg text-slate-600">
+                <p className="text-base text-slate-600">
                   Your selections will be included in the final booking
                 </p>
               </div>
               <div className="flex items-center space-x-2">
-                <Plus className="h-6 w-6 text-blue-600" />
-                <span className="text-2xl font-bold text-blue-600">
+                <Plus className="h-5 w-5 text-blue-600" />
+                <span className="text-lg font-bold text-blue-600">
                   Enhanced Experience
                 </span>
               </div>
@@ -178,12 +178,12 @@ const OptionalAddOns = () => {
         )}
 
         {/* Call to Action */}
-        <div className="mt-8 text-center">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white">
-            <h3 className="text-2xl font-bold mb-2">
+        <div className="mt-6 text-center">
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-4 text-white">
+            <h3 className="text-xl font-bold mb-1">
               Ready to Enhance Your Paris Adventure?
             </h3>
-            <p className="text-lg opacity-90">
+            <p className="text-base opacity-90">
               These add-ons are designed to create unforgettable memories and provide authentic Parisian experiences
             </p>
           </div>

@@ -10,23 +10,26 @@ import { MapPin, Clock, Users, Star, Check, X } from 'lucide-react';
 
 const ParisExplorePackage = () => {
   const included = [
-    "4 nights accommodation in 4-star hotel",
+    "4 nights accommodation in 4-star hotel in central Paris location",
     "Daily breakfast buffet",
     "Skip-the-line Eiffel Tower tickets",
-    "Louvre Museum guided tour",
+    "Louvre Museum guided tour with skip-the-line access and professional guide",
     "Seine River cruise",
     "Metro travel card (3 days)",
     "Professional English-speaking guide",
-    "24/7 customer support"
+    "24/7 customer support",
+    "International flights to/from Paris",
+    "Travel insurance (comprehensive coverage)",
+    "Lunch and dinner recommendations at local restaurants"
   ];
 
   const notIncluded = [
-    "International flights",
-    "Lunch and dinner (except breakfast)",
     "Personal expenses and shopping",
-    "Travel insurance",
     "Gratuities for guides and drivers",
-    "Optional activities not mentioned"
+    "Optional activities not mentioned in the package",
+    "Airport transfers (can be added upon request)",
+    "Additional meals beyond breakfast (customizable dining options available)",
+    "Spa services and room service"
   ];
 
   return (
@@ -38,7 +41,7 @@ const ParisExplorePackage = () => {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center mb-6">
             <div className="w-12 h-8 bg-gradient-to-r from-blue-600 to-white to-red-600 rounded mr-4"></div>
-            <span className="text-lg font-semibold text-blue-200">France • Single Country Trip</span>
+            <span className="text-lg font-semibold text-blue-200">Paris • Single City Trip</span>
           </div>
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
@@ -129,6 +132,11 @@ const ParisExplorePackage = () => {
                     </li>
                   ))}
                 </ul>
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700 font-medium">
+                    💡 Note: Many of these items can be customized and added to your package upon request. Contact us for personalized options!
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>
