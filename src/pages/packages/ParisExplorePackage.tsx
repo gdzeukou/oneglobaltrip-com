@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -126,6 +125,11 @@ const ParisExplorePackage = () => {
                     </li>
                   ))}
                 </ul>
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700 font-medium">
+                    💡 <strong>Available Upon Request:</strong> International flights and travel insurance can be added upon request.
+                  </p>
+                </div>
               </CardContent>
             </Card>
 
@@ -147,15 +151,9 @@ const ParisExplorePackage = () => {
                   ))}
                 </ul>
                 <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-700 font-medium mb-2">
-                    💡 <strong>Available Upon Request:</strong>
+                  <p className="text-sm text-blue-700 font-medium">
+                    💡 <strong>Note:</strong> If you want the items that are not included, you can always request them.
                   </p>
-                  <ul className="text-sm text-blue-600 space-y-1">
-                    <li>• International flights to/from Paris</li>
-                    <li>• Comprehensive travel insurance</li>
-                    <li>• Airport transfers and additional transportation</li>
-                    <li>• Customized dining experiences and restaurant recommendations</li>
-                  </ul>
                 </div>
               </CardContent>
             </Card>

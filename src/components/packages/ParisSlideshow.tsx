@@ -67,7 +67,7 @@ const ParisSlideshow = () => {
             <EnhancedImage
               src={image.src}
               alt={image.alt}
-              className="w-full h-full"
+              className="w-full h-full object-cover"
               priority={index === 0}
               sizes="100vw"
               aspectRatio="16/9"
