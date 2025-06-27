@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles, Plane, Globe, Star, Shield } from 'lucide-react';
@@ -12,16 +11,6 @@ const TravelDreamsCTA = () => {
         <div className="absolute top-10 left-10 w-48 md:w-72 h-48 md:h-72 bg-pink-500/20 rounded-full blur-3xl animate-colorful-float" />
         <div className="absolute bottom-10 right-10 w-64 md:w-96 h-64 md:h-96 bg-yellow-400/20 rounded-full blur-3xl animate-colorful-float" style={{ animationDelay: '1s' }} />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-56 md:w-80 h-56 md:h-80 bg-green-400/15 rounded-full blur-2xl animate-colorful-float" style={{ animationDelay: '2s' }} />
-      </div>
-
-      {/* Colorful geometric patterns */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-20 left-20 w-4 h-4 bg-pink-400 rotate-45 animate-pulse" />
-        <div className="absolute top-40 right-32 w-6 h-6 bg-yellow-300 rounded-full animate-bounce" />
-        <div className="absolute bottom-32 left-1/3 w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-        <div className="absolute bottom-20 right-1/4 w-5 h-5 bg-blue-300 rotate-45 animate-bounce" />
-        <div className="absolute top-1/3 left-1/4 w-2 h-2 bg-purple-400 animate-pulse" />
-        <div className="absolute bottom-1/3 right-1/3 w-4 h-4 bg-indigo-300 rounded-full animate-bounce" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
