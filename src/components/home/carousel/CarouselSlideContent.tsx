@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { PlaneTakeoff } from 'lucide-react';
 import { CarouselSlide } from '@/data/heroSlides';
 
 interface CarouselSlideContentProps {
@@ -27,12 +27,12 @@ const CarouselSlideContent = ({ slide, isTransitioning }: CarouselSlideContentPr
           </p>
           <Button
             size="lg"
-            className="bg-gradient-to-r from-[#FF6F61] to-[#ff8a7a] hover:from-[#e55a4d] hover:to-[#ff6f61] text-white font-semibold text-lg px-8 py-6 rounded-lg shadow-premium hover:shadow-premium-hover transition-all duration-300 hover:scale-105"
+            className="bg-gradient-to-r from-[#CC4500] to-[#FF4500] hover:from-[#B83A00] hover:to-[#E63E00] text-white font-bold text-lg px-10 py-7 rounded-xl shadow-2xl hover:shadow-premium-hover transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 active:scale-105 border-2 border-white/20 backdrop-blur-sm"
             asChild
           >
             <Link to={slide.ctaLink}>
               {slide.ctaText}
-              <ArrowRight className="h-5 w-5 ml-2" />
+              <PlaneTakeoff className="h-6 w-6 ml-3 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
             </Link>
           </Button>
         </div>
