@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { heroSlides } from '@/data/heroSlides';
 import { useCarousel } from '@/hooks/useCarousel';
 import { useCarouselTouch } from '@/hooks/useCarouselTouch';
@@ -29,7 +29,7 @@ const HeroCarousel = () => {
     handleKeyDown
   } = useCarouselTouch(nextSlide, prevSlide);
 
-  const currentSlideData = heroSlides[currentSlide];
+  const currentSlideData = useMemo(() => heroSlides[currentSlide], [currentSlide]);
 
   return (
     <section 

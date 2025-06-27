@@ -1,6 +1,6 @@
 
 import React from 'react';
-import EnhancedImage from '@/components/ui/enhanced-image';
+import FastImage from '@/components/ui/fast-image';
 import { CarouselSlide } from '@/data/heroSlides';
 
 interface CarouselSlidesProps {
@@ -14,15 +14,15 @@ const CarouselSlides = ({ slides, currentSlide }: CarouselSlidesProps) => {
       {slides.map((slide, index) => (
         <figure 
           key={slide.id}
-          className={`absolute inset-0 transition-opacity duration-600 ease-in-out ${
+          className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
             index === currentSlide ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <EnhancedImage
+          <FastImage
             src={slide.image}
             alt={slide.alt}
             className="w-full h-full"
-            priority={index === 0}
+            priority={index === 0 || index === currentSlide}
             sizes="100vw"
             aspectRatio="16/9"
           />

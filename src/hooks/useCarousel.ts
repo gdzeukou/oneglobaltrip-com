@@ -9,47 +9,40 @@ interface UseCarouselProps {
 
 export const useCarousel = ({ 
   totalSlides, 
-  autoPlayInterval = 4000, 
+  autoPlayInterval = 5000, 
   isPlaying = true 
 }: UseCarouselProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const nextSlide = useCallback(() => {
+    if (isTransitioning) return;
     setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentSlide((prev) => (prev + 1) % totalSlides);
-      setIsTransitioning(false);
-    }, 300);
-  }, [totalSlides]);
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+    setTimeout(() => setIsTransitioning(false), 100);
+  }, [totalSlides, isTransitioning]);
 
   const prevSlide = useCallback(() => {
+    if (isTransitioning) return;
     setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
-      setIsTransitioning(false);
-    }, 300);
-  }, [totalSlides]);
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+    setTimeout(() => setIsTransitioning(false), 100);
+  }, [totalSlides, isTransitioning]);
 
   const goToSlide = useCallback((index: number) => {
-    if (index === currentSlide) return;
+    if (index === currentSlide || isTransitioning) return;
     setIsTransitioning(true);
-    setTimeout(() => {
-      setCurrentSlide(index);
-      setIsTransitioning(false);
-    }, 300);
-  }, [currentSlide]);
+    setCurrentSlide(index);
+    setTimeout(() => setIsTransitioning(false), 100);
+  }, [currentSlide, isTransitioning]);
 
   // Auto-play functionality
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isPlaying || isTransitioning) return;
 
-    const interval = setInterval(() => {
-      nextSlide();
-    }, autoPlayInterval);
-
+    const interval = setInterval(nextSlide, autoPlayInterval);
     return () => clearInterval(interval);
-  }, [currentSlide, isPlaying, nextSlide, autoPlayInterval]);
+  }, [isPlaying, isTransitioning, nextSlide, autoPlayInterval]);
 
   return {
     currentSlide,
