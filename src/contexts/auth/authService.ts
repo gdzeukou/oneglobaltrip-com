@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { validateEmail } from '@/utils/validation';
 
@@ -81,30 +80,34 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
         // Since we've already verified the OTP through our custom system, we'll use a passwordless approach
         console.log('Completing signin after OTP verification');
         
-        // First, check if user exists
-        const { data: { users }, error: listError } = await supabase.auth.admin.listUsers();
+        // First, check if user exists by trying to get user data
+        const { data: userData, error: userError } = await supabase.auth.admin.getUserById(email);
         
-        if (listError) {
-          console.error('Error checking user existence:', listError);
-          return { error: { message: 'Authentication failed' } };
-        }
-        
-        const existingUser = users.find(user => user.email === email);
-        
-        if (!existingUser) {
-          console.error('User not found for signin');
-          return { error: { message: 'User not found. Please sign up first.' } };
-        }
-        
-        // Generate a temporary password reset token to sign in the user
-        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/auth/callback`
-        });
-        
-        if (resetError) {
-          console.error('Error generating signin token:', resetError);
-          // If password reset fails, try alternative approach
-          // Create a magic link for signin
+        if (userError) {
+          console.error('Error checking user existence:', userError);
+          // If we can't use admin.getUserById, try alternative approach
+          try {
+            // Generate a magic link for signin
+            const { error: magicLinkError } = await supabase.auth.signInWithOtp({
+              email,
+              options: {
+                emailRedirectTo: `${window.location.origin}/`
+              }
+            });
+            
+            if (magicLinkError) {
+              console.error('Magic link signin error:', magicLinkError);
+              return { error: { message: 'Authentication failed. Please try again.' } };
+            }
+            
+            console.log('Magic link sent for signin');
+          } catch (fallbackError) {
+            console.error('Fallback signin error:', fallbackError);
+            return { error: { message: 'Authentication failed. Please try again.' } };
+          }
+        } else if (userData?.user) {
+          console.log('User found, creating session');
+          // Generate a magic link for signin
           const { error: magicLinkError } = await supabase.auth.signInWithOtp({
             email,
             options: {
@@ -118,10 +121,13 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
           }
           
           console.log('Magic link sent for signin');
+        } else {
+          console.error('User not found for signin');
+          return { error: { message: 'User not found. Please sign up first.' } };
         }
         
         // Since we've verified the OTP, we can consider the user authenticated
-        // The session will be established through the magic link or password reset flow
+        // The session will be established through the magic link flow
         console.log('Signin process initiated successfully');
       }
     }
