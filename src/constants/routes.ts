@@ -17,6 +17,8 @@ export const ROUTES = {
   ADMIN: '/admin',
   
   // Visa categories
+  SHORT_STAY_VISAS: '/visas/short-stay',
+  LONG_STAY_VISAS: '/visas/long-stay', 
   VISAS_SHORT_STAY: '/visas/short-stay',
   VISAS_LONG_STAY: '/visas/long-stay',
   VISAS_PRICING: '/visas/pricing',
