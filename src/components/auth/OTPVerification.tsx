@@ -205,7 +205,7 @@ const OTPVerification = ({
           <div className="space-y-3">
             <Button 
               onClick={() => handleVerify()} 
-              disabled={isVerifying || otp.length !== 6 || success}
+              disabled={isVerifying || otp.length !== 6 || Boolean(success)}
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
             >
               {isVerifying ? 'Verifying...' : success ? 'Verified!' : 'Verify Code'}
@@ -216,7 +216,7 @@ const OTPVerification = ({
                 variant="ghost"
                 onClick={onBack}
                 className="flex items-center gap-2 text-purple-700 hover:text-purple-900 hover:bg-purple-50"
-                disabled={isVerifying || success}
+                disabled={isVerifying || Boolean(success)}
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back
@@ -225,7 +225,7 @@ const OTPVerification = ({
               <Button
                 variant="ghost"
                 onClick={handleResend}
-                disabled={isResending || !canResend || success}
+                disabled={isResending || !canResend || Boolean(success)}
                 className="flex items-center gap-2 text-purple-700 hover:text-purple-900 hover:bg-purple-50"
               >
                 {isResending ? (
