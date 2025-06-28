@@ -10,10 +10,10 @@ export const LazyPackages = lazy(() => import('@/pages/Packages'));
 export const LazyAuth = lazy(() => import('@/pages/Auth'));
 export const LazyDashboard = lazy(() => import('@/pages/Dashboard'));
 export const LazyBooking = lazy(() => import('@/pages/Booking'));
-export const LazyGetStarted = lazy(() => import('@/pages/GetStarted'));
 export const LazyConcierge = lazy(() => import('@/pages/Concierge'));
 export const LazyAdmin = lazy(() => import('@/pages/Admin'));
 export const LazyAdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
+export const LazyContact = lazy(() => import('@/pages/Contact'));
 
 // Visa country pages
 export const LazySchengenShortStay = lazy(() => import('@/pages/visa-countries/SchengenShortStay'));
@@ -97,7 +97,7 @@ const routeComponentMap: Record<string, () => Promise<any>> = {
   '/auth': () => import('@/pages/Auth'),
   '/dashboard': () => import('@/pages/Dashboard'),
   '/booking': () => import('@/pages/Booking'),
-  '/get-started': () => import('@/pages/GetStarted'),
+  '/contact': () => import('@/pages/Contact'),
   '/concierge': () => import('@/pages/Concierge'),
   '/admin': () => import('@/pages/Admin'),
   '/admin/dashboard': () => import('@/pages/AdminDashboard'),

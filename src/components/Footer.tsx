@@ -34,7 +34,7 @@ const Footer = () => {
               <Link to={ROUTES.HOME} className="block text-blue-200 hover:text-white transition-colors">Home</Link>
               <Link to={ROUTES.PACKAGES} className="block text-blue-200 hover:text-white transition-colors">Packages</Link>
               <Link to={ROUTES.VISAS} className="block text-blue-200 hover:text-white transition-colors">Visas</Link>
-              <Link to={ROUTES.GET_STARTED} className="block text-blue-200 hover:text-white transition-colors">Get Started</Link>
+              <Link to={ROUTES.CONTACT} className="block text-blue-200 hover:text-white transition-colors">Contact</Link>
               <Link to={ROUTES.AUTH} className="block text-blue-200 hover:text-white transition-colors">Sign In</Link>
             </div>
           </div>
