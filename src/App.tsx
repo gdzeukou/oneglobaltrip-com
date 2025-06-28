@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -31,6 +30,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Visa country pages
 import SchengenShortStay from "./pages/visa-countries/SchengenShortStay";
+import SchengenLandingPage from "./pages/visa-countries/SchengenLandingPage";
 import FranceShortStay from "./pages/visa-countries/FranceShortStay";
 import GreeceShortStay from "./pages/visa-countries/GreeceShortStay";
 import ItalyShortStay from "./pages/visa-countries/ItalyShortStay";
@@ -78,6 +78,7 @@ const App = () => (
             
             {/* Short Stay Visa Routes */}
             <Route path="/visas/schengen-short-stay" element={<SchengenShortStay />} />
+            <Route path="/visas/schengen-short-stay-landing" element={<SchengenLandingPage />} />
             <Route path="/visas/france-short-stay" element={<FranceShortStay />} />
             <Route path="/visas/greece-short-stay" element={<GreeceShortStay />} />
             <Route path="/visas/italy-short-stay" element={<ItalyShortStay />} />
