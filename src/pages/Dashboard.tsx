@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
@@ -57,7 +56,6 @@ interface Trip {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
-  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [applications, setApplications] = useState<Application[]>([]);
   const [trips, setTrips] = useState<Trip[]>([]);
@@ -65,13 +63,8 @@ const Dashboard = () => {
   const [documentsRefreshTrigger, setDocumentsRefreshTrigger] = useState(0);
 
   useEffect(() => {
-    if (!user) {
-      navigate('/auth');
-      return;
-    }
-    
     fetchUserData();
-  }, [user, navigate]);
+  }, [user]);
 
   const fetchUserData = async () => {
     if (!user) return;
@@ -118,7 +111,6 @@ const Dashboard = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
   };
 
   const getStatusColor = (status: string) => {

@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 // Lazy load components for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -45,13 +46,62 @@ const App = () => {
                       <Route path="/" element={<Index />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/auth/callback" element={<AuthCallback />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/profile" element={<Profile />} />
-                      <Route path="/bookings" element={<Bookings />} />
-                      <Route path="/booking" element={<Booking />} />
-                      <Route path="/concierge" element={<Concierge />} />
-                      <Route path="/admin" element={<Admin />} />
-                      <Route path="/admin-dashboard" element={<AdminDashboard />} />
+                      <Route 
+                        path="/dashboard" 
+                        element={
+                          <ProtectedRoute>
+                            <Dashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/profile" 
+                        element={
+                          <ProtectedRoute>
+                            <Profile />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/bookings" 
+                        element={
+                          <ProtectedRoute>
+                            <Bookings />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/booking" 
+                        element={
+                          <ProtectedRoute>
+                            <Booking />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/concierge" 
+                        element={
+                          <ProtectedRoute>
+                            <Concierge />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/admin" 
+                        element={
+                          <ProtectedRoute>
+                            <Admin />
+                          </ProtectedRoute>
+                        } 
+                      />
+                      <Route 
+                        path="/admin-dashboard" 
+                        element={
+                          <ProtectedRoute>
+                            <AdminDashboard />
+                          </ProtectedRoute>
+                        } 
+                      />
                     </Routes>
                   </Suspense>
                 </main>
