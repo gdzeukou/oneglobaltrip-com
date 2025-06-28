@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 import { validateEmail } from '@/utils/validation';
 
@@ -48,39 +49,17 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
     if (data?.success && data?.authData?.actionLink) {
       console.log('OTP verification successful, processing magic link authentication');
       
-      // Navigate to the magic link to establish the session
-      // This will trigger Supabase's authentication flow
+      // Process the magic link directly by navigating to it
+      // This will trigger Supabase's authentication flow and redirect back
       const magicLinkUrl = data.authData.actionLink;
-      console.log('Processing magic link for authentication');
+      console.log('Navigating to magic link for authentication');
       
-      // Use a hidden iframe to process the magic link
-      return new Promise((resolve) => {
-        const iframe = document.createElement('iframe');
-        iframe.style.display = 'none';
-        iframe.src = magicLinkUrl;
-        
-        // Listen for auth state changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-          if (event === 'SIGNED_IN' && session) {
-            console.log('Magic link authentication successful');
-            document.body.removeChild(iframe);
-            subscription.unsubscribe();
-            resolve({ error: null });
-          }
-        });
-        
-        document.body.appendChild(iframe);
-        
-        // Cleanup after timeout
-        setTimeout(() => {
-          if (document.body.contains(iframe)) {
-            document.body.removeChild(iframe);
-            subscription.unsubscribe();
-            console.log('Magic link authentication completed');
-            resolve({ error: null });
-          }
-        }, 3000);
-      });
+      // Instead of using iframe, directly navigate to the magic link
+      // This ensures the session is properly established in the main window
+      window.location.href = magicLinkUrl;
+      
+      // Return success immediately since we're redirecting
+      return { error: null };
     }
 
     return { error: data?.error ? { message: data.error } : null };
