@@ -1,3 +1,4 @@
+
 // Centralized route constants for consistent navigation
 export const ROUTES = {
   // Main pages

@@ -1,4 +1,3 @@
-
 import VisaCard from '@/components/common/VisaCard';
 import { ROUTES } from '@/constants/routes';
 
@@ -12,7 +11,7 @@ const VisaGrid = () => {
       price: 193,
       image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center',
       promo: 'Save $25 this month',
-      route: ROUTES.SCHENGEN_LANDING
+      route: ROUTES.SCHENGEN_SHORT_STAY_LANDING
     },
     {
       id: 'uk',
