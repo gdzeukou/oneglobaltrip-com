@@ -1,26 +1,9 @@
+
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useSecureFormSubmission } from './useSecureFormSubmission';
-
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  destination: string;
-  travelDate: string;
-  duration: string;
-  travelers: string;
-  budget: string;
-  selectedPackages: string[];
-  travelNeeds: string[];
-  otherNeeds: string;
-  specialRequests: string;
-  nationality: string;
-  visaType: string;
-  travelPurpose: string;
-  departureDate: string;
-  returnDate: string;
-}
+import { useFormState } from './useFormState';
+import { useFormValidation } from './useFormValidation';
 
 export const useUnifiedForm = (
   type: 'consultation' | 'visa-application' | 'package-booking',
@@ -28,74 +11,16 @@ export const useUnifiedForm = (
   onComplete?: () => void
 ) => {
   const { toast } = useToast();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    phone: '',
-    destination: '',
-    travelDate: '',
-    duration: '',
-    travelers: '',
-    budget: '',
-    selectedPackages: preSelectedPackage ? [preSelectedPackage] : [],
-    travelNeeds: [],
-    otherNeeds: '',
-    specialRequests: '',
-    nationality: '',
-    visaType: '',
-    travelPurpose: 'tourism',
-    departureDate: '',
-    returnDate: ''
-  });
+  const formState = useFormState(type, preSelectedPackage);
+  const { validateStep, validateFormData } = useFormValidation();
 
   const {
     trackActivity,
     saveFormSubmission,
     sendWelcomeEmail,
-    validateFormData,
     checkSubmissionRateLimit,
     handleSubmissionError
   } = useSecureFormSubmission();
-
-  const totalSteps = type === 'package-booking' ? 4 : 3;
-
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleTravelNeedsChange = (need: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      travelNeeds: checked 
-        ? [...prev.travelNeeds, need]
-        : prev.travelNeeds.filter(n => n !== need)
-    }));
-  };
-
-  const handlePackageSelection = (packageId: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedPackages: checked
-        ? [...prev.selectedPackages, packageId]
-        : prev.selectedPackages.filter(id => id !== packageId)
-    }));
-  };
-
-  const handleNext = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-      trackActivity('form_next_step', { step: currentStep + 1, form_type: type }, formData.email);
-    }
-  };
-
-  const handlePrev = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-      trackActivity('form_prev_step', { step: currentStep - 1, form_type: type }, formData.email);
-    }
-  };
 
   const openCalendly = () => {
     window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank', 'width=800,height=700');
@@ -105,25 +30,25 @@ export const useUnifiedForm = (
     console.log('=== SECURE UNIFIED FORM SUBMISSION START ===');
 
     // Enhanced validation with security checks
-    if (!validateFormData(formData)) {
+    if (!validateFormData(formState.formData)) {
       return;
     }
 
     // Check rate limit (enhanced security)
-    const canSubmit = await checkSubmissionRateLimit(formData.email);
+    const canSubmit = await checkSubmissionRateLimit(formState.formData.email);
     if (!canSubmit) {
       return;
     }
 
-    setIsSubmitting(true);
+    formState.setIsSubmitting(true);
 
     try {
       // Critical: Save to database with enhanced security
-      await saveFormSubmission(type, formData);
+      await saveFormSubmission(type, formState.formData);
       console.log('✅ Secure database save successful');
 
       // Non-critical: Send welcome email
-      const emailSent = await sendWelcomeEmail(formData, type);
+      const emailSent = await sendWelcomeEmail(formState.formData, type);
 
       // Show success message
       const messages = {
@@ -156,40 +81,16 @@ export const useUnifiedForm = (
     } catch (error) {
       handleSubmissionError(error);
     } finally {
-      setIsSubmitting(false);
+      formState.setIsSubmitting(false);
     }
   };
 
   const isStepValid = () => {
-    switch (currentStep) {
-      case 1:
-        return formData.name.trim().length > 0 && 
-               formData.email.includes('@') && 
-               formData.phone.trim().length > 0;
-      case 2:
-        if (type === 'package-booking') {
-          return formData.selectedPackages.length > 0;
-        }
-        return true;
-      case 3:
-        return true;
-      case 4:
-        return true;
-      default:
-        return false;
-    }
+    return validateStep(formState.currentStep, formState.formData, type);
   };
 
   return {
-    formData,
-    currentStep,
-    totalSteps,
-    isSubmitting,
-    handleInputChange,
-    handleTravelNeedsChange,
-    handlePackageSelection,
-    handleNext,
-    handlePrev,
+    ...formState,
     handleSubmit,
     isStepValid,
     trackActivity

@@ -24,78 +24,86 @@ const StepRenderer = ({
   onTravelNeedsChange,
   onPackageSelection
 }: StepRendererProps) => {
-  switch (currentStep) {
-    case 1:
-      return (
-        <PersonalInfoStep
-          formData={formData}
-          onInputChange={onInputChange}
-          type={type}
-        />
-      );
-
-    case 2:
-      if (type === 'package-booking') {
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
         return (
-          <div className="space-y-6">
-            <PackageSelector
-              selectedPackages={formData.selectedPackages}
-              onPackageSelection={onPackageSelection}
-            />
-            
-            <TravelNeedsSelector
-              selectedNeeds={formData.travelNeeds}
-              otherNeeds={formData.otherNeeds}
-              onNeedChange={onTravelNeedsChange}
-              onOtherNeedsChange={(value) => onInputChange('otherNeeds', value)}
-            />
-          </div>
-        );
-      } else {
-        return (
-          <TravelInfoStep
+          <PersonalInfoStep
             formData={formData}
             onInputChange={onInputChange}
+            type={type}
           />
         );
-      }
 
-    case 3:
-      if (type === 'package-booking') {
-        return (
-          <PreferencesStep
-            formData={formData}
-            onInputChange={onInputChange}
-          />
-        );
-      } else {
-        return (
-          <div className="space-y-4">
-            <TravelNeedsSelector
-              selectedNeeds={formData.travelNeeds}
-              otherNeeds={formData.otherNeeds}
-              onNeedChange={onTravelNeedsChange}
-              onOtherNeedsChange={(value) => onInputChange('otherNeeds', value)}
+      case 2:
+        if (type === 'package-booking') {
+          return (
+            <div className="space-y-6">
+              <PackageSelector
+                selectedPackages={formData.selectedPackages}
+                onPackageSelection={onPackageSelection}
+              />
+              
+              <TravelNeedsSelector
+                selectedNeeds={formData.travelNeeds}
+                otherNeeds={formData.otherNeeds}
+                onNeedChange={onTravelNeedsChange}
+                onOtherNeedsChange={(value) => onInputChange('otherNeeds', value)}
+              />
+            </div>
+          );
+        } else {
+          return (
+            <TravelInfoStep
+              formData={formData}
+              onInputChange={onInputChange}
             />
+          );
+        }
+
+      case 3:
+        if (type === 'package-booking') {
+          return (
             <PreferencesStep
               formData={formData}
               onInputChange={onInputChange}
             />
-          </div>
+          );
+        } else {
+          return (
+            <div className="space-y-4">
+              <TravelNeedsSelector
+                selectedNeeds={formData.travelNeeds}
+                otherNeeds={formData.otherNeeds}
+                onNeedChange={onTravelNeedsChange}
+                onOtherNeedsChange={(value) => onInputChange('otherNeeds', value)}
+              />
+              <PreferencesStep
+                formData={formData}
+                onInputChange={onInputChange}
+              />
+            </div>
+          );
+        }
+
+      case 4:
+        return (
+          <ReviewStep
+            formData={formData}
+            type={type}
+          />
         );
-      }
 
-    case 4:
-      return (
-        <ReviewStep
-          formData={formData}
-          type={type}
-        />
-      );
+      default:
+        return null;
+    }
+  };
 
-    default:
-      return null;
-  }
+  return (
+    <div className="min-h-[300px]">
+      {renderStep()}
+    </div>
+  );
 };
 
 export default StepRenderer;
