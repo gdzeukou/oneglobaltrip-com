@@ -10,6 +10,7 @@ import Packages from "./pages/Packages";
 import ParisExplorePackage from "./pages/packages/ParisExplorePackage";
 import PackageDetails from "./pages/PackageDetails";
 import Visas from "./pages/Visas";
+import ShortStayVisas from "./pages/ShortStayVisas";
 import GetStarted from "./pages/GetStarted";
 import Contact from "./pages/Contact";
 import Pricing from "./pages/Pricing";
@@ -25,7 +26,7 @@ import AuthCallback from "./pages/AuthCallback";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import ErrorPage from "./pages/ErrorPage";
-import { LazyShortStayVisas, LazyLongStayVisas } from "./utils/lazyImports";
+import { LazyLongStayVisas } from "./utils/lazyImports";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 // Visa country pages
@@ -71,7 +72,7 @@ const App = () => (
             <Route path="/packages/paris-explore-package" element={<ParisExplorePackage />} />
             <Route path="/packages/:id" element={<PackageDetails />} />
             <Route path="/visas" element={<Visas />} />
-            <Route path="/visas/short-stay" element={<LazyShortStayVisas />} />
+            <Route path="/visas/short-stay" element={<ShortStayVisas />} />
             <Route path="/visas/long-stay" element={<LazyLongStayVisas />} />
             <Route path="/visas/pricing" element={<VisaPricingPage />} />
             
