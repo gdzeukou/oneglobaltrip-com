@@ -78,28 +78,44 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
           console.log('User account created successfully');
         }
       } else {
-        // For signin, try to sign in the existing user with password
-        const pendingSignin = localStorage.getItem('pendingSignin');
-        if (pendingSignin) {
-          const signinData = JSON.parse(pendingSignin);
-          console.log('Signing in user after OTP verification');
+        // For signin, use the magic link data to establish session
+        if (data.sessionData) {
+          console.log('Establishing session with magic link data');
           
-          const { data: authData, error: signinError } = await supabase.auth.signInWithPassword({
-            email: signinData.email,
-            password: signinData.password || 'temp-password' // This won't work, we need a better approach
-          });
-          
-          localStorage.removeItem('pendingSignin');
-          
-          if (signinError) {
-            console.error('Signin error after OTP:', signinError);
-            // Since we don't have the password for signin, we need to use admin API
-            // For now, let's create a temporary session
-            console.log('Creating temporary session for verified user');
+          // The magic link URL contains the tokens we need
+          const magicLinkUrl = data.sessionData.properties?.action_link;
+          if (magicLinkUrl) {
+            // Extract the tokens from the magic link URL
+            const url = new URL(magicLinkUrl);
+            const accessToken = url.searchParams.get('access_token');
+            const refreshToken = url.searchParams.get('refresh_token');
+            
+            if (accessToken && refreshToken) {
+              console.log('Setting session with extracted tokens');
+              
+              const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken
+              });
+              
+              if (sessionError) {
+                console.error('Session establishment error:', sessionError);
+                return { error: { message: 'Failed to establish session' } };
+              }
+              
+              console.log('Session established successfully');
+              localStorage.removeItem('pendingSignin');
+            } else {
+              console.error('Could not extract tokens from magic link');
+              return { error: { message: 'Failed to extract session tokens' } };
+            }
+          } else {
+            console.error('No magic link URL found in session data');
+            return { error: { message: 'No session data received' } };
           }
         } else {
-          // If no pending signin data, we'll need to handle this differently
-          console.log('No pending signin data found, OTP verification successful');
+          console.error('No session data returned from verification');
+          return { error: { message: 'No session data received' } };
         }
       }
     }
