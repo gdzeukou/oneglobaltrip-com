@@ -21,6 +21,9 @@ const Booking = lazy(() => import("./pages/Booking"));
 const Concierge = lazy(() => import("./pages/Concierge"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const Packages = lazy(() => import("./pages/Packages"));
+const Visas = lazy(() => import("./pages/Visas"));
+const ShortStayVisas = lazy(() => import("./pages/ShortStayVisas"));
 
 const queryClient = new QueryClient();
 
@@ -46,6 +49,9 @@ const App = () => {
                       <Route path="/" element={<Index />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/auth/callback" element={<AuthCallback />} />
+                      <Route path="/packages" element={<Packages />} />
+                      <Route path="/visas" element={<Visas />} />
+                      <Route path="/visas/short-stay" element={<ShortStayVisas />} />
                       <Route 
                         path="/dashboard" 
                         element={
