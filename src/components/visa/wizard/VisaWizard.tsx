@@ -33,7 +33,7 @@ const VisaWizard = () => {
           duration={wizardData.duration}
         >
           <WizardContent
-            isComplete={isComplete()}
+            isComplete={Boolean(isComplete())}
             currentStep={currentStep}
             wizardData={wizardData}
             onUpdateData={updateWizardData}
