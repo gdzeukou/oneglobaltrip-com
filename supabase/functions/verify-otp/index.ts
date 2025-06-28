@@ -59,43 +59,23 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('OTP verification successful for', email);
 
-    // For both signup and signin, create a magic link token that can be used to establish a session
-    // Check if user exists
-    const { data: users } = await supabase.auth.admin.listUsers();
-    const existingUser = users.users.find(u => u.email === email);
+    // Try to generate a magic link first to check if user exists
+    console.log('Attempting to generate magic link for existing user');
     
-    if (existingUser) {
-      console.log('User exists, generating magic link');
-      // Generate a magic link for the existing user
-      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
-        type: 'magiclink',
-        email: email,
-        options: {
-          redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '')}.supabase.co/auth/v1/callback`
-        }
-      });
-
-      if (linkError) {
-        console.error('Error generating magic link:', linkError);
-        return new Response(
-          JSON.stringify({ error: 'Failed to create session' }),
-          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
-        );
+    const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+      type: 'magiclink',
+      email: email,
+      options: {
+        redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '')}.supabase.co/auth/v1/callback`
       }
+    });
 
-      console.log('Magic link generated successfully');
+    if (linkError) {
+      console.log('Magic link generation failed, checking if user needs to be created:', linkError.message);
       
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: 'OTP verified successfully',
-          sessionData: linkData
-        }),
-        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-      );
-    } else {
-      console.log('User does not exist, creating user account');
-      // For passwordless signin, create the user account
+      // If magic link fails, it might be because user doesn't exist
+      // Try to create the user
+      console.log('Creating new user account');
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
         email: email,
         email_confirm: true, // Mark email as confirmed since they verified OTP
@@ -107,16 +87,47 @@ const handler = async (req: Request): Promise<Response> => {
 
       if (createError) {
         console.error('Error creating user:', createError);
-        return new Response(
-          JSON.stringify({ error: 'Failed to create user account' }),
-          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
-        );
+        
+        // If user creation fails because user already exists, try magic link again
+        if (createError.message.includes('already been registered')) {
+          console.log('User already exists, retrying magic link generation');
+          const { data: retryLinkData, error: retryLinkError } = await supabase.auth.admin.generateLink({
+            type: 'magiclink',
+            email: email,
+            options: {
+              redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '')}.supabase.co/auth/v1/callback`
+            }
+          });
+
+          if (retryLinkError) {
+            console.error('Retry magic link generation failed:', retryLinkError);
+            return new Response(
+              JSON.stringify({ error: 'Failed to create session' }),
+              { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+            );
+          }
+
+          console.log('Retry magic link generated successfully');
+          return new Response(
+            JSON.stringify({ 
+              success: true, 
+              message: 'OTP verified successfully',
+              sessionData: retryLinkData
+            }),
+            { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+          );
+        } else {
+          return new Response(
+            JSON.stringify({ error: 'Failed to create user account' }),
+            { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+          );
+        }
       }
 
-      console.log('User created successfully, generating magic link');
+      console.log('User created successfully, generating magic link for new user');
 
       // Generate a magic link for the new user
-      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+      const { data: newUserLinkData, error: newUserLinkError } = await supabase.auth.admin.generateLink({
         type: 'magiclink',
         email: email,
         options: {
@@ -124,8 +135,8 @@ const handler = async (req: Request): Promise<Response> => {
         }
       });
 
-      if (linkError) {
-        console.error('Error generating magic link for new user:', linkError);
+      if (newUserLinkError) {
+        console.error('Error generating magic link for new user:', newUserLinkError);
         return new Response(
           JSON.stringify({ error: 'Failed to create session' }),
           { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
@@ -138,6 +149,17 @@ const handler = async (req: Request): Promise<Response> => {
         JSON.stringify({ 
           success: true, 
           message: 'Account created and OTP verified successfully',
+          sessionData: newUserLinkData
+        }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    } else {
+      console.log('Magic link generated successfully for existing user');
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'OTP verified successfully',
           sessionData: linkData
         }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
