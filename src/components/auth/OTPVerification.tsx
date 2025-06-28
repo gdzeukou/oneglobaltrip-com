@@ -82,12 +82,13 @@ const OTPVerification = ({
         setOtp(''); // Clear invalid code
       } else {
         console.log('OTP verification successful');
-        setSuccess('Verification successful! Redirecting...');
+        setSuccess('Verification successful! Signing you in...');
         
-        // Give user feedback before redirecting
+        // Give user feedback and allow time for auth state to update
         setTimeout(() => {
+          console.log('Calling onVerificationSuccess');
           onVerificationSuccess();
-        }, 1500);
+        }, 2000); // Increased timeout to allow auth state to update
       }
     } catch (error: any) {
       console.error('OTP verification error:', error);

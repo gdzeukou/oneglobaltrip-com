@@ -30,6 +30,7 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
   try {
     console.log(`Verifying OTP for ${email}, purpose: ${purpose}, code: ${code}`);
     
+    // First verify the OTP with our backend
     const { data, error } = await supabase.functions.invoke('verify-otp', {
       body: {
         email,
@@ -59,7 +60,7 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
             email: signupData.email,
             password: signupData.password,
             options: {
-              emailRedirectTo: `${window.location.origin}/`,
+              emailRedirectTo: `${window.location.origin}/dashboard`,
               data: {
                 first_name: signupData.firstName,
                 last_name: signupData.lastName
@@ -77,25 +78,35 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
           console.log('User account created successfully');
         }
       } else {
-        // For signin, we need to sign in the user directly
+        // For signin, we need to create a proper session
         console.log('Completing signin after OTP verification');
         
-        // Try to sign in with a one-time password approach
-        const { error: signinError } = await supabase.auth.signInWithOtp({
+        // Use signInWithOtp to create a proper session
+        const { data: authData, error: signinError } = await supabase.auth.signInWithOtp({
           email: email,
-          options: {
-            shouldCreateUser: false,
-            emailRedirectTo: `${window.location.origin}/dashboard`
-          }
+          type: 'email'
         });
         
         if (signinError) {
           console.error('Signin error after OTP:', signinError);
-          // If OTP signin fails, the user might need to use password signin
-          // Since we've verified the OTP, we can consider this authenticated
-          console.log('OTP signin failed, but OTP was verified successfully');
+          // If that doesn't work, try alternative approach
+          // Since we've verified the OTP, we can try to get existing user session
+          const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+          if (sessionError) {
+            console.error('Session retrieval error:', sessionError);
+            return { error: { message: 'Failed to establish session after verification' } };
+          }
+          
+          if (!sessionData.session) {
+            // Last resort: force a session refresh
+            const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+            if (refreshError) {
+              console.error('Session refresh error:', refreshError);
+              return { error: { message: 'Unable to establish user session' } };
+            }
+          }
         } else {
-          console.log('OTP signin initiated successfully');
+          console.log('Signin session created successfully');
         }
       }
     }
@@ -179,7 +190,7 @@ export const performResendVerification = async (userEmail?: string) => {
       type: 'signup',
       email: userEmail,
       options: {
-        emailRedirectTo: `${window.location.origin}/`
+        emailRedirectTo: `${window.location.origin}/dashboard`
       }
     });
     return { error };

@@ -13,6 +13,8 @@ export const useAuthState = () => {
   const isEmailVerified = user?.email_confirmed_at ? true : false;
 
   useEffect(() => {
+    console.log('Setting up auth state listener...');
+    
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -31,9 +33,15 @@ export const useAuthState = () => {
         }
 
         if (event === 'SIGNED_OUT') {
+          console.log('User signed out, clearing OTP step');
           setOTPStep(null);
           localStorage.removeItem('pendingSignup');
           localStorage.removeItem('pendingSignin');
+        }
+
+        // Handle token refresh
+        if (event === 'TOKEN_REFRESHED') {
+          console.log('Token refreshed successfully');
         }
       }
     );
@@ -46,7 +54,10 @@ export const useAuthState = () => {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log('Cleaning up auth state listener');
+      subscription.unsubscribe();
+    };
   }, []);
 
   return {
