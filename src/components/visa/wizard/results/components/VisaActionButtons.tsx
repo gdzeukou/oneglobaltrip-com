@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
 import { FileText, Phone } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import VisaActionButton from './VisaActionButton';
 
 interface VisaActionButtonsProps {
   visaType: string;
@@ -51,40 +51,50 @@ const VisaActionButtons = ({ visaType, onReset }: VisaActionButtonsProps) => {
   return (
     <div className="space-y-3">
       <Link to={getVisaRoute()}>
-        <Button size="lg" className="w-full bg-red-600 hover:bg-red-700">
-          <FileText className="w-5 h-5 mr-2" />
+        <VisaActionButton
+          size="lg"
+          className="bg-red-600 hover:bg-red-700"
+          icon={FileText}
+        >
           Start {getVisaTypeName()} Application
-        </Button>
+        </VisaActionButton>
       </Link>
       
-      <Button 
-        variant="outline" 
-        size="lg" 
-        className="w-full border-orange-600 text-orange-600 hover:bg-orange-50"
-        onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
+      <VisaActionButton
+        variant="outline"
+        size="lg"
+        className="border-orange-600 text-orange-600 hover:bg-orange-50"
+        icon={Phone}
+        href="https://calendly.com/camronm-oneglobaltrip/30min"
       >
-        <Phone className="w-5 h-5 mr-2" />
         Get Expert Visa Assistance
-      </Button>
+      </VisaActionButton>
       
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="outline" size="sm">
-          <FileText className="w-4 h-4 mr-2" />
+        <VisaActionButton
+          variant="outline"
+          size="sm"
+          icon={FileText}
+        >
           Document Checklist
-        </Button>
-        <Button variant="outline" size="sm">
-          <Phone className="w-4 h-4 mr-2" />
+        </VisaActionButton>
+        <VisaActionButton
+          variant="outline"
+          size="sm"
+          icon={Phone}
+        >
           Processing Times
-        </Button>
+        </VisaActionButton>
       </div>
       
-      <Button 
-        variant="ghost" 
+      <VisaActionButton
+        variant="ghost"
+        className="text-gray-600"
+        icon={Phone}
         onClick={onReset}
-        className="w-full text-gray-600"
       >
         Check Another Destination
-      </Button>
+      </VisaActionButton>
     </div>
   );
 };
