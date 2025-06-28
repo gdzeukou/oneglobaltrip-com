@@ -3,11 +3,16 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import WizardProgressSteps from './WizardProgressSteps';
 
+interface Destination {
+  country: string;
+  purpose: string;
+}
+
 interface WizardLayoutProps {
   currentStep: number;
   tripType: string;
   destination: string;
-  destinations: string[];
+  destinations: Destination[];
   nationality: string;
   purpose: string;
   duration: string;
