@@ -1,6 +1,7 @@
 
 import { Phone, Mail, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 
 const Footer = () => {
   return (
@@ -30,11 +31,11 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <div className="space-y-2">
-              <Link to="/" className="block text-blue-200 hover:text-white transition-colors">Home</Link>
-              <Link to="/packages" className="block text-blue-200 hover:text-white transition-colors">Packages</Link>
-              <Link to="/visas" className="block text-blue-200 hover:text-white transition-colors">Visas</Link>
-              <Link to="/get-started" className="block text-blue-200 hover:text-white transition-colors">Get Started</Link>
-              <Link to="/auth" className="block text-blue-200 hover:text-white transition-colors">Sign In</Link>
+              <Link to={ROUTES.HOME} className="block text-blue-200 hover:text-white transition-colors">Home</Link>
+              <Link to={ROUTES.PACKAGES} className="block text-blue-200 hover:text-white transition-colors">Packages</Link>
+              <Link to={ROUTES.VISAS} className="block text-blue-200 hover:text-white transition-colors">Visas</Link>
+              <Link to={ROUTES.GET_STARTED} className="block text-blue-200 hover:text-white transition-colors">Get Started</Link>
+              <Link to={ROUTES.AUTH} className="block text-blue-200 hover:text-white transition-colors">Sign In</Link>
             </div>
           </div>
 
@@ -42,9 +43,9 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Services</h4>
             <div className="space-y-2 text-blue-200">
-              <Link to="/visas/short-stay/schengen" className="block hover:text-white transition-colors">Schengen Visa Pack</Link>
-              <Link to="/visas/short-stay/uk" className="block hover:text-white transition-colors">UK Visa Pass</Link>
-              <Link to="/visas/short-stay/brazil" className="block hover:text-white transition-colors">Brazil eVisa</Link>
+              <Link to={ROUTES.SCHENGEN_LANDING} className="block hover:text-white transition-colors">Schengen Visa Pack</Link>
+              <Link to={ROUTES.UK_SHORT_STAY} className="block hover:text-white transition-colors">UK Visa Pass</Link>
+              <Link to={ROUTES.BRAZIL_SHORT_STAY} className="block hover:text-white transition-colors">Brazil eVisa</Link>
               <p>Passport Renewal</p>
               <p>Custom Itineraries</p>
             </div>
