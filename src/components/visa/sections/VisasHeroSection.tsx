@@ -1,12 +1,12 @@
 
 import { Button } from '@/components/ui/button';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
-interface VisasPageHeroProps {
+interface VisasHeroSectionProps {
   onScrollToCTA?: () => void;
 }
 
-const VisasPageHero = ({ onScrollToCTA }: VisasPageHeroProps) => {
+const VisasHeroSection = ({ onScrollToCTA }: VisasHeroSectionProps) => {
   return (
     <section className="pt-24 pb-16 bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
       <div className="absolute inset-0 opacity-10">
@@ -35,4 +35,4 @@ const VisasPageHero = ({ onScrollToCTA }: VisasPageHeroProps) => {
   );
 };
 
-export default VisasPageHero;
+export default VisasHeroSection;
