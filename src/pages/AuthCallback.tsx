@@ -9,6 +9,9 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        console.log('AuthCallback: Processing authentication callback');
+        
+        // Get the session after the callback
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -17,9 +20,16 @@ const AuthCallback = () => {
           return;
         }
 
+        console.log('AuthCallback: Session data received:', !!data.session);
+
         if (data.session) {
           console.log('Auth callback successful, redirecting to dashboard');
-          navigate('/dashboard', { replace: true });
+          
+          // Check if there's a next parameter for redirect
+          const urlParams = new URLSearchParams(window.location.search);
+          const nextUrl = urlParams.get('next') || '/dashboard';
+          
+          navigate(nextUrl, { replace: true });
         } else {
           console.log('No session found, redirecting to auth');
           navigate('/auth', { replace: true });
