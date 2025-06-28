@@ -59,11 +59,12 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('OTP verification successful for', email);
 
-    // Generate a magic link that redirects to the dashboard via our auth callback
+    // Generate a magic link that redirects to our custom auth callback
     console.log('Generating magic link for user authentication');
     
-    // Use the correct callback URL format that includes dashboard redirect
-    const redirectUrl = `${Deno.env.get("SUPABASE_URL")?.replace('/supabase', '')}/auth/v1/callback?next=${encodeURIComponent('/dashboard')}`;
+    // Use the correct callback URL that points to our AuthCallback component
+    const redirectUrl = `${Deno.env.get("SUPABASE_URL")?.split('/supabase')[0] || 'http://localhost:3000'}/auth/callback`;
+    console.log('Using redirect URL:', redirectUrl);
     
     const { data: magicLinkData, error: magicLinkError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',

@@ -12,6 +12,7 @@ const AuthCallback = () => {
       try {
         console.log('AuthCallback: Processing authentication callback');
         console.log('Current URL:', window.location.href);
+        console.log('Search params:', Object.fromEntries(searchParams.entries()));
         
         // Extract tokens from URL if present
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -38,6 +39,7 @@ const AuthCallback = () => {
           }
 
           console.log('AuthCallback: Session set successfully:', !!data.session);
+          console.log('AuthCallback: User authenticated:', data.session?.user?.email);
           
           // Always redirect to dashboard after successful authentication
           console.log('AuthCallback: Redirecting to dashboard');
@@ -56,6 +58,7 @@ const AuthCallback = () => {
         }
 
         console.log('AuthCallback: Session check result:', !!data.session);
+        console.log('AuthCallback: User from session:', data.session?.user?.email);
 
         if (data.session) {
           console.log('AuthCallback: Existing session found, redirecting to dashboard');
@@ -78,6 +81,7 @@ const AuthCallback = () => {
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
         <p className="text-gray-600">Completing authentication...</p>
+        <p className="text-sm text-gray-500 mt-2">Please wait while we log you in</p>
       </div>
     </div>
   );

@@ -49,14 +49,10 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
     if (data?.success && data?.authData?.actionLink) {
       console.log('OTP verification successful, processing magic link authentication');
       
-      // Store the current URL to return to after auth
-      const currentUrl = window.location.href;
-      localStorage.setItem('authRedirectUrl', currentUrl);
-      
       // Process the magic link directly by navigating to it
-      // This will trigger Supabase's authentication flow and redirect back
+      // This will trigger Supabase's authentication flow and redirect to our AuthCallback
       const magicLinkUrl = data.authData.actionLink;
-      console.log('Navigating to magic link for authentication');
+      console.log('Navigating to magic link for authentication:', magicLinkUrl);
       
       // Navigate to the magic link - this will redirect and establish the session
       window.location.href = magicLinkUrl;

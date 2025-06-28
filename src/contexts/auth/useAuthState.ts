@@ -30,14 +30,6 @@ export const useAuthState = () => {
           // Clear any pending data
           localStorage.removeItem('pendingSignup');
           localStorage.removeItem('pendingSignin');
-          
-          // Check if we need to redirect after auth
-          const redirectUrl = localStorage.getItem('authRedirectUrl');
-          if (redirectUrl && redirectUrl.includes('/auth')) {
-            localStorage.removeItem('authRedirectUrl');
-            console.log('Redirecting to dashboard after successful auth');
-            window.location.href = '/dashboard';
-          }
         }
 
         if (event === 'SIGNED_OUT') {
@@ -45,7 +37,6 @@ export const useAuthState = () => {
           setOTPStep(null);
           localStorage.removeItem('pendingSignup');
           localStorage.removeItem('pendingSignin');
-          localStorage.removeItem('authRedirectUrl');
         }
 
         // Handle token refresh
