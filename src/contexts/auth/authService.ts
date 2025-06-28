@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { validateEmail } from '@/utils/validation';
 
@@ -78,36 +77,19 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
           console.log('User account created successfully');
         }
       } else {
-        // For signin, we need to create a proper session
-        console.log('Completing signin after OTP verification');
+        // For signin, create a session using signInWithOtp
+        console.log('Establishing signin session after OTP verification');
         
-        // Use signInWithOtp to create a proper session
         const { data: authData, error: signinError } = await supabase.auth.signInWithOtp({
-          email: email,
-          type: 'email'
+          email: email
         });
         
         if (signinError) {
-          console.error('Signin error after OTP:', signinError);
-          // If that doesn't work, try alternative approach
-          // Since we've verified the OTP, we can try to get existing user session
-          const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-          if (sessionError) {
-            console.error('Session retrieval error:', sessionError);
-            return { error: { message: 'Failed to establish session after verification' } };
-          }
-          
-          if (!sessionData.session) {
-            // Last resort: force a session refresh
-            const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-            if (refreshError) {
-              console.error('Session refresh error:', refreshError);
-              return { error: { message: 'Unable to establish user session' } };
-            }
-          }
-        } else {
-          console.log('Signin session created successfully');
+          console.error('Signin session error:', signinError);
+          return { error: { message: 'Failed to establish session after verification' } };
         }
+        
+        console.log('Signin session established successfully');
       }
     }
 
