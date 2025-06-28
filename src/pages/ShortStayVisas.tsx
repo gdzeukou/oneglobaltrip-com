@@ -3,11 +3,11 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Star, Shield, Clock } from 'lucide-react';
 import ShortStayHero from '@/components/pages/short-stay-visas/ShortStayHero';
 import SchengenInfoRibbon from '@/components/pages/short-stay-visas/SchengenInfoRibbon';
 import VisaGrid from '@/components/pages/short-stay-visas/VisaGrid';
+import TrustBadges from '@/components/common/TrustBadges';
+import FAQSection from '@/components/common/FAQSection';
 import UnifiedCTA from '@/components/common/UnifiedCTA';
 import { ROUTES } from '@/constants/routes';
 
@@ -55,48 +55,8 @@ const ShortStayVisas = () => {
       <ShortStayHero onScrollToCards={scrollToCards} />
       <SchengenInfoRibbon />
       <VisaGrid />
-
-      {/* Conversion Booster */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div className="flex flex-col items-center">
-              <Star className="h-12 w-12 text-yellow-500 mb-4" />
-              <h3 className="text-xl font-bold mb-2">⭐ 4.9/5 on Trustpilot</h3>
-              <p className="text-gray-600">Thousands of happy travelers</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <Shield className="h-12 w-12 text-green-500 mb-4" />
-              <h3 className="text-xl font-bold mb-2">2,800+ visas approved</h3>
-              <p className="text-gray-600">99% success rate</p>
-            </div>
-            <div className="flex flex-col items-center">
-              <Clock className="h-12 w-12 text-blue-500 mb-4" />
-              <h3 className="text-xl font-bold mb-2">AI-powered document checker</h3>
-              <p className="text-gray-600">Reduce errors, save time</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-16">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Frequently Asked Questions
-          </h2>
-          <Accordion type="single" collapsible>
-            {faqData.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
-                <AccordionContent className="text-gray-600">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
+      <TrustBadges />
+      <FAQSection faqs={faqData} />
 
       <UnifiedCTA
         variant="footer"
