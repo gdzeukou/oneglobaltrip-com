@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,6 +24,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const Packages = lazy(() => import("./pages/Packages"));
 const Visas = lazy(() => import("./pages/Visas"));
 const ShortStayVisas = lazy(() => import("./pages/ShortStayVisas"));
+const LongStayVisas = lazy(() => import("./pages/LongStayVisas"));
 const Contact = lazy(() => import("./pages/Contact"));
 const SchengenShortStayLanding = lazy(() => import("./pages/visa-countries/SchengenShortStayLanding"));
 
@@ -53,6 +55,7 @@ const App = () => {
                       <Route path="/packages" element={<Packages />} />
                       <Route path="/visas" element={<Visas />} />
                       <Route path="/visas/short-stay" element={<ShortStayVisas />} />
+                      <Route path="/visas/long-stay" element={<LongStayVisas />} />
                       <Route path="/visas/short-stay/schengen" element={<SchengenShortStayLanding />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route 

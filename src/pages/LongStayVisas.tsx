@@ -4,7 +4,6 @@ import { useSearchParams, useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MultiStepForm from '@/components/visa/MultiStepForm';
-import CountryTile from '@/components/visa/CountryTile';
 import TrustBadges from '@/components/visa/TrustBadges';
 import { Button } from '@/components/ui/button';
 import { MapPin, Sparkles } from 'lucide-react';
@@ -32,14 +31,46 @@ const LongStayVisas = () => {
   }, [preSelectedCountry]);
 
   const countries = [
-    { name: 'Portugal', image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop&crop=center' },
-    { name: 'Norway', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&crop=center' },
-    { name: 'Denmark', image: 'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=800&h=600&fit=crop&crop=center' },
-    { name: 'Finland', image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=center' },
-    { name: 'Nigeria', image: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800&h=600&fit=crop&crop=center' },
-    { name: 'France', image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center' },
-    { name: 'Germany', image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop&crop=center' },
-    { name: 'Switzerland', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&crop=center' }
+    { 
+      name: 'Portugal', 
+      image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&h=600&fit=crop&crop=center',
+      description: 'D7 Visa, Golden Visa, Digital Nomad'
+    },
+    { 
+      name: 'Norway', 
+      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&crop=center',
+      description: 'Work permits, Family reunification'
+    },
+    { 
+      name: 'Denmark', 
+      image: 'https://images.unsplash.com/photo-1513622470522-26c3c8a854bc?w=800&h=600&fit=crop&crop=center',
+      description: 'Green Card, Work & Residence permits'
+    },
+    { 
+      name: 'Finland', 
+      image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop&crop=center',
+      description: 'Residence permits, EU Blue Card'
+    },
+    { 
+      name: 'Nigeria', 
+      image: 'https://images.unsplash.com/photo-1568322445389-f64ac2515020?w=800&h=600&fit=crop&crop=center',
+      description: 'Work permits, Business visas'
+    },
+    { 
+      name: 'France', 
+      image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center',
+      description: 'Long-stay visas, Talent Passport'
+    },
+    { 
+      name: 'Germany', 
+      image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&h=600&fit=crop&crop=center',
+      description: 'EU Blue Card, Job Seeker visa'
+    },
+    { 
+      name: 'Switzerland', 
+      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&crop=center',
+      description: 'Work permits, L & B permits'
+    }
   ];
 
   const scrollToForm = () => {
@@ -102,15 +133,21 @@ const LongStayVisas = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {countries.map((country, index) => (
               <div key={country.name} className="animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                <div className="bg-gradient-to-br from-deep-blue-900 to-blue-700 rounded-xl h-40 flex items-center justify-center text-white relative overflow-hidden hover-lift cursor-pointer group">
-                  <div className="absolute inset-0">
-                    <div className="absolute top-2 right-2 w-16 h-16 bg-yellow-500/10 rounded-full blur-xl" />
-                    <div className="absolute bottom-2 left-2 w-12 h-12 bg-blue-400/10 rounded-full blur-lg" />
-                  </div>
-                  <div className="relative z-10 text-center">
-                    <MapPin className="h-8 w-8 mx-auto mb-2 text-yellow-400" />
-                    <h3 className="text-lg font-bold">{country.name}</h3>
-                    <p className="text-blue-200 text-sm">Long-Stay Visa</p>
+                <div className="bg-white rounded-xl shadow-lg overflow-hidden hover-lift cursor-pointer group border border-gray-200">
+                  <div className="relative h-48">
+                    <img 
+                      src={country.image} 
+                      alt={`${country.name} visa`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <div className="flex items-center mb-2">
+                        <MapPin className="h-5 w-5 mr-2" />
+                        <h3 className="text-xl font-bold">{country.name}</h3>
+                      </div>
+                      <p className="text-sm text-gray-200">{country.description}</p>
+                    </div>
                   </div>
                 </div>
               </div>
