@@ -39,11 +39,9 @@ const AuthCallback = () => {
 
           console.log('AuthCallback: Session set successfully:', !!data.session);
           
-          // Get redirect URL from search params or default to dashboard
-          const nextUrl = searchParams.get('next') || '/dashboard';
-          console.log('AuthCallback: Redirecting to:', nextUrl);
-          
-          navigate(nextUrl, { replace: true });
+          // Always redirect to dashboard after successful authentication
+          console.log('AuthCallback: Redirecting to dashboard');
+          navigate('/dashboard', { replace: true });
           return;
         }
 
@@ -61,10 +59,7 @@ const AuthCallback = () => {
 
         if (data.session) {
           console.log('AuthCallback: Existing session found, redirecting to dashboard');
-          
-          // Check if there's a next parameter for redirect
-          const nextUrl = searchParams.get('next') || '/dashboard';
-          navigate(nextUrl, { replace: true });
+          navigate('/dashboard', { replace: true });
         } else {
           console.log('AuthCallback: No session found, redirecting to auth');
           navigate('/auth', { replace: true });
