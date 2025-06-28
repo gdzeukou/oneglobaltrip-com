@@ -1,4 +1,3 @@
-
 import { ArrowRight, Phone, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +27,7 @@ interface UnifiedCTAProps {
   buttonText?: string;
   buttonAction?: () => void;
   className?: string;
+  id?: string;
 }
 
 const UnifiedCTA = ({
@@ -38,7 +38,8 @@ const UnifiedCTA = ({
   options = [],
   buttonText,
   buttonAction,
-  className = ''
+  className = '',
+  id
 }: UnifiedCTAProps) => {
   const navigate = useNavigate();
 
@@ -48,7 +49,7 @@ const UnifiedCTA = ({
 
   if (variant === 'main' && options.length > 0) {
     return (
-      <section className={`py-16 bg-white ${className}`}>
+      <section id={id} className={`py-16 bg-white ${className}`}>
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12 animate-fade-in">
             <h2 className="text-4xl md:text-5xl text-gray-900 mb-4 font-extrabold">{title}</h2>
@@ -134,7 +135,7 @@ const UnifiedCTA = ({
 
   if (variant === 'consultation') {
     return (
-      <section className={`py-12 bg-gray-50 ${className}`}>
+      <section id={id} className={`py-12 bg-gray-50 ${className}`}>
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4 text-gray-900">{title}</h2>
           {description && (
@@ -155,7 +156,7 @@ const UnifiedCTA = ({
 
   if (variant === 'footer') {
     return (
-      <section className={`py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden ${className}`}>
+      <section id={id} className={`py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden ${className}`}>
         {/* Curved top edge */}
         <div className="absolute top-0 left-0 w-full overflow-hidden">
           <svg 
