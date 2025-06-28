@@ -60,13 +60,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const result = await verifyOTP(email, code, purpose);
       console.log('Verify OTP result:', result);
       
-      if (!result.error) {
+      // Handle the result properly - verifyOTP now returns either { error: any } or resolves without error
+      const response = result as { error?: any };
+      if (!response.error) {
         console.log('OTP verified successfully, clearing OTP step');
         setOTPStep(null);
+        return { error: null };
       } else {
-        console.error('Verify OTP failed:', result.error);
+        console.error('Verify OTP failed:', response.error);
+        return { error: response.error };
       }
-      return result;
     } catch (error: any) {
       console.error('Error verifying OTP:', error);
       return { error: { message: error.message || 'Verification failed' } };
