@@ -26,8 +26,8 @@ const NavigationLinks = () => {
       <Link to="/visas" className={linkClass('/visas')}>
         Visas
       </Link>
-      <Link to="/get-started" className={linkClass('/get-started')}>
-        Get Started
+      <Link to="/contact" className={linkClass('/contact')}>
+        Contact
       </Link>
     </div>
   );

@@ -62,8 +62,8 @@ const MobileNavigation = ({ isOpen, setIsOpen }: MobileNavigationProps) => {
         <Link to="/visas" className={linkClass('/visas')} onClick={() => setIsOpen(false)}>
           Visas
         </Link>
-        <Link to="/get-started" className={linkClass('/get-started')} onClick={() => setIsOpen(false)}>
-          Get Started
+        <Link to="/contact" className={linkClass('/contact')} onClick={() => setIsOpen(false)}>
+          Contact
         </Link>
 
         {/* Mobile Authentication */}

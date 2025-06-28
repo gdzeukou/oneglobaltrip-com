@@ -24,6 +24,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const Packages = lazy(() => import("./pages/Packages"));
 const Visas = lazy(() => import("./pages/Visas"));
 const ShortStayVisas = lazy(() => import("./pages/ShortStayVisas"));
+const Contact = lazy(() => import("./pages/Contact"));
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => {
                       <Route path="/packages" element={<Packages />} />
                       <Route path="/visas" element={<Visas />} />
                       <Route path="/visas/short-stay" element={<ShortStayVisas />} />
+                      <Route path="/contact" element={<Contact />} />
                       <Route 
                         path="/dashboard" 
                         element={
