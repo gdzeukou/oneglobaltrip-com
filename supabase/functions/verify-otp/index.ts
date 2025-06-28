@@ -59,55 +59,90 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('OTP verification successful for', email);
 
-    // For signin, create a magic link token that can be used to establish a session
-    if (purpose === 'signin') {
-      // Check if user exists
-      const { data: users } = await supabase.auth.admin.listUsers();
-      const existingUser = users.users.find(u => u.email === email);
-      
-      if (existingUser) {
-        // Generate a magic link for the user
-        const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
-          type: 'magiclink',
-          email: email,
-          options: {
-            redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '')}.supabase.co/auth/v1/callback`
-          }
-        });
-
-        if (linkError) {
-          console.error('Error generating magic link:', linkError);
-          return new Response(
-            JSON.stringify({ error: 'Failed to create session' }),
-            { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
-          );
+    // For both signup and signin, create a magic link token that can be used to establish a session
+    // Check if user exists
+    const { data: users } = await supabase.auth.admin.listUsers();
+    const existingUser = users.users.find(u => u.email === email);
+    
+    if (existingUser) {
+      console.log('User exists, generating magic link');
+      // Generate a magic link for the existing user
+      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email: email,
+        options: {
+          redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '')}.supabase.co/auth/v1/callback`
         }
+      });
 
-        console.log('Magic link generated successfully');
-        
+      if (linkError) {
+        console.error('Error generating magic link:', linkError);
         return new Response(
-          JSON.stringify({ 
-            success: true, 
-            message: 'OTP verified successfully',
-            sessionData: linkData
-          }),
-          { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-        );
-      } else {
-        return new Response(
-          JSON.stringify({ error: 'User not found' }),
-          { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } }
+          JSON.stringify({ error: 'Failed to create session' }),
+          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
         );
       }
-    }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: 'OTP verified successfully' 
-      }),
-      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
-    );
+      console.log('Magic link generated successfully');
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'OTP verified successfully',
+          sessionData: linkData
+        }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    } else {
+      console.log('User does not exist, creating user account');
+      // For passwordless signin, create the user account
+      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+        email: email,
+        email_confirm: true, // Mark email as confirmed since they verified OTP
+        user_metadata: {
+          email_verified: true,
+          signup_method: 'otp'
+        }
+      });
+
+      if (createError) {
+        console.error('Error creating user:', createError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to create user account' }),
+          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+
+      console.log('User created successfully, generating magic link');
+
+      // Generate a magic link for the new user
+      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email: email,
+        options: {
+          redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '')}.supabase.co/auth/v1/callback`
+        }
+      });
+
+      if (linkError) {
+        console.error('Error generating magic link for new user:', linkError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to create session' }),
+          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+        );
+      }
+
+      console.log('Magic link generated successfully for new user');
+      
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: 'Account created and OTP verified successfully',
+          sessionData: linkData
+        }),
+        { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
   } catch (error: any) {
     console.error("Error in verify-otp function:", error);
