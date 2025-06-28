@@ -1,4 +1,3 @@
-
 import { lazy } from 'react';
 
 // Lazy load page components for better performance
@@ -17,6 +16,7 @@ export const LazyContact = lazy(() => import('@/pages/Contact'));
 
 // Visa country pages
 export const LazySchengenShortStay = lazy(() => import('@/pages/visa-countries/SchengenShortStay'));
+export const LazySchengenShortStayLanding = lazy(() => import('@/pages/visa-countries/SchengenShortStayLanding'));
 export const LazyUKShortStay = lazy(() => import('@/pages/visa-countries/UKShortStay'));
 export const LazyUK5YearShortStay = lazy(() => import('@/pages/visa-countries/UK5YearShortStay'));
 export const LazyCanadaShortStay = lazy(() => import('@/pages/visa-countries/CanadaShortStay'));
@@ -92,6 +92,7 @@ const routeComponentMap: Record<string, () => Promise<any>> = {
   '/': () => import('@/pages/Index'),
   '/visas': () => import('@/pages/Visas'),
   '/visas/short-stay': () => import('@/pages/ShortStayVisas'),
+  '/visas/short-stay/schengen': () => import('@/pages/visa-countries/SchengenShortStayLanding'),
   '/visas/long-stay': () => import('@/pages/LongStayVisas'),
   '/packages': () => import('@/pages/Packages'),
   '/auth': () => import('@/pages/Auth'),
