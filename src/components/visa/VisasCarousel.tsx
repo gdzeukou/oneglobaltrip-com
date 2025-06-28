@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,7 @@ const visaSlides: VisaSlide[] = [
     description: 'Travel freely across 27 European countries with our expert assistance',
     processingTime: '5-15 business days',
     ctaText: 'Learn More',
-    ctaLink: '/visas/schengen',
+    ctaLink: '/visas/short-stay',
     alt: 'European landmarks including Eiffel Tower representing Schengen area'
   },
   {
@@ -34,7 +33,7 @@ const visaSlides: VisaSlide[] = [
     description: 'Business, tourism, and study visas for the United Kingdom',
     processingTime: '3-8 weeks',
     ctaText: 'Learn More',
-    ctaLink: '/visas/uk',
+    ctaLink: '/visas/short-stay',
     alt: 'Big Ben and London skyline representing UK visa services'
   },
   {
@@ -44,7 +43,7 @@ const visaSlides: VisaSlide[] = [
     description: 'Tourist and business visas for Japan with streamlined application',
     processingTime: '4-7 business days',
     ctaText: 'Learn More',
-    ctaLink: '/visas/japan',
+    ctaLink: '/visas/short-stay',
     alt: 'Tokyo cityscape at night representing Japan visa services'
   },
   {
@@ -54,7 +53,7 @@ const visaSlides: VisaSlide[] = [
     description: 'Tourist and business visas for Brazil with expert guidance',
     processingTime: '5-10 business days',
     ctaText: 'Learn More',
-    ctaLink: '/visas/brazil',
+    ctaLink: '/visas/short-stay',
     alt: 'Christ the Redeemer and Rio de Janeiro representing Brazil visa services'
   },
   {
@@ -64,7 +63,7 @@ const visaSlides: VisaSlide[] = [
     description: 'Tourist, business, and medical visas for India made simple',
     processingTime: '3-5 business days',
     ctaText: 'Learn More',
-    ctaLink: '/visas/india',
+    ctaLink: '/visas/short-stay',
     alt: 'Indian landmarks and architecture representing India visa services'
   },
   {
@@ -74,7 +73,7 @@ const visaSlides: VisaSlide[] = [
     description: 'Dubai and UAE visas with fast-track processing options',
     processingTime: '2-4 business days',
     ctaText: 'Learn More',
-    ctaLink: '/visas/uae',
+    ctaLink: '/visas/short-stay',
     alt: 'Dubai skyline and Burj Khalifa representing UAE visa services'
   }
 ];
