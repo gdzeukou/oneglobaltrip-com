@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from 'react';
-import { useSearchParams, useLocation } from 'react-router-dom';
+import { useSearchParams, useLocation, useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import { Info, Star, Shield, Clock, Users, MapPin, Globe } from 'lucide-react';
 const ShortStayVisas = () => {
   const [searchParams] = useSearchParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const [showSchengenModal, setShowSchengenModal] = useState(false);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const ShortStayVisas = () => {
       price: 193,
       image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center',
       promo: 'Save $25 this month',
-      route: '/visas/schengen-short-stay'
+      route: '/visas/schengen-short-stay-landing'
     },
     {
       id: 'uk',
@@ -220,7 +220,7 @@ const ShortStayVisas = () => {
                     <p>With one Schengen visa, you can travel freely between these countries for tourism, business, or visiting family for up to 90 days within any 180-day period.</p>
                     <p>This makes it perfect for European multi-country trips without needing separate visas for each destination.</p>
                     <Button asChild className="w-full mt-4">
-                      <a href="/visas/schengen-short-stay" target="_blank">
+                      <a href="/visas/schengen-short-stay-landing" target="_blank">
                         Learn More About Schengen Visas
                       </a>
                     </Button>
@@ -282,7 +282,7 @@ const ShortStayVisas = () => {
                   <Button 
                     className="w-full mb-3 rounded-full"
                     style={{ backgroundColor: '#FF6B35' }}
-                    onClick={() => window.location.href = `/checkout?visa=${visa.id}`}
+                    onClick={() => navigate(visa.route)}
                   >
                     Start Application
                   </Button>
@@ -316,7 +316,7 @@ const ShortStayVisas = () => {
                     <h4 className="font-bold text-sm mb-1">{country.name}</h4>
                     <p className="text-xs text-orange-600 font-semibold mb-1">{country.tagline}</p>
                     <p className="text-xs text-gray-600 mb-3">{country.description}</p>
-                    <Button size="sm" className="w-full text-xs" onClick={() => window.location.href = country.route}>
+                    <Button size="sm" className="w-full text-xs" onClick={() => navigate(country.route)}>
                       Apply Now
                     </Button>
                   </CardContent>
