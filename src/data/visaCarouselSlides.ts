@@ -15,62 +15,62 @@ export interface VisaSlide {
 export const visaSlides: VisaSlide[] = [
   {
     id: '1',
-    image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?auto=format&fit=crop&w=1920&q=80',
-    title: 'Schengen Visa Services',
-    description: 'Travel freely across 27 European countries with our expert assistance',
+    image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=1920&q=80',
+    title: 'Schengen Visa Excellence',
+    description: 'Your gateway to 27 European countries with our premium visa concierge service',
     processingTime: '5-15 business days',
-    ctaText: 'Learn More',
+    ctaText: 'Explore Europe',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'European landmarks including Eiffel Tower representing Schengen area'
+    alt: 'Stunning Paris cityscape with Eiffel Tower at golden hour representing Schengen visa excellence'
   },
   {
     id: '2',
-    image: 'https://images.unsplash.com/photo-1520986606214-8b456906c813?auto=format&fit=crop&w=1920&q=80',
-    title: 'UK Visa Application',
-    description: 'Business, tourism, and study visas for the United Kingdom',
+    image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1920&q=80',
+    title: 'UK Visa Mastery',
+    description: 'Business, tourism, and study visas for the United Kingdom with guaranteed success',
     processingTime: '3-8 weeks',
-    ctaText: 'Learn More',
+    ctaText: 'Visit Britain',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Big Ben and London skyline representing UK visa services'
+    alt: 'Majestic London skyline with Big Ben and Thames representing UK visa excellence'
   },
   {
     id: '3',
     image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1920&q=80',
-    title: 'Japan Visa Processing',
-    description: 'Tourist and business visas for Japan with streamlined application',
+    title: 'Japan Visa Precision',
+    description: 'Experience Japan with our streamlined visa application and cultural preparation',
     processingTime: '4-7 business days',
-    ctaText: 'Learn More',
+    ctaText: 'Discover Japan',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Tokyo cityscape at night representing Japan visa services'
+    alt: 'Spectacular Tokyo cityscape with neon lights and modern architecture at night'
   },
   {
     id: '4',
-    image: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?auto=format&fit=crop&w=1920&q=80',
-    title: 'Brazil Visa Services',
-    description: 'Tourist and business visas for Brazil with expert guidance',
+    image: 'https://images.unsplash.com/photo-1544735716-392fe20ff0c8?auto=format&fit=crop&w=1920&q=80',
+    title: 'Brazil Visa Adventure',
+    description: 'Unlock the wonders of Brazil with our comprehensive visa and travel planning',
     processingTime: '5-10 business days',
-    ctaText: 'Learn More',
+    ctaText: 'Experience Brazil',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Christ the Redeemer and Rio de Janeiro representing Brazil visa services'
+    alt: 'Breathtaking aerial view of Rio de Janeiro with Christ the Redeemer and Sugarloaf Mountain'
   },
   {
     id: '5',
-    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1920&q=80',
-    title: 'India Visa Application',
-    description: 'Tourist, business, and medical visas for India made simple',
+    image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1920&q=80',
+    title: 'India Visa Gateway',
+    description: 'Immerse yourself in India with our expert visa services and cultural insights',
     processingTime: '3-5 business days',
-    ctaText: 'Learn More',
+    ctaText: 'Explore India',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Indian landmarks and architecture representing India visa services'
+    alt: 'Magnificent Taj Mahal at sunrise with golden reflections representing India visa services'
   },
   {
     id: '6',
-    image: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80',
-    title: 'UAE Visa Processing',
-    description: 'Dubai and UAE visas with fast-track processing options',
+    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=1920&q=80',
+    title: 'UAE Visa Luxury',
+    description: 'Experience Dubai and UAE with our premium fast-track visa processing',
     processingTime: '2-4 business days',
-    ctaText: 'Learn More',
+    ctaText: 'Visit UAE',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Dubai skyline and Burj Khalifa representing UAE visa services'
+    alt: 'Stunning Dubai skyline with Burj Khalifa and modern architecture representing UAE luxury'
   }
 ];

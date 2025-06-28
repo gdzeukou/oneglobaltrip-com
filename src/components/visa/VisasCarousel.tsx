@@ -15,7 +15,7 @@ const VisasCarousel = () => {
 
     const interval = setInterval(() => {
       nextSlide();
-    }, 4000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [currentSlide, isPlaying]);
@@ -25,7 +25,7 @@ const VisasCarousel = () => {
     setTimeout(() => {
       setCurrentSlide((prev) => (prev + 1) % visaSlides.length);
       setIsTransitioning(false);
-    }, 300);
+    }, 400);
   }, []);
 
   const prevSlide = useCallback(() => {
@@ -33,7 +33,7 @@ const VisasCarousel = () => {
     setTimeout(() => {
       setCurrentSlide((prev) => (prev - 1 + visaSlides.length) % visaSlides.length);
       setIsTransitioning(false);
-    }, 300);
+    }, 400);
   }, []);
 
   const goToSlide = useCallback((index: number) => {
@@ -42,16 +42,16 @@ const VisasCarousel = () => {
     setTimeout(() => {
       setCurrentSlide(index);
       setIsTransitioning(false);
-    }, 300);
+    }, 400);
   }, [currentSlide]);
 
   return (
     <section 
-      className="relative w-full h-[60vh] md:h-[70vh] lg:h-[75vh] overflow-hidden rounded-lg shadow-premium mb-8"
+      className="relative w-full h-[70vh] md:h-[80vh] lg:h-[85vh] overflow-hidden rounded-2xl shadow-2xl shadow-black/20 mb-12 border-2 border-amber-200/20"
       onMouseEnter={() => setIsPlaying(false)}
       onMouseLeave={() => setIsPlaying(true)}
       role="region"
-      aria-label="Visa services carousel"
+      aria-label="Premium visa services carousel"
       aria-live="polite"
     >
       {/* Background slides */}
@@ -67,16 +67,26 @@ const VisasCarousel = () => {
         ))}
       </div>
 
+      {/* Enhanced controls */}
       <CarouselControls 
         onPrevious={prevSlide}
         onNext={nextSlide}
       />
 
+      {/* Enhanced indicators */}
       <CarouselIndicators 
         slides={visaSlides}
         currentSlide={currentSlide}
         onSlideChange={goToSlide}
       />
+      
+      {/* Progress bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
+        <div 
+          className="h-full bg-gradient-to-r from-amber-400 to-yellow-500 transition-all duration-5000 ease-linear"
+          style={{ width: isPlaying ? '100%' : '0%' }}
+        />
+      </div>
     </section>
   );
 };
