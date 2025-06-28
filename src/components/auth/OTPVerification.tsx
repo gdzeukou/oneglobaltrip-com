@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Mail, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Mail, ArrowLeft, RefreshCw, CheckCircle } from 'lucide-react';
 
 interface OTPVerificationProps {
   email: string;
@@ -25,6 +25,7 @@ const OTPVerification = ({
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
   const [canResend, setCanResend] = useState(false);
 
@@ -47,32 +48,11 @@ const OTPVerification = ({
       setCanResend(true);
     }, 30000);
 
-    // Focus on the first input
-    const firstInput = document.querySelector('input[inputmode="numeric"]') as HTMLInputElement;
-    if (firstInput) {
-      firstInput.focus();
-    }
-
     return () => {
       clearInterval(timer);
       clearTimeout(resendTimer);
     };
   }, [email, purpose]);
-
-  // Handle paste events for the entire code
-  useEffect(() => {
-    const handlePaste = (e: ClipboardEvent) => {
-      const pastedData = e.clipboardData?.getData('text');
-      if (pastedData && /^\d{6}$/.test(pastedData)) {
-        setOtp(pastedData);
-        // Auto-verify after a short delay
-        setTimeout(() => handleVerify(pastedData), 100);
-      }
-    };
-
-    document.addEventListener('paste', handlePaste);
-    return () => document.removeEventListener('paste', handlePaste);
-  }, []);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -91,45 +71,28 @@ const OTPVerification = ({
     console.log('Verifying OTP:', codeToVerify, 'for email:', email);
     setIsVerifying(true);
     setError('');
+    setSuccess('');
 
     try {
       const { error } = await verifyOTP(email, codeToVerify, purpose);
       
       if (error) {
         console.error('OTP verification failed:', error);
-        
-        // More specific error handling
-        if (error.message.includes('expired') || error.message.includes('Invalid')) {
-          if (error.message.includes('expired')) {
-            setError('This code has expired. Please request a new one.');
-          } else {
-            setError('Invalid code. Please check and try again.');
-          }
-        } else if (error.message.includes('Maximum') || error.message.includes('attempts')) {
-          setError('Too many attempts. Please request a new code.');
-        } else if (error.message.includes('User not found')) {
-          setError('Account not found. Please sign up first.');
-        } else {
-          setError(error.message || 'Verification failed. Please try again.');
-        }
+        setError(error.message || 'Verification failed. Please try again.');
         setOtp(''); // Clear invalid code
       } else {
         console.log('OTP verification successful');
+        setSuccess('Verification successful! Redirecting...');
         
-        // For signin, we need to give a moment for the auth session to be established
-        if (purpose === 'signin') {
-          // Wait a moment for the magic link process to complete
-          setTimeout(() => {
-            onVerificationSuccess();
-          }, 1000);
-        } else {
+        // Give user feedback before redirecting
+        setTimeout(() => {
           onVerificationSuccess();
-        }
+        }, 1500);
       }
     } catch (error: any) {
       console.error('OTP verification error:', error);
       setError(error.message || 'Verification failed. Please try again.');
-      setOtp(''); // Clear on error
+      setOtp('');
     } finally {
       setIsVerifying(false);
     }
@@ -139,6 +102,7 @@ const OTPVerification = ({
     console.log('Resending OTP for:', email, purpose);
     setIsResending(true);
     setError('');
+    setSuccess('');
     setCanResend(false);
 
     try {
@@ -149,6 +113,7 @@ const OTPVerification = ({
         setError(error.message);
       } else {
         console.log('OTP resent successfully');
+        setSuccess('New verification code sent!');
         setTimeLeft(600); // Reset timer
         setOtp(''); // Clear current OTP
         
@@ -156,6 +121,11 @@ const OTPVerification = ({
         setTimeout(() => {
           setCanResend(true);
         }, 30000);
+        
+        // Clear success message after 3 seconds
+        setTimeout(() => {
+          setSuccess('');
+        }, 3000);
       }
     } catch (error: any) {
       console.error('Resend OTP error:', error);
@@ -189,9 +159,9 @@ const OTPVerification = ({
                 onChange={(value) => {
                   console.log('OTP input changed:', value);
                   setOtp(value);
-                  setError(''); // Clear error on input
+                  setError('');
+                  setSuccess('');
                   if (value.length === 6) {
-                    // Auto-verify when 6 digits are entered
                     setTimeout(() => handleVerify(value), 100);
                   }
                 }}
@@ -212,9 +182,6 @@ const OTPVerification = ({
               <p className="text-sm text-gray-600">
                 Code expires in <span className="font-mono font-semibold text-purple-700">{formatTime(timeLeft)}</span>
               </p>
-              <p className="text-xs text-gray-500 mt-1">
-                You can paste the entire code at once
-              </p>
             </div>
           </div>
 
@@ -226,13 +193,22 @@ const OTPVerification = ({
             </Alert>
           )}
 
+          {success && (
+            <Alert className="border-green-200 bg-green-50">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800">
+                {success}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="space-y-3">
             <Button 
               onClick={() => handleVerify()} 
-              disabled={isVerifying || otp.length !== 6}
+              disabled={isVerifying || otp.length !== 6 || success}
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
             >
-              {isVerifying ? 'Verifying...' : 'Verify Code'}
+              {isVerifying ? 'Verifying...' : success ? 'Verified!' : 'Verify Code'}
             </Button>
 
             <div className="flex justify-between items-center">
@@ -240,7 +216,7 @@ const OTPVerification = ({
                 variant="ghost"
                 onClick={onBack}
                 className="flex items-center gap-2 text-purple-700 hover:text-purple-900 hover:bg-purple-50"
-                disabled={isVerifying}
+                disabled={isVerifying || success}
               >
                 <ArrowLeft className="h-4 w-4" />
                 Back
@@ -249,7 +225,7 @@ const OTPVerification = ({
               <Button
                 variant="ghost"
                 onClick={handleResend}
-                disabled={isResending || !canResend}
+                disabled={isResending || !canResend || success}
                 className="flex items-center gap-2 text-purple-700 hover:text-purple-900 hover:bg-purple-50"
               >
                 {isResending ? (
@@ -264,7 +240,7 @@ const OTPVerification = ({
 
           <div className="text-center pt-4">
             <p className="text-xs text-gray-500">
-              Having trouble? Make sure to check your spam folder or contact our One Global Trip support team.
+              Having trouble? Check your spam folder or try requesting a new code.
             </p>
           </div>
         </CardContent>
