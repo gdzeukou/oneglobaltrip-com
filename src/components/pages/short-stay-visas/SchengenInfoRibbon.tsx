@@ -31,7 +31,7 @@ const SchengenInfoRibbon = () => {
                   <p>With one Schengen visa, you can travel freely between these countries for tourism, business, or visiting family for up to 90 days within any 180-day period.</p>
                   <p>This makes it perfect for European multi-country trips without needing separate visas for each destination.</p>
                   <Button asChild className="w-full mt-4">
-                    <a href={ROUTES.SCHENGEN_LANDING} target="_blank">
+                    <a href={ROUTES.SCHENGEN_SHORT_STAY_LANDING} target="_blank">
                       Learn More About Schengen Visas
                     </a>
                   </Button>

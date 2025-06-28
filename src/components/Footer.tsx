@@ -43,7 +43,7 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Services</h4>
             <div className="space-y-2 text-blue-200">
-              <Link to={ROUTES.SCHENGEN_LANDING} className="block hover:text-white transition-colors">Schengen Visa Pack</Link>
+              <Link to={ROUTES.SCHENGEN_SHORT_STAY_LANDING} className="block hover:text-white transition-colors">Schengen Visa Pack</Link>
               <Link to={ROUTES.UK_SHORT_STAY} className="block hover:text-white transition-colors">UK Visa Pass</Link>
               <Link to={ROUTES.BRAZIL_SHORT_STAY} className="block hover:text-white transition-colors">Brazil eVisa</Link>
               <p>Passport Renewal</p>

@@ -13,7 +13,7 @@ const MainCTASection = () => {
     alt: 'European Union flag waving in front of classical European architecture',
     badge: 'POPULAR',
     badgeColor: 'bg-red-500',
-    route: ROUTES.SCHENGEN_LANDING,
+    route: ROUTES.SCHENGEN_SHORT_STAY_LANDING,
     features: ['90-day validity', 'Multiple entries', 'Fast processing']
   }, {
     id: 'portugal',

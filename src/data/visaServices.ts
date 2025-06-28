@@ -97,7 +97,7 @@ export const popularDestinations = [
     description: 'Visit all of Europe with a single visa application',
     price: 193,
     image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop',
-    route: ROUTES.SCHENGEN_LANDING,
+    route: ROUTES.SCHENGEN_SHORT_STAY_LANDING,
     countries: ['France', 'Germany', 'Italy', 'Spain', 'Netherlands'],
     processingTime: '10-15 days',
     validityPeriod: '90 days'
