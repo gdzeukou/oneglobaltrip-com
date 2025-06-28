@@ -255,7 +255,7 @@ const Dashboard = () => {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Visa Applications</CardTitle>
-                  <Button onClick={() => navigate('/visas')}>
+                  <Button onClick={() => window.location.href = '/visas'}>
                     <Plus className="h-4 w-4 mr-2" />
                     New Application
                   </Button>
@@ -266,7 +266,7 @@ const Dashboard = () => {
                       <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                       <h3 className="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
                       <p className="text-gray-600 mb-6">Start your visa application journey today!</p>
-                      <Button onClick={() => navigate('/visas')}>
+                      <Button onClick={() => window.location.href = '/visas'}>
                         Start First Application
                       </Button>
                     </div>
