@@ -1,5 +1,4 @@
 
-
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -60,15 +59,17 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('OTP verification successful for', email);
 
-    // For both signup and signin, we'll use the same approach:
-    // Generate a magic link that will redirect to dashboard after authentication
+    // Generate a magic link that redirects to our auth callback
     console.log('Generating magic link for user authentication');
+    
+    // Use the correct callback URL format
+    const redirectUrl = `${Deno.env.get("SUPABASE_URL")?.replace('/supabase', '')}/auth/v1/callback?next=${encodeURIComponent('/dashboard')}`;
     
     const { data: magicLinkData, error: magicLinkError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',
       email: email,
       options: {
-        redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '')}.supabase.co/auth/v1/callback?next=${encodeURIComponent('/dashboard')}`
+        redirectTo: redirectUrl
       }
     });
 
@@ -95,7 +96,7 @@ const handler = async (req: Request): Promise<Response> => {
             type: 'magiclink',
             email: email,
             options: {
-              redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '')}.supabase.co/auth/v1/callback?next=${encodeURIComponent('/dashboard')}`
+              redirectTo: redirectUrl
             }
           });
 
@@ -133,7 +134,7 @@ const handler = async (req: Request): Promise<Response> => {
         type: 'magiclink',
         email: email,
         options: {
-          redirectTo: `${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '')}.supabase.co/auth/v1/callback?next=${encodeURIComponent('/dashboard')}`
+          redirectTo: redirectUrl
         }
       });
 
@@ -182,4 +183,3 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 serve(handler);
-
