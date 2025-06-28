@@ -23,8 +23,6 @@ export const ROUTES = {
   VISAS_PRICING: '/visas/pricing',
   
   // Short stay visas
-  SCHENGEN_SHORT_STAY: '/visas/schengen-short-stay',
-  SCHENGEN_LANDING: '/visas/schengen-short-stay-landing',
   SCHENGEN_SHORT_STAY_LANDING: '/visas/short-stay/schengen',
   FRANCE_SHORT_STAY: '/visas/france-short-stay',
   GREECE_SHORT_STAY: '/visas/greece-short-stay',
