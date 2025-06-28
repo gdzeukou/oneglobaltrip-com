@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { validateEmail } from '@/utils/validation';
 
@@ -46,78 +45,42 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
 
     console.log('OTP verify response:', data);
 
-    if (data?.success) {
-      console.log('OTP verification successful');
+    if (data?.success && data?.authData?.actionLink) {
+      console.log('OTP verification successful, processing magic link authentication');
       
-      if (purpose === 'signup') {
-        // For signup, create the user account after OTP verification
-        const pendingSignup = localStorage.getItem('pendingSignup');
-        if (pendingSignup) {
-          const signupData = JSON.parse(pendingSignup);
-          console.log('Creating user account after OTP verification');
-          
-          const { data: authData, error: authError } = await supabase.auth.signUp({
-            email: signupData.email,
-            password: signupData.password,
-            options: {
-              emailRedirectTo: `${window.location.origin}/dashboard`,
-              data: {
-                first_name: signupData.firstName,
-                last_name: signupData.lastName
-              }
-            }
-          });
-
-          localStorage.removeItem('pendingSignup');
-          
-          if (authError) {
-            console.error('Signup error after OTP:', authError);
-            return { error: authError };
+      // Navigate to the magic link to establish the session
+      // This will trigger Supabase's authentication flow
+      const magicLinkUrl = data.authData.actionLink;
+      console.log('Processing magic link for authentication');
+      
+      // Use a hidden iframe to process the magic link
+      return new Promise((resolve) => {
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = magicLinkUrl;
+        
+        // Listen for auth state changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+          if (event === 'SIGNED_IN' && session) {
+            console.log('Magic link authentication successful');
+            document.body.removeChild(iframe);
+            subscription.unsubscribe();
+            resolve({ error: null });
           }
-
-          console.log('User account created successfully');
-        }
-      } else {
-        // For signin, use the magic link data to establish session
-        if (data.sessionData) {
-          console.log('Establishing session with magic link data');
-          
-          // The magic link URL contains the tokens we need
-          const magicLinkUrl = data.sessionData.properties?.action_link;
-          if (magicLinkUrl) {
-            // Extract the tokens from the magic link URL
-            const url = new URL(magicLinkUrl);
-            const accessToken = url.searchParams.get('access_token');
-            const refreshToken = url.searchParams.get('refresh_token');
-            
-            if (accessToken && refreshToken) {
-              console.log('Setting session with extracted tokens');
-              
-              const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-                access_token: accessToken,
-                refresh_token: refreshToken
-              });
-              
-              if (sessionError) {
-                console.error('Session establishment error:', sessionError);
-                return { error: { message: 'Failed to establish session' } };
-              }
-              
-              console.log('Session established successfully');
-              localStorage.removeItem('pendingSignin');
-            } else {
-              console.error('Could not extract tokens from magic link');
-              return { error: { message: 'Failed to extract session tokens' } };
-            }
-          } else {
-            console.error('No magic link URL found in session data');
-            return { error: { message: 'No session data received' } };
+        });
+        
+        document.body.appendChild(iframe);
+        
+        // Cleanup after timeout
+        setTimeout(() => {
+          if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+            subscription.unsubscribe();
+            console.log('Magic link authentication completed');
+            resolve({ error: null });
           }
-        } else {
-          console.error('No session data returned from verification');
-          return { error: { message: 'No session data received' } };
-        }
-      }
+        }, 3000);
+      });
     }
 
     return { error: data?.error ? { message: data.error } : null };

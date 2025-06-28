@@ -59,10 +59,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('OTP verification successful for', email);
 
-    // Try to generate a magic link first to check if user exists
-    console.log('Attempting to generate magic link for existing user');
+    // For both signup and signin, we'll use the same approach:
+    // Generate a magic link that will establish the session
+    console.log('Generating magic link for user authentication');
     
-    const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+    const { data: magicLinkData, error: magicLinkError } = await supabase.auth.admin.generateLink({
       type: 'magiclink',
       email: email,
       options: {
@@ -70,12 +71,10 @@ const handler = async (req: Request): Promise<Response> => {
       }
     });
 
-    if (linkError) {
-      console.log('Magic link generation failed, checking if user needs to be created:', linkError.message);
+    if (magicLinkError) {
+      console.log('Magic link generation failed, attempting to create user:', magicLinkError.message);
       
-      // If magic link fails, it might be because user doesn't exist
-      // Try to create the user
-      console.log('Creating new user account');
+      // If magic link fails, the user might not exist - create them
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
         email: email,
         email_confirm: true, // Mark email as confirmed since they verified OTP
@@ -89,9 +88,9 @@ const handler = async (req: Request): Promise<Response> => {
         console.error('Error creating user:', createError);
         
         // If user creation fails because user already exists, try magic link again
-        if (createError.message.includes('already been registered')) {
+        if (createError.message.includes('already been registered') || createError.message.includes('email_exists')) {
           console.log('User already exists, retrying magic link generation');
-          const { data: retryLinkData, error: retryLinkError } = await supabase.auth.admin.generateLink({
+          const { data: retryMagicLinkData, error: retryMagicLinkError } = await supabase.auth.admin.generateLink({
             type: 'magiclink',
             email: email,
             options: {
@@ -99,20 +98,22 @@ const handler = async (req: Request): Promise<Response> => {
             }
           });
 
-          if (retryLinkError) {
-            console.error('Retry magic link generation failed:', retryLinkError);
+          if (retryMagicLinkError) {
+            console.error('Retry magic link generation failed:', retryMagicLinkError);
             return new Response(
-              JSON.stringify({ error: 'Failed to create session' }),
+              JSON.stringify({ error: 'Failed to authenticate user' }),
               { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
             );
           }
 
-          console.log('Retry magic link generated successfully');
+          console.log('Magic link generated successfully for existing user');
           return new Response(
             JSON.stringify({ 
               success: true, 
               message: 'OTP verified successfully',
-              sessionData: retryLinkData
+              authData: {
+                actionLink: retryMagicLinkData.properties.action_link
+              }
             }),
             { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
           );
@@ -127,7 +128,7 @@ const handler = async (req: Request): Promise<Response> => {
       console.log('User created successfully, generating magic link for new user');
 
       // Generate a magic link for the new user
-      const { data: newUserLinkData, error: newUserLinkError } = await supabase.auth.admin.generateLink({
+      const { data: newUserMagicLinkData, error: newUserMagicLinkError } = await supabase.auth.admin.generateLink({
         type: 'magiclink',
         email: email,
         options: {
@@ -135,10 +136,10 @@ const handler = async (req: Request): Promise<Response> => {
         }
       });
 
-      if (newUserLinkError) {
-        console.error('Error generating magic link for new user:', newUserLinkError);
+      if (newUserMagicLinkError) {
+        console.error('Error generating magic link for new user:', newUserMagicLinkError);
         return new Response(
-          JSON.stringify({ error: 'Failed to create session' }),
+          JSON.stringify({ error: 'Failed to authenticate user' }),
           { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
         );
       }
@@ -149,7 +150,9 @@ const handler = async (req: Request): Promise<Response> => {
         JSON.stringify({ 
           success: true, 
           message: 'Account created and OTP verified successfully',
-          sessionData: newUserLinkData
+          authData: {
+            actionLink: newUserMagicLinkData.properties.action_link
+          }
         }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
@@ -160,7 +163,9 @@ const handler = async (req: Request): Promise<Response> => {
         JSON.stringify({ 
           success: true, 
           message: 'OTP verified successfully',
-          sessionData: linkData
+          authData: {
+            actionLink: magicLinkData.properties.action_link
+          }
         }),
         { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
