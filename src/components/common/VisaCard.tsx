@@ -1,134 +1,123 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface VisaCardProps {
-  id: string;
-  name: string;
-  tagline?: string;
+  title: string;
   description: string;
-  price: number;
-  image: string;
-  promo?: string;
-  route: string;
-  features?: string[];
-  size?: 'small' | 'medium' | 'large';
-  showDetails?: boolean;
+  processingTime: string;
+  price: string;
+  features: string[];
+  ctaText: string;
+  ctaLink: string;
+  image?: string;
+  badge?: string;
+  popular?: boolean;
 }
 
-const VisaCard = ({
-  id,
-  name,
-  tagline,
-  description,
-  price,
+const VisaCard = ({ 
+  title, 
+  description, 
+  processingTime, 
+  price, 
+  features, 
+  ctaText, 
+  ctaLink,
   image,
-  promo,
-  route,
-  features = ['24/7 AI assistant', 'Expedited appointments', 'Document review'],
-  size = 'medium',
-  showDetails = true
+  badge,
+  popular = false
 }: VisaCardProps) => {
-  const navigate = useNavigate();
-
-  const cardClasses = {
-    small: 'h-auto',
-    medium: 'h-auto',
-    large: 'h-auto min-h-[500px]'
-  };
-
-  const imageClasses = {
-    small: 'h-32',
-    medium: 'h-48',
-    large: 'h-64'
-  };
-
   return (
-    <Card className={`overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105 relative ${cardClasses[size]}`}>
-      {/* Promo Badge */}
-      {promo && (
-        <Badge className="absolute top-4 right-4 z-10 bg-orange-500 text-white">
-          {promo}
-        </Badge>
+    <Card className={`relative overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${
+      popular ? 'ring-2 ring-amber-400 shadow-amber-100/50' : ''
+    }`}>
+      {popular && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+          <span className="bg-gradient-to-r from-amber-400 to-yellow-500 text-black px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+            Most Popular
+          </span>
+        </div>
       )}
       
-      {/* Image */}
-      <div className={`relative ${imageClasses[size]}`}>
-        <img
-          src={image}
-          alt={name}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-black/20" />
-        
-        {/* Features overlay for small cards */}
-        {size === 'small' && features && (
-          <div className="absolute bottom-2 left-2">
-            <div className="flex flex-wrap gap-1">
-              {features.slice(0, 2).map((feature, idx) => (
-                <span key={idx} className="text-xs bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full">
-                  {feature.replace('• ', '')}
-                </span>
-              ))}
+      {/* Hero Image Section */}
+      {image && (
+        <div className="relative h-48 overflow-hidden">
+          <img 
+            src={image} 
+            alt={title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+          />
+          <div 
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url(/lovable-uploads/f3204ae7-860b-465a-bfd2-4d6fb469bd17.png)`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              opacity: 0.3
+            }}
+          />
+          {badge && (
+            <div className="absolute top-4 left-4">
+              <span className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-800">
+                {badge}
+              </span>
             </div>
-          </div>
-        )}
-      </div>
-      
-      {/* Content */}
-      <CardContent className={size === 'small' ? 'p-4' : 'p-6'}>
-        <h3 className={`font-bold mb-2 text-gray-900 ${size === 'small' ? 'text-sm' : 'text-xl'}`}>
-          {name}
-        </h3>
-        
-        {size !== 'small' && <div className="h-px bg-gray-200 mb-4" />}
-        
-        <div className="mb-4">
-          {tagline && (
-            <p className={`font-semibold text-orange-600 mb-2 ${size === 'small' ? 'text-xs' : 'text-sm'}`}>
-              {tagline}
-            </p>
           )}
-          <p className={`text-gray-600 mb-4 ${size === 'small' ? 'text-xs' : 'text-sm'}`}>
+        </div>
+      )}
+
+      <CardContent className="p-6 space-y-4">
+        {/* Title and Description */}
+        <div>
+          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+            {title}
+          </h3>
+          <p className="text-gray-600 text-sm leading-relaxed">
             {description}
           </p>
-          
-          {/* Features list for medium/large cards */}
-          {size !== 'small' && features && (
-            <ul className="text-sm text-gray-600 space-y-1">
-              {features.map((feature, idx) => (
-                <li key={idx}>{feature.startsWith('•') ? feature : `• ${feature}`}</li>
-              ))}
-            </ul>
-          )}
         </div>
-        
-        {/* Price and Actions */}
-        <div className={`flex items-center justify-between mb-4 ${size === 'small' ? 'text-sm' : ''}`}>
-          <span className={`font-bold text-gray-900 ${size === 'small' ? 'text-lg' : 'text-2xl'}`}>
-            ${price}
-          </span>
-          <span className={`text-gray-500 ${size === 'small' ? 'text-xs' : 'text-sm'}`}>
-            starting from
+
+        {/* Processing Time */}
+        <div className="flex items-center space-x-2">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="text-sm text-gray-500">
+            Processing: <span className="font-semibold text-green-600">{processingTime}</span>
           </span>
         </div>
-        
-        <Button 
-          className={`w-full mb-3 rounded-full ${size === 'small' ? 'text-xs py-2' : ''}`}
-          style={{ backgroundColor: '#FF6B35' }}
-          onClick={() => navigate(route)}
-        >
-          {size === 'small' ? 'Apply Now' : 'Start Application'}
-        </Button>
-        
-        {showDetails && size !== 'small' && (
-          <Button variant="ghost" size="sm" className="w-full text-gray-600">
-            Details
+
+        {/* Price */}
+        <div className="border-t border-gray-100 pt-4">
+          <div className="text-center mb-4">
+            <span className="text-3xl font-bold text-gray-900">{price}</span>
+            <span className="text-gray-500 text-sm ml-1">per application</span>
+          </div>
+        </div>
+
+        {/* Features List */}
+        <div className="space-y-2">
+          {features.map((feature, index) => (
+            <div key={index} className="flex items-start space-x-2">
+              <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+              <span className="text-sm text-gray-600">{feature}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Button */}
+        <div className="pt-4">
+          <Button 
+            asChild 
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all duration-300 hover:shadow-lg group"
+          >
+            <Link to={ctaLink} className="flex items-center justify-center space-x-2">
+              <span>{ctaText}</span>
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
           </Button>
-        )}
+        </div>
       </CardContent>
     </Card>
   );
