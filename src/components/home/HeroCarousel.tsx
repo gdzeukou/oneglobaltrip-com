@@ -9,8 +9,6 @@ import CarouselNavigation from './carousel/CarouselNavigation';
 import CarouselIndicators from './carousel/CarouselIndicators';
 
 const HeroCarousel = () => {
-  const [isPlaying, setIsPlaying] = useState(true);
-  
   const {
     currentSlide,
     isTransitioning,
@@ -19,7 +17,7 @@ const HeroCarousel = () => {
     goToSlide
   } = useCarousel({
     totalSlides: heroSlides.length,
-    isPlaying
+    isPlaying: true
   });
 
   const {
@@ -34,8 +32,6 @@ const HeroCarousel = () => {
   return (
     <section 
       className="relative w-full h-[70vh] md:h-[80vh] lg:h-[90vh] overflow-hidden"
-      onMouseEnter={() => setIsPlaying(false)}
-      onMouseLeave={() => setIsPlaying(true)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -59,11 +55,6 @@ const HeroCarousel = () => {
         currentSlide={currentSlide} 
         onSlideSelect={goToSlide} 
       />
-
-      {/* Play/Pause indicator for accessibility */}
-      <div className="absolute top-4 right-4 text-white/70 text-sm">
-        {isPlaying ? '⏸️ Hover to pause' : '▶️ Auto-playing'}
-      </div>
     </section>
   );
 };
