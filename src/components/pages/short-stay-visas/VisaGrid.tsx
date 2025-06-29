@@ -1,4 +1,3 @@
-
 import VisaCard from '@/components/common/VisaCard';
 import { ROUTES } from '@/constants/routes';
 
@@ -20,7 +19,8 @@ const VisaGrid = () => {
       ctaLink: ROUTES.SCHENGEN_SHORT_STAY_LANDING,
       image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center',
       badge: 'Save $25 this month',
-      popular: false
+      popular: false,
+      showEuroFlag: true
     },
     {
       id: 'uk',
@@ -236,6 +236,7 @@ const VisaGrid = () => {
               image={visa.image}
               badge={visa.badge}
               popular={visa.popular}
+              showEuroFlag={visa.showEuroFlag}
             />
           ))}
         </div>

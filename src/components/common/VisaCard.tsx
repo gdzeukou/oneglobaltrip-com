@@ -16,6 +16,7 @@ interface VisaCardProps {
   image?: string;
   badge?: string;
   popular?: boolean;
+  showEuroFlag?: boolean;
 }
 
 const VisaCard = ({ 
@@ -28,7 +29,8 @@ const VisaCard = ({
   ctaLink,
   image,
   badge,
-  popular = false
+  popular = false,
+  showEuroFlag = false
 }: VisaCardProps) => {
   return (
     <Card className={`relative overflow-hidden group transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${
@@ -50,15 +52,17 @@ const VisaCard = ({
             alt={title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
-          <div 
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url(/lovable-uploads/f3204ae7-860b-465a-bfd2-4d6fb469bd17.png)`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              opacity: 0.3
-            }}
-          />
+          {showEuroFlag && (
+            <div 
+              className="absolute inset-0"
+              style={{
+                backgroundImage: `url(/lovable-uploads/f3204ae7-860b-465a-bfd2-4d6fb469bd17.png)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                opacity: 0.3
+              }}
+            />
+          )}
           {badge && (
             <div className="absolute top-4 left-4">
               <span className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-800">
