@@ -15,6 +15,17 @@ const AuthCallback = () => {
         console.log('Current URL:', window.location.href);
         console.log('Search params:', Object.fromEntries(searchParams.entries()));
         
+        // Check for error parameters first
+        const errorParam = searchParams.get('error');
+        const errorDescription = searchParams.get('error_description');
+        
+        if (errorParam) {
+          console.error('AuthCallback: URL contains error:', errorParam, errorDescription);
+          setError(errorDescription || errorParam);
+          setTimeout(() => navigate('/auth', { replace: true }), 3000);
+          return;
+        }
+
         // Extract tokens from URL hash if present
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = hashParams.get('access_token');
@@ -60,20 +71,11 @@ const AuthCallback = () => {
           localStorage.removeItem('pendingSignup');
           localStorage.removeItem('pendingSignin');
           
-          // Redirect to dashboard after successful authentication
-          console.log('AuthCallback: Redirecting to dashboard');
-          navigate('/dashboard', { replace: true });
-          return;
-        }
-
-        // Check for error parameters
-        const errorParam = searchParams.get('error');
-        const errorDescription = searchParams.get('error_description');
-        
-        if (errorParam) {
-          console.error('AuthCallback: URL contains error:', errorParam, errorDescription);
-          setError(errorDescription || errorParam);
-          setTimeout(() => navigate('/auth', { replace: true }), 3000);
+          // Add small delay to ensure session is fully established
+          setTimeout(() => {
+            console.log('AuthCallback: Redirecting to dashboard');
+            navigate('/dashboard', { replace: true });
+          }, 100);
           return;
         }
 
@@ -93,7 +95,9 @@ const AuthCallback = () => {
 
         if (data.session) {
           console.log('AuthCallback: Existing session found, redirecting to dashboard');
-          navigate('/dashboard', { replace: true });
+          setTimeout(() => {
+            navigate('/dashboard', { replace: true });
+          }, 100);
         } else {
           console.log('AuthCallback: No session found, redirecting to auth');
           setError('No authentication session found. Please sign in again.');

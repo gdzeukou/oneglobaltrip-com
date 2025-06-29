@@ -42,7 +42,7 @@ file_size_limit = "50MiB"
 enabled = true
 port = 54328
 site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["https://127.0.0.1:3000", "http://127.0.0.1:3000/auth/callback", "https://127.0.0.1:3000/auth/callback", "https://oneglobaltrip.com", "https://oneglobaltrip.com/auth/callback"]
+additional_redirect_urls = ["https://127.0.0.1:3000", "http://127.0.0.1:3000/auth/callback", "https://127.0.0.1:3000/auth/callback", "https://oneglobaltrip.com", "https://oneglobaltrip.com/auth/callback", "https://id-preview--aa67c92a-c215-493c-9406-0eed14fe879a.lovable.app/auth/callback", "https://preview--oneglobaltrip-com.lovable.app/auth/callback"]
 jwt_expiry = 3600
 enable_signup = true
 
