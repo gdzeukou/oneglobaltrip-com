@@ -1,5 +1,6 @@
 
 import { Link, useLocation } from 'react-router-dom';
+import { ROUTES } from '@/constants/routes';
 
 const NavigationLinks = () => {
   const location = useLocation();
@@ -17,16 +18,16 @@ const NavigationLinks = () => {
 
   return (
     <div className="hidden md:flex items-center space-x-6">
-      <Link to="/" className={linkClass('/')}>
+      <Link to={ROUTES.HOME} className={linkClass(ROUTES.HOME)}>
         Home
       </Link>
-      <Link to="/packages" className={linkClass('/packages')}>
+      <Link to={ROUTES.PACKAGES} className={linkClass(ROUTES.PACKAGES)}>
         Packages
       </Link>
-      <Link to="/visas" className={linkClass('/visas')}>
+      <Link to={ROUTES.VISAS} className={linkClass(ROUTES.VISAS)}>
         Visas
       </Link>
-      <Link to="/contact" className={linkClass('/contact')}>
+      <Link to={ROUTES.CONTACT} className={linkClass(ROUTES.CONTACT)}>
         Contact
       </Link>
     </div>
