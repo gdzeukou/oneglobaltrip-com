@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -54,12 +53,11 @@ const VisaCard = ({
           />
           {showEuroFlag && (
             <div 
-              className="absolute inset-0"
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
               style={{
                 backgroundImage: `url(/lovable-uploads/f3204ae7-860b-465a-bfd2-4d6fb469bd17.png)`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                opacity: 0.3
+                opacity: 0.6,
+                mixBlendMode: 'multiply'
               }}
             />
           )}
