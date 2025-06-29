@@ -42,7 +42,7 @@ file_size_limit = "50MiB"
 enabled = true
 port = 54328
 site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["https://127.0.0.1:3000", "http://127.0.0.1:3000/auth/callback", "https://127.0.0.1:3000/auth/callback"]
+additional_redirect_urls = ["https://127.0.0.1:3000", "http://127.0.0.1:3000/auth/callback", "https://127.0.0.1:3000/auth/callback", "https://oneglobaltrip.com", "https://oneglobaltrip.com/auth/callback"]
 jwt_expiry = 3600
 enable_signup = true
 
@@ -56,6 +56,9 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.verify-otp]
+verify_jwt = false
+
+[functions.visa-eligibility-ai]
 verify_jwt = false
 
 [edge-runtime]

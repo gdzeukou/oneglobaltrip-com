@@ -62,8 +62,9 @@ const handler = async (req: Request): Promise<Response> => {
     // Generate a magic link that redirects to our custom auth callback
     console.log('Generating magic link for user authentication');
     
-    // Use the correct callback URL that points to our AuthCallback component
-    const redirectUrl = `${Deno.env.get("SUPABASE_URL")?.split('/supabase')[0] || 'http://localhost:3000'}/auth/callback`;
+    // Get the origin from the request headers to ensure proper redirect
+    const origin = req.headers.get('origin') || req.headers.get('referer')?.split('/').slice(0, 3).join('/') || 'http://localhost:3000';
+    const redirectUrl = `${origin}/auth/callback`;
     console.log('Using redirect URL:', redirectUrl);
     
     const { data: magicLinkData, error: magicLinkError } = await supabase.auth.admin.generateLink({
