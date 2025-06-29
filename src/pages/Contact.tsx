@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -50,8 +49,8 @@ const Contact = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-lg font-semibold text-gray-900">+1 (555) 123-4567</p>
-                    <p className="text-gray-700 font-medium">Available 24/7 for urgent matters</p>
+                    <p className="text-lg font-semibold text-gray-900">+1 877 622-7278</p>
+                    <p className="text-gray-700 font-medium">Available for any matters</p>
                   </CardContent>
                 </Card>
 
@@ -63,7 +62,7 @@ const Contact = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-lg font-semibold text-gray-900">support@oneglobaltrip.com</p>
+                    <p className="text-lg font-semibold text-gray-900">booking@oneglobaltrip.com</p>
                     <p className="text-gray-700 font-medium">Response within 2-4 hours</p>
                   </CardContent>
                 </Card>
