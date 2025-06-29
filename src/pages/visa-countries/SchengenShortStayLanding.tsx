@@ -1,8 +1,8 @@
-
 import { useEffect } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import SchengenHeroEnhanced from '@/components/visa/schengen-landing/SchengenHeroEnhanced';
+import AIVisaChecker from '@/components/visa/AIVisaChecker';
 import SchengenInfoSection from '@/components/visa/schengen-landing/SchengenInfoSection';
 import SchengenVisaRequirements from '@/components/visa/schengen-landing/SchengenVisaRequirements';
 import SchengenProcessSteps from '@/components/visa/schengen-landing/SchengenProcessSteps';
@@ -23,6 +23,10 @@ const SchengenShortStayLanding = () => {
       
       <section id="hero">
         <SchengenHeroEnhanced />
+      </section>
+
+      <section id="ai-visa-checker">
+        <AIVisaChecker />
       </section>
 
       <section id="what-is-schengen">
