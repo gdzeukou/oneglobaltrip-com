@@ -38,6 +38,25 @@ const AIResultsStep = ({ result, loading, onBack, onStartOver }: AIResultsStepPr
     );
   }
 
+  // Handle error status
+  if (result.status === 'error') {
+    return (
+      <div className="text-center py-12">
+        <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">{result.title || 'Analysis Failed'}</h3>
+        <p className="text-gray-600 mb-6">{result.reason || 'An error occurred while processing your request.'}</p>
+        <div className="space-y-3">
+          <Button onClick={onStartOver} className="bg-blue-600 hover:bg-blue-700 text-white">
+            Try Again
+          </Button>
+          <Button onClick={onBack} variant="outline">
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const getStatusIcon = () => {
     if (result.status === 'eligible') return <CheckCircle className="h-8 w-8 text-green-500" />;
     if (result.status === 'not-eligible') return <XCircle className="h-8 w-8 text-red-500" />;

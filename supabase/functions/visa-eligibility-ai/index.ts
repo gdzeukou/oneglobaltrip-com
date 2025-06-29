@@ -19,8 +19,25 @@ serve(async (req) => {
 
     console.log('Processing visa eligibility check:', { nationality, applyingFrom, usaVisaStatus, travelPurpose, duration });
 
+    // Check if OpenAI API key is available
+    if (!openAIApiKey) {
+      console.error('OpenAI API key not found');
+      return new Response(JSON.stringify({
+        eligible: false,
+        status: 'error',
+        title: 'Configuration Error',
+        reason: 'AI service is currently unavailable. Please try again later.',
+        alternative: 'Contact support for manual visa guidance.',
+        documents: [],
+        processingTime: 'N/A',
+        successTips: []
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     // Special logic for USA applications with B1/B2 visa
-    if (applyingFrom === 'USA' && usaVisaStatus === 'B1/B2') {
+    if (applyingFrom === 'USA' && usaVisaStatus === 'b1-b2') {
       return new Response(JSON.stringify({
         eligible: false,
         status: 'not-eligible',
@@ -52,6 +69,8 @@ Please provide:
 
 Format your response as a structured analysis focusing on practical, actionable advice.`;
 
+    console.log('Sending request to OpenAI...');
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -71,7 +90,19 @@ Format your response as a structured analysis focusing on practical, actionable 
       }),
     });
 
+    if (!response.ok) {
+      console.error('OpenAI API error:', response.status, response.statusText);
+      throw new Error(`OpenAI API error: ${response.status}`);
+    }
+
     const data = await response.json();
+    console.log('OpenAI response received:', { choices_length: data.choices?.length });
+
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid OpenAI response structure:', data);
+      throw new Error('Invalid response from OpenAI API');
+    }
+
     const aiResponse = data.choices[0].message.content;
 
     // Parse AI response and structure it
@@ -89,6 +120,8 @@ Format your response as a structured analysis focusing on practical, actionable 
       ]
     };
 
+    console.log('Sending structured response');
+
     return new Response(JSON.stringify(structuredResponse), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -96,6 +129,11 @@ Format your response as a structured analysis focusing on practical, actionable 
   } catch (error) {
     console.error('Error in visa-eligibility-ai function:', error);
     return new Response(JSON.stringify({ 
+      eligible: false,
+      status: 'error',
+      title: 'Analysis Failed',
+      reason: 'We encountered an error while processing your request. Please try again.',
+      alternative: 'If the problem persists, contact our support team for assistance.',
       error: 'Failed to process visa eligibility check',
       details: error.message 
     }), {
