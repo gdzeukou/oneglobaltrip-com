@@ -1,10 +1,11 @@
+
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, Phone, Mail, Clock, MessageCircle } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, MessageCircle, Calendar, Star, ArrowRight } from 'lucide-react';
 
 const Contact = () => {
   const location = useLocation();
@@ -152,59 +153,77 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Office Locations - Brighter background and cards */}
-      <section className="py-16 bg-gradient-to-r from-gray-50 to-blue-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">Our Offices</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-200 bg-white hover:scale-105">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-3">
-                  <MapPin className="h-6 w-6 text-blue-500" />
-                  <span className="text-gray-800 font-bold">New York Office</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 font-medium">
-                  123 Business Avenue<br />
-                  New York, NY 10001<br />
-                  United States
-                </p>
+      {/* Attractive CTA Section - Replacing Office Locations */}
+      <section className="py-20 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 relative overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-300/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-10 right-10 w-40 h-40 bg-white/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-pink-300/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 text-center relative z-10">
+          <div className="flex items-center justify-center mb-6">
+            <Star className="h-8 w-8 text-yellow-300 mr-3 animate-pulse" />
+            <h2 className="text-4xl md:text-5xl font-bold text-white">Ready for Your Next Adventure?</h2>
+            <Star className="h-8 w-8 text-yellow-300 ml-3 animate-pulse" />
+          </div>
+          
+          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto font-medium">
+            Join over 10,000 happy travelers who trusted us with their dream vacations. 
+            Let's make your travel dreams come true!
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            <Card className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105">
+              <CardContent className="p-6 text-center">
+                <Calendar className="h-12 w-12 text-yellow-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-2">Free Consultation</h3>
+                <p className="text-white/80">Expert advice tailored to your needs</p>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-200 bg-white hover:scale-105">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-3">
-                  <MapPin className="h-6 w-6 text-purple-500" />
-                  <span className="text-gray-800 font-bold">London Office</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 font-medium">
-                  456 Travel Street<br />
-                  London, EC1A 1BB<br />
-                  United Kingdom
-                </p>
+            <Card className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105">
+              <CardContent className="p-6 text-center">
+                <MapPin className="h-12 w-12 text-yellow-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-2">Worldwide Destinations</h3>
+                <p className="text-white/80">Access to exclusive global experiences</p>
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-200 bg-white hover:scale-105">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-3">
-                  <MapPin className="h-6 w-6 text-pink-500" />
-                  <span className="text-gray-800 font-bold">Dubai Office</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 font-medium">
-                  789 Global Plaza<br />
-                  Dubai, UAE<br />
-                  United Arab Emirates
-                </p>
+            <Card className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 transition-all duration-300 hover:scale-105">
+              <CardContent className="p-6 text-center">
+                <Star className="h-12 w-12 text-yellow-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold mb-2">5-Star Service</h3>
+                <p className="text-white/80">24/7 support throughout your journey</p>
               </CardContent>
             </Card>
           </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button 
+              size="lg"
+              onClick={() => window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank')}
+              className="bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold text-xl px-10 py-4 rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300"
+            >
+              <Calendar className="h-6 w-6 mr-3" />
+              Start Planning Today
+              <ArrowRight className="h-6 w-6 ml-3" />
+            </Button>
+            
+            <Button 
+              size="lg"
+              variant="outline"
+              className="border-2 border-white text-white hover:bg-white hover:text-purple-600 font-bold text-xl px-10 py-4 rounded-full bg-white/10 backdrop-blur-sm shadow-2xl hover:shadow-3xl transform hover:scale-110 transition-all duration-300"
+            >
+              <Phone className="h-6 w-6 mr-3" />
+              Call Now: +1 877 622-7278
+            </Button>
+          </div>
+
+          <p className="text-white/70 mt-6 text-lg">
+            ✨ No hidden fees • ✨ Instant booking confirmation • ✨ Best price guarantee
+          </p>
         </div>
       </section>
 
