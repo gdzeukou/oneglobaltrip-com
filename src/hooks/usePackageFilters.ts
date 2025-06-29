@@ -1,21 +1,6 @@
 
 import { useState, useMemo } from 'react';
-
-export interface Package {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-  duration: string;
-  location: string;
-  highlights: string[];
-  included: string[];
-  rating: number;
-  reviews: number;
-  featured?: boolean;
-}
+import { Package } from '@/data/packages';
 
 export const usePackageFilters = (packages: Package[]) => {
   const [searchTerm, setSearchTerm] = useState('');
