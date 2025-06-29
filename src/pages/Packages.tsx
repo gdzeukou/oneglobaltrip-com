@@ -9,6 +9,9 @@ import PackagesGrid from '@/components/packages/PackagesGrid';
 import FeaturedPackages from '@/components/packages/FeaturedPackages';
 import TrustBadges from '@/components/common/TrustBadges';
 import FAQSection from '@/components/common/FAQSection';
+import { usePackageFilters } from '@/hooks/usePackageFilters';
+import { packages } from '@/data/packages';
+import { categories } from '@/data/packages';
 
 const Packages = () => {
   const location = useLocation();
@@ -16,6 +19,17 @@ const Packages = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  const {
+    searchTerm,
+    setSearchTerm,
+    selectedCategory,
+    setSelectedCategory,
+    priceRange,
+    setPriceRange,
+    filteredPackages,
+    clearFilters
+  } = usePackageFilters(packages);
 
   const faqData = [
     {
@@ -44,10 +58,22 @@ const Packages = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      <PackagesHero />
-      <FeaturedPackages />
-      <PackagesFilters />
-      <PackagesGrid />
+      <PackagesHero 
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+      />
+      <FeaturedPackages packages={packages} />
+      <PackagesFilters 
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onCategoryChange={setSelectedCategory}
+        priceRange={priceRange}
+        onPriceRangeChange={setPriceRange}
+      />
+      <PackagesGrid 
+        packages={filteredPackages}
+        onClearFilters={clearFilters}
+      />
       <TrustBadges />
       <FAQSection faqs={faqData} />
 
