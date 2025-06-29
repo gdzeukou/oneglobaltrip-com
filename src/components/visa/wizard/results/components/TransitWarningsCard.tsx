@@ -2,12 +2,8 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 
-interface TransitWarning {
-  message: string;
-}
-
 interface TransitWarningsCardProps {
-  transitWarnings: TransitWarning[];
+  transitWarnings: string[];
 }
 
 const TransitWarningsCard = ({ transitWarnings }: TransitWarningsCardProps) => {
@@ -22,7 +18,7 @@ const TransitWarningsCard = ({ transitWarnings }: TransitWarningsCardProps) => {
         <div className="space-y-2">
           {transitWarnings.map((warning, index) => (
             <div key={index} className="text-yellow-700">
-              • {warning.message}
+              • {warning}
             </div>
           ))}
         </div>
