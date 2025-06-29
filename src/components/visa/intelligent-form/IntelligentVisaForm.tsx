@@ -46,6 +46,8 @@ export interface ApplicationData {
   departureDate: string;
   returnDate: string;
   accommodationDetails: string;
+  duration: string;
+  employmentStatus: string;
   
   // Dynamic fields for intelligent questions
   dynamicFields: Record<string, any>;
@@ -86,12 +88,23 @@ const IntelligentVisaForm = () => {
     departureDate: '',
     returnDate: '',
     accommodationDetails: '',
+    duration: '',
+    employmentStatus: '',
     dynamicFields: {},
     visaType: ''
   });
 
   // Hooks
-  const { dynamicQuestions, analyzeFormData } = useVisaIntelligence(formData);
+  const { 
+    recommendedVisaType, 
+    requiredDocuments, 
+    biometricRequired, 
+    estimatedProcessingTime, 
+    applicableDeals, 
+    dynamicQuestions, 
+    isLoading: intelligenceLoading,
+    analyzeFormData 
+  } = useVisaIntelligence(formData);
   const { saveProgress, loadProgress, isAutoSaving } = useApplicationProgress(user?.id);
 
   // Load saved progress on mount
@@ -224,7 +237,9 @@ const IntelligentVisaForm = () => {
           },
           travelDetails: {
             destination: formData.destination,
-            accommodationDetails: formData.accommodationDetails
+            accommodationDetails: formData.accommodationDetails,
+            duration: formData.duration,
+            employmentStatus: formData.employmentStatus
           },
           dynamicFields: formData.dynamicFields
         },
@@ -344,6 +359,9 @@ const IntelligentVisaForm = () => {
           <DocumentsStep
             formData={formData}
             onInputChange={handleInputChange}
+            requiredDocuments={requiredDocuments}
+            dynamicQuestions={dynamicQuestions}
+            onDynamicFieldChange={handleDynamicFieldChange}
           />
         );
       case 4:
@@ -357,7 +375,10 @@ const IntelligentVisaForm = () => {
         return (
           <ReviewStep
             formData={formData}
-            onInputChange={handleInputChange}
+            recommendedVisaType={recommendedVisaType}
+            requiredDocuments={requiredDocuments}
+            estimatedProcessingTime={estimatedProcessingTime}
+            applicableDeals={applicableDeals}
           />
         );
       default:

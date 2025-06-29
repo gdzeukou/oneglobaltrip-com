@@ -1,11 +1,13 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { ApplicationData } from '../IntelligentVisaForm';
 import { RequiredDocument, DynamicQuestion } from '../hooks/useVisaIntelligence';
-import { Upload, CheckCircle2, AlertCircle, FileText, Download } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface DocumentsStepProps {
   formData: ApplicationData;
@@ -18,209 +20,201 @@ interface DocumentsStepProps {
 const DocumentsStep = ({ 
   formData, 
   onInputChange, 
-  requiredDocuments,
-  dynamicQuestions,
+  requiredDocuments, 
+  dynamicQuestions, 
   onDynamicFieldChange 
 }: DocumentsStepProps) => {
-  const [uploadedDocs, setUploadedDocs] = useState<Record<string, File>>({});
+  const [uploadedDocs, setUploadedDocs] = React.useState<Record<string, boolean>>({});
 
-  const handleFileUpload = (docId: string, file: File) => {
-    setUploadedDocs(prev => ({
-      ...prev,
-      [docId]: file
-    }));
+  const handleFileUpload = (documentId: string, file: File) => {
+    // Simulate file upload - in a real app, this would upload to cloud storage
+    console.log(`Uploading file for ${documentId}:`, file.name);
+    setUploadedDocs(prev => ({ ...prev, [documentId]: true }));
+    
+    // Store file reference in form data
+    onInputChange(`document_${documentId}`, file.name);
   };
 
-  const getDocumentStatus = (docId: string) => {
-    return uploadedDocs[docId] ? 'uploaded' : 'pending';
-  };
-
-  const renderDocument = (doc: RequiredDocument) => {
-    const status = getDocumentStatus(doc.id);
-    const isUploaded = status === 'uploaded';
-
-    return (
-      <Card key={doc.id} className={`transition-all ${
-        isUploaded ? 'border-green-200 bg-green-50' : 'border-gray-200'
-      }`}>
-        <CardContent className="p-6">
-          <div className="flex items-start space-x-4">
-            <div className={`p-2 rounded-lg ${
-              isUploaded ? 'bg-green-100' : 'bg-gray-100'
-            }`}>
-              {isUploaded ? (
-                <CheckCircle2 className="h-6 w-6 text-green-600" />
-              ) : (
-                <FileText className="h-6 w-6 text-gray-600" />
+  const renderDocumentUpload = (doc: RequiredDocument) => (
+    <Card key={doc.id} className="border-2 border-dashed border-gray-200 hover:border-blue-300 transition-colors">
+      <CardContent className="p-6">
+        <div className="flex items-start space-x-4">
+          <div className={`p-2 rounded-lg ${uploadedDocs[doc.id] ? 'bg-green-100' : 'bg-gray-100'}`}>
+            {uploadedDocs[doc.id] ? (
+              <CheckCircle className="h-6 w-6 text-green-600" />
+            ) : (
+              <FileText className="h-6 w-6 text-gray-400" />
+            )}
+          </div>
+          <div className="flex-1">
+            <div className="flex items-center space-x-2 mb-2">
+              <h4 className="font-semibold text-gray-900">{doc.name}</h4>
+              {doc.required && (
+                <Badge variant="destructive" className="text-xs">Required</Badge>
+              )}
+            </div>
+            <p className="text-sm text-gray-600 mb-4">{doc.description}</p>
+            
+            <div className="flex items-center space-x-4">
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  className="hidden"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(doc.id, file);
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant={uploadedDocs[doc.id] ? "outline" : "default"}
+                  className="flex items-center space-x-2"
+                  asChild
+                >
+                  <span>
+                    <Upload className="h-4 w-4" />
+                    <span>{uploadedDocs[doc.id] ? 'Replace File' : 'Upload File'}</span>
+                  </span>
+                </Button>
+              </label>
+              
+              {uploadedDocs[doc.id] && (
+                <div className="flex items-center space-x-2 text-sm text-green-600">
+                  <CheckCircle className="h-4 w-4" />
+                  <span>Uploaded successfully</span>
+                </div>
               )}
             </div>
             
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <h4 className="font-semibold text-gray-900">{doc.name}</h4>
-                {doc.required && (
-                  <Badge variant="destructive" className="text-xs">Required</Badge>
-                )}
-                {doc.countrySpecific && (
-                  <Badge variant="secondary" className="text-xs">Country Specific</Badge>
-                )}
-              </div>
-              
-              <p className="text-gray-600 text-sm mb-4">{doc.description}</p>
-              
-              {doc.templates && doc.templates.length > 0 && (
-                <div className="mb-4">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Templates Available:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {doc.templates.map((template, index) => (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        size="sm"
-                        className="text-xs"
-                        onClick={() => {/* Download template */}}
-                      >
-                        <Download className="h-3 w-3 mr-1" />
-                        {template}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              <div className="flex items-center space-x-4">
-                {isUploaded ? (
-                  <div className="flex items-center space-x-2 text-green-600">
-                    <CheckCircle2 className="h-4 w-4" />
-                    <span className="text-sm font-medium">
-                      {uploadedDocs[doc.id].name}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="file"
-                      id={`file-${doc.id}`}
-                      className="hidden"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleFileUpload(doc.id, file);
-                      }}
-                    />
+            {doc.templates && doc.templates.length > 0 && (
+              <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+                <p className="text-sm font-medium text-blue-900 mb-2">Templates Available:</p>
+                <div className="flex flex-wrap gap-2">
+                  {doc.templates.map((template, index) => (
                     <Button
+                      key={index}
                       variant="outline"
                       size="sm"
-                      onClick={() => document.getElementById(`file-${doc.id}`)?.click()}
+                      className="text-blue-600 border-blue-200 hover:bg-blue-100"
                     >
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload
+                      Download {template}
                     </Button>
-                  </div>
-                )}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  const renderDynamicQuestion = (question: DynamicQuestion) => {
+    if (question.condition && !question.condition(formData)) {
+      return null;
+    }
+
+    return (
+      <div key={question.id} className="space-y-2">
+        <Label htmlFor={question.id} className="text-sm font-medium">
+          {question.question}
+          {question.required && <span className="text-red-500 ml-1">*</span>}
+        </Label>
+        
+        {question.type === 'text' && (
+          <Input
+            id={question.id}
+            value={formData.dynamicFields[question.id] || ''}
+            onChange={(e) => onDynamicFieldChange(question.id, e.target.value)}
+            required={question.required}
+          />
+        )}
+        
+        {question.type === 'select' && (
+          <select
+            id={question.id}
+            value={formData.dynamicFields[question.id] || ''}
+            onChange={(e) => onDynamicFieldChange(question.id, e.target.value)}
+            required={question.required}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Select an option</option>
+            {question.options?.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        )}
+        
+        {question.type === 'checkbox' && (
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id={question.id}
+              checked={formData.dynamicFields[question.id] || false}
+              onChange={(e) => onDynamicFieldChange(question.id, e.target.checked)}
+              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <label htmlFor={question.id} className="text-sm text-gray-700">
+              Yes
+            </label>
+          </div>
+        )}
+        
+        {question.type === 'date' && (
+          <Input
+            type="date"
+            id={question.id}
+            value={formData.dynamicFields[question.id] || ''}
+            onChange={(e) => onDynamicFieldChange(question.id, e.target.value)}
+            required={question.required}
+          />
+        )}
+      </div>
     );
   };
-
-  const requiredDocsCount = requiredDocuments.filter(doc => doc.required).length;
-  const uploadedRequiredCount = requiredDocuments.filter(doc => 
-    doc.required && getDocumentStatus(doc.id) === 'uploaded'
-  ).length;
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-xl font-semibold text-gray-900 mb-4">Required Documents</h3>
         <p className="text-gray-600 mb-6">
-          Upload the required documents for your visa application. Make sure all documents are clear and legible.
+          Please upload all required documents. Ensure they are clear, legible, and in the correct format.
         </p>
       </div>
 
-      {/* Progress Summary */}
-      <Card className="border-blue-200 bg-blue-50">
-        <CardContent className="p-6">
-          <div className="flex items-center space-x-4">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <AlertCircle className="h-6 w-6 text-blue-600" />
-            </div>
-            <div>
-              <h4 className="font-semibold text-blue-900">Document Progress</h4>
-              <p className="text-blue-800">
-                {uploadedRequiredCount} of {requiredDocsCount} required documents uploaded
-              </p>
-              <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
-                <div 
-                  className="bg-blue-600 h-2 rounded-full transition-all"
-                  style={{ width: `${(uploadedRequiredCount / requiredDocsCount) * 100}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Document Upload Guidelines */}
-      <Card>
-        <CardContent className="p-6">
-          <h4 className="font-semibold text-gray-900 mb-4">Upload Guidelines</h4>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span>File formats: PDF, JPG, PNG (recommended: PDF)</span>
-            </li>
-            <li className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span>Maximum file size: 5MB per document</span>
-            </li>
-            <li className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span>Ensure documents are clear, complete, and legible</span>
-            </li>
-            <li className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <span>All text should be in English or officially translated</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      {/* Required Documents */}
-      <div>
-        <h4 className="text-lg font-medium text-gray-900 mb-4">Required Documents</h4>
-        <div className="space-y-4">
-          {requiredDocuments.filter(doc => doc.required).map(renderDocument)}
-        </div>
+      {/* Document Upload Section */}
+      <div className="space-y-4">
+        {requiredDocuments.map(renderDocumentUpload)}
       </div>
 
-      {/* Optional Documents */}
-      {requiredDocuments.some(doc => !doc.required) && (
-        <div>
-          <h4 className="text-lg font-medium text-gray-900 mb-4">Optional Documents</h4>
-          <p className="text-gray-600 text-sm mb-4">
-            These documents may strengthen your application but are not mandatory.
-          </p>
-          <div className="space-y-4">
-            {requiredDocuments.filter(doc => !doc.required).map(renderDocument)}
+      {/* Dynamic Questions Section */}
+      {dynamicQuestions.length > 0 && (
+        <div className="space-y-6">
+          <div className="border-t pt-6">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h4>
+            <div className="space-y-4">
+              {dynamicQuestions.map(renderDynamicQuestion)}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Additional Notes */}
-      <Card className="border-yellow-200 bg-yellow-50">
+      {/* Important Notes */}
+      <Card className="border-amber-200 bg-amber-50">
         <CardContent className="p-6">
           <div className="flex items-start space-x-3">
-            <AlertCircle className="h-5 w-5 text-yellow-600 mt-1" />
+            <AlertCircle className="h-5 w-5 text-amber-600 mt-1" />
             <div>
-              <h4 className="font-semibold text-yellow-900 mb-2">Important Notes</h4>
-              <ul className="text-yellow-800 text-sm space-y-1">
-                <li>• Documents will be reviewed by our visa experts</li>
-                <li>• We may contact you if additional documents are needed</li>
-                <li>• Original documents may be required for certain applications</li>
-                <li>• Processing time begins after all documents are submitted</li>
+              <h4 className="font-semibold text-amber-900 mb-2">Document Requirements</h4>
+              <ul className="text-amber-800 text-sm space-y-1">
+                <li>• All documents must be in PDF, JPG, or PNG format</li>
+                <li>• File size should not exceed 5MB per document</li>
+                <li>• Documents should be clear and legible</li>
+                <li>• Translations may be required for documents not in English</li>
+                <li>• Original or certified copies may be required for submission</li>
               </ul>
             </div>
           </div>

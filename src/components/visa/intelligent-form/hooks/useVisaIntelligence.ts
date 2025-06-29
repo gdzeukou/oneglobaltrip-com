@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { ApplicationData } from '../IntelligentVisaForm';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,15 +47,7 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
   const [biometricRequired, setBiometricRequired] = useState(false);
   const [estimatedProcessingTime, setEstimatedProcessingTime] = useState<string>('');
   const [applicableDeals, setApplicableDeals] = useState<Deal[]>([]);
-  const [dynamicQuestions, setDynamicQuestions] = useState<{
-    personal: DynamicQuestion[];
-    travel: DynamicQuestion[];
-    documents: DynamicQuestion[];
-  }>({
-    personal: [],
-    travel: [],
-    documents: []
-  });
+  const [dynamicQuestions, setDynamicQuestions] = useState<DynamicQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -104,6 +95,27 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
       console.error('Error analyzing visa requirements:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const analyzeFormData = async () => {
+    // AI analysis function for form data insights
+    try {
+      await supabase.from('user_activity').insert({
+        user_id: null,
+        email: formData.email || 'anonymous',
+        page_visited: '/apply',
+        action_type: 'ai_analysis',
+        action_data: {
+          nationality: formData.nationality,
+          destination: formData.destination,
+          travelPurpose: formData.travelPurpose,
+          visaType: recommendedVisaType?.name
+        },
+        session_id: sessionStorage.getItem('session_id') || crypto.randomUUID()
+      });
+    } catch (error) {
+      console.error('Error logging AI analysis:', error);
     }
   };
 
@@ -225,7 +237,6 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
   };
 
   const checkBiometricRequirement = (nationality: string, destination: string): boolean => {
-    // Countries that typically require biometrics
     const biometricCountries = ['USA', 'United Kingdom', 'Canada', 'Australia'];
     const schengenCountries = destinationCountries.filter(c => c.isSchengen).map(c => c.name);
     
@@ -235,7 +246,6 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
   const calculateProcessingTime = (visaType: VisaType | null, nationality: string): string => {
     if (!visaType) return '10-15 business days';
     
-    // Premium processing for certain nationalities
     const premiumNationalities = ['United States', 'Canada', 'Australia', 'United Kingdom'];
     const isPremium = premiumNationalities.includes(nationality);
     
@@ -249,7 +259,6 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
   const findApplicableDeals = (data: ApplicationData, visaType: VisaType | null): Deal[] => {
     const deals: Deal[] = [];
     
-    // Early bird discount
     if (data.departureDate) {
       const daysUntilTravel = Math.ceil((new Date(data.departureDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
       if (daysUntilTravel > 30) {
@@ -264,7 +273,6 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
       }
     }
     
-    // Family discount
     if (data.travelPurpose === 'family') {
       deals.push({
         id: 'family-discount',
@@ -279,16 +287,11 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
     return deals;
   };
 
-  const generateDynamicQuestions = (data: ApplicationData, visaType: VisaType | null) => {
-    const questions = {
-      personal: [] as DynamicQuestion[],
-      travel: [] as DynamicQuestion[],
-      documents: [] as DynamicQuestion[]
-    };
+  const generateDynamicQuestions = (data: ApplicationData, visaType: VisaType | null): DynamicQuestion[] => {
+    const questions: DynamicQuestion[] = [];
 
-    // Add nationality-specific questions
     if (data.nationality === 'Nigeria') {
-      questions.personal.push({
+      questions.push({
         id: 'bvn',
         question: 'Bank Verification Number (BVN)',
         type: 'text',
@@ -297,9 +300,8 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
       });
     }
 
-    // Add destination-specific questions
     if (visaType?.id === 'schengen') {
-      questions.travel.push({
+      questions.push({
         id: 'main-destination',
         question: 'Which Schengen country will you spend the most time in?',
         type: 'select',
@@ -309,9 +311,8 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
       });
     }
 
-    // Add business-specific questions
     if (data.travelPurpose === 'business') {
-      questions.travel.push({
+      questions.push({
         id: 'business-invitation',
         question: 'Do you have a business invitation letter?',
         type: 'checkbox',
@@ -330,6 +331,7 @@ export const useVisaIntelligence = (formData: ApplicationData) => {
     estimatedProcessingTime,
     applicableDeals,
     dynamicQuestions,
-    isLoading
+    isLoading,
+    analyzeFormData
   };
 };

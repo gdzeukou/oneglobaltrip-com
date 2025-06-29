@@ -40,6 +40,15 @@ const ReviewStep = ({
     return Math.max(0, basePrice - totalDiscount);
   };
 
+  const calculateDuration = () => {
+    if (!formData.departureDate || !formData.returnDate) return 'Not specified';
+    const departure = new Date(formData.departureDate);
+    const returnDate = new Date(formData.returnDate);
+    const diffTime = Math.abs(returnDate.getTime() - departure.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return `${diffDays} days`;
+  };
+
   const renderPersonalInfo = () => (
     <Card>
       <CardContent className="p-6">
@@ -63,7 +72,7 @@ const ReviewStep = ({
           </div>
           <div>
             <span className="text-gray-600">Date of Birth:</span>
-            <p className="font-medium">{formData.dateOfBirth}</p>
+            <p className="font-medium">{formData.dateOfBirth || 'Not provided'}</p>
           </div>
           <div>
             <span className="text-gray-600">Passport Number:</span>
@@ -93,15 +102,15 @@ const ReviewStep = ({
           </div>
           <div>
             <span className="text-gray-600">Return Date:</span>
-            <p className="font-medium">{new Date(formData.returnDate).toLocaleDateString()}</p>
+            <p className="font-medium">{formData.returnDate ? new Date(formData.returnDate).toLocaleDateString() : 'Not specified'}</p>
           </div>
           <div>
             <span className="text-gray-600">Duration:</span>
-            <p className="font-medium">{formData.duration} days</p>
+            <p className="font-medium">{calculateDuration()}</p>
           </div>
           <div>
             <span className="text-gray-600">Employment:</span>
-            <p className="font-medium">{formData.employmentStatus}</p>
+            <p className="font-medium">{formData.employmentStatus || 'Not specified'}</p>
           </div>
         </div>
       </CardContent>
