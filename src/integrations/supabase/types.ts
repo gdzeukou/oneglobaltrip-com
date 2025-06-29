@@ -43,15 +43,7 @@ export type Database = {
           scheduled_at?: string
           status?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "appointments_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "form_submissions"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       automation_rules: {
         Row: {
@@ -271,15 +263,7 @@ export type Database = {
           mime_type?: string | null
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "documents_application_id_fkey"
-            columns: ["application_id"]
-            isOneToOne: false
-            referencedRelation: "visa_applications"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       email_templates: {
         Row: {
@@ -363,13 +347,6 @@ export type Database = {
             referencedRelation: "email_templates"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "email_tracking_lead_id_fkey"
-            columns: ["lead_id"]
-            isOneToOne: false
-            referencedRelation: "form_submissions"
-            referencedColumns: ["id"]
-          },
         ]
       }
       form_submission_rate_limit: {
@@ -404,7 +381,7 @@ export type Database = {
           appointment_booked: boolean | null
           budget: string | null
           contacted_at: string | null
-          created_at: string
+          created_at: string | null
           departure_date: string | null
           destination: string | null
           duration: string | null
@@ -430,7 +407,7 @@ export type Database = {
           travel_needs: string[] | null
           travel_purpose: string | null
           travelers: string | null
-          updated_at: string
+          updated_at: string | null
           user_agent: string | null
           user_id: string | null
           visa_type: string | null
@@ -439,7 +416,7 @@ export type Database = {
           appointment_booked?: boolean | null
           budget?: string | null
           contacted_at?: string | null
-          created_at?: string
+          created_at?: string | null
           departure_date?: string | null
           destination?: string | null
           duration?: string | null
@@ -465,7 +442,7 @@ export type Database = {
           travel_needs?: string[] | null
           travel_purpose?: string | null
           travelers?: string | null
-          updated_at?: string
+          updated_at?: string | null
           user_agent?: string | null
           user_id?: string | null
           visa_type?: string | null
@@ -474,7 +451,7 @@ export type Database = {
           appointment_booked?: boolean | null
           budget?: string | null
           contacted_at?: string | null
-          created_at?: string
+          created_at?: string | null
           departure_date?: string | null
           destination?: string | null
           duration?: string | null
@@ -500,7 +477,7 @@ export type Database = {
           travel_needs?: string[] | null
           travel_purpose?: string | null
           travelers?: string | null
-          updated_at?: string
+          updated_at?: string | null
           user_agent?: string | null
           user_id?: string | null
           visa_type?: string | null
@@ -656,7 +633,7 @@ export type Database = {
       }
       profiles: {
         Row: {
-          created_at: string
+          created_at: string | null
           date_of_birth: string | null
           first_name: string | null
           id: string
@@ -665,11 +642,10 @@ export type Database = {
           passport_expiry: string | null
           passport_number: string | null
           phone: string | null
-          phone_number: string | null
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           date_of_birth?: string | null
           first_name?: string | null
           id: string
@@ -678,11 +654,10 @@ export type Database = {
           passport_expiry?: string | null
           passport_number?: string | null
           phone?: string | null
-          phone_number?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           date_of_birth?: string | null
           first_name?: string | null
           id?: string
@@ -691,8 +666,7 @@ export type Database = {
           passport_expiry?: string | null
           passport_number?: string | null
           phone?: string | null
-          phone_number?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -780,7 +754,7 @@ export type Database = {
           action_type: string | null
           city: string | null
           country: string | null
-          created_at: string
+          created_at: string | null
           email: string
           id: string
           ip_address: string | null
@@ -799,7 +773,7 @@ export type Database = {
           action_type?: string | null
           city?: string | null
           country?: string | null
-          created_at?: string
+          created_at?: string | null
           email: string
           id?: string
           ip_address?: string | null
@@ -818,7 +792,7 @@ export type Database = {
           action_type?: string | null
           city?: string | null
           country?: string | null
-          created_at?: string
+          created_at?: string | null
           email?: string
           id?: string
           ip_address?: string | null
@@ -872,56 +846,53 @@ export type Database = {
       }
       visa_applications: {
         Row: {
+          application_data: Json | null
           application_reference: string | null
-          created_at: string
+          created_at: string | null
           departure_date: string | null
           email: string
           id: string
           last_updated: string | null
           name: string
           nationality: string
-          previous_visas: string | null
           return_date: string | null
-          special_circumstances: string | null
           status: string | null
           submitted_at: string | null
-          travel_purpose: string
+          travel_purpose: string | null
           user_id: string | null
           visa_type: string
         }
         Insert: {
+          application_data?: Json | null
           application_reference?: string | null
-          created_at?: string
+          created_at?: string | null
           departure_date?: string | null
           email: string
           id?: string
           last_updated?: string | null
           name: string
           nationality: string
-          previous_visas?: string | null
           return_date?: string | null
-          special_circumstances?: string | null
           status?: string | null
           submitted_at?: string | null
-          travel_purpose?: string
+          travel_purpose?: string | null
           user_id?: string | null
           visa_type: string
         }
         Update: {
+          application_data?: Json | null
           application_reference?: string | null
-          created_at?: string
+          created_at?: string | null
           departure_date?: string | null
           email?: string
           id?: string
           last_updated?: string | null
           name?: string
           nationality?: string
-          previous_visas?: string | null
           return_date?: string | null
-          special_circumstances?: string | null
           status?: string | null
           submitted_at?: string | null
-          travel_purpose?: string
+          travel_purpose?: string | null
           user_id?: string | null
           visa_type?: string
         }

@@ -1,5 +1,6 @@
 
 import { useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { ApplicationData } from '../IntelligentVisaForm';
 
 interface ProgressData {
@@ -25,10 +26,21 @@ export const useApplicationProgress = (userId?: string) => {
         completionPercentage: calculateCompletionPercentage(formData, currentStep, 5)
       };
 
+      // Save to localStorage as backup
       localStorage.setItem(`visa_application_progress_${userId}`, JSON.stringify(progressData));
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Also save user activity for tracking
+      await supabase.from('user_activity').insert({
+        user_id: userId,
+        email: formData.email || 'unknown',
+        page_visited: '/apply',
+        action_type: 'form_progress_save',
+        action_data: {
+          step: currentStep,
+          completion: progressData.completionPercentage
+        },
+        session_id: sessionStorage.getItem('session_id') || crypto.randomUUID()
+      });
       
     } catch (error) {
       console.error('Error saving progress:', error);

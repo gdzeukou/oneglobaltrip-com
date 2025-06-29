@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,43 +19,57 @@ import {
   Calendar,
   MapPin,
   Sparkles,
-  Plus
+  Plus,
+  Loader2
 } from 'lucide-react';
+
+interface VisaApplication {
+  id: string;
+  application_reference: string;
+  visa_type: string;
+  travel_purpose: string;
+  departure_date: string | null;
+  return_date: string | null;
+  status: string;
+  created_at: string;
+  last_updated: string;
+  application_data: any;
+}
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [applications, setApplications] = useState([
-    {
-      id: '1',
-      destination: 'Germany',
-      type: 'Schengen Tourist Visa',
-      status: 'in-review',
-      progress: 75,
-      submittedDate: '2024-01-10',
-      estimatedCompletion: '2024-01-25'
+
+  // Fetch user's visa applications
+  const { data: applications = [], isLoading, error } = useQuery({
+    queryKey: ['visa-applications', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      
+      const { data, error } = await supabase
+        .from('visa_applications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data as VisaApplication[];
     },
-    {
-      id: '2',
-      destination: 'Canada',
-      type: 'Tourist Visa',
-      status: 'approved',
-      progress: 100,
-      submittedDate: '2023-12-15',
-      estimatedCompletion: '2024-01-05'
-    }
-  ]);
+    enabled: !!user?.id
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'approved':
         return 'bg-green-100 text-green-800';
+      case 'submitted':
       case 'in-review':
         return 'bg-blue-100 text-blue-800';
+      case 'draft':
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'rejected':
@@ -64,11 +80,13 @@ const Dashboard = () => {
   };
 
   const getStatusIcon = (status: string) => {
-    switch (status) {
+    switch (status.toLowerCase()) {
       case 'approved':
         return <CheckCircle2 className="h-4 w-4" />;
+      case 'submitted':
       case 'in-review':
         return <Clock className="h-4 w-4" />;
+      case 'draft':
       case 'pending':
         return <AlertCircle className="h-4 w-4" />;
       default:
@@ -76,14 +94,52 @@ const Dashboard = () => {
     }
   };
 
+  const getProgress = (application: VisaApplication) => {
+    switch (application.status.toLowerCase()) {
+      case 'draft': return 25;
+      case 'submitted': return 50;
+      case 'in-review': return 75;
+      case 'approved': return 100;
+      case 'rejected': return 100;
+      default: return 0;
+    }
+  };
+
   const handleNewApplication = () => {
-    // Store intent for intelligent form
     sessionStorage.setItem('visa_application_intent', JSON.stringify({
       source: 'dashboard',
       timestamp: Date.now()
     }));
     navigate('/apply');
   };
+
+  const getStats = () => {
+    const total = applications.length;
+    const inReview = applications.filter(app => ['submitted', 'in-review'].includes(app.status.toLowerCase())).length;
+    const approved = applications.filter(app => app.status.toLowerCase() === 'approved').length;
+    const successRate = total > 0 ? Math.round((approved / total) * 100) : 95;
+
+    return { total, inReview, approved, successRate };
+  };
+
+  const stats = getStats();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navigation />
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="flex items-center space-x-2">
+              <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+              <span className="text-gray-600">Loading your applications...</span>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,9 +174,7 @@ const Dashboard = () => {
               <div className="flex items-center space-x-2">
                 <FileText className="h-5 w-5 text-blue-600" />
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {applications.length}
-                  </p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
                   <p className="text-sm text-gray-600">Total Applications</p>
                 </div>
               </div>
@@ -132,9 +186,7 @@ const Dashboard = () => {
               <div className="flex items-center space-x-2">
                 <Clock className="h-5 w-5 text-yellow-600" />
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {applications.filter(app => app.status === 'in-review').length}
-                  </p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.inReview}</p>
                   <p className="text-sm text-gray-600">In Review</p>
                 </div>
               </div>
@@ -146,9 +198,7 @@ const Dashboard = () => {
               <div className="flex items-center space-x-2">
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {applications.filter(app => app.status === 'approved').length}
-                  </p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
                   <p className="text-sm text-gray-600">Approved</p>
                 </div>
               </div>
@@ -160,7 +210,7 @@ const Dashboard = () => {
               <div className="flex items-center space-x-2">
                 <Sparkles className="h-5 w-5 text-purple-600" />
                 <div>
-                  <p className="text-2xl font-bold text-gray-900">95%</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.successRate}%</p>
                   <p className="text-sm text-gray-600">Success Rate</p>
                 </div>
               </div>
@@ -228,10 +278,13 @@ const Dashboard = () => {
                         <MapPin className="h-5 w-5 text-blue-600" />
                         <div>
                           <h3 className="font-semibold text-gray-900">
-                            {app.destination} - {app.type}
+                            {app.visa_type} - {app.travel_purpose}
                           </h3>
                           <p className="text-sm text-gray-600">
-                            Submitted: {new Date(app.submittedDate).toLocaleDateString()}
+                            Ref: {app.application_reference}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Created: {new Date(app.created_at).toLocaleDateString()}
                           </p>
                         </div>
                       </div>
@@ -246,13 +299,20 @@ const Dashboard = () => {
                     <div className="mb-4">
                       <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
                         <span>Progress</span>
-                        <span>{app.progress}%</span>
+                        <span>{getProgress(app)}%</span>
                       </div>
-                      <Progress value={app.progress} className="h-2" />
+                      <Progress value={getProgress(app)} className="h-2" />
                     </div>
                     
                     <div className="flex items-center justify-between text-sm text-gray-600">
-                      <span>Est. completion: {new Date(app.estimatedCompletion).toLocaleDateString()}</span>
+                      <div className="space-y-1">
+                        {app.departure_date && (
+                          <span>Departure: {new Date(app.departure_date).toLocaleDateString()}</span>
+                        )}
+                        {app.return_date && (
+                          <span className="block">Return: {new Date(app.return_date).toLocaleDateString()}</span>
+                        )}
+                      </div>
                       <Button variant="outline" size="sm">
                         View Details
                       </Button>
