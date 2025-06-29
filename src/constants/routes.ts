@@ -39,5 +39,7 @@ export const ROUTES = {
   NORWAY_LONG_STAY: '/visas/long-stay/norway',
   SWITZERLAND_LONG_STAY: '/visas/long-stay/switzerland',
   NIGERIA_LONG_STAY: '/visas/long-stay/nigeria',
-  PARIS_EXPLORE_PACKAGE: '/packages/paris-explore'
+  PARIS_EXPLORE_PACKAGE: '/packages/paris-explore',
+  CALENDLY_CONSULTATION: 'https://calendly.com/camronm-oneglobaltrip/30min',
+  CALENDLY_VISA_DISCOVERY: 'https://calendly.com/camronm-oneglobaltrip/visa-discovery'
 };

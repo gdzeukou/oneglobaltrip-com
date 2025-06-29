@@ -38,7 +38,7 @@ export const packages: Package[] = [
     category: 'cultural',
     duration: '14 days',
     location: 'Europe',
-    country: 'Multiple European Countries',
+    country: 'France',
     countries: ['uk', 'france', 'italy', 'germany', 'spain'],
     highlights: ['Paris City Tour', 'Swiss Alps', 'Roman Colosseum', 'Amsterdam Canals'],
     included: ['Visa processing', 'Hotels', 'Flights', 'Tours', 'Travel insurance'],

@@ -1,10 +1,10 @@
 
-
 export interface Package {
-  id: string; // Changed from number to string to match usage
+  id: string;
   title: string;
-  shortDescription?: string; // Added shortDescription as optional property
+  shortDescription?: string;
   country: string;
+  countries?: string[];
   category: string;
   duration: string;
   price: number;
@@ -16,14 +16,15 @@ export interface Package {
   visasRequired: string[];
   rating: number;
   reviews: number;
-  reviewCount?: number; // Added reviewCount as optional property
-  countries?: string[];
-  cities?: string[]; // Added cities as optional property
+  reviewCount?: number;
+  cities?: string[];
   features?: string[];
   tags?: string[];
-  difficulty?: string; // Added difficulty as optional property
-  groupSize?: string; // Added groupSize as optional property
-  included?: string[]; // Added included as optional property
+  difficulty?: string;
+  groupSize?: string;
+  included?: string[];
+  featured?: boolean;
+  location?: string;
 }
 
 export interface Category {
@@ -36,4 +37,3 @@ export interface PackageCategory {
   name: string;
   icon: string;
 }
-
