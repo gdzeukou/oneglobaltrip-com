@@ -1,115 +1,91 @@
 
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { User, LogOut, AlertCircle } from 'lucide-react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Sparkles, LogOut, User, Home, FileText } from 'lucide-react';
 
 interface MobileNavigationProps {
   isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
+  onClose: () => void;
+  onApplyClick: () => void;
 }
 
-const MobileNavigation = ({ isOpen, setIsOpen }: MobileNavigationProps) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { user, signOut, isEmailVerified } = useAuth();
-
-  const isActive = (path: string) => {
-    return location.pathname === path;
-  };
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigate('/');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
-  const getUserInitials = () => {
-    if (user?.email) {
-      return user.email.charAt(0).toUpperCase();
-    }
-    return 'U';
-  };
-
-  const getUserDisplayName = () => {
-    if (user?.email) {
-      return user.email.split('@')[0];
-    }
-    return 'User';
-  };
-
-  const linkClass = (path: string) => 
-    `block px-3 py-2 text-base font-medium rounded-lg transition-all duration-200 ${
-      isActive(path) 
-        ? 'text-deep-blue-900 bg-blue-50' 
-        : 'text-gray-700 hover:text-deep-blue-900 hover:bg-gray-50'
-    }`;
+const MobileNavigation = ({ isOpen, onClose, onApplyClick }: MobileNavigationProps) => {
+  const { user, signOut } = useAuth();
 
   if (!isOpen) return null;
 
-  return (
-    <div className="md:hidden bg-white/95 backdrop-blur-lg border-t border-gray-200/50 shadow-lg relative z-[9998]">
-      <div className="px-2 pt-2 pb-3 space-y-1">
-        <Link to="/" className={linkClass('/')} onClick={() => setIsOpen(false)}>
-          Home
-        </Link>
-        <Link to="/packages" className={linkClass('/packages')} onClick={() => setIsOpen(false)}>
-          Packages
-        </Link>
-        <Link to="/visas" className={linkClass('/visas')} onClick={() => setIsOpen(false)}>
-          Visas
-        </Link>
-        <Link to="/contact" className={linkClass('/contact')} onClick={() => setIsOpen(false)}>
-          Contact
-        </Link>
+  const handleLinkClick = () => {
+    onClose();
+  };
 
-        {/* Mobile Authentication */}
-        {user ? (
-          <div className="pt-4 border-t border-gray-200/50 mt-4">
-            {!isEmailVerified && (
-              <div className="flex items-center space-x-2 px-3 py-2 mb-2 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <AlertCircle className="h-4 w-4 text-yellow-600" />
-                <span className="text-sm text-yellow-700">Please verify your email address</span>
-              </div>
-            )}
-            <Link
-              to="/dashboard"
-              className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-gray-700 hover:text-deep-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
-              onClick={() => setIsOpen(false)}
-            >
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-deep-blue-800 text-white text-sm">
-                  {getUserInitials()}
-                </AvatarFallback>
-              </Avatar>
-              <span>Dashboard ({getUserDisplayName()})</span>
+  const handleApplyClick = () => {
+    onApplyClick();
+    onClose();
+  };
+
+  return (
+    <div className="md:hidden bg-white border-t border-gray-200">
+      <div className="px-4 py-4 space-y-4">
+        <div className="space-y-2">
+          <Link
+            to="/"
+            onClick={handleLinkClick}
+            className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 py-2"
+          >
+            <Home className="h-4 w-4" />
+            <span>Home</span>
+          </Link>
+          <Link
+            to="/visas"
+            onClick={handleLinkClick}
+            className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 py-2"
+          >
+            <FileText className="h-4 w-4" />
+            <span>Visas</span>
+          </Link>
+        </div>
+
+        <div className="border-t pt-4">
+          <Button
+            onClick={handleApplyClick}
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold flex items-center justify-center space-x-2 mb-4"
+          >
+            <Sparkles className="h-4 w-4" />
+            <span>Smart Apply</span>
+          </Button>
+
+          {user ? (
+            <div className="space-y-2">
+              <Link
+                to="/dashboard"
+                onClick={handleLinkClick}
+                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 py-2"
+              >
+                <User className="h-4 w-4" />
+                <span>Dashboard</span>
+              </Link>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  signOut();
+                  onClose();
+                }}
+                className="w-full flex items-center justify-center space-x-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Sign Out</span>
+              </Button>
+            </div>
+          ) : (
+            <Link to="/auth" onClick={handleLinkClick}>
+              <Button variant="outline" className="w-full">
+                Sign In
+              </Button>
             </Link>
-            <button
-              onClick={() => {
-                handleSignOut();
-                setIsOpen(false);
-              }}
-              className="flex items-center space-x-3 w-full text-left px-3 py-3 text-base font-medium text-gray-700 hover:text-deep-blue-900 hover:bg-red-50 rounded-lg transition-all duration-200"
-            >
-              <LogOut className="h-5 w-5" />
-              <span>Sign Out</span>
-            </button>
-          </div>
-        ) : (
-          <div className="pt-4 border-t border-gray-200/50 mt-4">
-            <Link
-              to="/auth"
-              className="flex items-center space-x-3 px-3 py-3 text-base font-medium text-deep-blue-800 hover:text-deep-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
-              onClick={() => setIsOpen(false)}
-            >
-              <User className="h-5 w-5" />
-              <span>Sign In / Sign Up</span>
-            </Link>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
