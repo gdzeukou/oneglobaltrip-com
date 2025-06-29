@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, MapPin, Clock, Users, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Package } from '@/data/packages';
 
 export interface PackagesGridProps {
@@ -107,8 +107,10 @@ const PackagesGrid: React.FC<PackagesGridProps> = ({ packages, onClearFilters })
                       <span className="text-xl font-bold text-blue-600">${pkg.price}</span>
                       <span className="text-gray-600 text-sm ml-1">per person</span>
                     </div>
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                      Book Now
+                    <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                      <Link to={`/packages/${pkg.id}`}>
+                        View Details
+                      </Link>
                     </Button>
                   </div>
                 </div>

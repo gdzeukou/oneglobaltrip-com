@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MapPin, Clock, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Package } from '@/data/packages';
 
 export interface FeaturedPackagesProps {
@@ -56,8 +56,10 @@ const FeaturedPackages: React.FC<FeaturedPackagesProps> = ({ packages }) => {
                     <span className="text-2xl font-bold text-blue-600">${pkg.price}</span>
                     <span className="text-gray-600 text-sm ml-1">per person</span>
                   </div>
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                    View Details
+                  <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+                    <Link to={`/packages/${pkg.id}`}>
+                      View Details
+                    </Link>
                   </Button>
                 </div>
               </CardContent>

@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -60,6 +59,7 @@ const ParisExplorePackage = lazy(() => import("./pages/packages/ParisExplorePack
 
 // Visa pricing page
 const VisaPricingPage = lazy(() => import("./pages/visas/VisaPricingPage"));
+const PackageDetails = lazy(() => import("./pages/PackageDetails"));
 
 const queryClient = new QueryClient();
 
@@ -178,6 +178,7 @@ const App = () => (
 
                 {/* Package routes */}
                 <Route path={ROUTES.PARIS_EXPLORE_PACKAGE} element={<ParisExplorePackage />} />
+                <Route path="/packages/:id" element={<PackageDetails />} />
               </Routes>
             </Suspense>
           </BrowserRouter>
