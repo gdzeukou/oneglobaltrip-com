@@ -1,39 +1,36 @@
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import React from 'react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
-interface FAQItem {
+interface FAQ {
   question: string;
   answer: string;
 }
 
 interface FAQSectionProps {
+  faqs: FAQ[];
   title?: string;
-  subtitle?: string;
-  faqs: FAQItem[];
-  className?: string;
 }
 
-const FAQSection = ({
-  title = 'Frequently Asked Questions',
-  subtitle,
-  faqs,
-  className = ''
-}: FAQSectionProps) => {
+const FAQSection: React.FC<FAQSectionProps> = ({ faqs, title = "Frequently Asked Questions" }) => {
   return (
-    <section className={`py-16 ${className}`}>
+    <section className="py-16 bg-white">
       <div className="max-w-4xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">{title}</h2>
-          {subtitle && (
-            <p className="text-xl text-gray-600">{subtitle}</p>
-          )}
-        </div>
-        
-        <Accordion type="single" collapsible>
+        <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+          {title}
+        </h2>
+        <Accordion type="single" collapsible className="space-y-4">
           {faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
-              <AccordionContent className="text-gray-600">
+            <AccordionItem key={index} value={`item-${index}`} className="border border-gray-200 rounded-lg px-6">
+              <AccordionTrigger className="text-left font-semibold text-gray-900 hover:text-blue-600">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-600 pt-2">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>

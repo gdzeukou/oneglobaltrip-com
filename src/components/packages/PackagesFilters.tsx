@@ -1,47 +1,69 @@
 
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Category } from '@/types/package';
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
 
-interface PackagesFiltersProps {
-  categories: Category[];
+export interface PackagesFiltersProps {
+  categories: Array<{ id: string; name: string }>;
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
-  priceRange: string;
-  onPriceRangeChange: (range: string) => void;
+  priceRange: [number, number];
+  onPriceRangeChange: (range: [number, number]) => void;
 }
 
-const PackagesFilters = ({
+const PackagesFilters: React.FC<PackagesFiltersProps> = ({
   categories,
   selectedCategory,
   onCategoryChange,
   priceRange,
   onPriceRangeChange
-}: PackagesFiltersProps) => {
+}) => {
   return (
-    <section className="py-8 bg-gray-50">
+    <section className="py-8 bg-white border-b">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex flex-wrap gap-4 items-center justify-between">
-          <Tabs value={selectedCategory} onValueChange={onCategoryChange} className="w-full md:w-auto">
-            <TabsList className="grid grid-cols-5 w-full md:w-auto">
-              {categories.map(category => (
-                <TabsTrigger key={category.id} value={category.id} className="text-sm">
-                  {category.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-          
-          <select
-            value={priceRange}
-            onChange={(e) => onPriceRangeChange(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg"
-          >
-            <option value="all">All Prices</option>
-            <option value="under-3000">Under $3,000</option>
-            <option value="3000-4000">$3,000 - $4,000</option>
-            <option value="over-4000">Over $4,000</option>
-          </select>
-        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Categories */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Categories</h3>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((category) => (
+                    <Button
+                      key={category.id}
+                      variant={selectedCategory === category.id ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => onCategoryChange(category.id)}
+                      className="text-sm"
+                    >
+                      {category.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Price Range */}
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Price Range</h3>
+                <div className="px-2">
+                  <Slider
+                    value={priceRange}
+                    onValueChange={(value) => onPriceRangeChange(value as [number, number])}
+                    max={10000}
+                    min={0}
+                    step={100}
+                    className="mb-4"
+                  />
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>${priceRange[0]}</span>
+                    <span>${priceRange[1]}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

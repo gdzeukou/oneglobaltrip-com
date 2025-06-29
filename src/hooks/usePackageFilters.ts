@@ -1,22 +1,36 @@
 
 import { useState, useMemo } from 'react';
-import { Package } from '@/types/package';
+
+export interface Package {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+  duration: string;
+  location: string;
+  highlights: string[];
+  included: string[];
+  rating: number;
+  reviews: number;
+  featured?: boolean;
+}
 
 export const usePackageFilters = (packages: Package[]) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [priceRange, setPriceRange] = useState('all');
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000]);
 
   const filteredPackages = useMemo(() => {
     return packages.filter(pkg => {
       const matchesSearch = pkg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            pkg.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           pkg.country.toLowerCase().includes(searchTerm.toLowerCase());
+                           pkg.location.toLowerCase().includes(searchTerm.toLowerCase());
+      
       const matchesCategory = selectedCategory === 'all' || pkg.category === selectedCategory;
-      const matchesPrice = priceRange === 'all' || 
-                          (priceRange === 'under-3000' && pkg.price < 3000) ||
-                          (priceRange === '3000-4000' && pkg.price >= 3000 && pkg.price < 4000) ||
-                          (priceRange === 'over-4000' && pkg.price >= 4000);
+      
+      const matchesPrice = pkg.price >= priceRange[0] && pkg.price <= priceRange[1];
       
       return matchesSearch && matchesCategory && matchesPrice;
     });
@@ -25,7 +39,7 @@ export const usePackageFilters = (packages: Package[]) => {
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedCategory('all');
-    setPriceRange('all');
+    setPriceRange([0, 10000]);
   };
 
   return {

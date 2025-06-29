@@ -1,46 +1,42 @@
 
-import { Star, Shield, Clock } from 'lucide-react';
+import React from 'react';
+import { Shield, Star, Users, Award } from 'lucide-react';
 
-interface TrustBadge {
-  icon: React.ComponentType<{ className?: string }>;
-  title: string;
-  subtitle: string;
-}
-
-interface TrustBadgesProps {
-  badges?: TrustBadge[];
-  className?: string;
-}
-
-const TrustBadges = ({ 
-  badges = [
-    {
-      icon: Star,
-      title: '⭐ 4.9/5 on Trustpilot',
-      subtitle: 'Thousands of happy travelers'
-    },
+const TrustBadges = () => {
+  const badges = [
     {
       icon: Shield,
-      title: '2,800+ visas approved',
-      subtitle: '99% success rate'
+      title: 'Secure & Safe',
+      description: 'Your data is protected with industry-standard security'
     },
     {
-      icon: Clock,
-      title: 'AI-powered document checker',
-      subtitle: 'Reduce errors, save time'
+      icon: Star,
+      title: '4.9/5 Rating',
+      description: 'Trusted by thousands of satisfied travelers'
+    },
+    {
+      icon: Users,
+      title: '50,000+ Customers',
+      description: 'Join our community of happy travelers'
+    },
+    {
+      icon: Award,
+      title: 'Award Winning',
+      description: 'Recognized for excellence in travel services'
     }
-  ],
-  className = ''
-}: TrustBadgesProps) => {
+  ];
+
   return (
-    <section className={`py-12 bg-gray-50 ${className}`}>
+    <section className="py-12 bg-blue-50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {badges.map((badge, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <badge.icon className="h-12 w-12 text-yellow-500 mb-4" />
-              <h3 className="text-xl font-bold mb-2">{badge.title}</h3>
-              <p className="text-gray-600">{badge.subtitle}</p>
+            <div key={index} className="text-center">
+              <div className="flex justify-center mb-3">
+                <badge.icon className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-1">{badge.title}</h3>
+              <p className="text-sm text-gray-600">{badge.description}</p>
             </div>
           ))}
         </div>
