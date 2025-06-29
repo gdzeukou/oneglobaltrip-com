@@ -1,22 +1,5 @@
 
-export interface Package {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-  duration: string;
-  location: string;
-  country: string;
-  highlights: string[];
-  included: string[];
-  rating: number;
-  reviews: number;
-  featured?: boolean;
-  specialFeatures: string[];
-  visasRequired: string[];
-}
+import { Package } from '@/types/package';
 
 export const categories = [
   { id: 'all', name: 'All Packages' },
