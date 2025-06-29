@@ -1,74 +1,58 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { destinationCountries } from '@/data/visaRequirementsDatabase';
-import { Link } from 'react-router-dom';
+import { CheckCircle, AlertTriangle } from 'lucide-react';
+import { MultiDestinationVisaCheck } from '@/data/visaRequirementsDatabase';
 
 interface Destination {
   country: string;
   purpose: string;
 }
 
-interface VisaCheck {
-  destinations: Array<{ destination: string; required: boolean }>;
-}
-
 interface NonSchengenCountriesCardsProps {
   nonSchengenDestinations: Destination[];
-  visaCheck: VisaCheck;
+  visaCheck: MultiDestinationVisaCheck;
 }
 
-const NonSchengenCountriesCards = ({ 
-  nonSchengenDestinations, 
-  visaCheck 
-}: NonSchengenCountriesCardsProps) => {
+const NonSchengenCountriesCards = ({ nonSchengenDestinations, visaCheck }: NonSchengenCountriesCardsProps) => {
+  if (nonSchengenDestinations.length === 0) {
+    return null;
+  }
+
   return (
-    <>
-      {nonSchengenDestinations.map((destination, index) => {
-        const countryInfo = destinationCountries.find(c => c.code === destination.country);
-        const visaResult = visaCheck.destinations.find(d => d.destination === destination.country);
+    <div className="space-y-4">
+      {nonSchengenDestinations.map((dest, index) => {
+        const requiresVisa = visaCheck.individualVisasRequired.includes(dest.country);
         
         return (
-          <Card key={index} className={`border ${visaResult?.required ? 'border-red-200' : 'border-green-200'}`}>
+          <Card key={index} className={`border-2 ${requiresVisa ? 'border-orange-200 bg-orange-50' : 'border-green-200 bg-green-50'}`}>
             <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-3">
-                  <span className="text-2xl">{countryInfo?.flag}</span>
-                  <div>
-                    <h5 className="text-lg font-semibold">{countryInfo?.name}</h5>
-                    <p className="text-sm text-gray-600">Purpose: {destination.purpose}</p>
-                  </div>
-                </div>
-                <Badge variant={visaResult?.required ? 'destructive' : 'secondary'}>
-                  {visaResult?.required ? 'Visa Required' : 'Visa Free'}
-                </Badge>
+              <div className="flex items-center mb-4">
+                {requiresVisa ? (
+                  <AlertTriangle className="w-6 h-6 text-orange-600 mr-3" />
+                ) : (
+                  <CheckCircle className="w-6 h-6 text-green-600 mr-3" />
+                )}
+                <h4 className="font-bold text-lg">{dest.country}</h4>
+              </div>
+              
+              <div className="mb-4">
+                <div className="text-sm text-gray-600">Purpose: {dest.purpose}</div>
               </div>
 
-              {visaResult?.required ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-red-800 mb-2">
-                    You need a visa for {countryInfo?.name}. Start your application as soon as possible.
-                  </p>
-                  <Link to="/visas/short-stay">
-                    <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
-                      Start {countryInfo?.name} Visa Application
-                    </Button>
-                  </Link>
-                </div>
-              ) : (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-green-800">
-                    No visa required for {countryInfo?.name}. Ensure your passport is valid for at least 6 months.
-                  </p>
-                </div>
-              )}
+              <div className={`p-4 rounded-lg ${requiresVisa ? 'bg-orange-100' : 'bg-green-100'}`}>
+                <p className="text-sm">
+                  {requiresVisa 
+                    ? `Separate visa required for ${dest.country}`
+                    : `No visa required for ${dest.country}`
+                  }
+                </p>
+              </div>
             </CardContent>
           </Card>
         );
       })}
-    </>
+    </div>
   );
 };
 

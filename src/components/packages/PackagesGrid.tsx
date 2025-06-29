@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, MapPin, Clock, Users, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Package } from '@/data/packages';
+import { Package } from '@/types/package';
 
 export interface PackagesGridProps {
   packages: Package[];

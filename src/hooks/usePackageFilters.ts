@@ -1,6 +1,5 @@
-
 import { useState, useMemo } from 'react';
-import { Package } from '@/data/packages';
+import { Package } from '@/types/package';
 
 export const usePackageFilters = (packages: Package[]) => {
   const [searchTerm, setSearchTerm] = useState('');

@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MapPin, Clock, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Package } from '@/data/packages';
+import { Package } from '@/types/package';
 
 export interface FeaturedPackagesProps {
   packages: Package[];
