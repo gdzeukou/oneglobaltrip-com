@@ -45,10 +45,10 @@ const Navigation = () => {
             
             <Button
               onClick={handleApplyClick}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg font-semibold flex items-center space-x-2 shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-500 hover:from-yellow-300 hover:via-orange-300 hover:to-pink-400 text-white px-6 py-2 rounded-lg font-bold text-lg flex items-center space-x-2 shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 border-2 border-white/20 backdrop-blur-sm relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/30 before:via-transparent before:to-white/30 before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700"
             >
-              <Sparkles className="h-4 w-4" />
-              <span>Smart Apply</span>
+              <Sparkles className="h-5 w-5 animate-pulse" />
+              <span className="relative z-10 drop-shadow-md">Smart Apply</span>
             </Button>
             
             <NavigationAuth />
