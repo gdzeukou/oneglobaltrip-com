@@ -31,20 +31,22 @@ const HeroCarousel = () => {
 
   return (
     <section 
-      className="relative w-full h-[70vh] md:h-[80vh] lg:h-[90vh] overflow-hidden"
+      className="relative w-full h-[80vh] md:h-[90vh] lg:h-screen overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="region"
-      aria-label="Hero image carousel"
+      aria-label="Luxury travel destinations carousel"
       aria-live="polite"
     >
       <CarouselSlides slides={heroSlides} currentSlide={currentSlide} />
 
-      {/* Gradient overlay for text legibility */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
+      {/* Luxury cinematic overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
 
       <CarouselSlideContent slide={currentSlideData} isTransitioning={isTransitioning} />
 

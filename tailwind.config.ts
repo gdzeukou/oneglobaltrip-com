@@ -77,12 +77,18 @@ export default {
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+				serif: ['Playfair Display', 'Georgia', 'serif'],
+				display: ['Playfair Display', 'Georgia', 'serif'],
 			},
 			fontSize: {
-				'display-xl': ['4.5rem', { lineHeight: '1', letterSpacing: '-0.02em' }],
-				'display-lg': ['3.75rem', { lineHeight: '1', letterSpacing: '-0.02em' }],
-				'display-md': ['3rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
-				'display-sm': ['2.25rem', { lineHeight: '1.2', letterSpacing: '-0.02em' }],
+				'display-xl': ['5rem', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
+				'display-lg': ['4rem', { lineHeight: '0.95', letterSpacing: '-0.025em' }],
+				'display-md': ['3.5rem', { lineHeight: '1', letterSpacing: '-0.02em' }],
+				'display-sm': ['2.75rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+				'luxury-xl': ['6rem', { lineHeight: '0.85', letterSpacing: '-0.035em' }],
+				'luxury-lg': ['5rem', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
+				'luxury-md': ['4rem', { lineHeight: '0.95', letterSpacing: '-0.025em' }],
+				'luxury-sm': ['3rem', { lineHeight: '1', letterSpacing: '-0.02em' }],
 			},
 			keyframes: {
 				'accordion-down': {
@@ -126,8 +132,13 @@ export default {
 				'shimmer': 'shimmer 2s linear infinite',
 			},
 			boxShadow: {
+				'luxury': 'var(--luxury-shadow)',
+				'luxury-lg': 'var(--luxury-shadow-lg)',
+				'luxury-xl': '0 45px 90px -20px hsl(var(--primary) / 0.3)',
 				'premium': '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
 				'premium-hover': '0 32px 64px -12px rgba(0, 0, 0, 0.25)',
+				'glass': '0 8px 32px 0 rgba(255, 255, 255, 0.1)',
+				'glow': '0 0 40px hsl(var(--accent) / 0.3)',
 			},
 			transitionDuration: {
 				'600': '600ms',

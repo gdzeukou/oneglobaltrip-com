@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,26 +8,78 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Luxury Travel Color Palette */
+    --background: 0 0% 99%;
+    --foreground: 214 32% 16%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 214 32% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 214 100% 15%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 45 100% 60%;
-    --accent-foreground: 214 100% 15%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 214 100% 15%;
-    --radius: 0.75rem;
+    --popover-foreground: 214 32% 16%;
+    
+    /* Premium Primary - Deep Navy */
+    --primary: 214 32% 16%;
+    --primary-foreground: 0 0% 100%;
+    --primary-50: 214 32% 96%;
+    --primary-100: 214 32% 91%;
+    --primary-200: 214 32% 81%;
+    --primary-300: 214 32% 61%;
+    --primary-400: 214 32% 41%;
+    --primary-500: 214 32% 26%;
+    --primary-600: 214 32% 16%;
+    --primary-700: 214 32% 11%;
+    --primary-800: 214 32% 8%;
+    --primary-900: 214 32% 5%;
+    
+    /* Luxury Gold Accent */
+    --accent: 45 85% 65%;
+    --accent-foreground: 214 32% 16%;
+    --accent-50: 45 85% 96%;
+    --accent-100: 45 85% 90%;
+    --accent-200: 45 85% 82%;
+    --accent-300: 45 85% 74%;
+    --accent-400: 45 85% 65%;
+    --accent-500: 45 85% 58%;
+    --accent-600: 45 85% 48%;
+    --accent-700: 45 85% 38%;
+    --accent-800: 45 85% 28%;
+    --accent-900: 45 85% 18%;
+    
+    /* Sophisticated Secondary */
+    --secondary: 220 15% 96%;
+    --secondary-foreground: 214 32% 16%;
+    --secondary-50: 220 15% 98%;
+    --secondary-100: 220 15% 96%;
+    --secondary-200: 220 15% 91%;
+    --secondary-300: 220 15% 81%;
+    --secondary-400: 220 15% 71%;
+    --secondary-500: 220 15% 61%;
+    --secondary-600: 220 15% 51%;
+    --secondary-700: 220 15% 41%;
+    --secondary-800: 220 15% 31%;
+    --secondary-900: 220 15% 21%;
+    
+    /* Premium Neutral Tones */
+    --muted: 220 15% 96%;
+    --muted-foreground: 215 16% 47%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 214 32% 16%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Luxury UI Elements */
+    --luxury-gradient-primary: linear-gradient(135deg, hsl(214, 32%, 16%) 0%, hsl(214, 32%, 11%) 100%);
+    --luxury-gradient-accent: linear-gradient(135deg, hsl(45, 85%, 65%) 0%, hsl(45, 85%, 58%) 100%);
+    --luxury-gradient-hero: linear-gradient(135deg, hsl(214, 32%, 16%) 0%, hsl(214, 32%, 21%) 50%, hsl(45, 85%, 65%) 100%);
+    --luxury-shadow: 0 25px 50px -12px hsl(214, 32%, 16%, 0.15);
+    --luxury-shadow-lg: 0 35px 70px -15px hsl(214, 32%, 16%, 0.25);
+    --luxury-glass: rgba(255, 255, 255, 0.08);
+    
+    /* Spacing & Layout */
+    --radius: 1rem;
+    --luxury-spacing: 3rem;
+    
+    /* Sidebar */
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -36,34 +88,35 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-    
-    /* Premium Travel Brand Colors */
-    --travel-primary: 214 100% 15%;
-    --travel-accent: 45 100% 60%;
-    --travel-luxury: 271 81% 56%;
-    --travel-premium: 25 95% 53%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* Dark Mode Luxury Palette */
+    --background: 214 32% 5%;
+    --foreground: 0 0% 98%;
+    --card: 214 32% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 214 32% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 45 85% 65%;
+    --primary-foreground: 214 32% 5%;
+    --secondary: 214 32% 11%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 214 32% 11%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 45 85% 65%;
+    --accent-foreground: 214 32% 5%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 16%;
+    --input: 214 32% 16%;
+    --ring: 45 85% 65%;
+    --luxury-gradient-primary: linear-gradient(135deg, hsl(214, 32%, 5%) 0%, hsl(214, 32%, 11%) 100%);
+    --luxury-gradient-accent: linear-gradient(135deg, hsl(45, 85%, 65%) 0%, hsl(45, 85%, 58%) 100%);
+    --luxury-gradient-hero: linear-gradient(135deg, hsl(214, 32%, 5%) 0%, hsl(214, 32%, 11%) 50%, hsl(45, 85%, 65%) 100%);
+    --luxury-shadow: 0 25px 50px -12px hsl(0, 0%, 0%, 0.5);
+    --luxury-shadow-lg: 0 35px 70px -15px hsl(0, 0%, 0%, 0.7);
+    --luxury-glass: rgba(255, 255, 255, 0.05);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -89,38 +142,78 @@
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.6;
     letter-spacing: -0.01em;
+    font-weight: 400;
   }
 
-  /* Single font family for all headings for better performance */
+  /* Luxury Typography System */
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Playfair Display', Georgia, serif;
     font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    color: hsl(var(--foreground));
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: hsl(var(--primary));
   }
 
-  /* Improved contrast ratios for accessibility */
+  /* Premium Display Typography */
   h1 { 
-    font-size: clamp(2.25rem, 5vw, 4rem); 
+    font-size: clamp(2.5rem, 6vw, 5rem); 
     font-weight: 800;
-    color: hsl(var(--foreground));
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: hsl(var(--primary));
   }
   h2 { 
-    font-size: clamp(1.875rem, 4vw, 2.75rem); 
+    font-size: clamp(2rem, 5vw, 3.5rem); 
     font-weight: 700;
-    color: hsl(var(--foreground));
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: hsl(var(--primary));
   }
   h3 { 
-    font-size: clamp(1.5rem, 3vw, 2.25rem); 
+    font-size: clamp(1.75rem, 4vw, 2.75rem); 
     font-weight: 600;
-    color: hsl(var(--foreground));
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: hsl(var(--primary));
+  }
+  h4 {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1.2;
+    color: hsl(var(--primary));
+  }
+  h5 {
+    font-size: clamp(1.25rem, 2.5vw, 1.875rem);
+    font-weight: 500;
+    line-height: 1.3;
+    color: hsl(var(--primary));
+  }
+  h6 {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.3;
+    color: hsl(var(--primary));
   }
   
+  /* Enhanced Body Text */
   p, li, span {
+    font-family: 'Inter', system-ui, sans-serif;
     line-height: 1.7;
     letter-spacing: -0.005em;
     color: hsl(var(--muted-foreground));
+    font-weight: 400;
+  }
+
+  /* Premium text classes */
+  .text-luxury {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight: 600;
+    color: hsl(var(--primary));
+  }
+
+  .text-accent-luxury {
+    color: hsl(var(--accent));
+    font-weight: 600;
   }
 
   /* High contrast mode support */
@@ -186,62 +279,137 @@
   animation: slide-up 0.7s ease-out forwards;
 }
 
-/* Streamlined Button Styles */
-.btn-premium {
-  background: linear-gradient(135deg, hsl(var(--travel-primary)) 0%, hsl(var(--travel-luxury)) 100%);
-  color: white;
-  border: none;
-  padding: 1rem 2.5rem;
-  border-radius: 0.75rem;
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.btn-premium:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
-}
-
-.btn-secondary {
-  background: linear-gradient(135deg, hsl(var(--travel-accent)) 0%, hsl(var(--travel-premium)) 100%);
-  color: white;
-  border: none;
-  padding: 1rem 2.5rem;
-  border-radius: 0.75rem;
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  transition: all 0.2s ease;
-  box-shadow: 0 8px 25px rgba(251, 146, 60, 0.3);
-}
-
-.btn-secondary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(251, 146, 60, 0.4);
-}
-
-/* Optimized Glass Effects */
-.glass-premium {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-}
-
-/* Enhanced Card Effects */
-.card-premium {
-  background: rgba(255, 255, 255, 0.98);
+/* Luxury Button System */
+.btn-luxury-primary {
+  background: var(--luxury-gradient-primary);
+  color: hsl(var(--accent));
+  border: 1px solid hsl(var(--accent) / 0.3);
+  padding: 1.25rem 3rem;
   border-radius: 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--luxury-shadow);
+  position: relative;
+  overflow: hidden;
 }
 
-.card-premium:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+.btn-luxury-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, hsl(var(--accent) / 0.2), transparent);
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-luxury-primary:hover::before {
+  left: 100%;
+}
+
+.btn-luxury-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--luxury-shadow-lg);
+  border-color: hsl(var(--accent) / 0.6);
+}
+
+.btn-luxury-accent {
+  background: var(--luxury-gradient-accent);
+  color: hsl(var(--primary));
+  border: none;
+  padding: 1.25rem 3rem;
+  border-radius: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px hsl(var(--accent) / 0.3);
+}
+
+.btn-luxury-accent:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px hsl(var(--accent) / 0.4);
+  filter: brightness(1.1);
+}
+
+.btn-luxury-glass {
+  background: var(--luxury-glass);
+  backdrop-filter: blur(20px);
+  color: hsl(var(--primary));
+  border: 1px solid hsl(var(--accent) / 0.3);
+  padding: 1.25rem 3rem;
+  border-radius: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 1.125rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-luxury-glass:hover {
+  background: hsl(var(--accent) / 0.1);
+  border-color: hsl(var(--accent) / 0.5);
+  transform: translateY(-2px);
+}
+
+/* Luxury Glass Morphism Effects */
+.glass-luxury {
+  background: var(--luxury-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid hsl(var(--accent) / 0.2);
+  box-shadow: var(--luxury-shadow);
+  border-radius: 1.5rem;
+}
+
+.glass-luxury-strong {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px);
+  border: 1px solid hsl(var(--accent) / 0.3);
+  box-shadow: var(--luxury-shadow-lg);
+  border-radius: 1.5rem;
+}
+
+/* Premium Card System */
+.card-luxury {
+  background: hsl(var(--card));
+  border-radius: 1.5rem;
+  border: 1px solid hsl(var(--border));
+  box-shadow: var(--luxury-shadow);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+.card-luxury::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(var(--accent) / 0.3), transparent);
+}
+
+.card-luxury:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--luxury-shadow-lg);
+  border-color: hsl(var(--accent) / 0.2);
+}
+
+.card-luxury-elevated {
+  background: hsl(var(--card));
+  border-radius: 2rem;
+  border: 1px solid hsl(var(--accent) / 0.2);
+  box-shadow: var(--luxury-shadow-lg);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-luxury-elevated:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 45px 90px -20px hsl(var(--primary) / 0.3);
+  border-color: hsl(var(--accent) / 0.4);
 }
 
 /* Responsive Typography */
