@@ -1,10 +1,9 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Sparkles, LogOut, User, Home, FileText, Package, Phone } from 'lucide-react';
 import { ROUTES } from '@/constants/routes';
+import { Sparkles, Plane, Shield, Crown, MapPin, Phone } from 'lucide-react';
 
 interface MobileNavigationProps {
   isOpen: boolean;
@@ -13,13 +12,7 @@ interface MobileNavigationProps {
 }
 
 const MobileNavigation = ({ isOpen, onClose, onApplyClick }: MobileNavigationProps) => {
-  const { user, signOut } = useAuth();
-
   if (!isOpen) return null;
-
-  const handleLinkClick = () => {
-    onClose();
-  };
 
   const handleApplyClick = () => {
     onApplyClick();
@@ -27,81 +20,74 @@ const MobileNavigation = ({ isOpen, onClose, onApplyClick }: MobileNavigationPro
   };
 
   return (
-    <div className="md:hidden bg-white border-t border-gray-200">
-      <div className="px-4 py-4 space-y-4">
-        <div className="space-y-2">
+    <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-40">
+      <div className="px-4 py-6 space-y-4">
+        {/* Main Navigation */}
+        <div className="space-y-3">
           <Link
             to={ROUTES.HOME}
-            onClick={handleLinkClick}
-            className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 py-2"
+            onClick={onClose}
+            className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
           >
-            <Home className="h-4 w-4" />
-            <span>Home</span>
+            Home
           </Link>
-          <Link
-            to={ROUTES.PACKAGES}
-            onClick={handleLinkClick}
-            className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 py-2"
-          >
-            <Package className="h-4 w-4" />
-            <span>Packages</span>
-          </Link>
-          <Link
-            to={ROUTES.VISAS}
-            onClick={handleLinkClick}
-            className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 py-2"
-          >
-            <FileText className="h-4 w-4" />
-            <span>Visas</span>
-          </Link>
+          
+          <div className="space-y-2">
+            <div className="px-3 py-2 text-sm font-semibold text-gray-900 uppercase tracking-wider">
+              Services
+            </div>
+            <Link
+              to={ROUTES.VISAS}
+              onClick={onClose}
+              className="flex items-center space-x-3 px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors ml-4"
+            >
+              <Plane className="h-4 w-4 text-blue-600" />
+              <span>Visa Services</span>
+            </Link>
+            <Link
+              to={ROUTES.PACKAGES}
+              onClick={onClose}
+              className="flex items-center space-x-3 px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors ml-4"
+            >
+              <Crown className="h-4 w-4 text-blue-600" />
+              <span>Travel Packages</span>
+            </Link>
+            <Link
+              to={ROUTES.CONCIERGE}
+              onClick={onClose}
+              className="flex items-center space-x-3 px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors ml-4"
+            >
+              <MapPin className="h-4 w-4 text-blue-600" />
+              <span>Concierge</span>
+            </Link>
+          </div>
+          
           <Link
             to={ROUTES.CONTACT}
-            onClick={handleLinkClick}
-            className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 py-2"
+            onClick={onClose}
+            className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
           >
-            <Phone className="h-4 w-4" />
-            <span>Contact</span>
+            Contact
           </Link>
         </div>
 
-        <div className="border-t pt-4">
+        {/* CTA Button */}
+        <div className="pt-4 border-t border-gray-200">
           <Button
             onClick={handleApplyClick}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold flex items-center justify-center space-x-2 mb-4"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-all duration-300"
           >
-            <Sparkles className="h-4 w-4" />
-            <span>Smart Apply</span>
+            <Sparkles className="h-5 w-5 mr-2" />
+            Smart Apply
           </Button>
+        </div>
 
-          {user ? (
-            <div className="space-y-2">
-              <Link
-                to={ROUTES.DASHBOARD}
-                onClick={handleLinkClick}
-                className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 py-2"
-              >
-                <User className="h-4 w-4" />
-                <span>Dashboard</span>
-              </Link>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  signOut();
-                  onClose();
-                }}
-                className="w-full flex items-center justify-center space-x-2"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Sign Out</span>
-              </Button>
-            </div>
-          ) : (
-            <Link to={ROUTES.AUTH} onClick={handleLinkClick}>
-              <Button variant="outline" className="w-full">
-                Sign In
-              </Button>
-            </Link>
-          )}
+        {/* Contact Info */}
+        <div className="pt-4 border-t border-gray-200">
+          <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <Phone className="h-4 w-4" />
+            <span>Free consultation available</span>
+          </div>
         </div>
       </div>
     </div>
