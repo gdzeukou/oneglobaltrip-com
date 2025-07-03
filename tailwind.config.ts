@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -90,6 +89,11 @@ export default {
 				'luxury-md': ['4rem', { lineHeight: '0.95', letterSpacing: '-0.025em' }],
 				'luxury-sm': ['3rem', { lineHeight: '1', letterSpacing: '-0.02em' }],
 			},
+			perspective: {
+				'500': '500px',
+				'1000': '1000px',
+				'1500': '1500px',
+			},
 			keyframes: {
 				'accordion-down': {
 					from: { height: '0' },
@@ -119,6 +123,20 @@ export default {
 						transform: 'scale(1)'
 					}
 				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'glow': {
+					'0%, 100%': { opacity: '0.5' },
+					'50%': { opacity: '1' }
+				},
+				'tilt': {
+					'0%': { transform: 'rotateY(0deg)' },
+					'25%': { transform: 'rotateY(1deg)' },
+					'75%': { transform: 'rotateY(-1deg)' },
+					'100%': { transform: 'rotateY(0deg)' }
+				},
 				'shimmer': {
 					'0%': { backgroundPosition: '-200% 0' },
 					'100%': { backgroundPosition: '200% 0' }
@@ -129,6 +147,9 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in-up': 'fade-in-up 0.6s ease-out forwards',
 				'scale-in': 'scale-in 0.5s ease-out forwards',
+				'float': 'float 3s ease-in-out infinite',
+				'glow': 'glow 2s ease-in-out infinite',
+				'tilt': 'tilt 2s ease-in-out infinite',
 				'shimmer': 'shimmer 2s linear infinite',
 			},
 			boxShadow: {
