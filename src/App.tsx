@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ROUTES } from "@/constants/routes";
+import { shouldBypassAuth } from "@/utils/developmentMode";
 
 // Lazy load components
 const Index = lazy(() => import("./pages/Index"));
@@ -130,9 +131,13 @@ const App = () => (
                 <Route 
                   path={ROUTES.ADMIN} 
                   element={
-                    <ProtectedRoute>
+                    shouldBypassAuth(ROUTES.ADMIN) ? (
                       <Admin />
-                    </ProtectedRoute>
+                    ) : (
+                      <ProtectedRoute>
+                        <Admin />
+                      </ProtectedRoute>
+                    )
                   } 
                 />
                 <Route 
