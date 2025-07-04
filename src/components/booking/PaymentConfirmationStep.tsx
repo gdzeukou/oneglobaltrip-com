@@ -1,5 +1,5 @@
-
-import { Shield } from 'lucide-react';
+import { Shield, CheckCircle } from 'lucide-react';
+import PaymentStep from '@/components/payments/PaymentStep';
 
 interface LeadTraveler {
   firstName: string;
@@ -17,13 +17,17 @@ interface PaymentConfirmationStepProps {
   travelers: number;
   leadTraveler: LeadTraveler;
   departureDate: string;
+  bookingId?: string;
+  totalAmount?: number;
 }
 
 const PaymentConfirmationStep = ({
   selectedPackage,
   travelers,
   leadTraveler,
-  departureDate
+  departureDate,
+  bookingId,
+  totalAmount = 0
 }: PaymentConfirmationStepProps) => {
   const packages = [
     { id: '1', name: 'Paris + Santorini Escape', price: 2499 },
@@ -32,6 +36,37 @@ const PaymentConfirmationStep = ({
     { id: '4', name: 'Mediterranean Coast Explorer', price: 3899 }
   ];
 
+  const selectedPackageData = packages.find(p => p.id === selectedPackage);
+  const packageTotal = selectedPackageData ? selectedPackageData.price * travelers : totalAmount;
+
+  const handlePaymentSuccess = (paymentResult: any) => {
+    console.log('Payment successful:', paymentResult);
+    // Handle successful payment - redirect to confirmation page
+  };
+
+  const handlePaymentError = (error: string) => {
+    console.error('Payment error:', error);
+    // Handle payment error - show error message
+  };
+
+  // If we have booking ID and amount, show payment form
+  if (bookingId && (totalAmount > 0 || selectedPackageData)) {
+    return (
+      <PaymentStep
+        bookingData={{
+          id: bookingId,
+          totalAmount: packageTotal,
+          currency: 'USD',
+          packageName: selectedPackageData?.name,
+          travelers: travelers,
+        }}
+        onPaymentSuccess={handlePaymentSuccess}
+        onPaymentError={handlePaymentError}
+      />
+    );
+  }
+
+  // Otherwise show the existing $0 down payment info
   return (
     <div className="space-y-6">
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
