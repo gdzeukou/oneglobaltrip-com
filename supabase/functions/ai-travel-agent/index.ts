@@ -62,10 +62,13 @@ serve(async (req) => {
     // Get or create conversation
     let currentConversationId = conversationId;
     if (!currentConversationId) {
+      // Handle development mode - check if user exists, if not create conversation without FK constraint
+      const isDevelopmentUser = userId === '00000000-0000-0000-0000-000000000000';
+      
       const { data: newConversation, error: conversationError } = await supabase
         .from('chat_conversations')
         .insert({ 
-          user_id: userId,
+          user_id: isDevelopmentUser ? null : userId, // Set to null for dev user to avoid FK constraint
           title: message.substring(0, 50) + (message.length > 50 ? '...' : '')
         })
         .select()
@@ -74,7 +77,7 @@ serve(async (req) => {
       if (conversationError) {
         console.error('Error creating conversation:', conversationError);
         return new Response(
-          JSON.stringify({ error: 'Failed to create conversation' }),
+          JSON.stringify({ error: 'Failed to create conversation', details: conversationError.message }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
