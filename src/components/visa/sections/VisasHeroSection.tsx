@@ -89,20 +89,28 @@ const VisasHeroSection = ({ onScrollToCTA }: VisasHeroSectionProps) => {
             </div>
 
             {/* Right side - Your uploaded image */}
-            <div className="relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-              <div className="relative">
+            <div className="relative animate-fade-in-up lg:flex lg:justify-center" style={{ animationDelay: '0.4s' }}>
+              <div className="relative max-w-lg w-full">
                 {/* Background decorative elements */}
                 <div className="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-yellow-400/20 to-blue-500/20 rounded-full blur-3xl" />
                 <div className="absolute -bottom-4 -left-4 w-64 h-64 bg-gradient-to-tr from-blue-400/20 to-purple-500/20 rounded-full blur-3xl" />
                 
                 {/* Main image container */}
-                <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 backdrop-blur-sm">
+                <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 backdrop-blur-sm bg-white/10">
                   <img
                     src="/lovable-uploads/cfe6ab35-b147-43d4-a694-ce1b4b67dc7e.png"
                     alt="Happy traveler ready for their journey"
-                    className="w-full h-auto object-cover max-w-md mx-auto"
-                    onLoad={() => console.log('Hero image loaded successfully')}
-                    onError={(e) => console.error('Hero image failed to load:', e)}
+                    className="w-full h-auto object-cover"
+                    style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
+                    onLoad={() => {
+                      console.log('✅ Hero image loaded successfully');
+                      console.log('Image src:', '/lovable-uploads/cfe6ab35-b147-43d4-a694-ce1b4b67dc7e.png');
+                    }}
+                    onError={(e) => {
+                      console.error('❌ Hero image failed to load:', e);
+                      console.log('Failed image src:', '/lovable-uploads/cfe6ab35-b147-43d4-a694-ce1b4b67dc7e.png');
+                      console.log('Image element:', e.target);
+                    }}
                   />
                   
                   {/* Overlay gradient for better integration */}
