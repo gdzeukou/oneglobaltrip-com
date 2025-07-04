@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import AITravelAgent from '@/components/ai/AITravelAgent';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -341,6 +342,9 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Travel Agent */}
+      <AITravelAgent />
 
       <Footer />
     </div>
