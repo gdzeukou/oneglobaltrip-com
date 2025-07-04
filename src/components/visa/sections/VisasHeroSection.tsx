@@ -89,8 +89,34 @@ const VisasHeroSection = ({ onScrollToCTA }: VisasHeroSectionProps) => {
               </div>
             </div>
 
-            {/* Right side - Image space (handled by ParallaxSection background) */}
-            <div className="hidden lg:block" />
+            {/* Right side - Your uploaded image */}
+            <div className="relative animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+              <div className="relative">
+                {/* Background decorative elements */}
+                <div className="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-yellow-400/20 to-blue-500/20 rounded-full blur-3xl" />
+                <div className="absolute -bottom-4 -left-4 w-64 h-64 bg-gradient-to-tr from-blue-400/20 to-purple-500/20 rounded-full blur-3xl" />
+                
+                {/* Main image container */}
+                <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 backdrop-blur-sm">
+                  <img
+                    src="/lovable-uploads/cfe6ab35-b147-43d4-a694-ce1b4b67dc7e.png"
+                    alt="Happy traveler ready for their journey"
+                    className="w-full h-auto object-cover"
+                  />
+                  
+                  {/* Overlay gradient for better integration */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 via-transparent to-transparent" />
+                </div>
+                
+                {/* Floating elements around the image */}
+                <div className="absolute top-8 right-8 bg-white/10 backdrop-blur-sm rounded-full p-3 border border-white/20">
+                  <Sparkles className="h-6 w-6 text-yellow-400" />
+                </div>
+                <div className="absolute bottom-8 left-8 bg-white/10 backdrop-blur-sm rounded-full p-2 border border-white/20">
+                  <Shield className="h-5 w-5 text-green-400" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
