@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles, Shield, Clock, Users } from 'lucide-react';
 import ParallaxSection from '@/components/ui/parallax-section';
 import AdvancedImage from '@/components/ui/advanced-image';
+import SmartCTA from '@/components/conversion/SmartCTA';
 
 interface VisasHeroSectionProps {
   onScrollToCTA?: () => void;
@@ -74,16 +75,15 @@ const VisasHeroSection = ({ onScrollToCTA }: VisasHeroSectionProps) => {
                   </div>
                 </div>
 
-                {/* CTA Button */}
+                {/* Smart CTA Button */}
                 {onScrollToCTA && (
                   <div className="animate-fade-in-up" style={{ animationDelay: '1.2s' }}>
-                    <Button 
+                    <SmartCTA
+                      variant="urgent"
+                      size="lg"
+                      location="hero"
                       onClick={onScrollToCTA}
-                      className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-bold text-lg px-8 py-4 rounded-full shadow-luxury hover:shadow-luxury-lg transition-all duration-300 transform hover:scale-105"
-                    >
-                      Get Started Now
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
+                    />
                   </div>
                 )}
               </div>

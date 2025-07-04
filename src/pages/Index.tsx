@@ -11,6 +11,7 @@ import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
 import MainCTASection from '@/components/visa/sections/MainCTASection';
+import RealtimeNotifications from '@/components/conversion/RealtimeNotifications';
 
 const Index = () => {
   return (
@@ -26,6 +27,7 @@ const Index = () => {
       <TestimonialsSection />
       <CTASection />
       <Footer />
+      <RealtimeNotifications />
     </div>
   );
 };
