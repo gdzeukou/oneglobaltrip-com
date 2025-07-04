@@ -3,6 +3,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate, useLocation } from 'react-router-dom';
 import EmailVerification from './EmailVerification';
+import { isDevelopmentMode } from '@/utils/developmentMode';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -19,6 +20,12 @@ const ProtectedRoute = ({ children, requireEmailVerification = true }: Protected
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
+  }
+
+  // Development bypass for Lovable environment
+  if (isDevelopmentMode()) {
+    console.log('Development mode: Bypassing authentication checks');
+    return <>{children}</>;
   }
 
   // If OTP verification is required, redirect to auth page

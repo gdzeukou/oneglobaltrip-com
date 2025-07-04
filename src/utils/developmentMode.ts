@@ -1,3 +1,4 @@
+
 // Development mode detection for Lovable
 export const isDevelopmentMode = (): boolean => {
   // Check if we're in Lovable development environment
@@ -20,3 +21,27 @@ export const shouldBypassAuth = (route: string): boolean => {
   // Only bypass auth for admin route in development
   return isDevelopmentMode() && route === '/admin';
 };
+
+export const createMockUser = () => ({
+  id: 'dev-user-id',
+  email: 'dev@lovable.app',
+  email_confirmed_at: new Date().toISOString(),
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+  app_metadata: {},
+  user_metadata: {
+    first_name: 'Dev',
+    last_name: 'User'
+  },
+  aud: 'authenticated',
+  role: 'authenticated'
+});
+
+export const createMockSession = () => ({
+  access_token: 'mock-access-token',
+  refresh_token: 'mock-refresh-token',
+  expires_in: 3600,
+  expires_at: Math.floor(Date.now() / 1000) + 3600,
+  token_type: 'bearer',
+  user: createMockUser()
+});
