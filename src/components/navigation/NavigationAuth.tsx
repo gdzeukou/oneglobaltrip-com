@@ -5,7 +5,12 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-const NavigationAuth = () => {
+interface NavigationAuthProps {
+  buttonVariant?: 'default' | 'outline';
+  textColor?: string;
+}
+
+const NavigationAuth = ({ buttonVariant = 'default', textColor }: NavigationAuthProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut, isEmailVerified } = useAuth();
@@ -51,7 +56,7 @@ const NavigationAuth = () => {
           className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
             isActive('/dashboard')
               ? 'bg-deep-blue-900 text-white shadow-lg'
-              : 'text-gray-700 hover:bg-blue-50 hover:text-deep-blue-900'
+              : `${textColor || 'text-gray-700'} hover:bg-blue-50 hover:text-deep-blue-900`
           }`}
         >
           <Avatar className="h-6 w-6">
@@ -65,7 +70,7 @@ const NavigationAuth = () => {
           variant="ghost"
           size="sm"
           onClick={handleSignOut}
-          className="text-gray-700 hover:text-deep-blue-900 hover:bg-blue-50 transition-all duration-200"
+          className={`${textColor || 'text-gray-700'} hover:text-deep-blue-900 hover:bg-blue-50 transition-all duration-200`}
         >
           <LogOut className="h-4 w-4" />
         </Button>
@@ -73,10 +78,15 @@ const NavigationAuth = () => {
     );
   }
 
+  const buttonClass = buttonVariant === 'outline' 
+    ? `border-2 ${textColor === 'text-white' ? 'border-white text-white hover:bg-white hover:text-black' : 'border-deep-blue-900 text-deep-blue-900 hover:bg-deep-blue-900 hover:text-white'}`
+    : "bg-gradient-to-r from-deep-blue-900 to-deep-blue-800 hover:from-deep-blue-800 hover:to-deep-blue-700 text-white";
+
   return (
     <Button
       asChild
-      className="bg-gradient-to-r from-deep-blue-900 to-deep-blue-800 hover:from-deep-blue-800 hover:to-deep-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+      variant={buttonVariant === 'outline' ? 'outline' : 'default'}
+      className={`${buttonClass} shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105`}
     >
       <Link to="/auth">
         <User className="h-4 w-4 mr-2" />

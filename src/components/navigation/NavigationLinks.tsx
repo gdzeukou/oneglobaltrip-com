@@ -11,7 +11,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Plane, Shield, Crown, MapPin } from 'lucide-react';
 
-const NavigationLinks = () => {
+interface NavigationLinksProps {
+  textColor?: string;
+}
+
+const NavigationLinks = ({ textColor }: NavigationLinksProps) => {
   const location = useLocation();
 
   const isActive = (path: string) => {
@@ -21,9 +25,11 @@ const NavigationLinks = () => {
   const linkClass = (path: string) => 
     `px-3 py-2 text-sm font-medium transition-all duration-200 ${
       isActive(path) 
-        ? 'text-deep-blue-900 border-b-2 border-deep-blue-900' 
-        : 'text-gray-700 hover:text-deep-blue-900 hover:scale-105'
+        ? `${textColor || 'text-deep-blue-900'} border-b-2 border-deep-blue-900` 
+        : `${textColor || 'text-gray-700'} hover:text-deep-blue-900 hover:scale-105`
     }`;
+
+  const triggerClass = `${textColor || 'text-gray-700'} hover:text-deep-blue-900`;
 
   return (
     <NavigationMenu>
@@ -35,7 +41,7 @@ const NavigationLinks = () => {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="text-gray-700 hover:text-deep-blue-900">
+          <NavigationMenuTrigger className={triggerClass}>
             Services
           </NavigationMenuTrigger>
           <NavigationMenuContent>

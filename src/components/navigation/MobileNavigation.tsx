@@ -8,14 +8,16 @@ import { Sparkles, Plane, Shield, Crown, MapPin, Phone } from 'lucide-react';
 interface MobileNavigationProps {
   isOpen: boolean;
   onClose: () => void;
-  onApplyClick: () => void;
+  onApplyClick?: () => void;
 }
 
 const MobileNavigation = ({ isOpen, onClose, onApplyClick }: MobileNavigationProps) => {
   if (!isOpen) return null;
 
   const handleApplyClick = () => {
-    onApplyClick();
+    if (onApplyClick) {
+      onApplyClick();
+    }
     onClose();
   };
 
@@ -72,15 +74,17 @@ const MobileNavigation = ({ isOpen, onClose, onApplyClick }: MobileNavigationPro
         </div>
 
         {/* CTA Button */}
-        <div className="pt-4 border-t border-gray-200">
-          <Button
-            onClick={handleApplyClick}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-all duration-300"
-          >
-            <Sparkles className="h-5 w-5 mr-2" />
-            Smart Apply
-          </Button>
-        </div>
+        {onApplyClick && (
+          <div className="pt-4 border-t border-gray-200">
+            <Button
+              onClick={handleApplyClick}
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-all duration-300"
+            >
+              <Sparkles className="h-5 w-5 mr-2" />
+              Smart Apply
+            </Button>
+          </div>
+        )}
 
         {/* Contact Info */}
         <div className="pt-4 border-t border-gray-200">

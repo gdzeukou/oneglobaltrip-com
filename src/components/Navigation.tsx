@@ -25,6 +25,11 @@ const Navigation = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleApplyClick = () => {
+    // Handle smart apply functionality here
+    console.log('Smart Apply clicked');
+  };
+
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${
       isVisasPage 
@@ -68,7 +73,8 @@ const Navigation = () => {
       {/* Mobile Navigation */}
       <MobileNavigation 
         isOpen={isMenuOpen} 
-        onClose={() => setIsMenuOpen(false)} 
+        onClose={() => setIsMenuOpen(false)}
+        onApplyClick={handleApplyClick}
       />
     </nav>
   );
