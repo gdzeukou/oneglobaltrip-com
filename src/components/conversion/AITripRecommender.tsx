@@ -394,7 +394,7 @@ const AITripRecommender = () => {
           >
             {isGenerating ? (
               <div className="flex items-center gap-3">
-                <Brain className="h-5 w-5 animate-spin" />
+                <Sparkles className="h-5 w-5 animate-spin" />
                 AI is analyzing your preferences...
               </div>
             ) : (
