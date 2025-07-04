@@ -5,21 +5,21 @@ const ServicesSection = () => {
   const services = [
     {
       icon: Shield,
-      title: 'Visa Excellence',
-      description: 'Guaranteed visa processing with our expert legal team and 99.2% success rate',
-      features: ['Expert Legal Team', '99.2% Success Rate', '24/7 Support', 'Money-Back Guarantee']
+      title: 'Passport to Possibility',
+      description: 'We don\'t just process visas. We unlock worlds where you belong.',
+      features: ['Soul-Deep Expertise', '99.2% Dreams Realized', 'Round-the-Clock Guardian Angels', 'Promise-Back Guarantee']
     },
     {
       icon: Crown,
-      title: 'Luxury Packages',
-      description: 'Curated premium travel experiences with exclusive access and personalized service',
-      features: ['Private Concierge', 'Exclusive Access', 'Luxury Accommodations', 'Custom Itineraries']
+      title: 'Curated Impossibilities',
+      description: 'Where luxury meets authenticity and every moment becomes a treasured memory.',
+      features: ['Personal World Curator', 'Doors Others Cannot Open', 'Sanctuaries of Wonder', 'Stories Written Just for You']
     },
     {
       icon: Sparkles,
-      title: 'Premium Concierge',
-      description: 'End-to-end travel management with dedicated specialists for seamless journeys',
-      features: ['Dedicated Specialist', 'VIP Treatment', 'Emergency Support', 'Travel Insurance']
+      title: 'Your Personal World Whisperer',
+      description: 'Because extraordinary journeys require more than planning—they need magic.',
+      features: ['Devoted Dream Architect', 'Where VIP Means Visionary', 'Guardian of Your Journey', 'Shield of Serenity']
     }
   ];
 
@@ -28,10 +28,10 @@ const ServicesSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-20">
           <h2 className="font-display text-luxury-lg md:text-luxury-xl font-bold text-primary mb-8 tracking-tight">
-            Premium Travel Services
+            Where Luxury Meets Authenticity
           </h2>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            Curated luxury experiences with comprehensive visa assistance and personalized concierge services
+            You don't just travel, you arrive different. Some journeys change your address. Others change your soul.
           </p>
           <div className="mt-8 w-24 h-1 bg-gradient-to-r from-accent via-accent/80 to-transparent rounded-full mx-auto"></div>
         </div>

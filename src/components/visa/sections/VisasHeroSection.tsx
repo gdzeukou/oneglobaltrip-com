@@ -48,15 +48,15 @@ const VisasHeroSection = ({ onScrollToCTA }: VisasHeroSectionProps) => {
 
                 {/* Main headline */}
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
-                  Visa Services That
+                  Where Dreams Get
                   <span className="block text-yellow-400 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-                    Actually Work
+                    Their Passport
                   </span>
                 </h1>
 
                 {/* Subtitle */}
                 <p className="text-xl md:text-2xl mb-8 text-blue-100 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-                  Skip the embassy queues and paperwork nightmares. We handle your visa so you can focus on planning your adventure.
+                  You don't just travel, you arrive different. We don't just process visas—we unlock worlds where you belong.
                 </p>
 
                 {/* Trust indicators */}
