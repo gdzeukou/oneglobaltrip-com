@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Calendar, User, Loader2 } from 'lucide-react';
+import { MapPin, Calendar, User, Clock, Loader2 } from 'lucide-react';
 import AutocompleteSelect from './wizard/components/AutocompleteSelect';
+import DurationSelector from './wizard/components/DurationSelector';
 import VisaResultsCard from './wizard/components/VisaResultsCard';
 import { checkVisaRequirement, getTravelPurposes, getCountryOptions } from '@/utils/enhancedVisaChecker';
 
@@ -11,6 +12,7 @@ const QuickVisaWizard = () => {
   const [nationality, setNationality] = useState('');
   const [destination, setDestination] = useState('');
   const [purpose, setPurpose] = useState('');
+  const [duration, setDuration] = useState('');
   const [result, setResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -18,40 +20,23 @@ const QuickVisaWizard = () => {
   const purposeOptions = getTravelPurposes();
 
   const handleQuickCheck = async () => {
-    if (nationality && destination && purpose) {
+    if (nationality && destination && purpose && duration) {
       setIsLoading(true);
       
       // Simulate API delay for better UX
       await new Promise(resolve => setTimeout(resolve, 800));
       
-      const visaResult = checkVisaRequirement(nationality, destination, purpose);
+      const visaResult = checkVisaRequirement(nationality, destination, purpose, duration);
       setResult(visaResult);
       setIsLoading(false);
     }
-  };
-
-  const handleApplyNow = () => {
-    // Navigate to appropriate visa application page
-    if (result?.isSchengen) {
-      window.open('/visa-countries/schengen-short-stay', '_blank');
-    } else if (destination === 'United States') {
-      window.open('https://ceac.state.gov/genniv/', '_blank');
-    } else if (destination === 'United Kingdom') {
-      window.open('https://www.gov.uk/standard-visitor-visa', '_blank');
-    } else {
-      // Default to short-stay visas page
-      window.open('/short-stay-visas', '_blank');
-    }
-  };
-
-  const handleGetConsultation = () => {
-    window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank');
   };
 
   const resetForm = () => {
     setNationality('');
     setDestination('');
     setPurpose('');
+    setDuration('');
     setResult(null);
   };
 
@@ -69,7 +54,7 @@ const QuickVisaWizard = () => {
         </CardHeader>
         
         <CardContent className="p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <User className="h-4 w-4 text-blue-500" />
@@ -114,13 +99,25 @@ const QuickVisaWizard = () => {
                 emptyMessage="No purposes found."
               />
             </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <Clock className="h-4 w-4 text-orange-500" />
+                Duration
+              </label>
+              <DurationSelector
+                value={duration}
+                onValueChange={setDuration}
+                placeholder="How long?"
+              />
+            </div>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <Button 
               onClick={handleQuickCheck}
               className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3"
-              disabled={!nationality || !destination || !purpose || isLoading}
+              disabled={!nationality || !destination || !purpose || !duration || isLoading}
             >
               {isLoading ? (
                 <>
@@ -152,8 +149,7 @@ const QuickVisaWizard = () => {
             nationality={nationality}
             destination={destination}
             purpose={purposeOptions.find(p => p.value === purpose)?.label || purpose}
-            onApplyNow={handleApplyNow}
-            onGetConsultation={handleGetConsultation}
+            duration={duration}
           />
         </div>
       )}

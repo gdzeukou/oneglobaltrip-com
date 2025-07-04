@@ -12,6 +12,7 @@ import {
   ExternalLink,
   Phone
 } from 'lucide-react';
+import { getVisaApplicationRoute, getConsultationRoute, getVisaButtonText } from '@/utils/visaRouting';
 
 interface VisaResult {
   required: boolean;
@@ -21,6 +22,8 @@ interface VisaResult {
   message?: string;
   isSchengen?: boolean;
   fallback?: boolean;
+  duration?: string;
+  category?: 'short-stay' | 'long-stay' | 'transit';
 }
 
 interface VisaResultsCardProps {
@@ -28,6 +31,7 @@ interface VisaResultsCardProps {
   nationality: string;
   destination: string;
   purpose: string;
+  duration: string;
   onApplyNow?: () => void;
   onGetConsultation?: () => void;
 }
@@ -37,9 +41,36 @@ const VisaResultsCard = ({
   nationality,
   destination,
   purpose,
+  duration,
   onApplyNow,
   onGetConsultation
 }: VisaResultsCardProps) => {
+  const handleApplyNow = () => {
+    if (onApplyNow) {
+      onApplyNow();
+      return;
+    }
+    
+    // Use smart routing
+    const route = getVisaApplicationRoute({
+      nationality,
+      destination,
+      purpose,
+      duration
+    });
+    
+    window.open(route, '_blank');
+  };
+
+  const handleGetConsultation = () => {
+    if (onGetConsultation) {
+      onGetConsultation();
+      return;
+    }
+    
+    window.open(getConsultationRoute(), '_blank');
+  };
+
   if (result.fallback) {
     return (
       <Card className="border-yellow-200 bg-yellow-50">
@@ -64,7 +95,7 @@ const VisaResultsCard = ({
             </Button>
             <Button 
               className="bg-yellow-600 hover:bg-yellow-700"
-              onClick={onGetConsultation}
+              onClick={handleGetConsultation}
             >
               <Phone className="h-4 w-4 mr-2" />
               Get Expert Help
@@ -97,6 +128,7 @@ const VisaResultsCard = ({
               <p><strong>From:</strong> {nationality}</p>
               <p><strong>To:</strong> {destination}</p>
               <p><strong>Purpose:</strong> {purpose}</p>
+              <p><strong>Duration:</strong> {duration.replace('-', ' ').replace('_', ' ')}</p>
             </div>
           </div>
           
@@ -107,6 +139,18 @@ const VisaResultsCard = ({
                 {result.visaType && (
                   <Badge variant="outline" className="text-xs">
                     {result.visaType}
+                  </Badge>
+                )}
+                {result.category && (
+                  <Badge 
+                    variant="outline" 
+                    className={`text-xs ${
+                      result.category === 'long-stay' ? 'border-purple-500 text-purple-700' :
+                      result.category === 'transit' ? 'border-blue-500 text-blue-700' :
+                      'border-green-500 text-green-700'
+                    }`}
+                  >
+                    {result.category.replace('-', ' ')}
                   </Badge>
                 )}
                 {result.processingTime && (
@@ -150,14 +194,14 @@ const VisaResultsCard = ({
             <>
               <Button 
                 className="bg-red-600 hover:bg-red-700 text-white"
-                onClick={onApplyNow}
+                onClick={handleApplyNow}
               >
-                Apply Now
+                {getVisaButtonText(destination, duration)}
               </Button>
               <Button 
                 variant="outline"
                 className="border-red-600 text-red-600 hover:bg-red-50"
-                onClick={onGetConsultation}
+                onClick={handleGetConsultation}
               >
                 <Phone className="h-4 w-4 mr-2" />
                 Get Consultation
@@ -174,7 +218,7 @@ const VisaResultsCard = ({
               <Button 
                 variant="outline"
                 className="border-green-600 text-green-600 hover:bg-green-50"
-                onClick={onGetConsultation}
+                onClick={handleGetConsultation}
               >
                 Plan Multi-Country Trip
               </Button>
