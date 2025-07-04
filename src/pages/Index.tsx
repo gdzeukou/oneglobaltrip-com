@@ -19,10 +19,10 @@ const Index = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       <HeroCarousel />
+      <AITripRecommender />
       <ServicesSection />
       <TrustIndicators />
       <MainCTASection />
-      <AITripRecommender />
       <InteractiveWorldMap />
       <PromoSection />
       <StartTripSection />
