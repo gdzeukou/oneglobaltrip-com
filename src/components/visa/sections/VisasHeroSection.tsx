@@ -1,6 +1,8 @@
 
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Shield, Clock, Users } from 'lucide-react';
+import ParallaxSection from '@/components/ui/parallax-section';
+import AdvancedImage from '@/components/ui/advanced-image';
 
 interface VisasHeroSectionProps {
   onScrollToCTA?: () => void;
@@ -8,30 +10,94 @@ interface VisasHeroSectionProps {
 
 const VisasHeroSection = ({ onScrollToCTA }: VisasHeroSectionProps) => {
   return (
-    <section className="pt-24 pb-16 bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10">
-        <Sparkles className="absolute top-20 left-1/4 w-8 h-8 text-blue-500 animate-pulse" />
-        <Sparkles className="absolute bottom-32 right-1/3 w-6 h-6 text-purple-500 animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
+    <ParallaxSection 
+      className="min-h-screen relative overflow-hidden"
+      backgroundImage="/lovable-uploads/45e83c7d-c5f3-4a9a-a57e-70cccc8d55d1.png"
+      speed={0.3}
+    >
+      {/* Gradient overlays for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 via-blue-800/70 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10" />
       
-      <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900 animate-fade-in">
-          Visa Services That Actually Work
-        </h1>
-        <p className="text-xl md:text-2xl mb-8 text-gray-600 max-w-3xl mx-auto animate-slide-up">
-          Skip the embassy queues and paperwork nightmares. We handle your visa so you can focus on planning your adventure.
-        </p>
-        {onScrollToCTA && (
-          <Button 
-            onClick={onScrollToCTA}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-scale-in"
-          >
-            Get Started Now
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        )}
+      {/* Decorative floating elements */}
+      <div className="absolute inset-0 opacity-20">
+        <Sparkles className="absolute top-20 left-1/4 w-8 h-8 text-yellow-400 animate-pulse" />
+        <Sparkles className="absolute bottom-32 left-1/3 w-6 h-6 text-blue-300 animate-pulse" style={{ animationDelay: '1s' }} />
+        <Sparkles className="absolute top-1/3 left-1/5 w-4 h-4 text-white animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
-    </section>
+
+      {/* Main content container */}
+      <div className="relative z-10 min-h-screen flex items-center">
+        <div className="max-w-7xl mx-auto px-4 w-full">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            
+            {/* Left side - Text content */}
+            <div className="relative">
+              {/* Background panel for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-900/60 to-blue-800/40 backdrop-blur-sm rounded-3xl transform -rotate-1" />
+              
+              <div className="relative p-8 lg:p-12">
+                {/* Badge */}
+                <div className="flex items-center mb-6">
+                  <Shield className="h-6 w-6 text-yellow-400 mr-3" />
+                  <span className="text-yellow-400 font-semibold text-lg tracking-wide">
+                    100% Success Rate
+                  </span>
+                </div>
+
+                {/* Main headline */}
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
+                  Visa Services That
+                  <span className="block text-yellow-400 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+                    Actually Work
+                  </span>
+                </h1>
+
+                {/* Subtitle */}
+                <p className="text-xl md:text-2xl mb-8 text-blue-100 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+                  Skip the embassy queues and paperwork nightmares. We handle your visa so you can focus on planning your adventure.
+                </p>
+
+                {/* Trust indicators */}
+                <div className="flex flex-wrap gap-4 mb-8 animate-fade-in-up" style={{ animationDelay: '0.9s' }}>
+                  <div className="flex items-center space-x-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
+                    <Shield className="h-4 w-4 text-yellow-400" />
+                    <span className="text-white font-medium text-sm">Guaranteed Approval</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
+                    <Clock className="h-4 w-4 text-yellow-400" />
+                    <span className="text-white font-medium text-sm">Fast Processing</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
+                    <Users className="h-4 w-4 text-yellow-400" />
+                    <span className="text-white font-medium text-sm">Expert Support</span>
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                {onScrollToCTA && (
+                  <div className="animate-fade-in-up" style={{ animationDelay: '1.2s' }}>
+                    <Button 
+                      onClick={onScrollToCTA}
+                      className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-bold text-lg px-8 py-4 rounded-full shadow-luxury hover:shadow-luxury-lg transition-all duration-300 transform hover:scale-105"
+                    >
+                      Get Started Now
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right side - Image space (handled by ParallaxSection background) */}
+            <div className="hidden lg:block" />
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom gradient fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
+    </ParallaxSection>
   );
 };
 

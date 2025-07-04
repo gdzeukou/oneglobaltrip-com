@@ -1,76 +1,76 @@
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Sparkles } from 'lucide-react';
-import NavigationLogo from './navigation/NavigationLogo';
 import NavigationLinks from './navigation/NavigationLinks';
 import NavigationAuth from './navigation/NavigationAuth';
+import NavigationLogo from './navigation/NavigationLogo';
 import MobileNavigation from './navigation/MobileNavigation';
-import SmartApplyModal from './smart-routing/SmartApplyModal';
 
 const Navigation = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSmartApplyOpen, setIsSmartApplyOpen] = useState(false);
-  const { user } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
 
-  const handleSmartApplyClick = () => {
-    setIsSmartApplyOpen(true);
-  };
+  // Check if we're on the visas page to apply transparent styling
+  const isVisasPage = location.pathname === '/visas';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <>
-      <nav className="bg-background/95 backdrop-blur-md shadow-luxury border-b border-border sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <NavigationLogo />
-            
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <NavigationLinks />
-              
-              <Button
-                onClick={handleSmartApplyClick}
-                className="btn-luxury-accent group relative overflow-hidden px-6 py-3 text-lg font-bold tracking-wide shadow-luxury hover:shadow-luxury-lg transition-all duration-500 transform hover:scale-105 hover:-translate-y-1"
-              >
-                <span className="relative z-10 flex items-center">
-                  <Sparkles className="h-5 w-5 mr-2 animate-pulse" />
-                  Smart Apply
-                </span>
-                {/* Animated shimmer effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              </Button>
-              
-              <NavigationAuth />
-            </div>
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${
+      isVisasPage 
+        ? (isScrolled 
+          ? 'bg-white/95 backdrop-blur-md shadow-lg' 
+          : 'bg-transparent'
+        )
+        : 'bg-white shadow-sm'
+    }`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <NavigationLogo textColor={isVisasPage && !isScrolled ? 'text-white' : undefined} />
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <NavigationLinks textColor={isVisasPage && !isScrolled ? 'text-white' : undefined} />
+          </div>
 
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            </div>
+          {/* Auth Section */}
+          <div className="hidden md:block">
+            <NavigationAuth 
+              buttonVariant={isVisasPage && !isScrolled ? 'outline' : 'default'}
+              textColor={isVisasPage && !isScrolled ? 'text-white' : undefined}
+            />
+          </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className={isVisasPage && !isScrolled ? 'text-white hover:text-white' : ''}
+            >
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </Button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        <MobileNavigation 
-          isOpen={isMobileMenuOpen} 
-          onClose={() => setIsMobileMenuOpen(false)}
-          onApplyClick={handleSmartApplyClick}
-        />
-      </nav>
-
-      <SmartApplyModal 
-        isOpen={isSmartApplyOpen} 
-        onClose={() => setIsSmartApplyOpen(false)} 
+      {/* Mobile Navigation */}
+      <MobileNavigation 
+        isOpen={isMenuOpen} 
+        onClose={() => setIsMenuOpen(false)} 
       />
-    </>
+    </nav>
   );
 };
 

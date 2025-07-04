@@ -25,7 +25,10 @@ const Visas = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navigation />
+      {/* Navigation with transparent background over hero */}
+      <div className="absolute top-0 left-0 right-0 z-50">
+        <Navigation />
+      </div>
       
       <VisasHeroSection onScrollToCTA={scrollToMainCTA} />
       
