@@ -45,6 +45,8 @@ const VisasCarousel = () => {
     }, 400);
   }, [currentSlide]);
 
+  console.log('VisasCarousel render:', { currentSlide, isTransitioning, totalSlides: visaSlides.length });
+
   return (
     <section 
       className="relative w-full h-[70vh] md:h-[80vh] lg:h-[85vh] overflow-hidden rounded-2xl shadow-2xl shadow-black/20 mb-12 border-2 border-amber-200/20"
@@ -56,15 +58,24 @@ const VisasCarousel = () => {
     >
       {/* Background slides */}
       <div className="absolute inset-0">
-        {visaSlides.map((slide, index) => (
-          <CarouselSlide
-            key={slide.id}
-            slide={slide}
-            isActive={index === currentSlide}
-            isTransitioning={isTransitioning}
-            priority={index === 0}
-          />
-        ))}
+        {visaSlides.map((slide, index) => {
+          const isActiveSlide = index === currentSlide;
+          return (
+            <div
+              key={slide.id}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                isActiveSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+              }`}
+            >
+              <CarouselSlide
+                slide={slide}
+                isActive={isActiveSlide}
+                isTransitioning={isTransitioning}
+                priority={index === 0 || isActiveSlide}
+              />
+            </div>
+          );
+        })}
       </div>
 
       {/* Enhanced controls */}
