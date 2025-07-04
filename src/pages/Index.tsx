@@ -20,10 +20,10 @@ const Index = () => {
       <Navigation />
       <HeroCarousel />
       <AITripRecommender />
+      <InteractiveWorldMap />
       <ServicesSection />
       <TrustIndicators />
       <MainCTASection />
-      <InteractiveWorldMap />
       <PromoSection />
       <StartTripSection />
       <WhyChooseUsSection />
