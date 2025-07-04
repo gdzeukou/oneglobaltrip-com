@@ -3,9 +3,16 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Heart, Compass, Calendar, DollarSign, Users, Zap, Brain, Wand2, RefreshCw } from 'lucide-react';
+import { Sparkles, Heart, Compass, Calendar, DollarSign, Users, Zap, Brain, Wand2, RefreshCw, UtensilsCrossed, Mountain, Leaf, Camera, Music, Dumbbell } from 'lucide-react';
 
 interface MoodOption {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  description: string;
+}
+
+interface ActivityOption {
   id: string;
   label: string;
   icon: React.ReactNode;
@@ -16,6 +23,7 @@ interface Recommendation {
   destination: string;
   tier: 'Explore' | 'Elevate' | 'Escape';
   mood: string;
+  activities?: string[];
   description: string;
   price: string;
   image: string;
@@ -25,6 +33,7 @@ interface Recommendation {
 const AITripRecommender = () => {
   const [selectedMood, setSelectedMood] = useState<string>('');
   const [selectedBudget, setSelectedBudget] = useState<string>('');
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -55,6 +64,45 @@ const AITripRecommender = () => {
     }
   ];
 
+  const activities: ActivityOption[] = [
+    {
+      id: 'culinary',
+      label: 'Culinary',
+      icon: <UtensilsCrossed className="h-5 w-5" />,
+      description: 'Food experiences & local cuisine'
+    },
+    {
+      id: 'outdoor',
+      label: 'Outdoor',
+      icon: <Mountain className="h-5 w-5" />,
+      description: 'Hiking, nature & adventure sports'
+    },
+    {
+      id: 'wellness',
+      label: 'Wellness',
+      icon: <Leaf className="h-5 w-5" />,
+      description: 'Spa, yoga & mindful experiences'
+    },
+    {
+      id: 'photography',
+      label: 'Photography',
+      icon: <Camera className="h-5 w-5" />,
+      description: 'Scenic views & Instagram-worthy spots'
+    },
+    {
+      id: 'nightlife',
+      label: 'Nightlife',
+      icon: <Music className="h-5 w-5" />,
+      description: 'Entertainment & vibrant city life'
+    },
+    {
+      id: 'fitness',
+      label: 'Active',
+      icon: <Dumbbell className="h-5 w-5" />,
+      description: 'Sports, fitness & physical activities'
+    }
+  ];
+
   const budgetOptions = [
     { id: 'explore', label: 'Explore ($1,500-3,000)', tier: 'Explore' },
     { id: 'elevate', label: 'Elevate ($3,000-6,000)', tier: 'Elevate' },
@@ -67,6 +115,7 @@ const AITripRecommender = () => {
         destination: 'Iceland',
         tier: 'Explore',
         mood: 'Adventurous',
+        activities: ['outdoor', 'photography'],
         description: 'Where fire meets ice and your courage finds its voice',
         price: 'From $2,400',
         image: 'https://images.unsplash.com/photo-1539066033336-9ed2c8a5eb51?w=800&h=600&fit=crop',
@@ -76,6 +125,7 @@ const AITripRecommender = () => {
         destination: 'New Zealand',
         tier: 'Elevate',
         mood: 'Adventurous',
+        activities: ['outdoor', 'photography'],
         description: 'Where Middle Earth becomes your playground',
         price: 'From $4,200',
         image: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop',
@@ -85,6 +135,7 @@ const AITripRecommender = () => {
         destination: 'Antarctic Peninsula',
         tier: 'Escape',
         mood: 'Adventurous',
+        activities: ['outdoor', 'photography'],
         description: 'The last untouched frontier awaits your footsteps',
         price: 'From $8,500',
         image: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800&h=600&fit=crop',
@@ -96,6 +147,7 @@ const AITripRecommender = () => {
         destination: 'Prague',
         tier: 'Explore',
         mood: 'Romantic',
+        activities: ['culinary', 'cultural'],
         description: 'Where cobblestones whisper love stories',
         price: 'From $1,800',
         image: 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=800&h=600&fit=crop',
@@ -105,6 +157,7 @@ const AITripRecommender = () => {
         destination: 'Santorini',
         tier: 'Elevate',
         mood: 'Romantic',
+        activities: ['culinary', 'wellness'],
         description: 'Where Greek gods chose to watch the world end',
         price: 'From $3,800',
         image: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&h=600&fit=crop',
@@ -114,12 +167,21 @@ const AITripRecommender = () => {
         destination: 'Bora Bora',
         tier: 'Escape',
         mood: 'Romantic',
+        activities: ['wellness', 'photography'],
         description: 'Where paradise was perfected just for two',
         price: 'From $7,200',
         image: 'https://images.unsplash.com/photo-1544550285-f813152fb2fd?w=800&h=600&fit=crop',
         highlights: ['Overwater Bungalows', 'Private Beach Picnics', 'Helicopter Proposals']
       }
     }
+  };
+
+  const handleActivityToggle = (activityId: string) => {
+    setSelectedActivities(prev => 
+      prev.includes(activityId) 
+        ? prev.filter(id => id !== activityId)
+        : [...prev, activityId]
+    );
   };
 
   const generateRecommendation = () => {
@@ -138,6 +200,7 @@ const AITripRecommender = () => {
   const resetSelections = () => {
     setSelectedMood('');
     setSelectedBudget('');
+    setSelectedActivities([]);
     setRecommendation(null);
     setIsGenerating(false);
   };
@@ -193,7 +256,7 @@ const AITripRecommender = () => {
           </div>
 
           {/* Refresh button */}
-          {(selectedMood || selectedBudget || recommendation) && (
+          {(selectedMood || selectedBudget || selectedActivities.length > 0 || recommendation) && (
             <div className="mb-8">
               <Button
                 onClick={resetSelections}
@@ -207,7 +270,7 @@ const AITripRecommender = () => {
           )}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
           {/* Mood Selection */}
           <Card className="bg-white border border-gray-200 shadow-xl rounded-3xl overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
@@ -240,6 +303,42 @@ const AITripRecommender = () => {
                   </button>
                 ))}
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Activities & Themes Selection */}
+          <Card className="bg-white border border-gray-200 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <CardTitle className="flex items-center gap-4 text-gray-900">
+                <div className="p-3 bg-purple-600 rounded-xl">
+                  <Sparkles className="h-6 w-6 text-white" />
+                </div>
+                Activities & Themes
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="grid grid-cols-2 gap-3">
+                {activities.map((activity) => (
+                  <button
+                    key={activity.id}
+                    onClick={() => handleActivityToggle(activity.id)}
+                    className={`p-4 rounded-2xl border-2 transition-all text-left hover:shadow-lg ${
+                      selectedActivities.includes(activity.id)
+                        ? 'border-purple-500 bg-purple-50 shadow-lg'
+                        : 'border-gray-200 bg-white hover:border-purple-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`p-1.5 rounded-lg ${selectedActivities.includes(activity.id) ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
+                        {activity.icon}
+                      </div>
+                      <span className="font-semibold text-sm text-gray-900">{activity.label}</span>
+                    </div>
+                    <p className="text-xs text-gray-600">{activity.description}</p>
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-4 text-center">Select multiple themes that interest you</p>
             </CardContent>
           </Card>
 
@@ -322,6 +421,11 @@ const AITripRecommender = () => {
                   <Badge className="bg-gray-100 text-gray-700 rounded-full px-4 py-2">
                     {recommendation.mood}
                   </Badge>
+                  {recommendation.activities && recommendation.activities.length > 0 && (
+                    <Badge className="bg-purple-100 text-purple-700 rounded-full px-4 py-2">
+                      {selectedActivities.length} themes matched
+                    </Badge>
+                  )}
                 </div>
                 
                 <h3 className="text-4xl font-bold text-gray-900 mb-4">
