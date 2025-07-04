@@ -15,62 +15,62 @@ export interface VisaSlide {
 export const visaSlides: VisaSlide[] = [
   {
     id: '1',
-    image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=1920&q=80',
+    image: '/lovable-uploads/3bee657a-be4d-476c-b496-1d6dd9f6031a.png',
     title: 'Schengen Visa Excellence',
     description: 'Your gateway to 27 European countries with our premium visa concierge service',
     processingTime: '5-35 business days',
     ctaText: 'Explore Europe',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Stunning Paris cityscape with Eiffel Tower at golden hour representing Schengen visa excellence'
+    alt: 'Beautiful Venice canal with gondola representing Schengen visa excellence'
   },
   {
     id: '2',
-    image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1920&q=80',
+    image: '/lovable-uploads/c1af39df-aed8-441c-a852-5e8567ccca13.png',
     title: 'UK Visa Mastery',
     description: 'Business, tourism, and study visas for the United Kingdom with guaranteed success',
     processingTime: '2-15 business days',
     ctaText: 'Visit Britain',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Majestic London skyline with Big Ben and Thames representing UK visa excellence'
+    alt: 'Iconic Tower Bridge in London at twilight representing UK visa excellence'
   },
   {
     id: '3',
-    image: 'https://images.unsplash.com/photo-1544735716-392fe20ff0c8?auto=format&fit=crop&w=1920&q=80',
+    image: '/lovable-uploads/f271e7d8-b6b9-4263-91a8-3f5c42042400.png',
     title: 'Brazil Visa Adventure',
     description: 'Unlock the wonders of Brazil with our comprehensive visa and travel planning',
     processingTime: '3-15 business days',
     ctaText: 'Experience Brazil',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Breathtaking aerial view of Rio de Janeiro with Christ the Redeemer and Sugarloaf Mountain'
+    alt: 'Stunning Rio de Janeiro skyline at night with Copacabana beach representing Brazil visa services'
   },
   {
     id: '4',
-    image: 'https://images.unsplash.com/photo-1483058712412-4245e9b90334?auto=format&fit=crop&w=1920&q=80',
+    image: '/lovable-uploads/4f1cdd82-b712-48cd-a7c2-1ede36b0a705.png',
     title: 'Canada Visa Excellence',
     description: 'Explore Canada with our comprehensive visa services and travel planning',
     processingTime: '2-30 business days',
     ctaText: 'Visit Canada',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Beautiful Canadian landscape with mountains and river representing Canada visa services'
+    alt: 'Historic Quebec City in winter with snow and Canadian flag representing Canada visa services'
   },
   {
     id: '5',
-    image: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&w=1920&q=80',
+    image: '/lovable-uploads/0ddd7e0a-80f9-46bf-8baa-5d5ddc75e1f6.png',
     title: 'India Visa Gateway',
     description: 'Immerse yourself in India with our expert visa services and cultural insights',
     processingTime: '2-15 business days',
     ctaText: 'Explore India',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Magnificent Taj Mahal at sunrise with golden reflections representing India visa services'
+    alt: 'Mumbai skyline at night with Bandra-Worli Sea Link representing India visa services'
   },
   {
     id: '6',
-    image: 'https://images.unsplash.com/photo-1494891848038-7bd202a2afeb?auto=format&fit=crop&w=1920&q=80',
+    image: '/lovable-uploads/432945ff-b098-486a-a3e4-03057fc3c67e.png',
     title: 'Nigeria Visa Gateway',
     description: 'Visit Nigeria with our expert visa processing and local insights',
     processingTime: '5-45 business days',
     ctaText: 'Discover Nigeria',
     ctaLink: ROUTES.SHORT_STAY_VISAS,
-    alt: 'Modern Nigerian architecture with traditional elements representing Nigeria visa services'
+    alt: 'Aerial view of Lagos waterfront with colorful buildings representing Nigeria visa services'
   }
 ];
