@@ -9,7 +9,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
 import { Badge } from '@/components/ui/badge';
-import { Plane, Shield, Crown, MapPin } from 'lucide-react';
+import { Plane, Shield, Crown, MapPin, Sparkles } from 'lucide-react';
 
 interface NavigationLinksProps {
   textColor?: string;
@@ -95,6 +95,20 @@ const NavigationLinks = ({ textColor }: NavigationLinksProps) => {
                 </div>
                 <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                   Personal travel specialists for complex trips
+                </p>
+              </Link>
+              
+              <Link
+                to={ROUTES.AI_CHAT}
+                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+              >
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="h-4 w-4 text-purple-600" />
+                  <div className="text-sm font-medium leading-none">AI Travel Agent</div>
+                  <Badge variant="secondary" className="text-xs bg-purple-100 text-purple-700">New</Badge>
+                </div>
+                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                  Chat with our AI assistant for instant travel help
                 </p>
               </Link>
             </div>

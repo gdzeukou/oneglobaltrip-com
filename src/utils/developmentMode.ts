@@ -23,7 +23,7 @@ export const shouldBypassAuth = (route: string): boolean => {
 };
 
 export const createMockUser = () => ({
-  id: 'dev-user-id',
+  id: '00000000-0000-0000-0000-000000000000',
   email: 'dev@lovable.app',
   email_confirmed_at: new Date().toISOString(),
   created_at: new Date().toISOString(),

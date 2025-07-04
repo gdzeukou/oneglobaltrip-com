@@ -13,6 +13,7 @@ export const ROUTES = {
   BOOKING: '/booking',
   CONCIERGE: '/concierge',
   ADMIN: '/admin',
+  AI_CHAT: '/ai-chat',
   SHORT_STAY_VISAS: '/visas/short-stay',
   LONG_STAY_VISAS: '/visas/long-stay',
   VISAS_PRICING: '/visas/pricing',

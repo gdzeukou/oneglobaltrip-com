@@ -27,6 +27,7 @@ const Booking = lazy(() => import("./pages/Booking"));
 const Concierge = lazy(() => import("./pages/Concierge"));
 const Admin = lazy(() => import("./pages/Admin"));
 const IntelligentApplication = lazy(() => import("./pages/IntelligentApplication"));
+const AIChat = lazy(() => import("./pages/AIChat"));
 
 // Visa country pages
 const SchengenShortStayLanding = lazy(() => import("./pages/visa-countries/SchengenShortStayLanding"));
@@ -145,6 +146,14 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <IntelligentApplication />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path={ROUTES.AI_CHAT} 
+                  element={
+                    <ProtectedRoute>
+                      <AIChat />
                     </ProtectedRoute>
                   } 
                 />
