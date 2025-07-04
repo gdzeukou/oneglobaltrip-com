@@ -1,8 +1,10 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.0';
 
-const openAIApiKey = Deno.env.get('Supagent Openai');
+// Try to get the OpenAI API key from different possible secret names
+const openAIApiKey = Deno.env.get('OPENAI_API_KEY') || Deno.env.get('SUPAGENT_OPENAI') || Deno.env.get('Supagent Openai');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
@@ -50,9 +52,22 @@ serve(async (req) => {
   }
 
   try {
+    console.log('AI Travel Agent function called');
+    
+    // Check if OpenAI API key is available
+    if (!openAIApiKey) {
+      console.error('OpenAI API key not found. Checked: OPENAI_API_KEY, SUPAGENT_OPENAI, Supagent Openai');
+      return new Response(
+        JSON.stringify({ error: 'OpenAI API key not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { message, conversationId, userId } = await req.json();
+    console.log('Request received:', { message: message?.substring(0, 50) + '...', conversationId, userId });
 
     if (!message || !userId) {
+      console.error('Missing required fields:', { message: !!message, userId: !!userId });
       return new Response(
         JSON.stringify({ error: 'Message and userId are required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -64,6 +79,7 @@ serve(async (req) => {
     if (!currentConversationId) {
       // Handle development mode - check if user exists, if not create conversation without FK constraint
       const isDevelopmentUser = userId === '00000000-0000-0000-0000-000000000000';
+      console.log('Creating new conversation for user:', userId, 'isDevelopmentUser:', isDevelopmentUser);
       
       const { data: newConversation, error: conversationError } = await supabase
         .from('chat_conversations')
@@ -83,16 +99,22 @@ serve(async (req) => {
       }
 
       currentConversationId = newConversation.id;
+      console.log('Created new conversation:', currentConversationId);
     }
 
     // Store user message
-    await supabase
+    console.log('Storing user message in conversation:', currentConversationId);
+    const { error: messageError } = await supabase
       .from('chat_messages')
       .insert({
         conversation_id: currentConversationId,
         role: 'user',
         content: message
       });
+
+    if (messageError) {
+      console.error('Error storing user message:', messageError);
+    }
 
     // Get conversation history for context
     const { data: messages } = await supabase
@@ -102,11 +124,15 @@ serve(async (req) => {
       .order('created_at', { ascending: true })
       .limit(20);
 
+    console.log('Retrieved conversation history:', messages?.length || 0, 'messages');
+
     // Build OpenAI messages array
     const openAIMessages = [
       { role: 'system', content: TRAVEL_AGENT_SYSTEM_PROMPT },
       ...(messages || []).map(msg => ({ role: msg.role, content: msg.content }))
     ];
+
+    console.log('Calling OpenAI API with', openAIMessages.length, 'messages');
 
     // Get AI response from OpenAI
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -123,20 +149,51 @@ serve(async (req) => {
       }),
     });
 
+    console.log('OpenAI API response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('OpenAI API error:', errorData);
+      console.error('OpenAI API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorData: errorData
+      });
+      
+      // Provide more specific error messages
+      let errorMessage = 'Failed to get AI response';
+      if (response.status === 401) {
+        errorMessage = 'Invalid OpenAI API key';
+      } else if (response.status === 429) {
+        errorMessage = 'OpenAI API rate limit exceeded or quota reached';
+      } else if (response.status === 400) {
+        errorMessage = 'Invalid request to OpenAI API';
+      }
+      
       return new Response(
-        JSON.stringify({ error: 'Failed to get AI response' }),
+        JSON.stringify({ 
+          error: errorMessage,
+          details: `Status: ${response.status}, Error: ${errorData}`
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     const data = await response.json();
+    console.log('OpenAI API response received successfully');
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid OpenAI response format:', data);
+      return new Response(
+        JSON.stringify({ error: 'Invalid response from OpenAI API' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const aiResponse = data.choices[0].message.content;
+    console.log('AI response generated, length:', aiResponse?.length || 0);
 
     // Store AI response
-    await supabase
+    const { error: aiMessageError } = await supabase
       .from('chat_messages')
       .insert({
         conversation_id: currentConversationId,
@@ -144,6 +201,11 @@ serve(async (req) => {
         content: aiResponse
       });
 
+    if (aiMessageError) {
+      console.error('Error storing AI message:', aiMessageError);
+    }
+
+    console.log('Function completed successfully');
     return new Response(JSON.stringify({ 
       response: aiResponse, 
       conversationId: currentConversationId 
