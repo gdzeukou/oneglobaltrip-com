@@ -17,6 +17,60 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Common city to IATA code mappings
+const CITY_TO_IATA: Record<string, string> = {
+  // Major US cities
+  'houston': 'IAH',
+  'dallas': 'DFW',
+  'new york': 'JFK',
+  'los angeles': 'LAX',
+  'chicago': 'ORD',
+  'miami': 'MIA',
+  'atlanta': 'ATL',
+  'boston': 'BOS',
+  'seattle': 'SEA',
+  'san francisco': 'SFO',
+  'las vegas': 'LAS',
+  'denver': 'DEN',
+  'phoenix': 'PHX',
+  'philadelphia': 'PHL',
+  'detroit': 'DTW',
+  'minneapolis': 'MSP',
+  'orlando': 'MCO',
+  'charlotte': 'CLT',
+  'washington': 'DCA',
+  'dc': 'DCA',
+  
+  // International cities
+  'london': 'LHR',
+  'paris': 'CDG',
+  'madrid': 'MAD',
+  'barcelona': 'BCN',
+  'rome': 'FCO',
+  'amsterdam': 'AMS',
+  'berlin': 'BER',
+  'munich': 'MUC',
+  'frankfurt': 'FRA',
+  'zurich': 'ZUR',
+  'vienna': 'VIE',
+  'brussels': 'BRU',
+  'milan': 'MXP',
+  'istanbul': 'IST',
+  'dubai': 'DXB',
+  'tokyo': 'NRT',
+  'singapore': 'SIN',
+  'sydney': 'SYD',
+  'toronto': 'YYZ',
+  'vancouver': 'YVR',
+  'mexico city': 'MEX',
+};
+
+// Get city IATA code with fallback
+function getCityIATA(cityName: string): string {
+  const normalized = cityName.toLowerCase().trim();
+  return CITY_TO_IATA[normalized] || cityName.toUpperCase();
+}
+
 // Get Amadeus access token
 async function getAmadeusToken() {
   const response = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
@@ -31,7 +85,7 @@ async function getAmadeusToken() {
   return data.access_token;
 }
 
-// Search flights using Amadeus API
+// Search flights using Amadeus API with flexible dates
 async function searchFlights(origin: string, destination: string, departureDate: string, returnDate?: string, adults: number = 1) {
   try {
     const token = await getAmadeusToken();
@@ -47,18 +101,62 @@ async function searchFlights(origin: string, destination: string, departureDate:
       params.append('returnDate', returnDate);
     }
     
-    const response = await fetch(`https://test.api.amadeus.com/v2/shopping/flight-offers?${params}`, {
+    let response = await fetch(`https://test.api.amadeus.com/v2/shopping/flight-offers?${params}`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
     
-    if (!response.ok) {
-      throw new Error(`Amadeus API error: ${response.status}`);
+    let data = await response.json();
+    
+    // If no flights found, try flexible dates (±2 days)
+    if (!data.data || data.data.length === 0) {
+      console.log('No flights found for exact date, trying flexible search...');
+      
+      const originalDate = new Date(departureDate);
+      const flexibleDates = [];
+      
+      // Try ±2 days
+      for (let i = -2; i <= 2; i++) {
+        if (i === 0) continue; // Skip original date
+        const flexDate = new Date(originalDate);
+        flexDate.setDate(originalDate.getDate() + i);
+        flexibleDates.push(flexDate.toISOString().split('T')[0]);
+      }
+      
+      for (const flexDate of flexibleDates) {
+        const flexParams = new URLSearchParams({
+          originLocationCode: origin,
+          destinationLocationCode: destination,
+          departureDate: flexDate,
+          adults: adults.toString(),
+          max: '3'
+        });
+        
+        if (returnDate) {
+          const returnOriginal = new Date(returnDate);
+          const daysDiff = Math.floor((originalDate.getTime() - new Date(departureDate).getTime()) / (1000 * 60 * 60 * 24));
+          const flexReturn = new Date(flexDate);
+          flexReturn.setDate(flexReturn.getDate() + daysDiff);
+          flexParams.append('returnDate', flexReturn.toISOString().split('T')[0]);
+        }
+        
+        response = await fetch(`https://test.api.amadeus.com/v2/shopping/flight-offers?${flexParams}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        data = await response.json();
+        if (data.data && data.data.length > 0) {
+          console.log(`Found flights for flexible date: ${flexDate}`);
+          break;
+        }
+      }
     }
     
-    const data = await response.json();
     return data.data || [];
   } catch (error) {
     console.error('Flight search error:', error);
@@ -66,10 +164,10 @@ async function searchFlights(origin: string, destination: string, departureDate:
   }
 }
 
-// Format flight results for AI
-function formatFlightResults(flights: any[]) {
+// Format flight results in Maya's structured format
+function formatFlightResults(flights: any[], searchedOrigin: string, searchedDestination: string) {
   if (!flights.length) {
-    return "I couldn't find any flights for those dates. Would you like to try different dates or destinations?";
+    return `I didn't find flights for those exact dates, but let me try expanding the search or suggest alternate dates. Would you like me to check nearby airports or different dates for your ${searchedOrigin} to ${searchedDestination} trip?`;
   }
   
   const formattedFlights = flights.slice(0, 3).map((flight, index) => {
@@ -79,80 +177,101 @@ function formatFlightResults(flights: any[]) {
     const firstSegment = segments[0];
     const lastSegment = segments[segments.length - 1];
     
-    return `
-Flight ${index + 1}:
-• Price: ${price} ${currency}
-• Departure: ${firstSegment?.departure?.at} from ${firstSegment?.departure?.iataCode}
-• Arrival: ${lastSegment?.arrival?.at} at ${lastSegment?.arrival?.iataCode}
-• Airline: ${firstSegment?.carrierCode}
-• Stops: ${segments.length - 1} stop(s)
-`;
-  }).join('\n');
+    // Format departure time
+    const departureTime = new Date(firstSegment?.departure?.at);
+    const arrivalTime = new Date(lastSegment?.arrival?.at);
+    
+    const formatTime = (date: Date) => {
+      return date.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit', 
+        hour12: true 
+      });
+    };
+    
+    const formatDate = (date: Date) => {
+      return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    };
+    
+    const stops = segments.length - 1;
+    const stopsText = stops === 0 ? 'Nonstop' : `${stops} stop${stops > 1 ? 's' : ''}`;
+    
+    return `✈️ **Flight Option ${index + 1}**
+🏢 **Airline:** ${firstSegment?.carrierCode || 'N/A'}
+🛫 **Depart:** ${formatDate(departureTime)} at ${formatTime(departureTime)} from ${firstSegment?.departure?.iataCode}
+🛬 **Arrive:** ${formatDate(arrivalTime)} at ${formatTime(arrivalTime)} in ${lastSegment?.arrival?.iataCode}
+💲 **Price:** ${price} ${currency}
+🔁 **Stops:** ${stopsText}`;
+  }).join('\n\n');
   
-  return `Here are the best flights I found:\n${formattedFlights}\n\nWould you like me to search for different options or help you book one of these flights?`;
+  return `Here are the best flight options I found:\n\n${formattedFlights}\n\nWould you like to book one of these flights or would you like me to check for hotels and other travel arrangements too?`;
 }
 
-const TRAVEL_AGENT_SYSTEM_PROMPT = `You are Maya, a friendly and expert AI Travel Agent with real flight search capabilities.
+const TRAVEL_AGENT_SYSTEM_PROMPT = `You are Maya, a friendly AI Travel Agent who helps travelers book flights naturally and conversationally.
 
-🌟 **Your Personality:**
-- Warm, conversational, and personable - like chatting with a knowledgeable friend
-- Patient and thorough - you ask ONE question at a time to understand their needs
-- Professional but approachable - you make complex travel planning feel easy and enjoyable
-- Empathetic - you understand that travel planning can be overwhelming
+🎯 **Your Core Mission:**
+Parse natural user input and extract flight booking information without showing errors. Users speak naturally like "I want to go from Houston to Paris on Nov 10 and return Nov 25" and you extract:
 
-✈️ **Your Capabilities:**
-- Search real flights using live flight data
-- Compare prices and airlines
-- Find the best routes and connections
-- Provide detailed flight information
-- Guide users through booking decisions
+- origin_city → convert to IATA code (Houston → IAH) 
+- destination_city → IATA code (Paris → CDG)
+- departure_date → ISO format (Nov 10 → 2025-11-10)
+- return_date (if mentioned)
+- number_of_travelers (default = 1)
 
-🎯 **Your Conversation Flow:**
-1. **Always introduce yourself first** when starting a new conversation
-2. **Ask ONE question at a time** - never overwhelm with multiple questions
-3. **Wait for their answer** before asking the next question
-4. **Build the conversation naturally** - like a human travel agent would
-5. **Use flight search when you have enough information**
+🧠 **Smart Parsing Rules:**
+- Always respond with flight options, even if input is incomplete
+- Use flexible searches (±2 days) automatically
+- If city is unclear, ask "Did you mean ___?"
+- If no flights found, suggest: "Let me try alternate dates or nearby airports"
 
-📋 **Flight Search Requirements:**
-Before searching flights, you need:
-- Origin city/airport (ask: "Where would you like to fly from?")
-- Destination city/airport (ask: "Where are you planning to go?")
-- Departure date (ask: "When would you like to depart?")
-- Return date if round trip (ask: "When would you like to return?" or clarify if one-way)
-- Number of travelers (ask: "How many travelers?")
+✅ **Accepted Input Examples:**
+- "I want to fly from Houston to Barcelona on Nov 10 and return on Nov 25"
+- "Show me flights from New York to London next week"  
+- "Tickets from Miami to Paris for 3 people in October"
+- "Flight to Rome in November"
 
-💬 **Your Communication Style:**
-- Use friendly, conversational language with appropriate emojis
-- Ask open-ended questions that invite detailed responses
-- Show genuine interest in their travel dreams and concerns
-- Acknowledge their answers before asking the next question
-- When you have flight search info, use the search_flights function
+🚫 **Never Show Errors:** Instead of "no flights found," say:
+- "I didn't find flights for that exact date, but here are close options"
+- "Let's try alternate dates or nearby airports"
 
-🔧 **Available Functions:**
-- search_flights: Use this when you have origin, destination, departure date, and number of travelers
+📋 **Flight Display Format (ALWAYS use this structure):**
+✈️ **Airline:** [Airline Name]
+🛫 **Depart:** [Date] at [Time] from [Airport Code]
+🛬 **Arrive:** [Date] at [Time] in [Airport Code]  
+💲 **Price:** $[Amount]
+🔁 **Stops:** [Nonstop/1 stop/etc]
 
-🚫 **What NOT to do:**
-- Never ask multiple questions in one message
-- Don't search flights until you have the required information
-- Don't overwhelm with too much information at once
-- Don't assume what they need - always ask first
+🎯 **Always End With Call-to-Action:**
+- "Would you like to book this flight or see more options?"
+- "Should I look for hotels or a return flight too?"
+- "Would you like me to check visa requirements for this destination?"
 
-Remember: You're having a friendly conversation to understand their travel needs, then providing real flight options to help make their dreams happen!`;
+💬 **Your Personality:**
+- Warm, conversational, and helpful
+- Ask ONE question at a time
+- Show genuine excitement about their travel plans
+- Use emojis to make responses visual and engaging
+- Always offer next steps
+
+🔧 **When You Have Enough Info:**
+Use the search_flights function with the parsed information to get real flight data.`;
 
 const FLIGHT_SEARCH_FUNCTION = {
   name: "search_flights",
-  description: "Search for real flights using live flight data",
+  description: "Search for real flights using live flight data with flexible date options",
   parameters: {
     type: "object",
     properties: {
       origin: {
         type: "string",
-        description: "Origin airport code (3-letter IATA code like LAX, JFK)"
+        description: "Origin airport code (3-letter IATA code like LAX, JFK) or city name that will be converted"
       },
       destination: {
         type: "string", 
-        description: "Destination airport code (3-letter IATA code)"
+        description: "Destination airport code (3-letter IATA code) or city name that will be converted"
       },
       departureDate: {
         type: "string",
@@ -331,15 +450,21 @@ serve(async (req) => {
         const functionArgs = JSON.parse(functionCall.arguments);
         console.log('Flight search parameters:', functionArgs);
         
+        // Convert city names to IATA codes
+        const originIATA = getCityIATA(functionArgs.origin);
+        const destinationIATA = getCityIATA(functionArgs.destination);
+        
+        console.log('Converted codes:', { origin: originIATA, destination: destinationIATA });
+        
         const flights = await searchFlights(
-          functionArgs.origin,
-          functionArgs.destination,
+          originIATA,
+          destinationIATA,
           functionArgs.departureDate,
           functionArgs.returnDate,
           functionArgs.adults || 1
         );
         
-        const flightResults = formatFlightResults(flights);
+        const flightResults = formatFlightResults(flights, functionArgs.origin, functionArgs.destination);
         console.log('Flight search completed, results formatted');
         
         // Get AI's response to the flight results
