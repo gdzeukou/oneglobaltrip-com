@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Heart, Compass, Calendar, DollarSign, Users, Zap, Brain, Wand2 } from 'lucide-react';
+import { Sparkles, Heart, Compass, Calendar, DollarSign, Users, Zap, Brain, Wand2, RefreshCw } from 'lucide-react';
 
 interface MoodOption {
   id: string;
@@ -135,15 +135,22 @@ const AITripRecommender = () => {
     }, 2000);
   };
 
+  const resetSelections = () => {
+    setSelectedMood('');
+    setSelectedBudget('');
+    setRecommendation(null);
+    setIsGenerating(false);
+  };
+
   return (
     <section className="py-24 bg-white relative overflow-hidden">
-      {/* Subtle background elements */}
+      {/* Subtle background elements - made smaller */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-gray-100" />
       
-      {/* Clean geometric elements */}
+      {/* Smaller geometric elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-32 right-32 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-30" />
-        <div className="absolute bottom-32 left-32 w-80 h-80 bg-gray-50 rounded-full blur-2xl opacity-40" />
+        <div className="absolute top-40 right-40 w-48 h-48 bg-blue-50 rounded-full blur-3xl opacity-20" />
+        <div className="absolute bottom-40 left-40 w-32 h-32 bg-gray-50 rounded-full blur-2xl opacity-30" />
       </div>
 
       <div className="max-w-6xl mx-auto px-4 relative z-10">
@@ -184,6 +191,20 @@ const AITripRecommender = () => {
               <span className="text-gray-700 font-medium">Instant Recommendations</span>
             </div>
           </div>
+
+          {/* Refresh button */}
+          {(selectedMood || selectedBudget || recommendation) && (
+            <div className="mb-8">
+              <Button
+                onClick={resetSelections}
+                variant="outline"
+                className="bg-white border-2 border-gray-200 hover:border-blue-300 text-gray-600 hover:text-blue-600 px-6 py-3 rounded-full transition-all duration-300"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Start Over
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-16">
