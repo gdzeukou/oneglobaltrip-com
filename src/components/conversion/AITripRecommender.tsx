@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -135,92 +136,86 @@ const AITripRecommender = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 relative overflow-hidden">
-      {/* Innovative background elements */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-20 right-20 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 left-20 w-80 h-80 bg-blue-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
-      </div>
-
-      {/* Floating tech elements */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-32 left-32 w-4 h-4 bg-orange-400 rounded-full animate-bounce" />
-        <div className="absolute top-48 right-40 w-3 h-3 bg-white rotate-45 animate-pulse" />
-        <div className="absolute bottom-32 left-1/3 w-2 h-2 bg-blue-400 rotate-45 animate-bounce" />
-        <div className="absolute bottom-48 right-1/3 w-3 h-3 bg-purple-400 rounded-full animate-pulse" />
+    <section className="py-24 bg-white relative overflow-hidden">
+      {/* Subtle background elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 to-gray-100" />
+      
+      {/* Clean geometric elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-32 right-32 w-96 h-96 bg-blue-50 rounded-full blur-3xl opacity-30" />
+        <div className="absolute bottom-32 left-32 w-80 h-80 bg-gray-50 rounded-full blur-2xl opacity-40" />
       </div>
 
       <div className="max-w-6xl mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          {/* New AI Soul Compass branding */}
-          <div className="flex items-center justify-center mb-6">
-            <div className="p-3 bg-gradient-to-r from-orange-500 to-red-600 rounded-full mr-4 animate-pulse">
+        <div className="text-center mb-20">
+          {/* Clean AI branding */}
+          <div className="flex items-center justify-center mb-8">
+            <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl mr-6 shadow-lg">
               <Brain className="h-8 w-8 text-white" />
             </div>
-            <Badge className="bg-gradient-to-r from-orange-600 to-red-700 text-white px-6 py-2 text-lg font-bold border-0">
-              <Zap className="h-5 w-5 mr-2" />
-              NEW AI TECHNOLOGY
+            <Badge className="bg-blue-600 text-white px-6 py-3 text-base font-semibold border-0 rounded-full">
+              <Zap className="h-4 w-4 mr-2" />
+              AI POWERED
             </Badge>
           </div>
 
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-            Try Our New{' '}
-            <span className="bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 bg-clip-text text-transparent">
+          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
+            Introducing{' '}
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               AI Soul Compass
             </span>
           </h2>
           
-          <p className="text-xl md:text-2xl text-slate-200 max-w-4xl mx-auto mb-8 leading-relaxed">
-            Revolutionary AI technology that reads your heart's desire and life's rhythm to recommend the perfect journey that calls to your soul
+          <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto mb-12 leading-relaxed font-light">
+            Advanced intelligence that understands your unique travel preferences and curates perfectly matched journeys
           </p>
 
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-              <Wand2 className="h-5 w-5 text-orange-400" />
-              <span className="text-white font-medium">AI-Powered</span>
+          <div className="flex items-center justify-center gap-6 mb-8">
+            <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm border border-gray-200">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+              <span className="text-gray-700 font-medium">Intelligent Matching</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-              <Sparkles className="h-5 w-5 text-blue-400" />
-              <span className="text-white font-medium">Personalized</span>
+            <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm border border-gray-200">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <span className="text-gray-700 font-medium">Personalized Results</span>
             </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
-              <Compass className="h-5 w-5 text-purple-400" />
-              <span className="text-white font-medium">Soul-Matched</span>
+            <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm border border-gray-200">
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
+              <span className="text-gray-700 font-medium">Instant Recommendations</span>
             </div>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* Mood Selection */}
-          <Card className="bg-white/10 backdrop-blur-md border-white/20 shadow-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-white">
-                <div className="p-2 bg-red-500 rounded-lg">
+          <Card className="bg-white border border-gray-200 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <CardTitle className="flex items-center gap-4 text-gray-900">
+                <div className="p-3 bg-blue-600 rounded-xl">
                   <Heart className="h-6 w-6 text-white" />
                 </div>
-                What does your soul crave?
+                What inspires your journey?
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-8">
               <div className="grid grid-cols-2 gap-4">
                 {moods.map((mood) => (
                   <button
                     key={mood.id}
                     onClick={() => setSelectedMood(mood.id)}
-                    className={`p-4 rounded-xl border-2 transition-all text-left hover:scale-105 ${
+                    className={`p-6 rounded-2xl border-2 transition-all text-left hover:shadow-lg ${
                       selectedMood === mood.id
-                        ? 'border-orange-500 bg-orange-500/20 shadow-lg shadow-orange-500/25'
-                        : 'border-white/30 bg-white/5 hover:border-white/50'
+                        ? 'border-blue-500 bg-blue-50 shadow-lg'
+                        : 'border-gray-200 bg-white hover:border-blue-300'
                     }`}
                   >
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className={`p-2 rounded-lg ${selectedMood === mood.id ? 'bg-orange-500' : 'bg-white/20'}`}>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`p-2 rounded-xl ${selectedMood === mood.id ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'}`}>
                         {mood.icon}
                       </div>
-                      <span className="font-bold text-white">{mood.label}</span>
+                      <span className="font-semibold text-gray-900">{mood.label}</span>
                     </div>
-                    <p className="text-sm text-slate-300">{mood.description}</p>
+                    <p className="text-sm text-gray-600">{mood.description}</p>
                   </button>
                 ))}
               </div>
@@ -228,32 +223,31 @@ const AITripRecommender = () => {
           </Card>
 
           {/* Budget Selection */}
-          <Card className="bg-white/10 backdrop-blur-md border-white/20 shadow-2xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-white">
-                <div className="p-2 bg-green-500 rounded-lg">
+          <Card className="bg-white border border-gray-200 shadow-xl rounded-3xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+              <CardTitle className="flex items-center gap-4 text-gray-900">
+                <div className="p-3 bg-green-600 rounded-xl">
                   <DollarSign className="h-6 w-6 text-white" />
                 </div>
-                Investment in your transformation
+                Investment in experiences
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+            <CardContent className="p-8">
+              <div className="space-y-4">
                 {budgetOptions.map((budget) => (
                   <button
                     key={budget.id}
                     onClick={() => setSelectedBudget(budget.id)}
-                    className={`w-full p-4 rounded-xl border-2 transition-all text-left hover:scale-105 ${
+                    className={`w-full p-6 rounded-2xl border-2 transition-all text-left hover:shadow-lg ${
                       selectedBudget === budget.id
-                        ? 'border-green-500 bg-green-500/20 shadow-lg shadow-green-500/25'
-                        : 'border-white/30 bg-white/5 hover:border-white/50'
+                        ? 'border-green-500 bg-green-50 shadow-lg'
+                        : 'border-gray-200 bg-white hover:border-green-300'
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-white">{budget.label}</span>
+                      <span className="font-semibold text-gray-900">{budget.label}</span>
                       <Badge 
-                        variant="outline" 
-                        className={selectedBudget === budget.id ? 'border-green-400 text-green-400' : 'border-white/50 text-white'}
+                        className={`rounded-full ${selectedBudget === budget.id ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-600'}`}
                       >
                         {budget.tier}
                       </Badge>
@@ -265,24 +259,23 @@ const AITripRecommender = () => {
           </Card>
         </div>
 
-        {/* Enhanced Generate Button */}
-        <div className="text-center mb-12">
+        {/* Generate Button */}
+        <div className="text-center mb-16">
           <Button
             onClick={generateRecommendation}
             disabled={!selectedMood || !selectedBudget || isGenerating}
-            className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white font-bold px-12 py-6 text-xl rounded-xl shadow-2xl hover:shadow-orange-500/25 transition-all duration-300 hover:scale-105 border-0"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-12 py-6 text-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 border-0"
           >
             {isGenerating ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <Brain className="h-6 w-6 animate-spin" />
-                AI Soul Compass is analyzing your essence...
+                AI is analyzing your preferences...
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <Compass className="h-6 w-6" />
+                Get My Perfect Match
                 <Sparkles className="h-6 w-6" />
-                Reveal My Soul's Journey
-                <Wand2 className="h-6 w-6" />
               </div>
             )}
           </Button>
@@ -290,7 +283,7 @@ const AITripRecommender = () => {
 
         {/* Recommendation Result */}
         {recommendation && (
-          <Card className="overflow-hidden shadow-2xl border-0 bg-white/10 backdrop-blur-md">
+          <Card className="overflow-hidden shadow-2xl border-0 bg-white rounded-3xl">
             <div className="md:flex">
               <div className="md:w-1/2 relative">
                 <img
@@ -298,41 +291,41 @@ const AITripRecommender = () => {
                   alt={recommendation.destination}
                   className="w-full h-64 md:h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
-              <div className="md:w-1/2 p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <Badge className="bg-gradient-to-r from-orange-600 to-red-600 text-white">
+              <div className="md:w-1/2 p-12">
+                <div className="flex items-center gap-3 mb-6">
+                  <Badge className="bg-blue-600 text-white rounded-full px-4 py-2">
                     {recommendation.tier}
                   </Badge>
-                  <Badge variant="outline" className="border-white/50 text-white">
+                  <Badge className="bg-gray-100 text-gray-700 rounded-full px-4 py-2">
                     {recommendation.mood}
                   </Badge>
                 </div>
                 
-                <h3 className="text-3xl font-bold text-white mb-3">
+                <h3 className="text-4xl font-bold text-gray-900 mb-4">
                   {recommendation.destination}
                 </h3>
                 
-                <p className="text-lg text-slate-300 mb-4 italic">
+                <p className="text-lg text-gray-600 mb-6 italic leading-relaxed">
                   {recommendation.description}
                 </p>
                 
-                <p className="text-2xl font-bold text-green-400 mb-6">
+                <p className="text-3xl font-bold text-green-600 mb-8">
                   {recommendation.price}
                 </p>
                 
-                <div className="space-y-2 mb-6">
+                <div className="space-y-3 mb-8">
                   {recommendation.highlights.map((highlight, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-orange-400" />
-                      <span className="text-slate-300">{highlight}</span>
+                    <div key={index} className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                      <span className="text-gray-700">{highlight}</span>
                     </div>
                   ))}
                 </div>
                 
-                <Button className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-4 text-lg">
-                  Begin This Soul Transformation
+                <Button className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-4 text-lg rounded-2xl shadow-lg">
+                  Begin Your Journey
                 </Button>
               </div>
             </div>
