@@ -59,7 +59,8 @@ const LongStayVisas = () => {
     { 
       name: 'France', 
       image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop&crop=center',
-      description: 'Long-stay visas, Talent Passport'
+      description: 'Long-stay visas, Talent Passport',
+      flagImage: '/lovable-uploads/f3204ae7-860b-465a-bfd2-4d6fb469bd17.png'
     },
     { 
       name: 'Germany', 
@@ -140,7 +141,17 @@ const LongStayVisas = () => {
                       alt={`${country.name} visa`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent relative">
+                      {country.name === 'France' && (country as any).flagImage && (
+                        <div className="absolute top-2 right-2 w-8 h-6 opacity-70">
+                          <img 
+                            src={(country as any).flagImage} 
+                            alt="French flag"
+                            className="w-full h-full object-cover rounded-sm shadow-sm"
+                          />
+                        </div>
+                      )}
+                    </div>
                     <div className="absolute bottom-4 left-4 text-white">
                       <div className="flex items-center mb-2">
                         <MapPin className="h-5 w-5 mr-2" />
