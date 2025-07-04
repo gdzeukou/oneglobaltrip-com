@@ -2,7 +2,6 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Sparkles, Shield, Clock, Users } from 'lucide-react';
 import ParallaxSection from '@/components/ui/parallax-section';
-import AdvancedImage from '@/components/ui/advanced-image';
 import SmartCTA from '@/components/conversion/SmartCTA';
 
 interface VisasHeroSectionProps {
@@ -101,7 +100,9 @@ const VisasHeroSection = ({ onScrollToCTA }: VisasHeroSectionProps) => {
                   <img
                     src="/lovable-uploads/cfe6ab35-b147-43d4-a694-ce1b4b67dc7e.png"
                     alt="Happy traveler ready for their journey"
-                    className="w-full h-auto object-cover"
+                    className="w-full h-auto object-cover max-w-md mx-auto"
+                    onLoad={() => console.log('Hero image loaded successfully')}
+                    onError={(e) => console.error('Hero image failed to load:', e)}
                   />
                   
                   {/* Overlay gradient for better integration */}
