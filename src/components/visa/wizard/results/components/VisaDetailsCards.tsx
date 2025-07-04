@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Clock, Globe, FileText } from 'lucide-react';
 
@@ -11,29 +10,29 @@ const VisaDetailsCards = ({ visaType, destination }: VisaDetailsCardsProps) => {
   const getProcessingTime = () => {
     switch (visaType) {
       case 'schengen-visa':
-        return '15-20 business days';
+        return '5-35 business days';
       case 'national-visa':
         return '30-60 business days';
       case 'uk-standard-visitor':
-        return '3-8 weeks';
+        return '2-15 business days';
       case 'uk-long-stay':
         return '8-12 weeks';
       case 'eta':
         return 'Usually within minutes';
       case 'canadian-trv':
-        return '2-4 weeks';
+        return '3-35 business days';
       case 'uae-e-visa':
         return '3-5 working days';
       case 'brazil-e-visa':
-        return '5-10 business days';
+        return '3-15 business days';
       case 'brazil-visa':
-        return '5-10 business days';
+        return '3-15 business days';
       case 'india-e-visa':
-        return '3-7 business days';
+        return '1-15 business days';
       case 'india-visa':
-        return '7-15 business days';
+        return '1-15 business days';
       case 'nigeria-visa-on-arrival':
-        return '3-7 business days (online pre-approval)';
+        return '5-45 business days';
       default:
         return '7-21 business days';
     }

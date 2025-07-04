@@ -28,7 +28,7 @@ const ShortStayVisas = () => {
   const faqData = [
     {
       question: "How long does visa processing typically take?",
-      answer: "Processing times vary by destination: Schengen visas take 10-15 days, UK visas 15-20 days, and e-visas like UAE and India can be processed in 3-5 days. We provide expedited services for urgent travel."
+      answer: "Processing times vary by destination: Schengen visas take 5-35 business days, UK visas 2-15 business days, Brazil e-visas 3-15 business days, India visas 1-15 business days, Canada visas 3-35 business days, and Nigeria visas 5-45 business days. We provide expedited services for urgent travel."
     },
     {
       question: "What documents do I need for a short-stay visa?",

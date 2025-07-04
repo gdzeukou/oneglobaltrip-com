@@ -58,7 +58,7 @@ const SwedenShortStay = () => {
               </ul>
               
               <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                <p className="text-blue-800 font-medium">Processing Time: 5-15 working days</p>
+                <p className="text-blue-800 font-medium">Processing Time: 5-35 business days</p>
                 <p className="text-blue-800">Visa Fee: €80</p>
               </div>
             </div>
