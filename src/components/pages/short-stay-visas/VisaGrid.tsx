@@ -7,7 +7,7 @@ const VisaGrid = () => {
       id: 'schengen',
       title: 'Schengen Short-Stay Visa',
       description: 'One visa, endless Euro-city hopping for up to 90 days.',
-      processingTime: '10-15 days',
+      processingTime: '5-35 business days',
       price: '$193',
       features: [
         'Visit 27 European countries',
@@ -26,7 +26,7 @@ const VisaGrid = () => {
       id: 'uk',
       title: 'UK Short-Stay Visa',
       description: 'Be ready for Big Ben & cream tea in as little as 3 weeks.',
-      processingTime: '15-20 days',
+      processingTime: '2-15 business days',
       price: '$480',
       features: [
         'Visit England, Scotland, Wales',
@@ -44,7 +44,7 @@ const VisaGrid = () => {
       id: 'brazil',
       title: 'Brazil Short-Stay Visa',
       description: 'Samba through Rio or relax in Bahia—visa sorted.',
-      processingTime: '7-10 days',
+      processingTime: '3-15 business days',
       price: '$175',
       features: [
         'Tourism and business',
@@ -62,7 +62,7 @@ const VisaGrid = () => {
       id: 'india',
       title: 'India Visa',
       description: 'Witness the Taj, Kerala backwaters & more with zero hassle.',
-      processingTime: '3-5 days',
+      processingTime: '1-15 business days',
       price: '$180',
       features: [
         'E-Visa available',
@@ -80,7 +80,7 @@ const VisaGrid = () => {
       id: 'nigeria',
       title: 'Nigeria Visa (ETA/VFS)',
       description: 'We handle NIS forms & biometrics—just pack.',
-      processingTime: '10-15 days',
+      processingTime: '5-45 business days',
       price: '$290',
       features: [
         'Full service support',
@@ -116,7 +116,7 @@ const VisaGrid = () => {
       id: 'canada',
       title: 'Canada Visa Short Stay',
       description: 'From Niagara Falls to Rocky Mountains—visa made simple.',
-      processingTime: '20-30 days',
+      processingTime: '3-35 business days',
       price: '$300',
       features: [
         'Visitor visa',
@@ -137,7 +137,7 @@ const VisaGrid = () => {
       id: 'france',
       title: 'France Visa – Short Stay',
       description: 'Perfect for fashion week, croissants & Eiffel selfies.',
-      processingTime: '10-15 days',
+      processingTime: '5-35 business days',
       price: '$193',
       features: [
         'Schengen area access',
@@ -153,7 +153,7 @@ const VisaGrid = () => {
       id: 'netherlands',
       title: 'Netherlands Visa – Short Stay',
       description: 'Tulips, tech, and art in one smart visa.',
-      processingTime: '10-15 days',
+      processingTime: '5-35 business days',
       price: '$193',
       features: [
         'Schengen area access',
@@ -169,7 +169,7 @@ const VisaGrid = () => {
       id: 'germany',
       title: 'Germany Visa – Short Stay',
       description: 'Oktoberfest or trade fairs—visa in record time.',
-      processingTime: '10-15 days',
+      processingTime: '5-35 business days',
       price: '$193',
       features: [
         'Schengen area access',
@@ -185,7 +185,7 @@ const VisaGrid = () => {
       id: 'denmark',
       title: 'Denmark Visa – Short Stay',
       description: 'Hygge, design, and pastries await.',
-      processingTime: '10-15 days',
+      processingTime: '5-35 business days',
       price: '$193',
       features: [
         'Schengen area access',
@@ -201,7 +201,7 @@ const VisaGrid = () => {
       id: 'sweden',
       title: 'Sweden Visa – Short Stay',
       description: 'Lapland lights to Stockholm startups—sorted.',
-      processingTime: '10-15 days',
+      processingTime: '5-35 business days',
       price: '$193',
       features: [
         'Schengen area access',
