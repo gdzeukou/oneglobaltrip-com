@@ -14,13 +14,11 @@ import MainCTASection from '@/components/visa/sections/MainCTASection';
 import RealtimeNotifications from '@/components/conversion/RealtimeNotifications';
 import AITripRecommender from '@/components/conversion/AITripRecommender';
 import InteractiveWorldMap from '@/components/conversion/InteractiveWorldMap';
-import MultilingualToggle from '@/components/conversion/MultilingualToggle';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
-      <MultilingualToggle />
       <HeroCarousel />
       <ServicesSection />
       <TrustIndicators />
