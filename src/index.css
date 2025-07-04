@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
@@ -30,19 +29,19 @@
     --primary-800: 214 32% 8%;
     --primary-900: 214 32% 5%;
     
-    /* Luxury Gold Accent */
-    --accent: 45 85% 65%;
-    --accent-foreground: 214 32% 16%;
-    --accent-50: 45 85% 96%;
-    --accent-100: 45 85% 90%;
-    --accent-200: 45 85% 82%;
-    --accent-300: 45 85% 74%;
-    --accent-400: 45 85% 65%;
-    --accent-500: 45 85% 58%;
-    --accent-600: 45 85% 48%;
-    --accent-700: 45 85% 38%;
-    --accent-800: 45 85% 28%;
-    --accent-900: 45 85% 18%;
+    /* Deep Orange Accent */
+    --accent: 20 90% 50%;
+    --accent-foreground: 0 0% 100%;
+    --accent-50: 20 90% 96%;
+    --accent-100: 20 90% 90%;
+    --accent-200: 20 90% 82%;
+    --accent-300: 20 90% 74%;
+    --accent-400: 20 90% 65%;
+    --accent-500: 20 90% 50%;
+    --accent-600: 20 90% 45%;
+    --accent-700: 20 90% 40%;
+    --accent-800: 20 90% 35%;
+    --accent-900: 20 90% 30%;
     
     /* Sophisticated Secondary */
     --secondary: 220 15% 96%;
@@ -69,8 +68,8 @@
     
     /* Luxury UI Elements */
     --luxury-gradient-primary: linear-gradient(135deg, hsl(214, 32%, 16%) 0%, hsl(214, 32%, 11%) 100%);
-    --luxury-gradient-accent: linear-gradient(135deg, hsl(45, 85%, 65%) 0%, hsl(45, 85%, 58%) 100%);
-    --luxury-gradient-hero: linear-gradient(135deg, hsl(214, 32%, 16%) 0%, hsl(214, 32%, 21%) 50%, hsl(45, 85%, 65%) 100%);
+    --luxury-gradient-accent: linear-gradient(135deg, hsl(20, 90%, 50%) 0%, hsl(20, 90%, 45%) 100%);
+    --luxury-gradient-hero: linear-gradient(135deg, hsl(214, 32%, 16%) 0%, hsl(214, 32%, 21%) 50%, hsl(20, 90%, 50%) 100%);
     --luxury-shadow: 0 25px 50px -12px hsl(214, 32%, 16%, 0.15);
     --luxury-shadow-lg: 0 35px 70px -15px hsl(214, 32%, 16%, 0.25);
     --luxury-glass: rgba(255, 255, 255, 0.08);
@@ -98,22 +97,22 @@
     --card-foreground: 0 0% 98%;
     --popover: 214 32% 8%;
     --popover-foreground: 0 0% 98%;
-    --primary: 45 85% 65%;
-    --primary-foreground: 214 32% 5%;
+    --primary: 20 90% 50%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 214 32% 11%;
     --secondary-foreground: 0 0% 98%;
     --muted: 214 32% 11%;
     --muted-foreground: 215 20% 65%;
-    --accent: 45 85% 65%;
-    --accent-foreground: 214 32% 5%;
+    --accent: 20 90% 50%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 0 0% 98%;
     --border: 214 32% 16%;
     --input: 214 32% 16%;
-    --ring: 45 85% 65%;
+    --ring: 20 90% 50%;
     --luxury-gradient-primary: linear-gradient(135deg, hsl(214, 32%, 5%) 0%, hsl(214, 32%, 11%) 100%);
-    --luxury-gradient-accent: linear-gradient(135deg, hsl(45, 85%, 65%) 0%, hsl(45, 85%, 58%) 100%);
-    --luxury-gradient-hero: linear-gradient(135deg, hsl(214, 32%, 5%) 0%, hsl(214, 32%, 11%) 50%, hsl(45, 85%, 65%) 100%);
+    --luxury-gradient-accent: linear-gradient(135deg, hsl(20, 90%, 50%) 0%, hsl(20, 90%, 45%) 100%);
+    --luxury-gradient-hero: linear-gradient(135deg, hsl(214, 32%, 5%) 0%, hsl(214, 32%, 11%) 50%, hsl(20, 90%, 50%) 100%);
     --luxury-shadow: 0 25px 50px -12px hsl(0, 0%, 0%, 0.5);
     --luxury-shadow-lg: 0 35px 70px -15px hsl(0, 0%, 0%, 0.7);
     --luxury-glass: rgba(255, 255, 255, 0.05);
@@ -317,21 +316,23 @@
 }
 
 .btn-luxury-accent {
-  background: var(--luxury-gradient-accent);
-  color: hsl(var(--primary));
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+  color: white;
   border: none;
   padding: 1.25rem 3rem;
   border-radius: 1rem;
   font-family: 'Inter', sans-serif;
-  font-weight: 700;
+  font-weight: 900;
   font-size: 1.125rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 25px hsl(var(--accent) / 0.3);
+  box-shadow: 0 8px 25px rgba(234, 88, 12, 0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .btn-luxury-accent:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 35px hsl(var(--accent) / 0.4);
+  box-shadow: 0 12px 35px rgba(234, 88, 12, 0.5);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
   filter: brightness(1.1);
 }
 
