@@ -17,7 +17,9 @@ const CarouselSlide = ({ slide, isActive, isTransitioning, priority = false }: C
   return (
     <figure 
       className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-        isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+        isActive 
+          ? 'opacity-100 scale-100 z-10' 
+          : 'opacity-0 scale-105 z-0 pointer-events-none'
       }`}
     >
       <EnhancedImage
