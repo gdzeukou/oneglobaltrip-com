@@ -43,10 +43,10 @@ const HeroCarousel = () => {
     >
       <CarouselSlides slides={heroSlides} currentSlide={currentSlide} />
 
-      {/* Luxury cinematic overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/80" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
+      {/* Lighter, more subtle overlays for better image visibility */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
       <CarouselSlideContent slide={currentSlideData} isTransitioning={isTransitioning} />
 
