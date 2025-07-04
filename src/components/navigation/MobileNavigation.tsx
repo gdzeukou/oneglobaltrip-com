@@ -1,97 +1,74 @@
 
-import React from 'react';
 import { Link } from 'react-router-dom';
+import { X, Plane, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ROUTES } from '@/constants/routes';
-import { Sparkles, Plane, Shield, Crown, MapPin, Phone } from 'lucide-react';
+import NavigationAuth from './NavigationAuth';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface MobileNavigationProps {
   isOpen: boolean;
   onClose: () => void;
-  onApplyClick?: () => void;
 }
 
-const MobileNavigation = ({ isOpen, onClose, onApplyClick }: MobileNavigationProps) => {
+const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => {
+  const { user } = useAuth();
+
   if (!isOpen) return null;
 
-  const handleApplyClick = () => {
-    if (onApplyClick) {
-      onApplyClick();
-    }
-    onClose();
-  };
-
   return (
-    <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg z-40">
-      <div className="px-4 py-6 space-y-4">
-        {/* Main Navigation */}
-        <div className="space-y-3">
-          <Link
-            to={ROUTES.HOME}
-            onClick={onClose}
-            className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
-          >
-            Home
-          </Link>
-          
-          <div className="space-y-2">
-            <div className="px-3 py-2 text-sm font-semibold text-gray-900 uppercase tracking-wider">
-              Services
-            </div>
-            <Link
-              to={ROUTES.VISAS}
-              onClick={onClose}
-              className="flex items-center space-x-3 px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors ml-4"
-            >
-              <Plane className="h-4 w-4 text-blue-600" />
-              <span>Visa Services</span>
-            </Link>
-            <Link
-              to={ROUTES.PACKAGES}
-              onClick={onClose}
-              className="flex items-center space-x-3 px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors ml-4"
-            >
-              <Crown className="h-4 w-4 text-blue-600" />
-              <span>Travel Packages</span>
-            </Link>
-            <Link
-              to={ROUTES.CONCIERGE}
-              onClick={onClose}
-              className="flex items-center space-x-3 px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors ml-4"
-            >
-              <MapPin className="h-4 w-4 text-blue-600" />
-              <span>Concierge</span>
-            </Link>
-          </div>
-          
-          <Link
-            to={ROUTES.CONTACT}
-            onClick={onClose}
-            className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors"
-          >
-            Contact
-          </Link>
-        </div>
+    <div className="md:hidden">
+      <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+        <Link
+          to="/"
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          onClick={onClose}
+        >
+          Home
+        </Link>
+        <Link
+          to="/visas"
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          onClick={onClose}
+        >
+          Visas
+        </Link>
+        <Link
+          to="/packages"
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          onClick={onClose}
+        >
+          Packages
+        </Link>
+        <Link
+          to="/pricing"
+          className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          onClick={onClose}
+        >
+          Pricing
+        </Link>
+        <Link
+          to="/ai-chat"
+          className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          onClick={onClose}
+        >
+          <Plane className="h-4 w-4" />
+          <span>Maya AI</span>
+        </Link>
 
-        {/* CTA Button */}
-        {onApplyClick && (
-          <div className="pt-4 border-t border-gray-200">
-            <Button
-              onClick={handleApplyClick}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-all duration-300"
-            >
-              <Sparkles className="h-5 w-5 mr-2" />
-              Smart Apply
-            </Button>
-          </div>
+        {/* Bookings Link - Only show if user is authenticated */}
+        {user && (
+          <Link
+            to="/bookings"
+            className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+            onClick={onClose}
+          >
+            <Calendar className="h-4 w-4" />
+            <span>My Bookings</span>
+          </Link>
         )}
-
-        {/* Contact Info */}
+        
         <div className="pt-4 border-t border-gray-200">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Phone className="h-4 w-4" />
-            <span>Free consultation available</span>
-          </div>
+          <NavigationAuth />
         </div>
       </div>
     </div>

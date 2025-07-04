@@ -78,6 +78,178 @@ export type Database = {
         }
         Relationships: []
       }
+      booking_documents: {
+        Row: {
+          booking_id: string
+          document_name: string
+          document_type: string
+          file_size: number | null
+          file_url: string
+          id: string
+          mime_type: string | null
+          passenger_id: string | null
+          uploaded_at: string
+        }
+        Insert: {
+          booking_id: string
+          document_name: string
+          document_type: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          mime_type?: string | null
+          passenger_id?: string | null
+          uploaded_at?: string
+        }
+        Update: {
+          booking_id?: string
+          document_name?: string
+          document_type?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          mime_type?: string | null
+          passenger_id?: string | null
+          uploaded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_documents_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "flight_bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_documents_passenger_id_fkey"
+            columns: ["passenger_id"]
+            isOneToOne: false
+            referencedRelation: "booking_passengers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_passengers: {
+        Row: {
+          booking_id: string
+          created_at: string
+          date_of_birth: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          meal_preference: string | null
+          nationality: string
+          passenger_type: string
+          passport_expiry: string | null
+          passport_number: string | null
+          phone: string | null
+          seat_preference: string | null
+          special_requests: string | null
+          title: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          date_of_birth: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          meal_preference?: string | null
+          nationality: string
+          passenger_type?: string
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          seat_preference?: string | null
+          special_requests?: string | null
+          title: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          date_of_birth?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          meal_preference?: string | null
+          nationality?: string
+          passenger_type?: string
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          seat_preference?: string | null
+          special_requests?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_passengers_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "flight_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          currency: string
+          id: string
+          payment_date: string | null
+          payment_intent_id: string | null
+          payment_method: string | null
+          payment_status: string
+          refund_amount: number | null
+          refund_date: string | null
+          stripe_payment_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          payment_date?: string | null
+          payment_intent_id?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          refund_amount?: number | null
+          refund_date?: string | null
+          stripe_payment_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          payment_date?: string | null
+          payment_intent_id?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          refund_amount?: number | null
+          refund_date?: string | null
+          stripe_payment_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "flight_bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           booking_date: string | null
@@ -404,6 +576,80 @@ export type Database = {
             columns: ["email_template_id"]
             isOneToOne: false
             referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flight_bookings: {
+        Row: {
+          airline_code: string | null
+          booking_date: string
+          booking_reference: string
+          booking_status: string
+          conversation_id: string | null
+          created_at: string
+          currency: string
+          departure_date: string
+          destination_airport: string
+          flight_data: Json
+          flight_numbers: string[] | null
+          id: string
+          origin_airport: string
+          passenger_count: number
+          pnr_code: string | null
+          return_date: string | null
+          total_amount: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          airline_code?: string | null
+          booking_date?: string
+          booking_reference: string
+          booking_status?: string
+          conversation_id?: string | null
+          created_at?: string
+          currency?: string
+          departure_date: string
+          destination_airport: string
+          flight_data: Json
+          flight_numbers?: string[] | null
+          id?: string
+          origin_airport: string
+          passenger_count?: number
+          pnr_code?: string | null
+          return_date?: string | null
+          total_amount: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          airline_code?: string | null
+          booking_date?: string
+          booking_reference?: string
+          booking_status?: string
+          conversation_id?: string | null
+          created_at?: string
+          currency?: string
+          departure_date?: string
+          destination_airport?: string
+          flight_data?: Json
+          flight_numbers?: string[] | null
+          id?: string
+          origin_airport?: string
+          passenger_count?: number
+          pnr_code?: string | null
+          return_date?: string | null
+          total_amount?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flight_bookings_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
             referencedColumns: ["id"]
           },
         ]
@@ -982,6 +1228,10 @@ export type Database = {
       cleanup_expired_otp_codes: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      generate_booking_reference: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
       generate_otp_code: {
         Args: Record<PropertyKey, never>

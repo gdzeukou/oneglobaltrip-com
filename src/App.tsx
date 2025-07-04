@@ -1,205 +1,177 @@
-import { Suspense, lazy } from "react";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import { ROUTES } from "@/constants/routes";
-import { shouldBypassAuth } from "@/utils/developmentMode";
+import { AuthProvider } from '@/contexts/AuthContext';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
-// Lazy load components
-const Index = lazy(() => import("./pages/Index"));
-const Visas = lazy(() => import("./pages/Visas"));
-const ShortStayVisas = lazy(() => import("./pages/ShortStayVisas"));
-const LongStayVisas = lazy(() => import("./pages/LongStayVisas"));
-const Packages = lazy(() => import("./pages/Packages"));
-const Contact = lazy(() => import("./pages/Contact"));
-const Pricing = lazy(() => import("./pages/Pricing"));
-const Auth = lazy(() => import("./pages/Auth"));
-const AuthCallback = lazy(() => import("./pages/AuthCallback"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Profile = lazy(() => import("./pages/Profile"));
-const Bookings = lazy(() => import("./pages/Bookings"));
-const Booking = lazy(() => import("./pages/Booking"));
-const Concierge = lazy(() => import("./pages/Concierge"));
-const Admin = lazy(() => import("./pages/Admin"));
-const IntelligentApplication = lazy(() => import("./pages/IntelligentApplication"));
-const AIChat = lazy(() => import("./pages/AIChat"));
+// Lazy imports for better performance
+import Index from "./pages/Index";
+import Home from "./pages/Home";
+import Visas from "./pages/Visas";
+import Packages from "./pages/Packages";
+import PackageDetails from "./pages/PackageDetails";
+import Contact from "./pages/Contact";
+import Auth from "./pages/Auth";
+import AuthCallback from "./pages/AuthCallback";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Admin from "./pages/Admin";
+import AdminDashboard from "./pages/AdminDashboard";
+import Pricing from "./pages/Pricing";
+import NotFound from "./pages/NotFound";
+import ErrorPage from "./pages/ErrorPage";
+import Concierge from "./pages/Concierge";
+import Booking from "./pages/Booking";
+import Bookings from "./pages/Bookings";
+import AIChat from "./pages/AIChat";
+import LongStayVisas from "./pages/LongStayVisas";
+import ShortStayVisas from "./pages/ShortStayVisas";
+import IntelligentApplication from "./pages/IntelligentApplication";
 
 // Visa country pages
-const SchengenShortStayLanding = lazy(() => import("./pages/visa-countries/SchengenShortStayLanding"));
-const FranceShortStay = lazy(() => import("./pages/visa-countries/FranceShortStay"));
-const GreeceShortStay = lazy(() => import("./pages/visa-countries/GreeceShortStay"));
-const ItalyShortStay = lazy(() => import("./pages/visa-countries/ItalyShortStay"));
-const NetherlandsShortStay = lazy(() => import("./pages/visa-countries/NetherlandsShortStay"));
-const GermanyShortStay = lazy(() => import("./pages/visa-countries/GermanyShortStay"));
-const DenmarkShortStay = lazy(() => import("./pages/visa-countries/DenmarkShortStay"));
-const SwedenShortStay = lazy(() => import("./pages/visa-countries/SwedenShortStay"));
-const UKShortStay = lazy(() => import("./pages/visa-countries/UKShortStay"));
-const UK5YearShortStay = lazy(() => import("./pages/visa-countries/UK5YearShortStay"));
-const UAEShortStay = lazy(() => import("./pages/visa-countries/UAEShortStay"));
-const CanadaShortStay = lazy(() => import("./pages/visa-countries/CanadaShortStay"));
-const BrazilShortStay = lazy(() => import("./pages/visa-countries/BrazilShortStay"));
-const IndiaShortStay = lazy(() => import("./pages/visa-countries/IndiaShortStay"));
-const NigeriaShortStay = lazy(() => import("./pages/visa-countries/NigeriaShortStay"));
+import SchengenShortStay from "./pages/visa-countries/SchengenShortStay";
+import SchengenShortStayLanding from "./pages/visa-countries/SchengenShortStayLanding";
+import FranceShortStay from "./pages/visa-countries/FranceShortStay";
+import GermanyShortStay from "./pages/visa-countries/GermanyShortStay";
+import ItalyShortStay from "./pages/visa-countries/ItalyShortStay";
+import NetherlandsShortStay from "./pages/visa-countries/NetherlandsShortStay";
+import DenmarkShortStay from "./pages/visa-countries/DenmarkShortStay";
+import SwedenShortStay from "./pages/visa-countries/SwedenShortStay";
+import GreeceShortStay from "./pages/visa-countries/GreeceShortStay";
+import UKShortStay from "./pages/visa-countries/UKShortStay";
+import UK5YearShortStay from "./pages/visa-countries/UK5YearShortStay";
+import UAEShortStay from "./pages/visa-countries/UAEShortStay";
+import CanadaShortStay from "./pages/visa-countries/CanadaShortStay";
+import IndiaShortStay from "./pages/visa-countries/IndiaShortStay";
+import BrazilShortStay from "./pages/visa-countries/BrazilShortStay";
+import NigeriaShortStay from "./pages/visa-countries/NigeriaShortStay";
 
 // Long stay visa pages
-const FranceLongStay = lazy(() => import("./pages/visa-countries/FranceLongStay"));
-const GermanyLongStay = lazy(() => import("./pages/visa-countries/GermanyLongStay"));
-const PortugalLongStay = lazy(() => import("./pages/visa-countries/PortugalLongStay"));
-const FinlandLongStay = lazy(() => import("./pages/visa-countries/FinlandLongStay"));
-const DenmarkLongStay = lazy(() => import("./pages/visa-countries/DenmarkLongStay"));
-const NorwayLongStay = lazy(() => import("./pages/visa-countries/NorwayLongStay"));
-const SwitzerlandLongStay = lazy(() => import("./pages/visa-countries/SwitzerlandLongStay"));
-const NigeriaLongStay = lazy(() => import("./pages/visa-countries/NigeriaLongStay"));
+import FranceLongStay from "./pages/visa-countries/FranceLongStay";
+import GermanyLongStay from "./pages/visa-countries/GermanyLongStay";
+import DenmarkLongStay from "./pages/visa-countries/DenmarkLongStay";
+import FinlandLongStay from "./pages/visa-countries/FinlandLongStay";
+import PortugalLongStay from "./pages/visa-countries/PortugalLongStay";
+import SwitzerlandLongStay from "./pages/visa-countries/SwitzerlandLongStay";
+import NorwayLongStay from "./pages/visa-countries/NorwayLongStay";
+import NigeriaLongStay from "./pages/visa-countries/NigeriaLongStay";
 
-// Package pages
-const ParisExplorePackage = lazy(() => import("./pages/packages/ParisExplorePackage"));
+// Package specific pages
+import ParisExplorePackage from "./pages/packages/ParisExplorePackage";
 
-// Visa pricing page
-const VisaPricingPage = lazy(() => import("./pages/visas/VisaPricingPage"));
-const PackageDetails = lazy(() => import("./pages/PackageDetails"));
+// Pricing page
+import VisaPricingPage from "./pages/visas/VisaPricingPage";
+
+import "./App.css";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+function App() {
+  return (
     <ErrorBoundary>
-      <AuthProvider>
+      <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Suspense fallback={
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              </div>
-            }>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
               <Routes>
-                {/* Main pages */}
-                <Route path={ROUTES.HOME} element={<Index />} />
-                <Route path={ROUTES.PACKAGES} element={<Packages />} />
-                <Route path={ROUTES.VISAS} element={<Visas />} />
-                <Route path={ROUTES.CONTACT} element={<Contact />} />
-                <Route path={ROUTES.PRICING} element={<Pricing />} />
-                <Route path={ROUTES.AUTH} element={<Auth />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
-                
-                {/* Protected routes */}
-                <Route 
-                  path={ROUTES.DASHBOARD} 
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path={ROUTES.PROFILE} 
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path={ROUTES.BOOKINGS} 
-                  element={
-                    <ProtectedRoute>
-                      <Bookings />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path={ROUTES.BOOKING} 
-                  element={
-                    <ProtectedRoute>
-                      <Booking />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path={ROUTES.CONCIERGE} 
-                  element={
-                    <ProtectedRoute>
-                      <Concierge />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path={ROUTES.ADMIN} 
-                  element={
-                    shouldBypassAuth(ROUTES.ADMIN) ? (
-                      <Admin />
-                    ) : (
-                      <ProtectedRoute>
-                        <Admin />
-                      </ProtectedRoute>
-                    )
-                  } 
-                />
-                <Route 
-                  path="/apply" 
-                  element={
-                    <ProtectedRoute>
-                      <IntelligentApplication />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path={ROUTES.AI_CHAT} 
-                  element={
-                    <ProtectedRoute>
-                      <AIChat />
-                    </ProtectedRoute>
-                  } 
-                />
-
-                {/* Visa categories */}
-                <Route path={ROUTES.SHORT_STAY_VISAS} element={<ShortStayVisas />} />
-                <Route path={ROUTES.LONG_STAY_VISAS} element={<LongStayVisas />} />
-                <Route path={ROUTES.VISAS_PRICING} element={<VisaPricingPage />} />
-
-                {/* Short stay visa countries */}
-                <Route path={ROUTES.SCHENGEN_SHORT_STAY_LANDING} element={<SchengenShortStayLanding />} />
-                <Route path={ROUTES.FRANCE_SHORT_STAY} element={<FranceShortStay />} />
-                <Route path={ROUTES.GREECE_SHORT_STAY} element={<GreeceShortStay />} />
-                <Route path={ROUTES.ITALY_SHORT_STAY} element={<ItalyShortStay />} />
-                <Route path={ROUTES.NETHERLANDS_SHORT_STAY} element={<NetherlandsShortStay />} />
-                <Route path={ROUTES.GERMANY_SHORT_STAY} element={<GermanyShortStay />} />
-                <Route path={ROUTES.DENMARK_SHORT_STAY} element={<DenmarkShortStay />} />
-                <Route path={ROUTES.SWEDEN_SHORT_STAY} element={<SwedenShortStay />} />
-                <Route path={ROUTES.UK_SHORT_STAY} element={<UKShortStay />} />
-                <Route path={ROUTES.UK_5_YEAR_SHORT_STAY} element={<UK5YearShortStay />} />
-                <Route path={ROUTES.UAE_SHORT_STAY} element={<UAEShortStay />} />
-                <Route path={ROUTES.CANADA_SHORT_STAY} element={<CanadaShortStay />} />
-                <Route path={ROUTES.BRAZIL_SHORT_STAY} element={<BrazilShortStay />} />
-                <Route path={ROUTES.INDIA_SHORT_STAY} element={<IndiaShortStay />} />
-                <Route path={ROUTES.NIGERIA_SHORT_STAY} element={<NigeriaShortStay />} />
-
-                {/* Long stay visa countries */}
-                <Route path={ROUTES.FRANCE_LONG_STAY} element={<FranceLongStay />} />
-                <Route path={ROUTES.GERMANY_LONG_STAY} element={<GermanyLongStay />} />
-                <Route path={ROUTES.PORTUGAL_LONG_STAY} element={<PortugalLongStay />} />
-                <Route path={ROUTES.FINLAND_LONG_STAY} element={<FinlandLongStay />} />
-                <Route path={ROUTES.DENMARK_LONG_STAY} element={<DenmarkLongStay />} />
-                <Route path={ROUTES.NORWAY_LONG_STAY} element={<NorwayLongStay />} />
-                <Route path={ROUTES.SWITZERLAND_LONG_STAY} element={<SwitzerlandLongStay />} />
-                <Route path={ROUTES.NIGERIA_LONG_STAY} element={<NigeriaLongStay />} />
-
-                {/* Package routes */}
-                <Route path={ROUTES.PARIS_EXPLORE_PACKAGE} element={<ParisExplorePackage />} />
+                {/* Public routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/visas" element={<Visas />} />
+                <Route path="/packages" element={<Packages />} />
                 <Route path="/packages/:id" element={<PackageDetails />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/concierge" element={<Concierge />} />
+                <Route path="/ai-chat" element={<AIChat />} />
+                <Route path="/long-stay-visas" element={<LongStayVisas />} />
+                <Route path="/short-stay-visas" element={<ShortStayVisas />} />
+                <Route path="/intelligent-application" element={<IntelligentApplication />} />
+                
+                {/* Visa country routes */}
+                <Route path="/visa/schengen-short-stay" element={<SchengenShortStay />} />
+                <Route path="/schengen-visa" element={<SchengenShortStayLanding />} />
+                <Route path="/visa/france-short-stay" element={<FranceShortStay />} />
+                <Route path="/visa/germany-short-stay" element={<GermanyShortStay />} />
+                <Route path="/visa/italy-short-stay" element={<ItalyShortStay />} />
+                <Route path="/visa/netherlands-short-stay" element={<NetherlandsShortStay />} />
+                <Route path="/visa/denmark-short-stay" element={<DenmarkShortStay />} />
+                <Route path="/visa/sweden-short-stay" element={<SwedenShortStay />} />
+                <Route path="/visa/greece-short-stay" element={<GreeceShortStay />} />
+                <Route path="/visa/uk-short-stay" element={<UKShortStay />} />
+                <Route path="/visa/uk-5-year-short-stay" element={<UK5YearShortStay />} />
+                <Route path="/visa/uae-short-stay" element={<UAEShortStay />} />
+                <Route path="/visa/canada-short-stay" element={<CanadaShortStay />} />
+                <Route path="/visa/india-short-stay" element={<IndiaShortStay />} />
+                <Route path="/visa/brazil-short-stay" element={<BrazilShortStay />} />
+                <Route path="/visa/nigeria-short-stay" element={<NigeriaShortStay />} />
+                
+                {/* Long stay visa routes */}
+                <Route path="/visa/france-long-stay" element={<FranceLongStay />} />
+                <Route path="/visa/germany-long-stay" element={<GermanyLongStay />} />
+                <Route path="/visa/denmark-long-stay" element={<DenmarkLongStay />} />
+                <Route path="/visa/finland-long-stay" element={<FinlandLongStay />} />
+                <Route path="/visa/portugal-long-stay" element={<PortugalLongStay />} />
+                <Route path="/visa/switzerland-long-stay" element={<SwitzerlandLongStay />} />
+                <Route path="/visa/norway-long-stay" element={<NorwayLongStay />} />
+                <Route path="/visa/nigeria-long-stay" element={<NigeriaLongStay />} />
+                
+                {/* Package specific routes */}
+                <Route path="/package/paris-explore" element={<ParisExplorePackage />} />
+                
+                {/* Pricing routes */}
+                <Route path="/visa-pricing" element={<VisaPricingPage />} />
+
+                {/* Protected routes */}
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
+                <Route path="/booking" element={
+                  <ProtectedRoute>
+                    <Booking />
+                  </ProtectedRoute>
+                } />
+                <Route path="/bookings" element={
+                  <ProtectedRoute>
+                    <Bookings />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin" element={
+                  <ProtectedRoute>
+                    <Admin />
+                  </ProtectedRoute>
+                } />
+                <Route path="/admin-dashboard" element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } />
+
+                {/* Error routes */}
+                <Route path="/error" element={<ErrorPage />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
-            </Suspense>
-          </BrowserRouter>
+            </BrowserRouter>
+          </AuthProvider>
         </TooltipProvider>
-      </AuthProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
-  </QueryClientProvider>
-);
+  );
+}
 
 export default App;
