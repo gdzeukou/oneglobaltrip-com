@@ -84,7 +84,7 @@ const VisaCard = ({
         <div className="flex items-center space-x-2">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
           <span className="text-sm text-gray-500">
-            Processing: <span className="font-semibold text-green-600">{processingTime}</span>
+            Processing: <span className="font-semibold text-green-600">5-35 business days</span>
           </span>
         </div>
 
