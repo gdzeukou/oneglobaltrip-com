@@ -123,7 +123,7 @@ const AIChat = () => {
       setMessages([{
         id: 'welcome',
         role: 'assistant',
-        content: "Hi there! 👋 I'm Maya, your personal AI Travel Agent.\n\nI'm here to help make your travel dreams come true! Whether you need help with visas, finding the perfect destination, booking flights, or planning your entire trip - I've got you covered.\n\nWhat's bringing you here today? Are you planning a new adventure? ✈️",
+        content: "Hi there! 👋 I'm Maya, your personal AI Travel Agent with real-time flight search capabilities!\n\nI can search actual flights, compare live prices, find the best routes, and help with visas, bookings, and complete travel planning. I work step-by-step to understand your needs perfectly.\n\nWhat brings you here today? Are you planning a new adventure? ✈️",
         timestamp: new Date()
       }]);
     } catch (error) {

@@ -39,7 +39,7 @@ const AITravelAgent = () => {
       setMessages([{
         id: 'welcome',
         role: 'assistant',
-        content: "Hi there! 👋 I'm Maya, your personal AI Travel Agent.\n\nI'm here to help make your travel dreams come true! Whether you need help with visas, finding the perfect destination, booking flights, or planning your entire trip - I've got you covered.\n\nWhat's bringing you here today? Are you planning a new adventure? ✈️",
+        content: "Hi there! 👋 I'm Maya, your personal AI Travel Agent with real-time flight search capabilities!\n\nI can help you find and compare actual flights, discover the best routes, check real prices, and guide you through your entire travel journey - from visa assistance to booking confirmations.\n\nI work step by step to understand exactly what you need. To get started, could you tell me: are you planning a new trip? ✈️",
         timestamp: new Date()
       }]);
     }
