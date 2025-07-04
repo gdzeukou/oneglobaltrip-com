@@ -207,7 +207,9 @@ export type Database = {
           payment_status: string
           refund_amount: number | null
           refund_date: string | null
-          stripe_payment_id: string | null
+          square_location_id: string | null
+          square_order_id: string | null
+          square_payment_id: string | null
           updated_at: string
         }
         Insert: {
@@ -222,7 +224,9 @@ export type Database = {
           payment_status?: string
           refund_amount?: number | null
           refund_date?: string | null
-          stripe_payment_id?: string | null
+          square_location_id?: string | null
+          square_order_id?: string | null
+          square_payment_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -237,7 +241,9 @@ export type Database = {
           payment_status?: string
           refund_amount?: number | null
           refund_date?: string | null
-          stripe_payment_id?: string | null
+          square_location_id?: string | null
+          square_order_id?: string | null
+          square_payment_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -598,6 +604,7 @@ export type Database = {
           passenger_count: number
           pnr_code: string | null
           return_date: string | null
+          square_order_id: string | null
           total_amount: number
           updated_at: string
           user_id: string
@@ -619,6 +626,7 @@ export type Database = {
           passenger_count?: number
           pnr_code?: string | null
           return_date?: string | null
+          square_order_id?: string | null
           total_amount: number
           updated_at?: string
           user_id: string
@@ -640,6 +648,7 @@ export type Database = {
           passenger_count?: number
           pnr_code?: string | null
           return_date?: string | null
+          square_order_id?: string | null
           total_amount?: number
           updated_at?: string
           user_id?: string
@@ -1008,6 +1017,36 @@ export type Database = {
           nationality?: string
           phone?: string
           purpose?: string
+        }
+        Relationships: []
+      }
+      square_webhooks: {
+        Row: {
+          created_at: string
+          event_data: Json
+          event_type: string
+          id: string
+          processed: boolean | null
+          processed_at: string | null
+          webhook_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data: Json
+          event_type: string
+          id?: string
+          processed?: boolean | null
+          processed_at?: string | null
+          webhook_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json
+          event_type?: string
+          id?: string
+          processed?: boolean | null
+          processed_at?: string | null
+          webhook_id?: string
         }
         Relationships: []
       }
