@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Send, Plus, MessageSquare, Sparkles, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -122,7 +123,7 @@ const AIChat = () => {
       setMessages([{
         id: 'welcome',
         role: 'assistant',
-        content: "👋 Hello! I'm your AI Travel Agent. I'm here to help you with:\n\n✈️ **Flight bookings & recommendations**\n🏨 **Hotel searches & reservations**\n📄 **Visa requirements & applications**\n🗺️ **Travel itinerary planning**\n📋 **Custom travel forms**\n\nWhat can I help you with today?",
+        content: "Hi there! 👋 I'm Maya, your personal AI Travel Agent.\n\nI'm here to help make your travel dreams come true! Whether you need help with visas, finding the perfect destination, booking flights, or planning your entire trip - I've got you covered.\n\nWhat's bringing you here today? Are you planning a new adventure? ✈️",
         timestamp: new Date()
       }]);
     } catch (error) {
@@ -322,7 +323,7 @@ const AIChat = () => {
                 </Button>
                 <div className="flex items-center space-x-2">
                   <Sparkles className="h-5 w-5 text-primary" />
-                  <h1 className="text-lg font-semibold">AI Travel Agent</h1>
+                  <h1 className="text-lg font-semibold">Maya - AI Travel Agent</h1>
                 </div>
               </div>
             </div>
@@ -333,13 +334,13 @@ const AIChat = () => {
             {messages.length === 0 && !currentConversationId ? (
               <div className="text-center py-12">
                 <Sparkles className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h2 className="text-xl font-semibold mb-2">Welcome to AI Travel Agent</h2>
+                <h2 className="text-xl font-semibold mb-2">Meet Maya, Your AI Travel Agent</h2>
                 <p className="text-muted-foreground mb-6">
-                  Start a new conversation to get personalized travel assistance
+                  Start a conversation to get personalized travel assistance, step by step
                 </p>
                 <Button onClick={createNewConversation} className="bg-primary hover:bg-primary/90">
                   <Plus className="h-4 w-4 mr-2" />
-                  Start New Chat
+                  Start Chatting with Maya
                 </Button>
               </div>
             ) : (
@@ -357,7 +358,7 @@ const AIChat = () => {
                           ? 'bg-primary text-primary-foreground' 
                           : 'bg-secondary text-secondary-foreground'
                       }>
-                        {message.role === 'user' ? 'U' : 'AI'}
+                        {message.role === 'user' ? 'U' : 'M'}
                       </AvatarFallback>
                     </Avatar>
                     <div className={`rounded-lg px-4 py-3 ${
@@ -379,12 +380,12 @@ const AIChat = () => {
                 <div className="flex items-start space-x-3">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-secondary text-secondary-foreground">
-                      AI
+                      M
                     </AvatarFallback>
                   </Avatar>
                   <div className="bg-muted rounded-lg px-4 py-3 flex items-center space-x-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">Thinking...</span>
+                    <span className="text-sm text-muted-foreground">Maya is thinking...</span>
                   </div>
                 </div>
               </div>
@@ -402,7 +403,7 @@ const AIChat = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask me anything about travel..."
+                  placeholder="Tell Maya about your travel plans..."
                   className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background"
                   disabled={isLoading}
                 />

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -38,7 +39,7 @@ const AITravelAgent = () => {
       setMessages([{
         id: 'welcome',
         role: 'assistant',
-        content: "👋 Hello! I'm your AI Travel Agent. I'm here to help you with:\n\n✈️ **Flight bookings & recommendations**\n🏨 **Hotel searches & reservations**\n📄 **Visa requirements & applications**\n🗺️ **Travel itinerary planning**\n📋 **Custom travel forms**\n\nWhat can I help you with today?",
+        content: "Hi there! 👋 I'm Maya, your personal AI Travel Agent.\n\nI'm here to help make your travel dreams come true! Whether you need help with visas, finding the perfect destination, booking flights, or planning your entire trip - I've got you covered.\n\nWhat's bringing you here today? Are you planning a new adventure? ✈️",
         timestamp: new Date()
       }]);
     }
@@ -128,7 +129,7 @@ const AITravelAgent = () => {
           <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
             <CardTitle className="flex items-center space-x-2">
               <Sparkles className="h-5 w-5" />
-              <span>AI Travel Agent</span>
+              <span>Maya - AI Travel Agent</span>
             </CardTitle>
           </CardHeader>
           
@@ -149,7 +150,7 @@ const AITravelAgent = () => {
                           ? 'bg-blue-100 text-blue-600' 
                           : 'bg-purple-100 text-purple-600'
                       }>
-                        {message.role === 'user' ? 'U' : 'AI'}
+                        {message.role === 'user' ? 'U' : 'M'}
                       </AvatarFallback>
                     </Avatar>
                     <div className={`rounded-lg px-3 py-2 text-sm ${
@@ -168,12 +169,12 @@ const AITravelAgent = () => {
                   <div className="flex items-center space-x-2">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-purple-100 text-purple-600">
-                        AI
+                        M
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-gray-100 rounded-lg px-3 py-2 flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-gray-600">Thinking...</span>
+                      <span className="text-sm text-gray-600">Maya is thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -190,7 +191,7 @@ const AITravelAgent = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask me anything about travel..."
+                  placeholder="Tell Maya about your travel plans..."
                   className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   disabled={isLoading}
                 />
