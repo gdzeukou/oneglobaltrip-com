@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
@@ -78,21 +77,6 @@ const SchengenShortStay = () => {
           }}
         />
         <div className="absolute inset-0 bg-black/10" />
-        <div className="max-w-7xl mx-auto px-4 text-center relative z-10 text-gray-900">
-          <h1 className="text-5xl font-bold mb-6">Get Your Schengen Visa or Your Money Back!</h1>
-          <p className="text-xl mb-4 max-w-3xl mx-auto font-semibold">
-            🎯 100% Success Rate Guarantee • Visit 27 European Countries with ONE Visa
-          </p>
-          <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
-            Fast-track your European adventure! Our expert visa specialists ensure your application gets approved or you get your money back. No hidden fees, no surprises - just results!
-          </p>
-          <Button 
-            onClick={scrollToForm}
-            className="bg-white hover:bg-gray-100 text-blue-700 font-bold text-lg px-8 py-3"
-          >
-            Start Schengen Visa Application
-          </Button>
-        </div>
       </section>
 
       <TrustBadges />
