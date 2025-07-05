@@ -244,29 +244,50 @@ const AIChat = () => {
     } catch (error) {
       console.error('Error sending message to Maya:', error);
       
-      // Enhanced error handling with user-friendly messages
+      // Enhanced error handling with specific, actionable error messages
       let errorMessage = "I'm experiencing some technical difficulties right now. ";
+      let specificGuidance = "";
       
-      if (error.message?.includes('network') || error.message?.includes('fetch')) {
-        errorMessage += "Please check your connection and try again.";
-      } else if (error.message?.includes('timeout')) {
-        errorMessage += "The request is taking longer than expected. Please try again.";
+      // Check if the error has a specific message from the backend
+      if (error.message) {
+        if (error.message.includes('OpenAI API key')) {
+          errorMessage = "🔑 **API Configuration Issue**: My OpenAI connection isn't properly configured.";
+          specificGuidance = "\n\n**What you can do:**\n• Contact support to resolve this configuration issue\n• This is a technical problem that needs admin attention";
+        } else if (error.message.includes('Amadeus')) {
+          errorMessage = "✈️ **Flight Search Issue**: I'm having trouble connecting to the flight booking service.";
+          specificGuidance = "\n\n**What you can do:**\n• Try your search again in a few minutes\n• Double-check your city names and dates\n• Contact support if this continues";
+        } else if (error.message.includes('conversation')) {
+          errorMessage = "💬 **Chat System Issue**: I'm having trouble saving our conversation.";
+          specificGuidance = "\n\n**What you can do:**\n• Try refreshing the page\n• Your message was received, but might not be saved\n• Contact support if this persists";
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorMessage = "🌐 **Connection Issue**: There seems to be a network connectivity problem.";
+          specificGuidance = "\n\n**What you can do:**\n• Check your internet connection\n• Try again in a moment\n• Refresh the page if needed";
+        } else if (error.message.includes('timeout')) {
+          errorMessage = "⏱️ **Response Timeout**: My response is taking longer than expected.";
+          specificGuidance = "\n\n**What you can do:**\n• Try a simpler question first\n• Wait a moment and try again\n• Your request might be processing - please be patient";
+        } else {
+          // Use the specific error message if available
+          errorMessage = `⚠️ **Issue Detected**: ${error.message}`;
+          specificGuidance = "\n\n**What you can do:**\n• Try rephrasing your question\n• Check that all required information is provided\n• Contact support if this continues";
+        }
       } else {
-        errorMessage += "Please try rephrasing your question or contact support if the issue persists.";
+        // Generic fallback with actionable guidance
+        errorMessage = "I encountered an unexpected issue while processing your request.";
+        specificGuidance = "\n\n**What you can do:**\n• Try rephrasing your question\n• Start with a simpler request (like 'search flights from NYC to LA')\n• Refresh the page if needed\n• Contact support if problems persist";
       }
       
       const errorAssistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `❌ ${errorMessage}\n\n💡 **In the meantime, you can:**\n• Try a simpler question\n• Check our FAQ section\n• Contact our support team\n\nI'm here to help once the issue is resolved! 🛠️`,
+        content: `${errorMessage}${specificGuidance}\n\n💡 **I'm here to help with:**\n• Flight searches and bookings\n• Travel planning and advice\n• Visa requirements and guidance\n• Step-by-step travel assistance\n\nOnce this issue is resolved, I'll be ready to help you plan your perfect trip! 🌟`,
         timestamp: new Date()
       };
       
       setMessages(prev => [...prev, errorAssistantMessage]);
       
       toast({
-        title: "Connection Issue",
-        description: "Maya is having trouble connecting. Please try again.",
+        title: "Maya Connection Issue",
+        description: "I'm having trouble processing your request. Please see my message for details.",
         variant: "destructive"
       });
     } finally {

@@ -2,12 +2,21 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.0';
 
-// API keys from environment
+// API keys from environment with enhanced debugging
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY') || Deno.env.get('SUPAGENT_OPENAI') || Deno.env.get('Supagent Openai');
 const amadeusApiKey = Deno.env.get('AMADEUS_API_KEY');
 const amadeusApiSecret = Deno.env.get('AMADEUS_API_SECRET');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+// Enhanced API key validation and logging
+console.log('🔧 Maya AI Travel Agent - Initializing...');
+console.log('📋 API Key Status Check:');
+console.log('  ✅ OpenAI API Key:', openAIApiKey ? `Found (${openAIApiKey.substring(0, 8)}...)` : '❌ Missing');
+console.log('  ✅ Amadeus API Key:', amadeusApiKey ? `Found (${amadeusApiKey.substring(0, 8)}...)` : '❌ Missing');
+console.log('  ✅ Amadeus Secret:', amadeusApiSecret ? `Found (${amadeusApiSecret.substring(0, 8)}...)` : '❌ Missing');
+console.log('  ✅ Supabase URL:', supabaseUrl ? 'Found' : '❌ Missing');
+console.log('  ✅ Supabase Service Key:', supabaseServiceKey ? 'Found' : '❌ Missing');
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -951,7 +960,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: openAIMessages,
         temperature: 0.7,
         max_tokens: 1500,
@@ -1088,7 +1097,7 @@ serve(async (req) => {
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  model: 'gpt-4o',
+                  model: 'gpt-4o-mini',
                   messages: [
                     { role: 'system', content: TRAVEL_AGENT_SYSTEM_PROMPT },
                     ...openAIMessages.slice(1),
@@ -1177,11 +1186,58 @@ Is there anything else I can help you with for your upcoming trip? I can assist 
     });
 
   } catch (error) {
-    console.error('Error in ai-travel-agent function:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Internal server error',
-      details: error.message 
-    }), {
+    console.error('🚨 CRITICAL ERROR in ai-travel-agent function:', error);
+    console.error('📊 Error Details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Provide specific error responses based on error type
+    let errorResponse = {
+      error: 'Service temporarily unavailable',
+      userMessage: 'I apologize, but I\'m experiencing some technical difficulties right now.',
+      details: error.message,
+      suggestions: [
+        'Try your request again in a moment',
+        'Make sure your message is clear and complete',
+        'Contact support if the issue persists'
+      ]
+    };
+    
+    // Customize error message based on error type
+    if (error.message?.includes('OpenAI')) {
+      errorResponse.userMessage = '🔑 My AI processing system is temporarily unavailable. This appears to be an API configuration issue.';
+      errorResponse.suggestions = [
+        'This is a technical issue that needs admin attention',
+        'Please contact support to report this problem',
+        'Try again in a few minutes'
+      ];
+    } else if (error.message?.includes('Amadeus')) {
+      errorResponse.userMessage = '✈️ My flight search service is temporarily offline. I cannot search for flights right now.';
+      errorResponse.suggestions = [
+        'Try again in a few minutes',
+        'Double-check your city names and travel dates',
+        'Contact support if this continues'
+      ];
+    } else if (error.message?.includes('supabase') || error.message?.includes('database')) {
+      errorResponse.userMessage = '💾 I\'m having trouble accessing my conversation memory. Your messages might not be saved.';
+      errorResponse.suggestions = [
+        'Try refreshing the page',
+        'Your conversation data should be preserved',
+        'Contact support if problems persist'
+      ];
+    } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+      errorResponse.userMessage = '🌐 I\'m experiencing network connectivity issues right now.';
+      errorResponse.suggestions = [
+        'Check your internet connection',
+        'Try again in a moment',
+        'Refresh the page if needed'
+      ];
+    }
+    
+    return new Response(JSON.stringify(errorResponse), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
