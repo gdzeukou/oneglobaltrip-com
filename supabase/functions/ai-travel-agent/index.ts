@@ -503,21 +503,70 @@ async function searchTravelInsurance(destination: string, travelDates: string, t
   return mockInsurance;
 }
 
-// Fixed booking function with proper field mapping
+// Enhanced booking function with comprehensive validation and error handling
 async function createFlightBooking(flightSelection: any, passengers: any[], userId: string, conversationId: string, supabase: any): Promise<any> {
   try {
-    console.log('🎫 Creating flight booking:', { flightSelection, passengers, userId });
+    console.log('🎫 Creating flight booking with validation:', { 
+      flightSelection: {
+        id: flightSelection.id,
+        departure: flightSelection.departure,
+        arrival: flightSelection.arrival,
+        price: flightSelection.price
+      }, 
+      passengerCount: passengers.length, 
+      userId 
+    });
+    
+    // Comprehensive data validation and extraction
+    const departureDate = flightSelection.departure?.date || 
+                         flightSelection.departureDate || 
+                         new Date().toISOString().split('T')[0];
+    
+    const returnDate = flightSelection.arrival?.date || 
+                      flightSelection.returnDate || 
+                      null;
+    
+    const originAirport = flightSelection.origin || 
+                         flightSelection.departure?.airport || 
+                         'ORIGIN';
+    
+    const destinationAirport = flightSelection.destination || 
+                              flightSelection.arrival?.airport || 
+                              'DEST';
+    
+    const flightPrice = flightSelection.price || 0;
+    const currency = flightSelection.currency || 'USD';
+    const airline = flightSelection.airline || 'Unknown Airline';
+    const flightNumber = flightSelection.flightNumber || flightSelection.id || 'UNKNOWN';
+    
+    // Validate required fields
+    if (!departureDate) {
+      throw new Error('Missing departure date - cannot create booking');
+    }
+    
+    if (!originAirport || !destinationAirport) {
+      throw new Error('Missing airport information - cannot create booking');
+    }
+    
+    if (passengers.length === 0) {
+      throw new Error('No passengers provided - cannot create booking');
+    }
+    
+    console.log('✅ Validation passed:', {
+      departureDate,
+      returnDate,
+      originAirport,
+      destinationAirport,
+      flightPrice,
+      currency,
+      airline,
+      flightNumber
+    });
     
     // Generate booking reference
     const bookingReference = `OGT-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`;
     
-    // Ensure we have proper airport codes
-    const originAirport = flightSelection.origin || flightSelection.departure?.airport || 'UNKNOWN';
-    const destinationAirport = flightSelection.destination || flightSelection.arrival?.airport || 'UNKNOWN';
-    
-    console.log('🛫 Airport mapping:', { originAirport, destinationAirport });
-    
-    // Create booking record with proper field mapping
+    // Create booking record with validated data
     const { data: booking, error: bookingError } = await supabase
       .from('flight_bookings')
       .insert({
@@ -526,37 +575,62 @@ async function createFlightBooking(flightSelection: any, passengers: any[], user
         booking_reference: bookingReference,
         origin_airport: originAirport,
         destination_airport: destinationAirport,
-        departure_date: flightSelection.departureDate,
-        return_date: flightSelection.returnDate || null,
+        departure_date: departureDate,
+        return_date: returnDate,
         passenger_count: passengers.length,
-        total_amount: flightSelection.price * passengers.length,
-        currency: flightSelection.currency || 'USD',
-        airline_code: flightSelection.airline,
-        flight_numbers: [flightSelection.flightNumber || 'Unknown'],
-        flight_data: flightSelection,
+        total_amount: flightPrice * passengers.length,
+        currency: currency,
+        airline_code: airline,
+        flight_numbers: [flightNumber],
+        flight_data: {
+          ...flightSelection,
+          validatedData: {
+            departureDate,
+            returnDate,
+            originAirport,
+            destinationAirport,
+            flightPrice,
+            currency,
+            airline,
+            flightNumber
+          }
+        },
         booking_status: 'confirmed'
       })
       .select()
       .single();
 
     if (bookingError) {
-      console.error('❌ Booking creation error:', bookingError);
-      throw bookingError;
+      console.error('❌ Database booking error:', bookingError);
+      throw new Error(`Database error: ${bookingError.message}`);
     }
 
-    console.log('✅ Flight booking created successfully:', booking.id);
+    console.log('✅ Flight booking created successfully:', {
+      bookingId: booking.id,
+      bookingReference,
+      totalAmount: flightPrice * passengers.length
+    });
+    
     return {
       success: true,
       bookingReference,
-      totalAmount: flightSelection.price * passengers.length,
-      currency: flightSelection.currency || 'USD',
-      status: 'confirmed'
+      totalAmount: flightPrice * passengers.length,
+      currency: currency,
+      status: 'confirmed',
+      details: {
+        departureDate,
+        returnDate,
+        originAirport,
+        destinationAirport,
+        airline,
+        flightNumber
+      }
     };
   } catch (error) {
-    console.error('❌ Error creating booking:', error);
+    console.error('❌ Comprehensive booking error:', error);
     return {
       success: false,
-      error: error.message || 'Failed to create booking'
+      error: error.message || 'Failed to create booking due to data validation issues'
     };
   }
 }
