@@ -607,6 +607,10 @@ async function searchTravelInsurance(destination: string, travelDates: string, t
 // Enhanced booking function with comprehensive validation and error handling
 async function createFlightBooking(flightSelection: any, passengers: any[], userId: string, conversationId: string, supabase: any): Promise<any> {
   try {
+    // Handle development users the same way as conversations - set to null if mock ID
+    const isDevelopmentUser = userId === '00000000-0000-0000-0000-000000000000';
+    const actualUserId = isDevelopmentUser ? null : userId;
+    
     console.log('🎫 Creating flight booking with validation:', { 
       flightSelection: {
         id: flightSelection.id,
@@ -615,7 +619,9 @@ async function createFlightBooking(flightSelection: any, passengers: any[], user
         price: flightSelection.price
       }, 
       passengerCount: passengers.length, 
-      userId 
+      userId,
+      actualUserId,
+      isDevelopmentUser
     });
     
     // Comprehensive data validation and extraction
@@ -667,11 +673,11 @@ async function createFlightBooking(flightSelection: any, passengers: any[], user
     // Generate booking reference
     const bookingReference = `OGT-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000000).toString().padStart(6, '0')}`;
     
-    // Create booking record with validated data
+    // Create booking record with validated data (use actualUserId for development scenarios)
     const { data: booking, error: bookingError } = await supabase
       .from('flight_bookings')
       .insert({
-        user_id: userId,
+        user_id: actualUserId,
         conversation_id: conversationId,
         booking_reference: bookingReference,
         origin_airport: originAirport,

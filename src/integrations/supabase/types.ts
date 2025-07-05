@@ -607,7 +607,7 @@ export type Database = {
           square_order_id: string | null
           total_amount: number
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           airline_code?: string | null
@@ -629,7 +629,7 @@ export type Database = {
           square_order_id?: string | null
           total_amount: number
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           airline_code?: string | null
@@ -651,7 +651,7 @@ export type Database = {
           square_order_id?: string | null
           total_amount?: number
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
