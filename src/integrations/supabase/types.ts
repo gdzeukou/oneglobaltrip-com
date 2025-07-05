@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      application_travelers: {
+        Row: {
+          application_id: string
+          contact_info: Json | null
+          created_at: string
+          id: string
+          passport_info: Json | null
+          personal_info: Json | null
+          traveler_number: number
+          traveler_reference: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          contact_info?: Json | null
+          created_at?: string
+          id?: string
+          passport_info?: Json | null
+          personal_info?: Json | null
+          traveler_number: number
+          traveler_reference: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          contact_info?: Json | null
+          created_at?: string
+          id?: string
+          passport_info?: Json | null
+          personal_info?: Json | null
+          traveler_number?: number
+          traveler_reference?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "application_travelers_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "visa_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           appointment_type: string | null
@@ -258,53 +302,68 @@ export type Database = {
       }
       bookings: {
         Row: {
+          booking_category: string | null
           booking_date: string | null
           booking_details: Json | null
           booking_reference: string | null
           booking_type: string
+          cancellation_policy: Json | null
           check_in_date: string | null
           check_out_date: string | null
+          confirmation_code: string | null
           cost: number | null
           created_at: string
           description: string | null
           id: string
           location: string | null
           provider: string | null
+          special_requirements: string | null
           status: string | null
+          supplier_reference: string | null
           trip_id: string
           user_id: string
         }
         Insert: {
+          booking_category?: string | null
           booking_date?: string | null
           booking_details?: Json | null
           booking_reference?: string | null
           booking_type: string
+          cancellation_policy?: Json | null
           check_in_date?: string | null
           check_out_date?: string | null
+          confirmation_code?: string | null
           cost?: number | null
           created_at?: string
           description?: string | null
           id?: string
           location?: string | null
           provider?: string | null
+          special_requirements?: string | null
           status?: string | null
+          supplier_reference?: string | null
           trip_id: string
           user_id: string
         }
         Update: {
+          booking_category?: string | null
           booking_date?: string | null
           booking_details?: Json | null
           booking_reference?: string | null
           booking_type?: string
+          cancellation_policy?: Json | null
           check_in_date?: string | null
           check_out_date?: string | null
+          confirmation_code?: string | null
           cost?: number | null
           created_at?: string
           description?: string | null
           id?: string
           location?: string | null
           provider?: string | null
+          special_requirements?: string | null
           status?: string | null
+          supplier_reference?: string | null
           trip_id?: string
           user_id?: string
         }
@@ -1188,54 +1247,111 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preferences: {
+        Row: {
+          created_at: string
+          emergency_contacts: Json | null
+          id: string
+          notification_settings: Json | null
+          privacy_settings: Json | null
+          travel_preferences: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          emergency_contacts?: Json | null
+          id?: string
+          notification_settings?: Json | null
+          privacy_settings?: Json | null
+          travel_preferences?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          emergency_contacts?: Json | null
+          id?: string
+          notification_settings?: Json | null
+          privacy_settings?: Json | null
+          travel_preferences?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       visa_applications: {
         Row: {
           application_data: Json | null
+          application_number: number | null
           application_reference: string | null
+          application_reference_new: string | null
+          auto_saved_at: string | null
+          country_code: string | null
           created_at: string | null
           departure_date: string | null
           email: string
           id: string
+          is_draft: boolean | null
           last_updated: string | null
           name: string
           nationality: string
+          progress_data: Json | null
+          progress_step: number | null
           return_date: string | null
           status: string | null
           submitted_at: string | null
+          total_travelers: number | null
           travel_purpose: string | null
           user_id: string | null
           visa_type: string
         }
         Insert: {
           application_data?: Json | null
+          application_number?: number | null
           application_reference?: string | null
+          application_reference_new?: string | null
+          auto_saved_at?: string | null
+          country_code?: string | null
           created_at?: string | null
           departure_date?: string | null
           email: string
           id?: string
+          is_draft?: boolean | null
           last_updated?: string | null
           name: string
           nationality: string
+          progress_data?: Json | null
+          progress_step?: number | null
           return_date?: string | null
           status?: string | null
           submitted_at?: string | null
+          total_travelers?: number | null
           travel_purpose?: string | null
           user_id?: string | null
           visa_type: string
         }
         Update: {
           application_data?: Json | null
+          application_number?: number | null
           application_reference?: string | null
+          application_reference_new?: string | null
+          auto_saved_at?: string | null
+          country_code?: string | null
           created_at?: string | null
           departure_date?: string | null
           email?: string
           id?: string
+          is_draft?: boolean | null
           last_updated?: string | null
           name?: string
           nationality?: string
+          progress_data?: Json | null
+          progress_step?: number | null
           return_date?: string | null
           status?: string | null
           submitted_at?: string | null
+          total_travelers?: number | null
           travel_purpose?: string | null
           user_id?: string | null
           visa_type?: string
@@ -1268,12 +1384,20 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      generate_application_reference: {
+        Args: { p_country_code: string; p_application_date?: string }
+        Returns: string
+      }
       generate_booking_reference: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
       generate_otp_code: {
         Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_traveler_reference: {
+        Args: { p_base_reference: string; p_traveler_number: number }
         Returns: string
       }
       is_admin: {

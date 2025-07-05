@@ -7,10 +7,11 @@ import { supabase } from '@/integrations/supabase/client';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AITravelAgent from '@/components/ai/AITravelAgent';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import MyApplications from '@/components/dashboard/MyApplications';
+import MyTrips from '@/components/dashboard/MyTrips';
+import MyProfile from '@/components/dashboard/MyProfile';
+import MySettings from '@/components/dashboard/MySettings';
 import { 
   User, 
   FileText, 
@@ -147,205 +148,33 @@ const Dashboard = () => {
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Welcome back, {user?.user_metadata?.first_name || 'User'}!
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Manage your visa applications and track their progress
-              </p>
-            </div>
-            <Button
-              onClick={handleNewApplication}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold flex items-center space-x-2"
-            >
-              <Plus className="h-4 w-4" />
-              <span>New Application</span>
-            </Button>
-          </div>
-        </div>
+        <Tabs defaultValue="applications" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="applications">My Applications</TabsTrigger>
+            <TabsTrigger value="trips">My Trips</TabsTrigger>
+            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
+          </TabsList>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <FileText className="h-5 w-5 text-blue-600" />
-                <div>
-                  <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-                  <p className="text-sm text-gray-600">Total Applications</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <TabsContent value="applications">
+            <MyApplications />
+          </TabsContent>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <Clock className="h-5 w-5 text-yellow-600" />
-                <div>
-                  <p className="text-2xl font-bold text-gray-900">{stats.inReview}</p>
-                  <p className="text-sm text-gray-600">In Review</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <TabsContent value="trips">
+            <MyTrips />
+          </TabsContent>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
-                <div>
-                  <p className="text-2xl font-bold text-gray-900">{stats.approved}</p>
-                  <p className="text-sm text-gray-600">Approved</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <TabsContent value="profile">
+            <MyProfile />
+          </TabsContent>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <Sparkles className="h-5 w-5 text-purple-600" />
-                <div>
-                  <p className="text-2xl font-bold text-gray-900">{stats.successRate}%</p>
-                  <p className="text-sm text-gray-600">Success Rate</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Sparkles className="h-5 w-5 text-blue-600" />
-              <span>Quick Actions</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button
-                variant="outline"
-                className="h-auto p-4 flex flex-col items-center space-y-2"
-                onClick={handleNewApplication}
-              >
-                <Plus className="h-6 w-6 text-blue-600" />
-                <span className="font-medium">Start New Application</span>
-                <span className="text-xs text-gray-500">AI-powered form</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="h-auto p-4 flex flex-col items-center space-y-2"
-                onClick={() => navigate('/visas')}
-              >
-                <MapPin className="h-6 w-6 text-green-600" />
-                <span className="font-medium">Check Requirements</span>
-                <span className="text-xs text-gray-500">Visa eligibility</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="h-auto p-4 flex flex-col items-center space-y-2"
-              >
-                <Calendar className="h-6 w-6 text-purple-600" />
-                <span className="font-medium">Book Biometrics</span>
-                <span className="text-xs text-gray-500">Schedule appointment</span>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Applications List */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Your Applications</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {applications.length > 0 ? (
-              <div className="space-y-4">
-                {applications.map((app) => (
-                  <div
-                    key={app.id}
-                    className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-3">
-                        <MapPin className="h-5 w-5 text-blue-600" />
-                        <div>
-                          <h3 className="font-semibold text-gray-900">
-                            {app.visa_type} - {app.travel_purpose}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            Ref: {app.application_reference}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Created: {new Date(app.created_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge className={getStatusColor(app.status)}>
-                        <div className="flex items-center space-x-1">
-                          {getStatusIcon(app.status)}
-                          <span className="capitalize">{app.status.replace('-', ' ')}</span>
-                        </div>
-                      </Badge>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-                        <span>Progress</span>
-                        <span>{getProgress(app)}%</span>
-                      </div>
-                      <Progress value={getProgress(app)} className="h-2" />
-                    </div>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-600">
-                      <div className="space-y-1">
-                        {app.departure_date && (
-                          <span>Departure: {new Date(app.departure_date).toLocaleDateString()}</span>
-                        )}
-                        {app.return_date && (
-                          <span className="block">Return: {new Date(app.return_date).toLocaleDateString()}</span>
-                        )}
-                      </div>
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No applications yet
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Start your first visa application with our intelligent form
-                </p>
-                <Button
-                  onClick={handleNewApplication}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Start Application
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          <TabsContent value="settings">
+            <MySettings />
+          </TabsContent>
+        </Tabs>
       </div>
 
-      {/* AI Travel Agent */}
       <AITravelAgent />
-
       <Footer />
     </div>
   );
