@@ -8,7 +8,7 @@ import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
 import SchengenRequirements from '@/components/visa/SchengenRequirements';
 import SchengenApplicationOptions from '@/components/visa/schengen/SchengenApplicationOptions';
 import MayaVisaAssistant from '@/components/visa/schengen/MayaVisaAssistant';
-import SchengenVisaForm from '@/components/visa/schengen/SchengenVisaForm';
+import EnhancedSchengenForm from '@/components/visa/enhanced/EnhancedSchengenForm';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
@@ -171,9 +171,9 @@ const SchengenShortStay = () => {
         />
       )}
 
-      {/* Traditional Visa Form Modal */}
+      {/* Enhanced Visa Form Modal */}
       {showTraditionalForm && (
-        <SchengenVisaForm
+        <EnhancedSchengenForm
           onClose={() => setShowTraditionalForm(false)}
           onSubmit={handleTraditionalSubmit}
         />
