@@ -30,7 +30,7 @@ const AIChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const { toast } = useToast();
 
   const scrollToBottom = () => {
@@ -187,6 +187,8 @@ const AIChat = () => {
     console.log('📝 User state:', user ? `User ID: ${user.id}` : 'No user');
     console.log('💬 Input message:', inputMessage.substring(0, 50) + '...');
     console.log('🗣️ Current conversation ID:', currentConversationId);
+    console.log('🔧 Maya Test: Complete user object:', user);
+    console.log('🔧 Maya Test: Auth session:', session);
 
     if (!inputMessage.trim()) {
       console.log('❌ Empty message, aborting');
@@ -233,8 +235,10 @@ const AIChat = () => {
     console.log('🔧 Function parameters:', {
       message: currentInputMessage.substring(0, 50) + '...',
       conversationId,
-      userId: user.id
+      userId: user.id,
+      fullUrl: 'https://sdeyqojklszwarfrputz.supabase.co/functions/v1/ai-travel-agent'
     });
+    console.log('🔧 Maya Test: About to call supabase.functions.invoke...');
 
     try {
       const startTime = Date.now();
