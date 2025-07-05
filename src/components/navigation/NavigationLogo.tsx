@@ -9,7 +9,11 @@ const NavigationLogo = ({ textColor }: NavigationLogoProps) => {
   return (
     <div className="flex items-center">
       <Link to="/" className="flex-shrink-0 flex items-center">
-        <span className={`text-xl font-bold gradient-text-primary ${textColor || ''}`}>One Global Trip</span>
+        <img 
+          src="/lovable-uploads/5b4dba4f-5616-4525-b9e3-909656247d46.png" 
+          alt="One Global Trip" 
+          className="h-10 w-auto"
+        />
       </Link>
     </div>
   );

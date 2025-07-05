@@ -26,10 +26,13 @@ const Navigation = () => {
             <div className="flex-shrink-0">
               <Link 
                 to="/" 
-                className="flex items-center space-x-2 text-2xl font-bold bg-gradient-to-r from-deep-blue-900 to-deep-blue-700 bg-clip-text text-transparent hover:from-deep-blue-800 hover:to-deep-blue-600 transition-all duration-200"
+                className="flex items-center transition-all duration-200 hover:opacity-80"
               >
-                <Plane className="h-8 w-8 text-deep-blue-900" />
-                <span>OneGlobalTrip</span>
+                <img 
+                  src="/lovable-uploads/5b4dba4f-5616-4525-b9e3-909656247d46.png" 
+                  alt="One Global Trip" 
+                  className="h-12 w-auto"
+                />
               </Link>
             </div>
 
