@@ -78,7 +78,7 @@ const SchengenShortStay = () => {
           }}
         />
         <div className="absolute inset-0 bg-black/10" />
-        <div className="max-w-7xl mx-auto px-4 text-center relative z-10 text-white">
+        <div className="max-w-7xl mx-auto px-4 text-center relative z-10 text-gray-900">
           <h1 className="text-5xl font-bold mb-6">Get Your Schengen Visa or Your Money Back!</h1>
           <p className="text-xl mb-4 max-w-3xl mx-auto font-semibold">
             🎯 100% Success Rate Guarantee • Visit 27 European Countries with ONE Visa
