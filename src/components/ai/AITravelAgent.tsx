@@ -63,13 +63,44 @@ const AITravelAgent = () => {
     console.log('📝 Message:', inputMessage);
     console.log('👤 User ID:', user.id);
     console.log('💬 Conversation ID:', conversationId);
+    
+    // Test direct function URL accessibility first
+    const functionUrl = `https://sdeyqojklszwarfrputz.supabase.co/functions/v1/ai-travel-agent`;
+    console.log('🌐 Testing function accessibility at:', functionUrl);
+    
+    try {
+      const testResponse = await fetch(functionUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkZXlxb2prbHN6d2FyZnJwdXR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA0ODMyOTQsImV4cCI6MjA2NjA1OTI5NH0.YYRvAUAJF0Ow95sZ1OM21fDXz8FHtpUAMrmqlsbZf8o`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: 'test',
+          conversationId: null,
+          userId: user.id
+        })
+      });
+      console.log('🧪 Direct function test response:', testResponse.status, testResponse.statusText);
+      
+      // If the test response was successful, log the body as well
+      if (testResponse.ok) {
+        const testData = await testResponse.json();
+        console.log('🧪 Direct function test data:', testData);
+      } else {
+        const testError = await testResponse.text();
+        console.log('🧪 Direct function test error:', testError);
+      }
+    } catch (testError) {
+      console.error('🚨 Direct function test failed:', testError);
+    }
 
     let retryCount = 0;
     const maxRetries = 3;
     
     while (retryCount < maxRetries) {
       try {
-        console.log(`📡 Maya: Attempt ${retryCount + 1}/${maxRetries} - Calling edge function`);
+        console.log(`📡 Maya: Attempt ${retryCount + 1}/${maxRetries} - Calling edge function via Supabase client`);
         
         const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
           body: {
@@ -82,6 +113,7 @@ const AITravelAgent = () => {
         console.log('📨 Maya: Edge function response received');
         console.log('✅ Data:', data);
         console.log('❌ Error:', error);
+        console.log('🔍 Full response details:', { data, error });
 
         if (error) {
           console.error('🚨 Maya: Edge function error:', error);
