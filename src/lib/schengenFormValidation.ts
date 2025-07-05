@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isPassportValidForTravel, addMonths } from '@/utils/dateHelpers';
 
 // Comprehensive validation schema for Schengen Visa Application Form
 export const schengenFormSchema = z.object({
@@ -64,13 +65,7 @@ export const schengenFormSchema = z.object({
   path: ['returnDate']
 }).refine((data) => {
   // Passport validity check (must be valid for at least 3 months beyond departure)
-  const expiryDate = new Date(data.passportExpiryDate);
-  const depDate = new Date(data.departureDate);
-  
-  // Proper 3-month calculation avoiding setMonth() issues
-  const threeMonthsAfterDep = new Date(depDate.getFullYear(), depDate.getMonth() + 3, depDate.getDate());
-  
-  return expiryDate >= threeMonthsAfterDep;
+  return isPassportValidForTravel(data.passportExpiryDate, data.departureDate);
 }, {
   message: 'Passport must be valid for at least 3 months beyond your departure date',
   path: ['passportExpiryDate']
@@ -149,8 +144,7 @@ export const validatePassportValidity = (issueDate: string, expiryDate: string, 
   }
   
   // Check if passport is valid for at least 3 months beyond departure
-  // Proper 3-month calculation avoiding setMonth() issues
-  const threeMonthsAfterDeparture = new Date(departure.getFullYear(), departure.getMonth() + 3, departure.getDate());
+  const threeMonthsAfterDeparture = addMonths(departure, 3);
   
   if (expiry < threeMonthsAfterDeparture) {
     errors.push('Passport must be valid for at least 3 months beyond your departure date');
