@@ -700,6 +700,47 @@ const CREATE_FLIGHT_BOOKING_FUNCTION = {
   }
 };
 
+// Retrieve stored flight data for booking
+async function getStoredFlightData(conversationId: string, flightId: string) {
+  console.log('Retrieving stored flight data for:', { conversationId, flightId });
+  
+  try {
+    const { data: storedMessages } = await supabase
+      .from('chat_messages')
+      .select('metadata')
+      .eq('conversation_id', conversationId)
+      .eq('content', 'FLIGHT_SEARCH_RESULTS')
+      .order('created_at', { ascending: false })
+      .limit(5); // Get recent search results
+    
+    if (!storedMessages || storedMessages.length === 0) {
+      console.log('No stored flight data found');
+      return null;
+    }
+    
+    // Look for the specific flight in stored results
+    for (const message of storedMessages) {
+      const metadata = message.metadata;
+      if (metadata?.searchResults) {
+        const flight = metadata.searchResults.find((f: any) => f.id === flightId);
+        if (flight) {
+          console.log('Found matching flight in stored data:', flight.id);
+          return {
+            flight: flight,
+            searchContext: metadata.searchContext
+          };
+        }
+      }
+    }
+    
+    console.log('Flight ID not found in stored data:', flightId);
+    return null;
+  } catch (error) {
+    console.error('Error retrieving stored flight data:', error);
+    return null;
+  }
+}
+
 // Enhanced flight booking function with proper validation
 async function createFlightBooking(flightSelection: any, passengers: any[], userId: string, conversationId: string) {
   console.log('Creating flight booking with data:', { 
@@ -923,8 +964,12 @@ serve(async (req) => {
       if (conversationError) {
         console.error('Error creating conversation:', conversationError);
         return new Response(
-          JSON.stringify({ error: 'Failed to create conversation', details: conversationError.message }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ 
+            response: '💾 **Conversation Setup Issue**: I\'m having trouble setting up our conversation right now.\n\n**What this means:**\n• Your messages might not be saved properly\n• This could be a temporary database issue\n\n**What you can do:**\n• Try refreshing the page and starting again\n• Your previous conversations should still be available\n• Contact support if this keeps happening\n\nI\'m here to help once this is resolved! 💬',
+            error: true,
+            errorType: 'conversation_setup'
+          }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -1002,10 +1047,12 @@ serve(async (req) => {
       
       return new Response(
         JSON.stringify({ 
-          error: errorMessage,
-          details: `Status: ${response.status}, Error: ${errorData}`
+          response: '🔑 **AI Processing Issue**: My AI system is having trouble right now.\n\n**What this means:**\n• There might be an API connectivity problem\n• My AI processing service could be temporarily overloaded\n• This could be a temporary authentication issue\n\n**What you can do:**\n• Try your request again in a moment\n• Make sure your message is clear and complete\n• Contact support if this continues happening\n\nI\'m working to get back online as quickly as possible! 🚀',
+          error: true,
+          errorType: 'ai_processing_error',
+          details: `${errorMessage}: ${errorData}`
         }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -1015,8 +1062,12 @@ serve(async (req) => {
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
       console.error('Invalid OpenAI response format:', data);
       return new Response(
-        JSON.stringify({ error: 'Invalid response from OpenAI API' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          response: '🤖 **AI Response Issue**: I received an unexpected response from my AI system.\n\n**What this means:**\n• My AI processing returned incomplete data\n• This could be a temporary system issue\n• The response format was not as expected\n\n**What you can do:**\n• Try sending your message again\n• Rephrase your request if needed\n• Contact support if this keeps happening\n\nI\'m working to resolve this right away! 🔧',
+          error: true,
+          errorType: 'ai_response_format_error'
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -1093,6 +1144,27 @@ serve(async (req) => {
                 returnDate: parsedReturnDate
               };
               
+              // Store flight data in conversation for later booking use
+              if (flights && flights.length > 0) {
+                console.log('Storing flight search results for conversation:', currentConversationId);
+                const { error: storageError } = await supabase
+                  .from('chat_messages')
+                  .insert({
+                    conversation_id: currentConversationId,
+                    role: 'system',
+                    content: 'FLIGHT_SEARCH_RESULTS',
+                    metadata: {
+                      searchResults: flights.slice(0, 10), // Store up to 10 flights
+                      searchContext: searchContext,
+                      timestamp: new Date().toISOString()
+                    }
+                  });
+                
+                if (storageError) {
+                  console.error('Error storing flight results:', storageError);
+                }
+              }
+              
               const flightResults = formatFlightResults(
                 flights, 
                 functionArgs.origin, 
@@ -1140,8 +1212,31 @@ serve(async (req) => {
           const functionArgs = JSON.parse(functionCall.arguments);
           console.log('Creating booking with parameters:', functionArgs);
           
+          let flightSelectionData = functionArgs.flightSelection;
+          
+          // If flight selection is incomplete, try to retrieve stored flight data
+          if (flightSelectionData && flightSelectionData.flightId && (!flightSelectionData.departureDate || !flightSelectionData.price)) {
+            console.log('Flight selection incomplete, retrieving stored data for:', flightSelectionData.flightId);
+            const storedData = await getStoredFlightData(currentConversationId, flightSelectionData.flightId);
+            
+            if (storedData) {
+              console.log('Enhancing flight selection with stored data');
+              flightSelectionData = transformFlightDataForBooking(storedData.flight, storedData.searchContext);
+              
+              // Merge with any additional data provided by the user
+              flightSelectionData = {
+                ...flightSelectionData,
+                ...functionArgs.flightSelection // Override with user-provided data
+              };
+            } else {
+              console.error('Could not retrieve stored flight data for booking');
+              aiResponse = `I couldn't find the flight data for booking. This might happen if:\n\n• The flight search was done in a different conversation\n• Too much time has passed since the search\n• There was an issue storing the flight data\n\nCould you please search for flights again and then select the one you'd like to book? I'll make sure to preserve all the flight details for booking this time! ✈️`;
+              continue;
+            }
+          }
+          
           const bookingResult = await createFlightBooking(
-            functionArgs.flightSelection,
+            flightSelectionData,
             functionArgs.passengers,
             userId,
             currentConversationId
