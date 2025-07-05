@@ -51,9 +51,23 @@ const SchengenShortStay = () => {
     <div className="min-h-screen bg-white">
       <Navigation />
       
-      <section className="pt-24 pb-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold mb-6">Schengen Short-Stay Visa</h1>
+      <section className="pt-24 pb-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+        <div className="absolute top-10 right-10 opacity-20">
+          <img 
+            src="/lovable-uploads/099bd39c-ef31-44b8-b27d-0d5e98410d95.png"
+            alt="European Union Flag"
+            className="w-64 h-48 object-cover rounded-lg"
+          />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
+          <div className="flex items-center justify-center mb-6">
+            <img 
+              src="/lovable-uploads/099bd39c-ef31-44b8-b27d-0d5e98410d95.png"
+              alt="European Union Flag"
+              className="w-20 h-15 object-cover rounded-lg mr-4"
+            />
+            <h1 className="text-5xl font-bold">Schengen Short-Stay Visa</h1>
+          </div>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
             Visit 27 European countries with one visa. Explore historic cities, diverse cultures, and stunning landscapes across Europe.
           </p>
