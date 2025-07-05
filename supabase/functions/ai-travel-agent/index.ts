@@ -109,18 +109,40 @@ serve(async (req) => {
       console.log('Created new conversation:', currentConversationId);
     }
 
-    // Store user message
-    console.log('Storing user message in conversation:', currentConversationId);
-    const { error: messageError } = await supabase
-      .from('chat_messages')
-      .insert({
-        conversation_id: currentConversationId,
-        role: 'user',
-        content: message
-      });
+    // Store user message with retry logic
+    console.log('📝 Storing user message in conversation:', currentConversationId);
+    let userMessageStored = false;
+    let messageRetryCount = 0;
+    const maxMessageRetries = 3;
 
-    if (messageError) {
-      console.error('Error storing user message:', messageError);
+    while (!userMessageStored && messageRetryCount < maxMessageRetries) {
+      messageRetryCount++;
+      console.log(`💾 Attempting to store user message - Attempt ${messageRetryCount}/${maxMessageRetries}`);
+      
+      const { error: messageError } = await supabase
+        .from('chat_messages')
+        .insert({
+          conversation_id: currentConversationId,
+          role: 'user',
+          content: message
+        });
+
+      if (!messageError) {
+        userMessageStored = true;
+        console.log('✅ User message stored successfully');
+      } else {
+        console.error(`❌ Error storing user message (attempt ${messageRetryCount}):`, messageError);
+        if (messageRetryCount < maxMessageRetries) {
+          const delay = 1000 * messageRetryCount; // 1s, 2s, 3s delays
+          console.log(`⏳ Retrying user message storage in ${delay}ms`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+
+    if (!userMessageStored) {
+      console.error('🚨 Failed to store user message after all retries - Continuing without storage');
+      // Continue processing even if message storage fails
     }
 
     // Get conversation history for context
@@ -139,50 +161,129 @@ serve(async (req) => {
       ...(messages || []).map(msg => ({ role: msg.role, content: msg.content }))
     ];
 
-    console.log('Calling OpenAI API with enhanced function calling support');
+    console.log('🚀 Starting OpenAI API call with enhanced function calling support');
 
-    // Get AI response from OpenAI with function calling
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: openAIMessages,
-        temperature: 0.7,
-        max_tokens: 1500,
-        functions: [FLIGHT_SEARCH_FUNCTION, CREATE_FLIGHT_BOOKING_FUNCTION],
-        function_call: "auto"
-      }),
-    });
+    // Enhanced OpenAI API call with retry logic and comprehensive error handling
+    let response: Response;
+    let attemptCount = 0;
+    const maxRetries = 3;
+    const baseDelay = 1000; // 1 second
 
-    console.log('OpenAI API response status:', response.status);
-
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error('OpenAI API error:', {
-        status: response.status,
-        statusText: response.statusText,
-        errorData: errorData
-      });
+    while (attemptCount < maxRetries) {
+      attemptCount++;
+      console.log(`📡 OpenAI API attempt ${attemptCount}/${maxRetries}`);
       
-      let errorMessage = 'Failed to get AI response';
-      if (response.status === 401) {
-        errorMessage = 'Invalid OpenAI API key';
-      } else if (response.status === 429) {
-        errorMessage = 'OpenAI API rate limit exceeded or quota reached';
-      } else if (response.status === 400) {
-        errorMessage = 'Invalid request to OpenAI API';
+      try {
+        response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${openAIApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: openAIMessages,
+            temperature: 0.7,
+            max_tokens: 1500,
+            functions: [FLIGHT_SEARCH_FUNCTION, CREATE_FLIGHT_BOOKING_FUNCTION],
+            function_call: "auto"
+          }),
+        });
+
+        console.log(`✅ OpenAI API response received - Status: ${response.status}, Attempt: ${attemptCount}`);
+
+        if (response.ok) {
+          break; // Success, exit retry loop
+        }
+
+        // Handle specific error codes
+        if (response.status === 401) {
+          console.error('❌ OpenAI API Authentication Error - Invalid API key');
+          return new Response(
+            JSON.stringify({ 
+              response: '🔑 **Authentication Issue**: My OpenAI API configuration has an authentication problem.\n\n**What this means:**\n• The API key may be invalid or expired\n• This requires administrator attention\n\n**What you can do:**\n• Contact support immediately to report this authentication issue\n• This is a critical configuration problem\n• I cannot process AI requests until this is resolved\n\nI apologize for this technical issue! 🛠️',
+              error: true,
+              errorType: 'openai_auth_error'
+            }),
+            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        if (response.status === 429) {
+          // Rate limit - implement exponential backoff
+          const retryAfter = response.headers.get('retry-after');
+          const delay = retryAfter ? parseInt(retryAfter) * 1000 : baseDelay * Math.pow(2, attemptCount - 1);
+          console.log(`⏳ Rate limited. Waiting ${delay}ms before retry ${attemptCount}/${maxRetries}`);
+          
+          if (attemptCount < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          } else {
+            console.error('❌ OpenAI API Rate limit exceeded - Max retries reached');
+            return new Response(
+              JSON.stringify({ 
+                response: '⏱️ **High Demand**: My AI system is experiencing very high demand right now.\n\n**What this means:**\n• OpenAI\'s servers are temporarily overloaded\n• This is a temporary issue that usually resolves quickly\n\n**What you can do:**\n• Please wait 30-60 seconds and try your request again\n• Your request is important and will be processed once traffic decreases\n• Contact support if this persists for more than 5 minutes\n\nThank you for your patience! I\'ll be back to full speed soon! 🚀',
+                error: true,
+                errorType: 'openai_rate_limit'
+              }),
+              { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+        }
+
+        if (response.status >= 500) {
+          // Server error - retry with exponential backoff
+          const delay = baseDelay * Math.pow(2, attemptCount - 1);
+          console.log(`🔄 Server error ${response.status}. Retrying in ${delay}ms. Attempt ${attemptCount}/${maxRetries}`);
+          
+          if (attemptCount < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          }
+        }
+
+        // For other errors, don't retry
+        const errorData = await response.text();
+        console.error(`❌ OpenAI API Error - Status: ${response.status}, Response: ${errorData}`);
+        break;
+
+      } catch (fetchError) {
+        console.error(`🌐 Network error on attempt ${attemptCount}:`, fetchError);
+        
+        if (attemptCount < maxRetries) {
+          const delay = baseDelay * Math.pow(2, attemptCount - 1);
+          console.log(`⏳ Network error. Retrying in ${delay}ms`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          continue;
+        } else {
+          console.error('❌ Network error - Max retries reached');
+          return new Response(
+            JSON.stringify({ 
+              response: '🌐 **Connection Issue**: I\'m having trouble connecting to my AI processing service.\n\n**What this means:**\n• There might be a temporary network connectivity issue\n• My AI servers might be temporarily unreachable\n\n**What you can do:**\n• Check your internet connection\n• Try your request again in a moment\n• Contact support if this continues\n\nI\'m working to restore full connectivity! 📡',
+              error: true,
+              errorType: 'network_error'
+            }),
+            { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
       }
+    }
+
+    // If we've exhausted retries and still don't have a successful response
+    if (!response || !response.ok) {
+      const errorData = response ? await response.text() : 'No response received';
+      console.error('❌ OpenAI API failed after all retries:', {
+        status: response?.status,
+        statusText: response?.statusText,
+        errorData: errorData,
+        attempts: attemptCount
+      });
       
       return new Response(
         JSON.stringify({ 
-          response: '🔑 **AI Processing Issue**: My AI system is having trouble right now.\n\n**What this means:**\n• There might be an API connectivity problem\n• My AI processing service could be temporarily overloaded\n• This could be a temporary authentication issue\n\n**What you can do:**\n• Try your request again in a moment\n• Make sure your message is clear and complete\n• Contact support if this continues happening\n\nI\'m working to get back online as quickly as possible! 🚀',
+          response: '🔧 **AI Processing Unavailable**: I\'ve tried multiple times but can\'t reach my AI processing service.\n\n**What this means:**\n• My AI system is temporarily having technical difficulties\n• I\'ve attempted several retries but the issue persists\n• This might be a broader service outage\n\n**What you can do:**\n• Please try again in a few minutes\n• Check if there are any known service outages\n• Contact support if this continues for more than 10 minutes\n\nI really want to help you, and I\'m working hard to get back online! 💪',
           error: true,
-          errorType: 'ai_processing_error',
-          details: `${errorMessage}: ${errorData}`
+          errorType: 'ai_service_unavailable'
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -424,17 +525,40 @@ Is there anything else I can help you with for your upcoming trip? I can assist 
 
     console.log('AI response generated, length:', aiResponse?.length || 0);
 
-    // Store AI response
-    const { error: aiMessageError } = await supabase
-      .from('chat_messages')
-      .insert({
-        conversation_id: currentConversationId,
-        role: 'assistant',
-        content: aiResponse
-      });
+    // Store AI response with retry logic
+    console.log('💾 Storing AI response in conversation:', currentConversationId);
+    let aiResponseStored = false;
+    let aiRetryCount = 0;
+    const maxAiRetries = 3;
 
-    if (aiMessageError) {
-      console.error('Error storing AI message:', aiMessageError);
+    while (!aiResponseStored && aiRetryCount < maxAiRetries) {
+      aiRetryCount++;
+      console.log(`📝 Attempting to store AI response - Attempt ${aiRetryCount}/${maxAiRetries}`);
+      
+      const { error: aiMessageError } = await supabase
+        .from('chat_messages')
+        .insert({
+          conversation_id: currentConversationId,
+          role: 'assistant',
+          content: aiResponse
+        });
+
+      if (!aiMessageError) {
+        aiResponseStored = true;
+        console.log('✅ AI response stored successfully');
+      } else {
+        console.error(`❌ Error storing AI response (attempt ${aiRetryCount}):`, aiMessageError);
+        if (aiRetryCount < maxAiRetries) {
+          const delay = 1000 * aiRetryCount; // 1s, 2s, 3s delays
+          console.log(`⏳ Retrying AI response storage in ${delay}ms`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+
+    if (!aiResponseStored) {
+      console.error('🚨 Failed to store AI response after all retries - Returning response anyway');
+      // Still return the response to user even if storage fails
     }
 
     console.log('Function completed successfully');
@@ -451,59 +575,132 @@ Is there anything else I can help you with for your upcoming trip? I can assist 
       message: error.message,
       stack: error.stack,
       name: error.name,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      userId: userId || 'unknown',
+      conversationId: currentConversationId || 'none'
     });
     
-    // Provide specific error responses based on error type
+    // Enhanced error categorization and user-friendly responses
     let errorResponse = {
       error: 'Service temporarily unavailable',
-      userMessage: 'I apologize, but I\'m experiencing some technical difficulties right now.',
+      userMessage: '🛠️ **Technical Difficulties**: I\'m experiencing some technical challenges right now, but I\'m here to help!',
       details: error.message,
       suggestions: [
         'Try your request again in a moment',
         'Make sure your message is clear and complete',
         'Contact support if the issue persists'
-      ]
+      ],
+      errorType: 'general_system_error'
     };
     
-    // Customize error message based on error type
-    if (error.message?.includes('OpenAI')) {
-      errorResponse.userMessage = '🔑 My AI processing system is temporarily unavailable. This appears to be an API configuration issue.';
+    // Categorize and customize error messages based on error type
+    if (error.message?.toLowerCase().includes('openai') || error.message?.toLowerCase().includes('gpt')) {
+      errorResponse.userMessage = '🤖 **AI Processing Issue**: My AI brain is having a temporary hiccup!';
+      errorResponse.errorType = 'openai_error';
       errorResponse.suggestions = [
-        'This is a technical issue that needs admin attention',
-        'Please contact support to report this problem',
-        'Try again in a few minutes'
+        'This is usually a temporary issue with my AI processing',
+        'Please try your request again in 30-60 seconds',
+        'Contact support if this continues for more than 5 minutes'
       ];
-    } else if (error.message?.includes('Amadeus')) {
-      errorResponse.userMessage = '✈️ My flight search service is temporarily offline. I cannot search for flights right now.';
+    } else if (error.message?.toLowerCase().includes('rapidapi') || error.message?.toLowerCase().includes('flight') || error.message?.toLowerCase().includes('hotel')) {
+      errorResponse.userMessage = '✈️ **Travel Search Unavailable**: My flight and hotel search services are temporarily offline.';
+      errorResponse.errorType = 'travel_api_error';
       errorResponse.suggestions = [
-        'Try again in a few minutes',
-        'Double-check your city names and travel dates',
-        'Contact support if this continues'
+        'I can still help with travel advice and planning questions',
+        'Try flight searches again in a few minutes',
+        'Contact support if travel searches remain unavailable'
       ];
-    } else if (error.message?.includes('supabase') || error.message?.includes('database')) {
-      errorResponse.userMessage = '💾 I\'m having trouble accessing my conversation memory. Your messages might not be saved.';
+    } else if (error.message?.toLowerCase().includes('supabase') || error.message?.toLowerCase().includes('database') || error.message?.toLowerCase().includes('conversation')) {
+      errorResponse.userMessage = '💾 **Memory Issue**: I\'m having trouble with my conversation memory right now.';
+      errorType = 'database_error';
       errorResponse.suggestions = [
-        'Try refreshing the page',
-        'Your conversation data should be preserved',
-        'Contact support if problems persist'
+        'Your messages are still being processed, just not saved',
+        'Try refreshing the page and starting a new conversation',
+        'Your previous conversations should still be available'
       ];
-    } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
-      errorResponse.userMessage = '🌐 I\'m experiencing network connectivity issues right now.';
+    } else if (error.message?.toLowerCase().includes('network') || error.message?.toLowerCase().includes('fetch') || error.message?.toLowerCase().includes('connection')) {
+      errorResponse.userMessage = '🌐 **Connection Problem**: I\'m having trouble connecting to my services right now.';
+      errorResponse.errorType = 'network_error';
       errorResponse.suggestions = [
         'Check your internet connection',
-        'Try again in a moment',
+        'Try again in a moment - this is usually temporary',
         'Refresh the page if needed'
+      ];
+    } else if (error.message?.toLowerCase().includes('timeout')) {
+      errorResponse.userMessage = '⏱️ **Response Timeout**: Your request is taking longer than expected to process.';
+      errorResponse.errorType = 'timeout_error';
+      errorResponse.suggestions = [
+        'This usually happens during high traffic periods',
+        'Try a simpler request first to test connectivity',
+        'Wait 30 seconds and try again'
+      ];
+    } else if (error.message?.toLowerCase().includes('rate') || error.message?.toLowerCase().includes('limit')) {
+      errorResponse.userMessage = '🚦 **High Traffic**: I\'m experiencing very high demand right now.';
+      errorResponse.errorType = 'rate_limit_error';
+      errorResponse.suggestions = [
+        'Please wait 1-2 minutes before trying again',
+        'This helps ensure quality service for everyone',
+        'Your request is important and will be processed soon'
       ];
     }
     
+    // Create a comprehensive, helpful response that always provides value
+    const finalResponse = `${errorResponse.userMessage}
+
+**What happened:**
+• I encountered a technical issue while processing your request
+• My systems are designed to recover quickly from these situations
+• Your request was received and I\'m working to resolve this
+
+**What you can try:**
+${errorResponse.suggestions.map(s => `• ${s}`).join('\n')}
+
+**I\'m still here to help:**
+• Ask me travel questions and I\'ll do my best to answer
+• Try breaking complex requests into smaller parts
+• I can provide travel advice even when some services are offline
+
+**Need immediate assistance?**
+• Contact our support team if this continues
+• Report this error with timestamp: ${new Date().toISOString()}
+• Reference error type: ${errorResponse.errorType}
+
+Don\'t worry - I\'m working hard to get back to full functionality! Let\'s try something else while I recover. 💪`;
+
+    // Attempt to store error information in conversation (with fallback handling)
+    if (currentConversationId) {
+      try {
+        console.log('💾 Attempting to store error response in conversation');
+        await supabase
+          .from('chat_messages')
+          .insert({
+            conversation_id: currentConversationId,
+            role: 'assistant',
+            content: finalResponse,
+            metadata: {
+              error: true,
+              errorType: errorResponse.errorType,
+              errorDetails: error.message,
+              timestamp: new Date().toISOString()
+            }
+          });
+        console.log('✅ Error response stored in conversation');
+      } catch (storageError) {
+        console.error('⚠️ Could not store error response in conversation:', storageError);
+        // Continue anyway - don't let storage failures prevent user response
+      }
+    }
+    
+    // ALWAYS return a response - this is our ultimate fallback
     return new Response(JSON.stringify({
-      response: errorResponse.userMessage + '\n\n**What you can try:**\n' + errorResponse.suggestions.map(s => `• ${s}`).join('\n') + '\n\nI\'m here to help once this issue is resolved! 🛠️',
+      response: finalResponse,
       error: true,
-      errorType: 'system_error',
-      details: errorResponse.details
+      errorType: errorResponse.errorType,
+      conversationId: currentConversationId,
+      timestamp: new Date().toISOString(),
+      canRetry: true
     }), {
-      status: 200,
+      status: 200, // Always return 200 so the frontend can display the message
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
