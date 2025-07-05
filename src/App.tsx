@@ -92,45 +92,46 @@ function App() {
                 <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/concierge" element={<Concierge />} />
-                <Route path="/long-stay-visas" element={<LongStayVisas />} />
-                <Route path="/short-stay-visas" element={<ShortStayVisas />} />
+                <Route path="/visas/long-stay" element={<LongStayVisas />} />
+                <Route path="/visas/short-stay" element={<ShortStayVisas />} />
                 <Route path="/intelligent-application" element={<IntelligentApplication />} />
                 
                 {/* Maya Auth Gate - shown to unauthenticated users trying to access Maya */}
                 <Route path="/maya-auth" element={<MayaAuthGate />} />
                 
                 {/* Visa country routes */}
-                <Route path="/visa/schengen-short-stay" element={<SchengenShortStay />} />
+                <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
                 <Route path="/schengen-visa" element={<SchengenShortStayLanding />} />
-                <Route path="/visa/france-short-stay" element={<FranceShortStay />} />
-                <Route path="/visa/germany-short-stay" element={<GermanyShortStay />} />
-                <Route path="/visa/italy-short-stay" element={<ItalyShortStay />} />
-                <Route path="/visa/netherlands-short-stay" element={<NetherlandsShortStay />} />
-                <Route path="/visa/denmark-short-stay" element={<DenmarkShortStay />} />
-                <Route path="/visa/sweden-short-stay" element={<SwedenShortStay />} />
-                <Route path="/visa/greece-short-stay" element={<GreeceShortStay />} />
-                <Route path="/visa/uk-short-stay" element={<UKShortStay />} />
-                <Route path="/visa/uk-5-year-short-stay" element={<UK5YearShortStay />} />
-                <Route path="/visa/uae-short-stay" element={<UAEShortStay />} />
-                <Route path="/visa/canada-short-stay" element={<CanadaShortStay />} />
-                <Route path="/visa/india-short-stay" element={<IndiaShortStay />} />
-                <Route path="/visa/brazil-short-stay" element={<BrazilShortStay />} />
-                <Route path="/visa/nigeria-short-stay" element={<NigeriaShortStay />} />
+                <Route path="/visas/short-stay/france" element={<FranceShortStay />} />
+                <Route path="/visas/short-stay/germany" element={<GermanyShortStay />} />
+                <Route path="/visas/short-stay/italy" element={<ItalyShortStay />} />
+                <Route path="/visas/short-stay/netherlands" element={<NetherlandsShortStay />} />
+                <Route path="/visas/short-stay/denmark" element={<DenmarkShortStay />} />
+                <Route path="/visas/short-stay/sweden" element={<SwedenShortStay />} />
+                <Route path="/visas/short-stay/greece" element={<GreeceShortStay />} />
+                <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
+                <Route path="/visas/short-stay/uk-5-year" element={<UK5YearShortStay />} />
+                <Route path="/visas/short-stay/uae" element={<UAEShortStay />} />
+                <Route path="/visas/short-stay/canada" element={<CanadaShortStay />} />
+                <Route path="/visas/short-stay/india" element={<IndiaShortStay />} />
+                <Route path="/visas/short-stay/brazil" element={<BrazilShortStay />} />
+                <Route path="/visas/short-stay/nigeria" element={<NigeriaShortStay />} />
                 
                 {/* Long stay visa routes */}
-                <Route path="/visa/france-long-stay" element={<FranceLongStay />} />
-                <Route path="/visa/germany-long-stay" element={<GermanyLongStay />} />
-                <Route path="/visa/denmark-long-stay" element={<DenmarkLongStay />} />
-                <Route path="/visa/finland-long-stay" element={<FinlandLongStay />} />
-                <Route path="/visa/portugal-long-stay" element={<PortugalLongStay />} />
-                <Route path="/visa/switzerland-long-stay" element={<SwitzerlandLongStay />} />
-                <Route path="/visa/norway-long-stay" element={<NorwayLongStay />} />
-                <Route path="/visa/nigeria-long-stay" element={<NigeriaLongStay />} />
+                <Route path="/visas/long-stay/france" element={<FranceLongStay />} />
+                <Route path="/visas/long-stay/germany" element={<GermanyLongStay />} />
+                <Route path="/visas/long-stay/denmark" element={<DenmarkLongStay />} />
+                <Route path="/visas/long-stay/finland" element={<FinlandLongStay />} />
+                <Route path="/visas/long-stay/portugal" element={<PortugalLongStay />} />
+                <Route path="/visas/long-stay/switzerland" element={<SwitzerlandLongStay />} />
+                <Route path="/visas/long-stay/norway" element={<NorwayLongStay />} />
+                <Route path="/visas/long-stay/nigeria" element={<NigeriaLongStay />} />
                 
                 {/* Package specific routes */}
                 <Route path="/package/paris-explore" element={<ParisExplorePackage />} />
                 
                 {/* Pricing routes */}
+                <Route path="/visas/pricing" element={<VisaPricingPage />} />
                 <Route path="/visa-pricing" element={<VisaPricingPage />} />
 
                 {/* Protected routes */}
