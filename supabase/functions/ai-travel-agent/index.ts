@@ -15,8 +15,11 @@ import {
   CREATE_FLIGHT_BOOKING_FUNCTION 
 } from './lib/openai-config.ts';
 
-// API keys from environment with enhanced debugging
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY') || Deno.env.get('SUPAGENT_OPENAI') || Deno.env.get('Supagent Openai');
+// API keys from environment with enhanced debugging - Maya Recovery Plan Step 1
+const openAIApiKey = Deno.env.get('OPENAI_API_KEY') || 
+                     Deno.env.get('SUPAGENT_OPENAI') || 
+                     Deno.env.get('Supagent OpenAi') ||
+                     Deno.env.get('Supagent_OpenAi');
 const rapidApiKey = Deno.env.get('RAPIDAPI_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
