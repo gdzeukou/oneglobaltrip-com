@@ -317,11 +317,113 @@ function getCityIATA(cityName: string): { code: string; suggestions?: string[] }
   };
 }
 
-// Enhanced search functions
+// Enhanced search functions with Amadeus API integration
 async function searchFlights(origin: string, destination: string, departureDate: string, returnDate: string | null, adults: number): Promise<any[]> {
-  console.log('🔍 Searching flights:', { origin, destination, departureDate, returnDate, adults });
+  console.log('🔍 Searching flights with Amadeus API:', { origin, destination, departureDate, returnDate, adults });
   
-  // Mock flight data with proper structure
+  const amadeusApiKey = Deno.env.get('AMADEUS_API_KEY');
+  const amadeusApiSecret = Deno.env.get('AMADEUS_API_SECRET');
+
+  // Use real Amadeus API if credentials are available
+  if (amadeusApiKey && amadeusApiSecret) {
+    try {
+      console.log('🎯 Using Amadeus API for real flight search');
+      
+      // Get Amadeus access token
+      const tokenResponse = await fetch('https://test.api.amadeus.com/v1/security/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `grant_type=client_credentials&client_id=${amadeusApiKey}&client_secret=${amadeusApiSecret}`
+      });
+      
+      if (!tokenResponse.ok) {
+        throw new Error(`Amadeus token error: ${tokenResponse.status}`);
+      }
+      
+      const tokenData = await tokenResponse.json();
+      const accessToken = tokenData.access_token;
+      
+      // Search flights with Amadeus API
+      const params = new URLSearchParams({
+        originLocationCode: origin,
+        destinationLocationCode: destination,
+        departureDate,
+        adults: adults.toString(),
+        max: '10',
+        currencyCode: 'USD'
+      });
+      
+      if (returnDate) {
+        params.append('returnDate', returnDate);
+      }
+      
+      const searchResponse = await fetch(`https://test.api.amadeus.com/v2/shopping/flight-offers?${params}`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!searchResponse.ok) {
+        throw new Error(`Amadeus search error: ${searchResponse.status}`);
+      }
+      
+      const searchData = await searchResponse.json();
+      const amadeusFlights = searchData.data || [];
+      
+      console.log(`🎯 Amadeus API returned ${amadeusFlights.length} flights`);
+      
+      // Transform Amadeus data to our format
+      const transformedFlights = amadeusFlights.map((offer: any, index: number) => {
+        const outbound = offer.itineraries[0].segments[0];
+        const inbound = offer.itineraries[1]?.segments[0];
+        
+        return {
+          id: `AM-${offer.id}`,
+          airline: outbound.carrierCode,
+          flightNumber: `${outbound.carrierCode}${outbound.number}`,
+          price: parseFloat(offer.price.total),
+          currency: offer.price.currency,
+          departure: {
+            airport: outbound.departure.iataCode,
+            time: new Date(outbound.departure.at).toLocaleTimeString('en-US', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: false 
+            }),
+            date: departureDate
+          },
+          arrival: {
+            airport: outbound.arrival.iataCode,
+            time: new Date(outbound.arrival.at).toLocaleTimeString('en-US', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: false 
+            }),
+            date: departureDate
+          },
+          duration: outbound.duration.replace('PT', '').toLowerCase(),
+          stops: offer.itineraries[0].segments.length - 1,
+          origin: origin,
+          destination: destination,
+          amadeusData: offer // Store original data for booking
+        };
+      });
+      
+      console.log('✅ Real flight search completed:', transformedFlights.length, 'flights found');
+      return transformedFlights;
+      
+    } catch (error) {
+      console.error('❌ Amadeus API error, falling back to mock data:', error);
+      // Fall through to mock data
+    }
+  } else {
+    console.log('⚠️ Amadeus API credentials not configured, using mock data');
+  }
+  
+  // Fallback to mock data if API fails or credentials missing
   const mockFlights = [
     {
       id: 'FL001',
@@ -341,7 +443,6 @@ async function searchFlights(origin: string, destination: string, departureDate:
       },
       duration: '6h 30m',
       stops: 0,
-      // Add origin/destination at root level for booking
       origin: origin,
       destination: destination
     },
@@ -368,7 +469,7 @@ async function searchFlights(origin: string, destination: string, departureDate:
     }
   ];
   
-  console.log('✅ Flight search completed:', mockFlights.length, 'flights found');
+  console.log('✅ Mock flight search completed:', mockFlights.length, 'flights found');
   return mockFlights;
 }
 
