@@ -183,15 +183,38 @@ const AIChat = () => {
   };
 
   const sendMessage = async () => {
-    if (!inputMessage.trim() || !user) return;
+    console.log('🚀 Maya: Starting sendMessage process');
+    console.log('📝 User state:', user ? `User ID: ${user.id}` : 'No user');
+    console.log('💬 Input message:', inputMessage.substring(0, 50) + '...');
+    console.log('🗣️ Current conversation ID:', currentConversationId);
+
+    if (!inputMessage.trim()) {
+      console.log('❌ Empty message, aborting');
+      return;
+    }
+
+    if (!user) {
+      console.log('❌ No user found, aborting');
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to chat with Maya.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     let conversationId = currentConversationId;
 
     // Create new conversation if none selected
     if (!conversationId) {
+      console.log('📝 Creating new conversation...');
       await createNewConversation();
       conversationId = currentConversationId;
-      if (!conversationId) return;
+      if (!conversationId) {
+        console.log('❌ Failed to create conversation, aborting');
+        return;
+      }
+      console.log('✅ Conversation created:', conversationId);
     }
 
     const userMessage: Message = {
@@ -202,23 +225,50 @@ const AIChat = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInputMessage = inputMessage;
     setInputMessage('');
     setIsLoading(true);
 
+    console.log('📡 Calling Maya Edge Function...');
+    console.log('🔧 Function parameters:', {
+      message: currentInputMessage.substring(0, 50) + '...',
+      conversationId,
+      userId: user.id
+    });
+
     try {
+      const startTime = Date.now();
+      
       const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
         body: {
-          message: inputMessage,
+          message: currentInputMessage,
           conversationId,
           userId: user.id
         }
       });
 
+      const endTime = Date.now();
+      console.log(`⏱️ Function call completed in ${endTime - startTime}ms`);
+      console.log('📨 Maya response data:', data);
+      console.log('❌ Maya response error:', error);
+
       if (error) {
-        console.error('Maya function error:', error);
+        console.error('🚨 Maya function error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         throw new Error(error.message || 'Failed to get response from Maya');
       }
 
+      if (!data) {
+        console.error('🚨 No data received from Maya');
+        throw new Error('No response data received from Maya');
+      }
+
+      console.log('✅ Maya responded successfully:', data.response?.substring(0, 100) + '...');
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -242,14 +292,19 @@ const AIChat = () => {
         );
       }
     } catch (error) {
-      console.error('Error sending message to Maya:', error);
+      console.error('🚨 Maya Error - Full details:', {
+        error,
+        message: error?.message,
+        stack: error?.stack,
+        name: error?.name
+      });
       
       // Enhanced error handling with specific, actionable error messages
       let errorMessage = "I'm experiencing some technical difficulties right now. ";
       let specificGuidance = "";
       
       // Check if the error has a specific message from the backend
-      if (error.message) {
+      if (error?.message) {
         if (error.message.includes('OpenAI API key')) {
           errorMessage = "🔑 **API Configuration Issue**: My OpenAI connection isn't properly configured.";
           specificGuidance = "\n\n**What you can do:**\n• Contact support to resolve this configuration issue\n• This is a technical problem that needs admin attention";
