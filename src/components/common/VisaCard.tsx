@@ -54,7 +54,7 @@ const VisaCard = ({
           />
           {showEuroFlag && (
             <img 
-              src="/lovable-uploads/f3204ae7-860b-465a-bfd2-4d6fb469bd17.png"
+              src="/lovable-uploads/892be4cb-b414-4a4a-bdc0-484393a58d3d.png"
               alt="European Union Flag"
               className="absolute inset-0 w-full h-full object-cover opacity-80"
             />
