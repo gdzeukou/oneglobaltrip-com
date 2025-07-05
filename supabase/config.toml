@@ -86,7 +86,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.ai-travel-agent]
-verify_jwt = true
+verify_jwt = false
 
 [functions.visa-eligibility-ai]
 verify_jwt = false
