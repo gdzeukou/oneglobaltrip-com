@@ -77,11 +77,14 @@ const SchengenShortStay = () => {
             backgroundImage: `url('/lovable-uploads/099bd39c-ef31-44b8-b27d-0d5e98410d95.png')`
           }}
         />
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/10" />
         <div className="max-w-7xl mx-auto px-4 text-center relative z-10 text-white">
-          <h1 className="text-5xl font-bold mb-6">Schengen Short-Stay Visa</h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Visit 27 European countries with one visa. Explore historic cities, diverse cultures, and stunning landscapes across Europe.
+          <h1 className="text-5xl font-bold mb-6">Get Your Schengen Visa or Your Money Back!</h1>
+          <p className="text-xl mb-4 max-w-3xl mx-auto font-semibold">
+            🎯 100% Success Rate Guarantee • Visit 27 European Countries with ONE Visa
+          </p>
+          <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
+            Fast-track your European adventure! Our expert visa specialists ensure your application gets approved or you get your money back. No hidden fees, no surprises - just results!
           </p>
           <Button 
             onClick={scrollToForm}
