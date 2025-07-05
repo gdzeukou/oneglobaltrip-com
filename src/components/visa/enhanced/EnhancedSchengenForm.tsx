@@ -30,8 +30,10 @@ import SmartDatePicker from './SmartDatePicker';
 import { cn } from '@/lib/utils';
 
 interface EnhancedSchengenFormProps {
-  onClose: () => void;
-  onSubmit: (formData: SchengenFormData) => void;
+  onClose?: () => void;
+  onSubmit?: (formData: SchengenFormData) => void;
+  onCancel?: () => void;
+  fullPage?: boolean;
   applicationId?: string; // For continuing existing applications
 }
 
@@ -66,7 +68,13 @@ const steps = [
   }
 ];
 
-const EnhancedSchengenForm = ({ onClose, onSubmit, applicationId }: EnhancedSchengenFormProps) => {
+const EnhancedSchengenForm = ({ 
+  onClose, 
+  onSubmit, 
+  onCancel, 
+  fullPage = false, 
+  applicationId 
+}: EnhancedSchengenFormProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
@@ -205,7 +213,9 @@ const EnhancedSchengenForm = ({ onClose, onSubmit, applicationId }: EnhancedSche
       }
 
       // Submit the final application
-      await onSubmit(data);
+      if (onSubmit) {
+        await onSubmit(data);
+      }
       
       toast({
         title: 'Application Submitted',
@@ -761,23 +771,33 @@ const EnhancedSchengenForm = ({ onClose, onSubmit, applicationId }: EnhancedSche
     }
   };
 
+  const containerClass = fullPage 
+    ? "w-full" 
+    : "fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4";
+  
+  const formClass = fullPage 
+    ? "w-full" 
+    : "w-full max-w-2xl max-h-[90vh] overflow-hidden";
+
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-border">
-          <div className="flex items-center space-x-2">
-            <FileText className="h-5 w-5 text-accent" />
-            <CardTitle className="text-xl">Schengen Visa Application</CardTitle>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className="h-8 w-8 p-0"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </CardHeader>
+    <div className={containerClass}>
+      <Card className={formClass}>
+        {!fullPage && (
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 border-b border-border">
+            <div className="flex items-center space-x-2">
+              <FileText className="h-5 w-5 text-accent" />
+              <CardTitle className="text-xl">Schengen Visa Application</CardTitle>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="h-8 w-8 p-0"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+        )}
 
         {/* Progress Indicator */}
         <div className="px-6 py-4">
@@ -823,14 +843,14 @@ const EnhancedSchengenForm = ({ onClose, onSubmit, applicationId }: EnhancedSche
           </div>
         </div>
 
-        <CardContent className="flex-1 overflow-y-auto p-6">
+        <CardContent className={fullPage ? "p-0" : "flex-1 overflow-y-auto p-6"}>
           <form onSubmit={handleSubmit(handleFormSubmit)}>
             {renderStepContent()}
           </form>
         </CardContent>
 
-        {/* Sticky Navigation */}
-        <div className="sticky bottom-0 bg-card border-t border-border px-6 py-4">
+        {/* Navigation */}
+        <div className={fullPage ? "sticky bottom-0 bg-card border-t border-border px-6 py-4 mt-8" : "sticky bottom-0 bg-card border-t border-border px-6 py-4"}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               {autoSaveEnabled && (
@@ -880,6 +900,17 @@ const EnhancedSchengenForm = ({ onClose, onSubmit, applicationId }: EnhancedSche
                       <span>Submit Application</span>
                     </>
                   )}
+                </Button>
+              )}
+              
+              {(onCancel || onClose) && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={onCancel || onClose}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  Cancel
                 </Button>
               )}
             </div>

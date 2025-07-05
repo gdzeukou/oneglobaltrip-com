@@ -33,6 +33,7 @@ import IntelligentApplication from "./pages/IntelligentApplication";
 
 // Visa country pages
 import SchengenShortStay from "./pages/visa-countries/SchengenShortStay";
+import SchengenShortStayApply from "./pages/visa-countries/SchengenShortStayApply";
 import SchengenShortStayLanding from "./pages/visa-countries/SchengenShortStayLanding";
 import FranceShortStay from "./pages/visa-countries/FranceShortStay";
 import GermanyShortStay from "./pages/visa-countries/GermanyShortStay";
@@ -111,6 +112,7 @@ function App() {
                 
                 {/* Visa country routes */}
                 <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
+                <Route path="/visas/short-stay/schengen/apply" element={<SchengenShortStayApply />} />
                 <Route path="/schengen-visa" element={<SchengenShortStayLanding />} />
                 <Route path="/visas/short-stay/france" element={<FranceShortStay />} />
                 <Route path="/visas/short-stay/germany" element={<GermanyShortStay />} />

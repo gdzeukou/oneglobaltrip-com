@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
@@ -19,6 +19,7 @@ const SchengenShortStay = () => {
   const [showMayaAssistant, setShowMayaAssistant] = useState(false);
   const [showTraditionalForm, setShowTraditionalForm] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -85,7 +86,7 @@ const SchengenShortStay = () => {
       {user && (
         <SchengenApplicationOptions
           onSelectMaya={() => setShowMayaAssistant(true)}
-          onSelectTraditional={() => setShowTraditionalForm(true)}
+          onSelectTraditional={() => navigate('/visas/short-stay/schengen/apply')}
         />
       )}
 
