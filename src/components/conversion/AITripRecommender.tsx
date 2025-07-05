@@ -221,7 +221,7 @@ const AITripRecommender = () => {
         <div className="absolute bottom-20 left-20 w-16 h-16 bg-gray-50 rounded-full blur-xl opacity-20" />
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 relative z-10">
         <div className="text-center mb-12">
           {/* Compact AI branding */}
           <div className="flex items-center justify-center mb-6">
