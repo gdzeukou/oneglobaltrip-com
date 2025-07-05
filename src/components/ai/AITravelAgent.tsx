@@ -59,36 +59,106 @@ const AITravelAgent = () => {
     setInputMessage('');
     setIsLoading(true);
 
-    try {
-      const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
-        body: {
-          message: inputMessage,
-          conversationId,
-          userId: user.id
+    console.log('🚀 Maya: Starting message send process');
+    console.log('📝 Message:', inputMessage);
+    console.log('👤 User ID:', user.id);
+    console.log('💬 Conversation ID:', conversationId);
+
+    let retryCount = 0;
+    const maxRetries = 3;
+    
+    while (retryCount < maxRetries) {
+      try {
+        console.log(`📡 Maya: Attempt ${retryCount + 1}/${maxRetries} - Calling edge function`);
+        
+        const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
+          body: {
+            message: inputMessage,
+            conversationId,
+            userId: user.id
+          }
+        });
+
+        console.log('📨 Maya: Edge function response received');
+        console.log('✅ Data:', data);
+        console.log('❌ Error:', error);
+
+        if (error) {
+          console.error('🚨 Maya: Edge function error:', error);
+          throw error;
         }
-      });
 
-      if (error) throw error;
+        if (!data || !data.response) {
+          console.error('🚨 Maya: Invalid response format:', data);
+          throw new Error('Invalid response format from AI service');
+        }
 
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.response,
-        timestamp: new Date()
-      };
+        console.log('✅ Maya: Processing successful response');
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: data.response,
+          timestamp: new Date()
+        };
 
-      setMessages(prev => [...prev, assistantMessage]);
-      setConversationId(data.conversationId);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
+        setMessages(prev => [...prev, assistantMessage]);
+        setConversationId(data.conversationId);
+        console.log('✅ Maya: Message successfully processed and stored');
+        return; // Success, exit retry loop
+
+      } catch (error) {
+        retryCount++;
+        console.error(`❌ Maya: Attempt ${retryCount}/${maxRetries} failed:`, error);
+        
+        if (retryCount >= maxRetries) {
+          // Final attempt failed - show fallback response
+          console.error('🚨 Maya: All retry attempts failed, showing fallback response');
+          
+          const fallbackMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: `🤖 **Maya AI Service Temporarily Unavailable**
+
+I'm experiencing technical difficulties right now, but I'm here to help! Here's what might be happening:
+
+**Possible Issues:**
+• My AI processing service might be temporarily down
+• There could be a connectivity issue
+• API services might be experiencing high demand
+
+**What you can try:**
+• Wait a moment and try your message again
+• Refresh the page and start a new conversation
+• Check your internet connection
+
+**Error Details for Support:**
+• Error: ${error instanceof Error ? error.message : 'Unknown error'}
+• Time: ${new Date().toISOString()}
+• Retry attempts: ${maxRetries}
+
+**I'm still here to help once services are restored!** 💪
+
+Contact support if this issue persists for more than 5 minutes.`,
+            timestamp: new Date()
+          };
+
+          setMessages(prev => [...prev, fallbackMessage]);
+          
+          toast({
+            title: "Maya AI Temporarily Unavailable",
+            description: "I've provided a detailed status update in the chat. Please try again in a moment.",
+            variant: "destructive"
+          });
+        } else {
+          // Wait before retry with exponential backoff
+          const delay = 1000 * Math.pow(2, retryCount - 1);
+          console.log(`⏳ Maya: Waiting ${delay}ms before retry`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
     }
+
+    setIsLoading(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
