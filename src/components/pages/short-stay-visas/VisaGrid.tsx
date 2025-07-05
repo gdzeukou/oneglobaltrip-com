@@ -5,7 +5,7 @@ const VisaGrid = () => {
   const primaryVisas = [
     {
       id: 'schengen',
-      title: 'Schengen Short-Stay Visa',
+      title: 'European Union Visa',
       description: 'One visa, endless Euro-city hopping for up to 90 days.',
       processingTime: '5-35 business days',
       price: '$193',

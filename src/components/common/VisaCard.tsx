@@ -56,7 +56,7 @@ const VisaCard = ({
             <img 
               src="/lovable-uploads/892be4cb-b414-4a4a-bdc0-484393a58d3d.png"
               alt="European Union Flag"
-              className="absolute inset-0 w-full h-full object-cover opacity-80"
+              className="absolute inset-0 w-full h-full object-cover opacity-100"
             />
           )}
           {badge && (
