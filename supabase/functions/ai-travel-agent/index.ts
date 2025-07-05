@@ -435,11 +435,11 @@ function formatFlightResults(flights: any[], searchedOrigin: string, searchedDes
     
     return suggestions;
   }
-  
+
   const dateNote = searchParams?.dateChanged 
     ? `\n📅 **Note:** No flights found for ${searchParams.originalDate}, showing results for ${searchParams.newDate} instead.\n`
     : '';
-  
+
   const formattedFlights = flights.slice(0, 5).map((flight, index) => {
     const price = flight.price?.total || 'N/A';
     const currency = flight.price?.currency || '';
@@ -450,7 +450,7 @@ function formatFlightResults(flights: any[], searchedOrigin: string, searchedDes
     if (!firstSegment || !lastSegment) {
       return `❌ **Flight Option ${index + 1}** - Data incomplete`;
     }
-    
+
     // Format departure and arrival times
     const departureTime = new Date(firstSegment.departure?.at);
     const arrivalTime = new Date(lastSegment.arrival?.at);
@@ -473,7 +473,7 @@ function formatFlightResults(flights: any[], searchedOrigin: string, searchedDes
         timeZone: 'UTC'
       });
     };
-    
+
     const stops = segments.length - 1;
     const stopsText = stops === 0 ? 'Nonstop' : `${stops} stop${stops > 1 ? 's' : ''}`;
     
@@ -485,7 +485,7 @@ function formatFlightResults(flights: any[], searchedOrigin: string, searchedDes
     const durationText = durationMinutes 
       ? `${Math.floor(durationMinutes / 60)}h ${durationMinutes % 60}m`
       : 'Duration TBD';
-    
+
     return [
       `✈️ **Flight Option ${index + 1}**`,
       `🏢 **Airline:** ${firstSegment.carrierCode || 'TBD'}`,
@@ -494,29 +494,65 @@ function formatFlightResults(flights: any[], searchedOrigin: string, searchedDes
       `💲 **Price:** $${price} ${currency}`,
       `🔁 **Stops:** ${stopsText}`,
       `⏱️ **Duration:** ${durationText}`,
-      `📋 **Booking Class:** ${firstSegment.cabin || 'Economy'}`
+      `📋 **Booking Class:** ${firstSegment.cabin || 'Economy'}`,
+      `🎫 **Flight ID:** ${flight.id || `FLIGHT_${index + 1}`}` // Add unique identifier for booking
     ].join('\n');
     
   }).join('\n\n');
-  
+
   const bookingPrompt = [
     "",
-    "🎯 **Ready to book?** I can help you:",
-    "• Collect passenger information",
-    "• Process your booking",
-    "• Handle payment securely",
-    "• Send confirmation details",
+    "🎯 **Ready to book?** To proceed with booking, please tell me:",
+    "• Which flight option you'd like (e.g., 'Flight Option 1')",
+    "• Passenger details (name, email, phone, date of birth, nationality)",
+    "• Any special requests or preferences",
     "",
-    "Would you like to book one of these flights, or would you like me to:",
-    "• Search for different dates",
-    "• Look for hotels at your destination", 
-    "• Check visa requirements",
-    "• Find car rentals",
-    "",
-    "Just let me know which flight interests you! 🚀"
+    "I'll guide you through the booking process step by step! 🚀"
   ].join('\n');
   
   return `Here are the best flight options I found:${dateNote}\n\n${formattedFlights}${bookingPrompt}`;
+}
+
+// Transform Amadeus flight data to booking format
+function transformFlightDataForBooking(flight: any, searchParams: any) {
+  console.log('Transforming flight data for booking:', { flightId: flight.id, searchParams });
+  
+  if (!flight || !flight.itineraries || !flight.itineraries[0]) {
+    console.error('Invalid flight data structure:', flight);
+    return null;
+  }
+
+  const firstItinerary = flight.itineraries[0];
+  const segments = firstItinerary.segments || [];
+  const firstSegment = segments[0];
+  const lastSegment = segments[segments.length - 1];
+
+  if (!firstSegment || !lastSegment) {
+    console.error('Missing flight segments:', { firstSegment, lastSegment });
+    return null;
+  }
+
+  const transformedData = {
+    flightId: flight.id,
+    origin: firstSegment.departure?.iataCode || searchParams.origin,
+    destination: lastSegment.arrival?.iataCode || searchParams.destination,
+    departureDate: firstSegment.departure?.at ? firstSegment.departure.at.split('T')[0] : searchParams.departureDate,
+    returnDate: searchParams.returnDate || null,
+    airline: firstSegment.carrierCode,
+    flightNumbers: segments.map((seg: any) => `${seg.carrierCode}${seg.number}`),
+    price: {
+      total: parseFloat(flight.price?.total || '0'),
+      currency: flight.price?.currency || 'USD'
+    },
+    itinerary: flight.itineraries,
+    segments: segments,
+    duration: firstItinerary.duration,
+    stops: segments.length - 1,
+    bookingClass: firstSegment.cabin || 'Economy'
+  };
+
+  console.log('Transformed flight data:', transformedData);
+  return transformedData;
 }
 
 // Enhanced system prompt with better guidance
@@ -545,21 +581,21 @@ const TRAVEL_AGENT_SYSTEM_PROMPT = `You are Maya, a friendly AI Travel Agent who
 1. Parse and validate dates using natural language processing
 2. Convert city names to proper IATA codes with fuzzy matching
 3. Search primary dates first, then try flexible date ranges
-4. Provide detailed results with clear booking options
+4. Provide detailed results with clear booking options including Flight IDs
 5. Offer alternatives and suggestions when no flights found
 
 📋 **Booking Process Flow:**
-1. **Flight Selection** - Help user choose preferred flight
-2. **Passenger Collection** - Gather required details systematically
-3. **Booking Creation** - Create reservation with confirmation
-4. **Payment Processing** - Guide through secure payment
+1. **Flight Selection** - User selects specific flight by Flight ID
+2. **Data Validation** - Verify flight data exists and is complete
+3. **Passenger Collection** - Gather required details systematically
+4. **Booking Creation** - Create reservation with confirmation
 5. **Confirmation** - Provide booking reference and next steps
 
 🔧 **Error Recovery:**
 - When searches fail, provide clear explanations and alternatives
 - Guide users to correct date/location formats
-- Offer nearby airports or flexible dates
-- Always maintain a helpful, solution-oriented tone
+- Always validate data before attempting bookings
+- Provide helpful error messages when data is missing
 
 💬 **Your Personality:**
 - Warm, professional, and patient
@@ -603,13 +639,30 @@ const FLIGHT_SEARCH_FUNCTION = {
 
 const CREATE_FLIGHT_BOOKING_FUNCTION = {
   name: "create_flight_booking",
-  description: "Create a flight booking with passenger information and flight details",
+  description: "Create a flight booking with passenger information and validated flight details",
   parameters: {
     type: "object",
     properties: {
-      flightData: {
+      flightSelection: {
         type: "object",
-        description: "Complete flight information from search results"
+        description: "Selected flight information from search results",
+        properties: {
+          flightId: { type: "string", description: "Unique flight identifier from search results" },
+          origin: { type: "string", description: "Origin airport code" },
+          destination: { type: "string", description: "Destination airport code" },
+          departureDate: { type: "string", description: "Departure date in YYYY-MM-DD format" },
+          returnDate: { type: "string", description: "Return date in YYYY-MM-DD format (optional)" },
+          airline: { type: "string", description: "Airline code" },
+          flightNumbers: { type: "array", description: "Array of flight numbers" },
+          price: { 
+            type: "object", 
+            properties: {
+              total: { type: "number", description: "Total price" },
+              currency: { type: "string", description: "Currency code" }
+            }
+          }
+        },
+        required: ["flightId", "origin", "destination", "departureDate", "price"]
       },
       passengers: {
         type: "array",
@@ -632,52 +685,115 @@ const CREATE_FLIGHT_BOOKING_FUNCTION = {
           },
           required: ["title", "firstName", "lastName", "dateOfBirth", "nationality", "email", "phone"]
         }
-      },
-      totalAmount: {
-        type: "number",
-        description: "Total booking amount"
-      },
-      currency: {
-        type: "string",
-        description: "Currency code (e.g., USD, EUR)"
       }
     },
-    required: ["flightData", "passengers", "totalAmount", "currency"]
+    required: ["flightSelection", "passengers"]
   }
 };
 
-// Create flight booking function
-async function createFlightBooking(flightData: any, passengers: any[], totalAmount: number, currency: string, userId: string, conversationId: string) {
+// Enhanced flight booking function with proper validation
+async function createFlightBooking(flightSelection: any, passengers: any[], userId: string, conversationId: string) {
+  console.log('Creating flight booking with data:', { 
+    flightSelection, 
+    passengerCount: passengers?.length, 
+    userId, 
+    conversationId 
+  });
+
   try {
-    console.log('Creating flight booking for user:', userId);
-    
+    // Validate required data
+    if (!flightSelection) {
+      console.error('Flight selection is missing');
+      return {
+        success: false,
+        error: 'Flight selection data is required. Please select a flight first.'
+      };
+    }
+
+    if (!flightSelection.departureDate) {
+      console.error('Departure date is missing from flight selection:', flightSelection);
+      return {
+        success: false,
+        error: 'Flight departure date is missing. Please search for flights again and select a valid option.'
+      };
+    }
+
+    if (!flightSelection.price || typeof flightSelection.price.total !== 'number') {
+      console.error('Invalid price data:', flightSelection.price);
+      return {
+        success: false,
+        error: 'Flight price information is invalid. Please search for flights again.'
+      };
+    }
+
+    if (!passengers || !Array.isArray(passengers) || passengers.length === 0) {
+      console.error('Invalid passenger data:', passengers);
+      return {
+        success: false,
+        error: 'Passenger information is required. Please provide passenger details.'
+      };
+    }
+
+    // Validate passenger data
+    for (let i = 0; i < passengers.length; i++) {
+      const passenger = passengers[i];
+      const requiredFields = ['title', 'firstName', 'lastName', 'dateOfBirth', 'nationality', 'email', 'phone'];
+      
+      for (const field of requiredFields) {
+        if (!passenger[field]) {
+          return {
+            success: false,
+            error: `Missing required field '${field}' for passenger ${i + 1}. Please provide all required passenger information.`
+          };
+        }
+      }
+    }
+
+    console.log('All validation passed, creating booking...');
+
     // Create the main booking record
+    const bookingData = {
+      user_id: userId,
+      conversation_id: conversationId,
+      total_amount: flightSelection.price.total,
+      currency: flightSelection.price.currency || 'USD',
+      flight_data: {
+        flightId: flightSelection.flightId,
+        origin: flightSelection.origin,
+        destination: flightSelection.destination,
+        airline: flightSelection.airline,
+        flightNumbers: flightSelection.flightNumbers || [],
+        bookingClass: flightSelection.bookingClass || 'Economy',
+        duration: flightSelection.duration,
+        stops: flightSelection.stops || 0
+      },
+      departure_date: flightSelection.departureDate,
+      return_date: flightSelection.returnDate || null,
+      origin_airport: flightSelection.origin,
+      destination_airport: flightSelection.destination,
+      airline_code: flightSelection.airline || null,
+      flight_numbers: flightSelection.flightNumbers || null,
+      passenger_count: passengers.length,
+      booking_status: 'confirmed' // For now, we'll mark as confirmed (payment integration comes later)
+    };
+
+    console.log('Inserting booking with data:', bookingData);
+
     const { data: booking, error: bookingError } = await supabase
       .from('flight_bookings')
-      .insert({
-        user_id: userId,
-        conversation_id: conversationId,
-        total_amount: totalAmount,
-        currency: currency,
-        flight_data: flightData,
-        departure_date: flightData.departureDate,
-        return_date: flightData.returnDate || null,
-        origin_airport: flightData.origin,
-        destination_airport: flightData.destination,
-        airline_code: flightData.airlineCode || null,
-        flight_numbers: flightData.flightNumbers || null,
-        passenger_count: passengers.length,
-        booking_status: 'confirmed' // For now, we'll mark as confirmed (payment integration comes later)
-      })
+      .insert(bookingData)
       .select()
       .single();
 
     if (bookingError) {
       console.error('Error creating booking:', bookingError);
-      throw new Error('Failed to create booking');
+      return {
+        success: false,
+        error: `Failed to create booking: ${bookingError.message}`
+      };
     }
 
-    console.log('Booking created:', booking.id);
+    console.log('Booking created successfully:', booking.id);
 
     // Create passenger records
     const passengerInserts = passengers.map(passenger => ({
@@ -697,6 +813,8 @@ async function createFlightBooking(flightData: any, passengers: any[], totalAmou
       passenger_type: 'adult' // Default for now
     }));
 
+    console.log('Inserting passengers:', passengerInserts);
+
     const { error: passengersError } = await supabase
       .from('booking_passengers')
       .insert(passengerInserts);
@@ -705,7 +823,10 @@ async function createFlightBooking(flightData: any, passengers: any[], totalAmou
       console.error('Error creating passengers:', passengersError);
       // Rollback booking if passengers fail
       await supabase.from('flight_bookings').delete().eq('id', booking.id);
-      throw new Error('Failed to create passenger records');
+      return {
+        success: false,
+        error: `Failed to create passenger records: ${passengersError.message}`
+      };
     }
 
     console.log('Passengers created successfully');
@@ -723,7 +844,7 @@ async function createFlightBooking(flightData: any, passengers: any[], totalAmou
     console.error('Error in createFlightBooking:', error);
     return {
       success: false,
-      error: error.message
+      error: `Booking creation failed: ${error.message}`
     };
   }
 }
@@ -833,7 +954,7 @@ serve(async (req) => {
         model: 'gpt-4o',
         messages: openAIMessages,
         temperature: 0.7,
-        max_tokens: 1500, // Increased for more detailed responses
+        max_tokens: 1500,
         functions: [FLIGHT_SEARCH_FUNCTION, CREATE_FLIGHT_BOOKING_FUNCTION],
         function_call: "auto"
       }),
@@ -941,10 +1062,21 @@ serve(async (req) => {
                 functionArgs.adults || 1
               );
               
+              // Store flight search results in conversation context for booking
+              const searchContext = {
+                searchParams: functionArgs,
+                searchResults: flights,
+                origin: originLookup.code,
+                destination: destinationLookup.code,
+                departureDate: parsedDepartureDate,
+                returnDate: parsedReturnDate
+              };
+              
               const flightResults = formatFlightResults(
                 flights, 
                 functionArgs.origin, 
-                functionArgs.destination
+                functionArgs.destination,
+                searchContext
               );
               console.log('Flight search completed, results formatted');
               
@@ -988,10 +1120,8 @@ serve(async (req) => {
           console.log('Creating booking with parameters:', functionArgs);
           
           const bookingResult = await createFlightBooking(
-            functionArgs.flightData,
+            functionArgs.flightSelection,
             functionArgs.passengers,
-            functionArgs.totalAmount,
-            functionArgs.currency,
             userId,
             currentConversationId
           );
@@ -1002,7 +1132,7 @@ serve(async (req) => {
 Your flight has been successfully booked! Here are your booking details:
 
 📋 **Booking Reference:** ${bookingResult.bookingReference}
-💰 **Total Amount:** ${bookingResult.totalAmount} ${bookingResult.currency}
+💰 **Total Amount:** $${bookingResult.totalAmount} ${bookingResult.currency}
 ✅ **Status:** ${bookingResult.status}
 
 You will receive a confirmation email shortly with all your booking details and next steps.
@@ -1013,12 +1143,12 @@ Is there anything else I can help you with for your upcoming trip? I can assist 
 - Visa requirements
 - Local recommendations`;
           } else {
-            aiResponse = `I encountered an issue while creating your booking: ${bookingResult.error}. Let me try to help you resolve this or find an alternative solution.`;
+            aiResponse = `I encountered an issue while creating your booking: ${bookingResult.error}\n\nTo help resolve this, please make sure you have:\n• Selected a specific flight from the search results\n• Provided all required passenger information\n• Verified that all details are correct\n\nWould you like me to guide you through the booking process step by step?`;
           }
           
         } catch (error) {
           console.error('Error in create booking function:', error);
-          aiResponse = "I encountered an issue while processing your booking. Let me help you try again or find an alternative solution.";
+          aiResponse = `I encountered an issue while processing your booking: ${error.message}\n\nLet me help you resolve this. Please ensure you have:\n• Selected a specific flight option\n• Provided complete passenger details\n• All information is accurate\n\nWould you like to try again or need help with any specific step?`;
         }
       }
     }
