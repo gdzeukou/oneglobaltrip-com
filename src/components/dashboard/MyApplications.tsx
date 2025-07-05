@@ -131,11 +131,11 @@ const MyApplications = () => {
   };
 
   const handleNewApplication = () => {
-    navigate('/apply');
+    navigate('/visas/short-stay/schengen/apply');
   };
 
   const handleContinueApplication = (applicationId: string) => {
-    navigate(`/apply?continue=${applicationId}`);
+    navigate(`/visas/short-stay/schengen/apply?continue=${applicationId}`);
   };
 
   const handleViewApplication = (applicationId: string) => {

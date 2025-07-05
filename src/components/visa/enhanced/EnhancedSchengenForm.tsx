@@ -31,7 +31,7 @@ import { cn } from '@/lib/utils';
 
 interface EnhancedSchengenFormProps {
   onClose?: () => void;
-  onSubmit?: (formData: SchengenFormData) => void;
+  onSubmit?: (formData: SchengenFormData & { applicationReference?: string }) => void;
   onCancel?: () => void;
   fullPage?: boolean;
   applicationId?: string; // For continuing existing applications
@@ -119,31 +119,34 @@ const EnhancedSchengenForm = ({
   const watchedValues = watch();
   const currentStepProgress = ((currentStep + 1) / steps.length) * 100;
 
-  // Auto-save functionality
+  // Auto-save functionality - optimized for better UX
   useEffect(() => {
     if (!autoSaveEnabled || !user || currentStep === 0) return;
 
     const saveTimer = setTimeout(async () => {
       try {
         const formData = getValues();
-        await saveProgressToDatabase(formData);
+        await saveProgressToDatabase(formData, true); // Silent save
       } catch (error) {
         console.error('Auto-save failed:', error);
       }
-    }, 2000);
+    }, 10000); // Reduced frequency to 10 seconds
 
     return () => clearTimeout(saveTimer);
   }, [watchedValues, currentStep, autoSaveEnabled, user]);
 
-  const saveProgressToDatabase = async (formData: Partial<SchengenFormData>) => {
+  const saveProgressToDatabase = async (formData: Partial<SchengenFormData>, silent = false) => {
     if (!user) return;
 
     try {
+      // Determine country code based on main destination (default to France for Schengen)
+      const countryCode = 'FRA'; // Can be enhanced to detect from form data
+      
       const applicationData = {
         user_id: user.id,
         visa_type: 'Schengen Short-Stay',
         travel_purpose: 'tourism',
-        country_code: 'SCHENGEN',
+        country_code: countryCode,
         nationality: formData.nationality || '',
         email: user.email || '',
         name: `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim() || 'Unnamed',
@@ -166,13 +169,23 @@ const EnhancedSchengenForm = ({
           .insert([applicationData]);
       }
 
-      toast({
-        title: 'Progress Saved',
-        description: 'Your application has been automatically saved.',
-        duration: 2000
-      });
+      // Only show toast for manual saves, not auto-saves
+      if (!silent) {
+        toast({
+          title: 'Progress Saved',
+          description: 'Your application has been saved successfully.',
+          duration: 2000
+        });
+      }
     } catch (error) {
       console.error('Failed to save progress:', error);
+      if (!silent) {
+        toast({
+          title: 'Save Failed',
+          description: 'Failed to save your progress. Please try again.',
+          variant: 'destructive'
+        });
+      }
     }
   };
 
@@ -213,15 +226,44 @@ const EnhancedSchengenForm = ({
       }
 
       // Submit the final application
+      const countryCode = 'FRA'; // Default to France for Schengen
+      
+      const finalApplicationData = {
+        user_id: user?.id,
+        visa_type: 'Schengen Short-Stay',
+        travel_purpose: 'tourism',
+        country_code: countryCode,
+        nationality: data.nationality,
+        email: user?.email || '',
+        name: `${user?.user_metadata?.first_name || ''} ${user?.user_metadata?.last_name || ''}`.trim() || 'Unnamed',
+        application_data: data,
+        is_draft: false,
+        progress_step: 4,
+        submitted_at: new Date().toISOString(),
+        departure_date: data.departureDate,
+        return_date: data.returnDate,
+        status: 'submitted'
+      };
+
+      const { data: submittedApp, error } = await supabase
+        .from('visa_applications')
+        .insert([finalApplicationData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
       if (onSubmit) {
-        await onSubmit(data);
+        await onSubmit({ ...data, applicationReference: submittedApp.application_reference_new });
       }
       
       toast({
-        title: 'Application Submitted',
-        description: 'Your Schengen visa application has been submitted successfully.',
+        title: 'Application Submitted Successfully!',
+        description: `Reference: ${submittedApp.application_reference_new}`,
+        duration: 5000
       });
     } catch (error) {
+      console.error('Submission error:', error);
       toast({
         title: 'Submission Failed',
         description: 'There was an error submitting your application. Please try again.',
@@ -856,7 +898,7 @@ const EnhancedSchengenForm = ({
               {autoSaveEnabled && (
                 <Badge variant="outline" className="text-xs">
                   <Save className="h-3 w-3 mr-1" />
-                  Auto-save enabled
+                  Auto-saves every 10s
                 </Badge>
               )}
             </div>

@@ -30,10 +30,16 @@ const SchengenShortStayApply = () => {
 
   const handleSubmit = (formData: any) => {
     console.log('Schengen application submitted:', formData);
+    
+    // Show success with application reference
+    const reference = formData.applicationReference;
+    
     // Navigate to dashboard after successful submission
     navigate('/dashboard', { 
       state: { 
-        message: 'Your Schengen visa application has been saved successfully!' 
+        message: `Your Schengen visa application has been submitted successfully!`,
+        applicationReference: reference,
+        showSuccess: true
       }
     });
   };
