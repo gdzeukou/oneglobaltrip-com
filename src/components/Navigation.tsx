@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Plane, Bot } from 'lucide-react';
-import NavigationAuth from './NavigationAuth';
+import NavigationAuth from './navigation/NavigationAuth';
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
