@@ -6,7 +6,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.0';
 import { corsHeaders } from './lib/constants.ts';
 import { parseNaturalDate } from './lib/date-utils.ts';
 import { getCityIATA } from './lib/city-utils.ts';
-import { searchFlights } from './lib/amadeus-client.ts';
+import { searchFlights, searchHotels } from './lib/rapidapi-client.ts';
 import { formatFlightResults, transformFlightDataForBooking } from './lib/flight-formatter.ts';
 import { getStoredFlightData, createFlightBooking } from './lib/booking-service.ts';
 import { 
@@ -17,8 +17,7 @@ import {
 
 // API keys from environment with enhanced debugging
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY') || Deno.env.get('SUPAGENT_OPENAI') || Deno.env.get('Supagent Openai');
-const amadeusApiKey = Deno.env.get('AMADEUS_API_KEY');
-const amadeusApiSecret = Deno.env.get('AMADEUS_API_SECRET');
+const rapidApiKey = Deno.env.get('RAPIDAPI_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
@@ -26,8 +25,7 @@ const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 console.log('🔧 Maya AI Travel Agent - Initializing...');
 console.log('📋 API Key Status Check:');
 console.log('  ✅ OpenAI API Key:', openAIApiKey ? `Found (${openAIApiKey.substring(0, 8)}...)` : '❌ Missing');
-console.log('  ✅ Amadeus API Key:', amadeusApiKey ? `Found (${amadeusApiKey.substring(0, 8)}...)` : '❌ Missing');
-console.log('  ✅ Amadeus Secret:', amadeusApiSecret ? `Found (${amadeusApiSecret.substring(0, 8)}...)` : '❌ Missing');
+console.log('  ✅ RapidAPI Key:', rapidApiKey ? `Found (${rapidApiKey.substring(0, 8)}...)` : '❌ Missing');
 console.log('  ✅ Supabase URL:', supabaseUrl ? 'Found' : '❌ Missing');
 console.log('  ✅ Supabase Service Key:', supabaseServiceKey ? 'Found' : '❌ Missing');
 
@@ -53,13 +51,13 @@ serve(async (req) => {
       );
     }
 
-    if (!amadeusApiKey || !amadeusApiSecret) {
-      console.error('Amadeus API credentials not found');
+    if (!rapidApiKey) {
+      console.error('RapidAPI key not found');
       return new Response(
         JSON.stringify({ 
-          response: '✈️ **Flight Search Unavailable**: My flight booking service isn\'t configured properly.\n\n**What this means:**\n• I can\'t search for flights or make bookings right now\n• My Amadeus API connection needs admin setup\n\n**What you can do:**\n• Contact support to report this configuration issue\n• I can still help with travel advice and planning\n• Try flight searches again once this is resolved\n\nI\'m sorry I can\'t search flights right now, but I\'m here for any other travel questions! 🗺️',
+          response: '✈️ **Flight & Travel Search Unavailable**: My travel booking service isn\'t configured properly.\n\n**What this means:**\n• I can\'t search for flights, hotels, or make bookings right now\n• My RapidAPI connection needs admin setup\n\n**What you can do:**\n• Contact support to report this configuration issue\n• I can still help with travel advice and planning\n• Try searches again once this is resolved\n\nI\'m sorry I can\'t search travel options right now, but I\'m here for any other travel questions! 🗺️',
           error: true,
-          errorType: 'flight_api_configuration'
+          errorType: 'travel_api_configuration'
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -266,8 +264,7 @@ serve(async (req) => {
                 parsedDepartureDate,
                 parsedReturnDate,
                 functionArgs.adults || 1,
-                amadeusApiKey,
-                amadeusApiSecret
+                rapidApiKey
               );
               
               // Store flight search results in conversation context for booking
