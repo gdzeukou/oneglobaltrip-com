@@ -6,17 +6,24 @@
  * Add months to a date without using setMonth() to avoid boundary issues
  */
 export const addMonths = (date: Date, months: number): Date => {
-  const newDate = new Date(date);
-  const targetMonth = newDate.getMonth() + months;
-  const targetYear = newDate.getFullYear() + Math.floor(targetMonth / 12);
-  const finalMonth = targetMonth % 12;
+  const result = new Date(date);
+  const currentMonth = result.getMonth();
+  const currentYear = result.getFullYear();
   
-  // Handle negative months
-  if (finalMonth < 0) {
-    return new Date(targetYear - 1, 12 + finalMonth, newDate.getDate());
+  // Calculate new year and month
+  const totalMonths = currentMonth + months;
+  const newYear = currentYear + Math.floor(totalMonths / 12);
+  const newMonth = totalMonths % 12;
+  
+  // Handle negative months properly
+  if (totalMonths < 0) {
+    const yearsBack = Math.ceil(-totalMonths / 12);
+    const adjustedYear = currentYear - yearsBack;
+    const adjustedMonth = 12 + (totalMonths % 12);
+    return new Date(adjustedYear, adjustedMonth === 12 ? 0 : adjustedMonth, result.getDate());
   }
   
-  return new Date(targetYear, finalMonth, newDate.getDate());
+  return new Date(newYear, newMonth, result.getDate());
 };
 
 /**
