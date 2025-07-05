@@ -869,16 +869,24 @@ serve(async (req) => {
     if (!openAIApiKey) {
       console.error('OpenAI API key not found');
       return new Response(
-        JSON.stringify({ error: 'OpenAI API key not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          response: '🔑 **Configuration Issue**: My AI system isn\'t properly configured right now.\n\n**What this means:**\n• My OpenAI connection needs to be set up by an administrator\n• I can\'t process your travel requests until this is fixed\n\n**What you can do:**\n• Contact support to resolve this configuration issue\n• This is a technical problem that needs admin attention\n• Try again later once the issue is resolved\n\nI apologize for the inconvenience! Once this is fixed, I\'ll be ready to help you plan amazing trips! 🌟',
+          error: true,
+          errorType: 'api_configuration'
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
     if (!amadeusApiKey || !amadeusApiSecret) {
       console.error('Amadeus API credentials not found');
       return new Response(
-        JSON.stringify({ error: 'Amadeus API credentials not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          response: '✈️ **Flight Search Unavailable**: My flight booking service isn\'t configured properly.\n\n**What this means:**\n• I can\'t search for flights or make bookings right now\n• My Amadeus API connection needs admin setup\n\n**What you can do:**\n• Contact support to report this configuration issue\n• I can still help with travel advice and planning\n• Try flight searches again once this is resolved\n\nI\'m sorry I can\'t search flights right now, but I\'m here for any other travel questions! 🗺️',
+          error: true,
+          errorType: 'flight_api_configuration'
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -888,8 +896,12 @@ serve(async (req) => {
     if (!message || !userId) {
       console.error('Missing required fields:', { message: !!message, userId: !!userId });
       return new Response(
-        JSON.stringify({ error: 'Message and userId are required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ 
+          response: '📝 **Request Issue**: I need both a message and user information to help you.\n\n**What went wrong:**\n• Your request is missing some required information\n• This might be a temporary connection issue\n\n**What you can do:**\n• Try refreshing the page and sending your message again\n• Make sure you\'re logged in properly\n• Contact support if this keeps happening\n\nPlease try again - I\'m ready to help with your travel plans! ✈️',
+          error: true,
+          errorType: 'missing_data'
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -1237,8 +1249,13 @@ Is there anything else I can help you with for your upcoming trip? I can assist 
       ];
     }
     
-    return new Response(JSON.stringify(errorResponse), {
-      status: 500,
+    return new Response(JSON.stringify({
+      response: errorResponse.userMessage + '\n\n**What you can try:**\n' + errorResponse.suggestions.map(s => `• ${s}`).join('\n') + '\n\nI\'m here to help once this issue is resolved! 🛠️',
+      error: true,
+      errorType: 'system_error',
+      details: errorResponse.details
+    }), {
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
