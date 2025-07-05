@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -67,6 +66,8 @@ import ParisExplorePackage from "./pages/packages/ParisExplorePackage";
 import VisaPricingPage from "./pages/visas/VisaPricingPage";
 
 import "./App.css";
+import MayaAuthGate from "./components/auth/MayaAuthGate";
+import MayaProtectedRoute from "./components/auth/MayaProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -91,10 +92,12 @@ function App() {
                 <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/concierge" element={<Concierge />} />
-                <Route path="/ai-chat" element={<AIChat />} />
                 <Route path="/long-stay-visas" element={<LongStayVisas />} />
                 <Route path="/short-stay-visas" element={<ShortStayVisas />} />
                 <Route path="/intelligent-application" element={<IntelligentApplication />} />
+                
+                {/* Maya Auth Gate - shown to unauthenticated users trying to access Maya */}
+                <Route path="/maya-auth" element={<MayaAuthGate />} />
                 
                 {/* Visa country routes */}
                 <Route path="/visa/schengen-short-stay" element={<SchengenShortStay />} />
@@ -160,6 +163,13 @@ function App() {
                   <ProtectedRoute>
                     <AdminDashboard />
                   </ProtectedRoute>
+                } />
+                
+                {/* Maya - Now Protected with Maya-specific auth gate */}
+                <Route path="/ai-chat" element={
+                  <MayaProtectedRoute>
+                    <AIChat />
+                  </MayaProtectedRoute>
                 } />
 
                 {/* Error routes */}

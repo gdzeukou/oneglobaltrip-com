@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Send, Plus, MessageSquare, Sparkles, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -48,6 +47,18 @@ const AIChat = () => {
       loadConversations();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user && messages.length === 0 && !currentConversationId) {
+      const welcomeMessage: Message = {
+        id: 'welcome-' + Date.now(),
+        role: 'assistant',
+        content: `🎉 **Welcome to Maya!** I'm your personal AI Travel Agent, and I'm excited to help you plan your next adventure!\n\n✈️ **What I can do for you:**\n• Search real-time flights with live pricing\n• Find the best routes and deals\n• Help with visa requirements and applications\n• Provide personalized travel recommendations\n• Guide you through complete booking process\n• Answer any travel-related questions\n\n🌟 **Getting Started:**\nJust tell me where you'd like to go and when, and I'll take care of the rest! For example:\n• "I want to fly from New York to Paris in December"\n• "Help me find flights to Tokyo for my honeymoon"\n• "What visa do I need for Germany?"\n\nWhat travel plans can I help you with today? 🗺️`,
+        timestamp: new Date()
+      };
+      setMessages([welcomeMessage]);
+    }
+  }, [user, messages.length, currentConversationId]);
 
   const loadConversations = async () => {
     if (!user) return;
@@ -203,12 +214,15 @@ const AIChat = () => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Maya function error:', error);
+        throw new Error(error.message || 'Failed to get response from Maya');
+      }
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response,
+        content: data.response || 'I apologize, but I encountered a technical issue. Please try again or rephrase your question.',
         timestamp: new Date()
       };
 
@@ -228,10 +242,31 @@ const AIChat = () => {
         );
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message to Maya:', error);
+      
+      // Enhanced error handling with user-friendly messages
+      let errorMessage = "I'm experiencing some technical difficulties right now. ";
+      
+      if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        errorMessage += "Please check your connection and try again.";
+      } else if (error.message?.includes('timeout')) {
+        errorMessage += "The request is taking longer than expected. Please try again.";
+      } else {
+        errorMessage += "Please try rephrasing your question or contact support if the issue persists.";
+      }
+      
+      const errorAssistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: `❌ ${errorMessage}\n\n💡 **In the meantime, you can:**\n• Try a simpler question\n• Check our FAQ section\n• Contact our support team\n\nI'm here to help once the issue is resolved! 🛠️`,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, errorAssistantMessage]);
+      
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
+        title: "Connection Issue",
+        description: "Maya is having trouble connecting. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -267,10 +302,10 @@ const AIChat = () => {
             <div className="p-4 border-b border-border">
               <Button
                 onClick={createNewConversation}
-                className="w-full justify-start space-x-2 bg-primary hover:bg-primary/90"
+                className="w-full justify-start space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <Plus className="h-4 w-4" />
-                <span>New Chat</span>
+                <span>New Chat with Maya</span>
               </Button>
             </div>
             
@@ -322,8 +357,14 @@ const AIChat = () => {
                   <MessageSquare className="h-4 w-4" />
                 </Button>
                 <div className="flex items-center space-x-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  <h1 className="text-lg font-semibold">Maya - AI Travel Agent</h1>
+                  <div className="relative">
+                    <Sparkles className="h-6 w-6 text-gradient-to-r from-blue-500 to-purple-600" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                  </div>
+                  <div>
+                    <h1 className="text-lg font-semibold">Maya - Your AI Travel Agent</h1>
+                    <p className="text-xs text-muted-foreground">Free for all members • Real-time flight search</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -333,14 +374,28 @@ const AIChat = () => {
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {messages.length === 0 && !currentConversationId ? (
               <div className="text-center py-12">
-                <Sparkles className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h2 className="text-xl font-semibold mb-2">Meet Maya, Your AI Travel Agent</h2>
-                <p className="text-muted-foreground mb-6">
-                  Start a conversation to get personalized travel assistance, step by step
+                <div className="relative mb-6">
+                  <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto">
+                    <Sparkles className="h-10 w-10 text-white" />
+                  </div>
+                  <div className="absolute -top-2 -right-6 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center animate-bounce">
+                    <span className="text-xs font-bold text-white">✓</span>
+                  </div>
+                </div>
+                <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Maya is Ready to Help!
+                </h2>
+                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                  Your personal AI travel agent with real-time flight search and booking assistance
                 </p>
-                <Button onClick={createNewConversation} className="bg-primary hover:bg-primary/90">
+                <div className="flex flex-wrap justify-center gap-2 mb-6">
+                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">✈️ Real-time Flights</span>
+                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">🔒 Secure Booking</span>
+                  <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">🆓 Completely Free</span>
+                </div>
+                <Button onClick={createNewConversation} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                   <Plus className="h-4 w-4 mr-2" />
-                  Start Chatting with Maya
+                  Start Planning Your Trip
                 </Button>
               </div>
             ) : (
@@ -379,13 +434,13 @@ const AIChat = () => {
               <div className="flex justify-start">
                 <div className="flex items-start space-x-3">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-secondary text-secondary-foreground">
+                    <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
                       M
                     </AvatarFallback>
                   </Avatar>
                   <div className="bg-muted rounded-lg px-4 py-3 flex items-center space-x-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">Maya is thinking...</span>
+                    <span className="text-sm text-muted-foreground">Maya is searching flights and planning your trip...</span>
                   </div>
                 </div>
               </div>
@@ -403,8 +458,8 @@ const AIChat = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Tell Maya about your travel plans..."
-                  className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring bg-background"
+                  placeholder="Tell Maya about your travel plans... (e.g., 'Find flights from NYC to London in March')"
+                  className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background"
                   disabled={isLoading}
                 />
               </div>
@@ -412,11 +467,14 @@ const AIChat = () => {
                 onClick={sendMessage}
                 disabled={!inputMessage.trim() || isLoading}
                 size="lg"
-                className="bg-primary hover:bg-primary/90"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <Send className="h-4 w-4" />
               </Button>
             </div>
+            <p className="text-xs text-center text-muted-foreground mt-2">
+              Maya can search real flights, help with bookings, and provide travel assistance - all free for members
+            </p>
           </div>
         </div>
       </div>
