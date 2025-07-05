@@ -7,13 +7,20 @@ import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 import TrustBadges from '@/components/visa/TrustBadges';
 import CountrySpecificPricing from '@/components/visa/CountrySpecificPricing';
 import SchengenRequirements from '@/components/visa/SchengenRequirements';
+import SchengenApplicationOptions from '@/components/visa/schengen/SchengenApplicationOptions';
+import MayaVisaAssistant from '@/components/visa/schengen/MayaVisaAssistant';
+import SchengenVisaForm from '@/components/visa/schengen/SchengenVisaForm';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SchengenShortStay = () => {
   const [showCalendly, setShowCalendly] = useState(false);
   const [selectedPurpose, setSelectedPurpose] = useState('Tourism');
+  const [showMayaAssistant, setShowMayaAssistant] = useState(false);
+  const [showTraditionalForm, setShowTraditionalForm] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -47,6 +54,18 @@ const SchengenShortStay = () => {
     }
   };
 
+  const handleMayaComplete = (formData: any) => {
+    console.log('Maya application completed:', formData);
+    setShowMayaAssistant(false);
+    setShowCalendly(true);
+  };
+
+  const handleTraditionalSubmit = (formData: any) => {
+    console.log('Traditional form submitted:', formData);
+    setShowTraditionalForm(false);
+    setShowCalendly(true);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
@@ -74,6 +93,14 @@ const SchengenShortStay = () => {
       </section>
 
       <TrustBadges />
+
+      {/* Enhanced Application Options for Authenticated Users */}
+      {user && (
+        <SchengenApplicationOptions
+          onSelectMaya={() => setShowMayaAssistant(true)}
+          onSelectTraditional={() => setShowTraditionalForm(true)}
+        />
+      )}
 
       <CountrySpecificPricing 
         country="schengenShortStay"
@@ -126,18 +153,21 @@ const SchengenShortStay = () => {
         </div>
       </section>
 
-      <section id="visa-form" className="py-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
-            Start Your Schengen Visa Application
-          </h2>
-          <UnifiedTravelForm 
-            type="visa-application" 
-            title="Schengen Short-Stay Visa Application"
-            onComplete={() => setShowCalendly(true)}
-          />
-        </div>
-      </section>
+      {/* Traditional Application Form for Non-Authenticated Users */}
+      {!user && (
+        <section id="visa-form" className="py-16">
+          <div className="max-w-7xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">
+              Start Your Schengen Visa Application
+            </h2>
+            <UnifiedTravelForm 
+              type="visa-application" 
+              title="Schengen Short-Stay Visa Application"
+              onComplete={() => setShowCalendly(true)}
+            />
+          </div>
+        </section>
+      )}
 
       <section className="py-8 bg-yellow-500">
         <div className="max-w-7xl mx-auto px-4 text-center">
@@ -145,6 +175,22 @@ const SchengenShortStay = () => {
           <p className="text-blue-800">Start your Schengen visa application today with no upfront payment required</p>
         </div>
       </section>
+
+      {/* Maya Visa Assistant Modal */}
+      {showMayaAssistant && (
+        <MayaVisaAssistant
+          onClose={() => setShowMayaAssistant(false)}
+          onComplete={handleMayaComplete}
+        />
+      )}
+
+      {/* Traditional Visa Form Modal */}
+      {showTraditionalForm && (
+        <SchengenVisaForm
+          onClose={() => setShowTraditionalForm(false)}
+          onSubmit={handleTraditionalSubmit}
+        />
+      )}
 
       {showCalendly && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
