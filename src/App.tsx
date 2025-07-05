@@ -69,6 +69,12 @@ import "./App.css";
 import MayaAuthGate from "./components/auth/MayaAuthGate";
 import MayaProtectedRoute from "./components/auth/MayaProtectedRoute";
 
+// New pages
+import About from "./pages/About";
+import Blog from "./pages/Blog";
+import Services from "./pages/Services";
+import Testimonials from "./pages/Testimonials";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -92,6 +98,10 @@ function App() {
                 <Route path="/auth/callback" element={<AuthCallback />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/concierge" element={<Concierge />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/testimonials" element={<Testimonials />} />
                 <Route path="/visas/long-stay" element={<LongStayVisas />} />
                 <Route path="/visas/short-stay" element={<ShortStayVisas />} />
                 <Route path="/intelligent-application" element={<IntelligentApplication />} />
