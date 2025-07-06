@@ -959,6 +959,75 @@ export type Database = {
         }
         Relationships: []
       }
+      ogt_orders: {
+        Row: {
+          addons: Json
+          addons_total: number
+          automation_processed: boolean
+          completed_at: string | null
+          confirmed_at: string | null
+          created_at: string
+          currency: string
+          id: string
+          order_reference: string
+          order_status: string
+          payment_status: string
+          plan_price: number
+          plan_type: string
+          square_order_id: string | null
+          square_payment_id: string | null
+          total_amount: number
+          trip_meta: Json
+          updated_at: string
+          user_id: string | null
+          webhook_sent: boolean
+        }
+        Insert: {
+          addons?: Json
+          addons_total?: number
+          automation_processed?: boolean
+          completed_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          order_reference?: string
+          order_status?: string
+          payment_status?: string
+          plan_price: number
+          plan_type: string
+          square_order_id?: string | null
+          square_payment_id?: string | null
+          total_amount: number
+          trip_meta?: Json
+          updated_at?: string
+          user_id?: string | null
+          webhook_sent?: boolean
+        }
+        Update: {
+          addons?: Json
+          addons_total?: number
+          automation_processed?: boolean
+          completed_at?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          order_reference?: string
+          order_status?: string
+          payment_status?: string
+          plan_price?: number
+          plan_type?: string
+          square_order_id?: string | null
+          square_payment_id?: string | null
+          total_amount?: number
+          trip_meta?: Json
+          updated_at?: string
+          user_id?: string | null
+          webhook_sent?: boolean
+        }
+        Relationships: []
+      }
       otp_codes: {
         Row: {
           attempts: number
