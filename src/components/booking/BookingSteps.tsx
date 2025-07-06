@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BookingPlan, BookingFormData, TripDetails, BookingAddOn } from '@/types/booking';
 import { BOOKING_ADDONS, getExtraTravelerAddon } from '@/data/bookingPlans';
 import { useAuth } from '@/contexts/AuthContext';
+import { BookingProvider, useBooking } from './BookingContext';
 import BookingStepAuth from './steps/BookingStepAuth';
 import BookingStepContact from './steps/BookingStepContact';
 import BookingStepTrip from './steps/BookingStepTrip';
@@ -17,16 +18,22 @@ interface BookingStepsProps {
   onClose: () => void;
 }
 
-const BookingSteps = ({ selectedPlan, onClose }: BookingStepsProps) => {
+const BookingStepsContent = ({ selectedPlan, onClose }: BookingStepsProps) => {
   const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState(user ? 1 : 0); // Skip auth if logged in
-  const [formData, setFormData] = useState<Partial<BookingFormData>>({
-    selectedPlan,
-    selectedAddOns: [],
-    totalAmount: selectedPlan.price,
-    addonsTotal: 0
-  });
+  const { formData, updateFormData, validateStep, errors } = useBooking();
+  const [currentStep, setCurrentStep] = useState(user ? 1 : 0);
   const [orderId, setOrderId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Initialize form data with selected plan
+  useState(() => {
+    updateFormData({ 
+      selectedPlan,
+      selectedAddOns: formData.selectedAddOns || [],
+      totalAmount: selectedPlan.price,
+      addonsTotal: formData.addonsTotal || 0
+    });
+  });
 
   const steps = [
     { id: 0, title: 'Sign In', description: 'Create account or sign in' },
@@ -39,7 +46,12 @@ const BookingSteps = ({ selectedPlan, onClose }: BookingStepsProps) => {
   ];
 
   const handleStepComplete = (stepData: any) => {
-    setFormData(prev => ({ ...prev, ...stepData }));
+    // Validate current step before proceeding
+    if (!validateStep(currentStep)) {
+      return;
+    }
+    
+    updateFormData(stepData);
     
     if (currentStep < steps.length - 1) {
       setCurrentStep(prev => prev + 1);
@@ -173,23 +185,40 @@ const BookingSteps = ({ selectedPlan, onClose }: BookingStepsProps) => {
   };
 
   return (
-    <div className="flex h-full">
-      {/* Progress Sidebar */}
-      <div className="w-80 bg-muted/30 border-r border-border p-6">
-        <BookingProgress 
-          steps={steps} 
-          currentStep={currentStep}
-          selectedPlan={formData.selectedPlan!}
-          selectedAddOns={formData.selectedAddOns || []}
-          totalAmount={calculateTotal()}
-        />
+    <div className="flex h-full flex-col lg:flex-row">
+      {/* Progress Sidebar - Mobile responsive */}
+      <div className="w-full lg:w-80 bg-muted/30 border-b lg:border-b-0 lg:border-r border-border p-4 lg:p-6 flex-shrink-0">
+        <div className="lg:sticky lg:top-0">
+          <BookingProgress 
+            steps={steps} 
+            currentStep={currentStep}
+            selectedPlan={formData.selectedPlan!}
+            selectedAddOns={formData.selectedAddOns || []}
+            totalAmount={calculateTotal()}
+          />
+        </div>
       </div>
       
       {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
-        {renderStep()}
+      <div className="flex-1 overflow-y-auto relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        )}
+        <div className="min-h-full">
+          {renderStep()}
+        </div>
       </div>
     </div>
+  );
+};
+
+const BookingSteps = ({ selectedPlan, onClose }: BookingStepsProps) => {
+  return (
+    <BookingProvider>
+      <BookingStepsContent selectedPlan={selectedPlan} onClose={onClose} />
+    </BookingProvider>
   );
 };
 

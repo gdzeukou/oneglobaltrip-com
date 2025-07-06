@@ -3,27 +3,29 @@
  */
 
 /**
- * Add months to a date without using setMonth() to avoid boundary issues
+ * Add months to a date reliably avoiding boundary issues
  */
 export const addMonths = (date: Date, months: number): Date => {
-  const result = new Date(date);
-  const currentMonth = result.getMonth();
-  const currentYear = result.getFullYear();
+  const result = new Date(date.getTime());
+  const day = result.getDate();
+  const month = result.getMonth();
+  const year = result.getFullYear();
   
-  // Calculate new year and month
-  const totalMonths = currentMonth + months;
-  const newYear = currentYear + Math.floor(totalMonths / 12);
-  const newMonth = totalMonths % 12;
+  // Calculate target month and year
+  const targetMonth = month + months;
+  const targetYear = year + Math.floor(targetMonth / 12);
+  const finalMonth = targetMonth >= 0 ? targetMonth % 12 : 12 + (targetMonth % 12);
   
-  // Handle negative months properly
-  if (totalMonths < 0) {
-    const yearsBack = Math.ceil(-totalMonths / 12);
-    const adjustedYear = currentYear - yearsBack;
-    const adjustedMonth = 12 + (totalMonths % 12);
-    return new Date(adjustedYear, adjustedMonth === 12 ? 0 : adjustedMonth, result.getDate());
-  }
+  // Set to first day of target month to avoid overflow
+  result.setFullYear(targetYear, finalMonth, 1);
   
-  return new Date(newYear, newMonth, result.getDate());
+  // Get last day of target month
+  const lastDayOfMonth = new Date(targetYear, finalMonth + 1, 0).getDate();
+  
+  // Use original day or last day of month, whichever is smaller
+  result.setDate(Math.min(day, lastDayOfMonth));
+  
+  return result;
 };
 
 /**

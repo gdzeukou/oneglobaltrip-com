@@ -57,8 +57,8 @@ const SquarePaymentForm = ({
       try {
         const payments = window.Square.payments(
           process.env.NODE_ENV === 'production' 
-            ? 'your-production-app-id' // Replace with actual production app ID
-            : 'sandbox-sq0idb-your-sandbox-app-id' // Replace with actual sandbox app ID
+            ? 'sq0idp-wGVapF8sNt9PLLIaVFCuUA' // Use environment variable in production
+            : 'sandbox-sq0idb-wGVapF8sNt9PLLIaVFCuUA' // Sandbox app ID
         );
         
         setSquarePayments(payments);
