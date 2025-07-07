@@ -38,13 +38,13 @@ const Visas = () => {
       
       <VisaCarouselSection />
       
+      <MainCTASection />
+      
       <TransparentPricingSection />
       
       <EnhancedTrustBadges />
       
       <InternationalTestimonials />
-      
-      <MainCTASection />
       
       <VisaFAQSection />
 
