@@ -76,8 +76,8 @@ export default {
 			},
 			fontFamily: {
 				sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-				serif: ['Playfair Display', 'Georgia', 'serif'],
-				display: ['Playfair Display', 'Georgia', 'serif'],
+				serif: ['Source Sans Pro', 'system-ui', 'sans-serif'],
+				display: ['Source Sans Pro', 'system-ui', 'sans-serif'],
 			},
 			fontSize: {
 				'display-xl': ['5rem', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
