@@ -10,9 +10,9 @@ interface TripData {
   nationality: string;
   destination: string;
   departureDate: string;
-  returnDate: string;
+  returnDate?: string; // Made optional to match TripDetails
   travelers: number;
-  passportExpiry?: string;
+  passportExpiry?: string; // Added missing field
 }
 
 interface BookingStepTripProps {
