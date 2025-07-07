@@ -30,6 +30,7 @@ import AIChat from "./pages/AIChat";
 import LongStayVisas from "./pages/LongStayVisas";
 import ShortStayVisas from "./pages/ShortStayVisas";
 import IntelligentApplication from "./pages/IntelligentApplication";
+import StartMyTrip from "./pages/StartMyTrip";
 
 // Visa country pages
 import SchengenShortStay from "./pages/visa-countries/SchengenShortStay";
@@ -106,6 +107,7 @@ function App() {
                 <Route path="/visas/long-stay" element={<LongStayVisas />} />
                 <Route path="/visas/short-stay" element={<ShortStayVisas />} />
                 <Route path="/intelligent-application" element={<IntelligentApplication />} />
+                <Route path="/startmytrip" element={<StartMyTrip />} />
                 
                 {/* Maya Auth Gate - shown to unauthenticated users trying to access Maya */}
                 <Route path="/maya-auth" element={<MayaAuthGate />} />

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { PlaneTakeoff, Sparkles } from 'lucide-react';
 import { CarouselSlide } from '@/data/heroSlides';
-import SmartApplyModal from '@/components/smart-routing/SmartApplyModal';
 interface CarouselSlideContentProps {
   slide: CarouselSlide;
   isTransitioning: boolean;
@@ -12,7 +11,6 @@ const CarouselSlideContent = ({
   slide,
   isTransitioning
 }: CarouselSlideContentProps) => {
-  const [isSmartApplyOpen, setIsSmartApplyOpen] = useState(false);
   return <>
       <div className="absolute inset-0 flex items-end justify-start">
         <div className="w-full p-8 md:p-16 lg:p-24 max-w-7xl mx-auto">
@@ -29,13 +27,15 @@ const CarouselSlideContent = ({
             
             {/* Luxury CTA Button */}
             <div className="flex flex-col sm:flex-row gap-4 items-start">
-              <Button size="lg" className="btn-luxury-accent group relative overflow-hidden px-8 py-4 text-lg font-bold tracking-wide shadow-luxury-lg hover:shadow-luxury-xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2" onClick={() => setIsSmartApplyOpen(true)}>
-                <span className="relative z-10 flex items-center text-white text-base font-extrabold">
-                  <Sparkles className="h-6 w-6 mr-3 animate-pulse" />
-                  Start Your Journey
-                </span>
-                {/* Animated background effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <Button size="lg" className="btn-luxury-accent group relative overflow-hidden px-8 py-4 text-lg font-bold tracking-wide shadow-luxury-lg hover:shadow-luxury-xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2" asChild>
+                <Link to="/startmytrip">
+                  <span className="relative z-10 flex items-center text-white text-base font-extrabold">
+                    <Sparkles className="h-6 w-6 mr-3 animate-pulse" />
+                    Start Your Journey
+                  </span>
+                  {/* Animated background effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                </Link>
               </Button>
               
               {/* Secondary luxury button for premium feel */}
@@ -52,7 +52,7 @@ const CarouselSlideContent = ({
         </div>
       </div>
 
-      <SmartApplyModal isOpen={isSmartApplyOpen} onClose={() => setIsSmartApplyOpen(false)} />
+      
     </>;
 };
 export default CarouselSlideContent;
