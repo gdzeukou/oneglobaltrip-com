@@ -1,3 +1,4 @@
+
 /**
  * Date utility functions for reliable date calculations
  */
@@ -57,17 +58,72 @@ export const formatDate = (date: Date): string => {
 };
 
 /**
+ * Parse date string reliably, handling different formats
+ */
+export const parseDate = (dateString: string | Date): Date => {
+  if (dateString instanceof Date) return dateString;
+  
+  // Handle empty or invalid strings
+  if (!dateString || typeof dateString !== 'string') {
+    return new Date('');
+  }
+  
+  // Create date and set to start of day to avoid timezone issues
+  const date = new Date(dateString);
+  if (isValidDate(date)) {
+    // Set to noon to avoid timezone edge cases
+    date.setHours(12, 0, 0, 0);
+    return date;
+  }
+  
+  return new Date('');
+};
+
+/**
+ * Compare dates safely, ignoring time components
+ */
+export const compareDates = (date1: string | Date, date2: string | Date): number => {
+  const d1 = parseDate(date1);
+  const d2 = parseDate(date2);
+  
+  if (!isValidDate(d1) || !isValidDate(d2)) {
+    console.warn('Invalid date comparison:', { date1, date2 });
+    return 0;
+  }
+  
+  // Compare only the date parts (ignore time)
+  const day1 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
+  const day2 = new Date(d2.getFullYear(), d2.getMonth(), d2.getDate());
+  
+  return day1.getTime() - day2.getTime();
+};
+
+/**
  * Check if passport is valid for travel (3 months beyond departure)
  */
 export const isPassportValidForTravel = (
   passportExpiry: string | Date,
   departureDate: string | Date
 ): boolean => {
-  const expiry = typeof passportExpiry === 'string' ? new Date(passportExpiry) : passportExpiry;
-  const departure = typeof departureDate === 'string' ? new Date(departureDate) : departureDate;
+  console.log('Checking passport validity:', { passportExpiry, departureDate });
   
-  if (!isValidDate(expiry) || !isValidDate(departure)) return false;
+  const expiry = parseDate(passportExpiry);
+  const departure = parseDate(departureDate);
+  
+  if (!isValidDate(expiry) || !isValidDate(departure)) {
+    console.warn('Invalid dates for passport validation:', { expiry, departure });
+    return false;
+  }
   
   const threeMonthsAfterDeparture = addMonths(departure, 3);
-  return expiry >= threeMonthsAfterDeparture;
+  const isValid = compareDates(expiry, threeMonthsAfterDeparture) >= 0;
+  
+  console.log('Passport validation result:', {
+    expiry: formatDate(expiry),
+    departure: formatDate(departure),
+    threeMonthsAfter: formatDate(threeMonthsAfterDeparture),
+    isValid
+  });
+  
+  return isValid;
 };
