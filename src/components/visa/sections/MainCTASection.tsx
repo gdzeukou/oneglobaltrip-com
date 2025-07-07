@@ -5,39 +5,28 @@ import { ROUTES } from '@/constants/routes';
 const MainCTASection = () => {
   const ctaOptions = [
     {
-      id: 'explore',
-      title: 'EXPLORE',
-      subtitle: 'For the Curious Soul',
-      description: 'Where wanderlust meets wonder. Discover cultures, taste adventures, and collect moments that become treasures.',
-      price: 'From $193',
+      id: 'visa_assist',
+      title: 'Visa Assist',
+      subtitle: 'Essential Service',
+      description: 'Application review, AI checklist, form submission, VAC booking, tracking portal, 48h email SLA',
+      price: 'From $129',
       image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop',
-      alt: 'European cityscape',
+      alt: 'Visa assistance service',
+      route: ROUTES.SHORT_STAY_VISAS,
+      features: ['Application review', 'AI checklist', 'Form submission']
+    },
+    {
+      id: 'trip_bundle',
+      title: 'Trip Bundle',
+      subtitle: 'Complete Travel Package',
+      description: 'Visa Assist plus • 1 4star hotel • 1 flight • 1 activity of your choice • Basic insurance quote pack • WhatsApp/phone (12h SLA)',
+      price: 'From $249',
+      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
+      alt: 'Complete travel bundle',
       badge: 'Most Popular',
       badgeColor: 'bg-orange-500',
-      route: ROUTES.SHORT_STAY_VISAS,
-      features: ['Cultural immersion', 'Hidden gem discoveries', 'Authentic local experiences']
-    },
-    {
-      id: 'elevate',
-      title: 'ELEVATE',
-      subtitle: 'For the Discerning Traveler',
-      description: 'Where luxury meets legacy. Curated experiences that transform perspectives and create lifelong memories.',
-      price: 'From $890',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
-      alt: 'Luxury travel experience',
-      route: ROUTES.LONG_STAY_VISAS,
-      features: ['Exclusive access', 'Personal concierge', 'Bespoke itineraries']
-    },
-    {
-      id: 'escape',
-      title: 'ESCAPE',
-      subtitle: 'For the Dream Seeker',
-      description: 'Where impossible becomes inevitable. Journey beyond maps to places that exist only in dreams—until now.',
-      price: 'From $1,890',
-      image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
-      alt: 'Exclusive destination',
       route: ROUTES.PACKAGES,
-      features: ['Private sanctuaries', 'Once-in-lifetime moments', 'Beyond extraordinary']
+      features: ['Visa Assist +', '1 4star hotel', '1 flight', '1 activity of your choice']
     }
   ];
 
