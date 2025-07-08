@@ -79,7 +79,6 @@ const Index = () => {
       <InteractiveWorldMap />
       <ServicesSection />
       <TrustIndicators />
-      <MainCTASection />
       <PromoSection />
       <StartTripSection />
       <WhyChooseUsSection />
