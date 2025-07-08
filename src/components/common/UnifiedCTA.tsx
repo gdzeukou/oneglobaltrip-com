@@ -50,85 +50,114 @@ const UnifiedCTA = ({
 
   if (variant === 'main' && options.length > 0) {
     return (
-      <section id={id} className={`py-16 bg-white ${className}`}>
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl text-gray-900 mb-4 font-extrabold">{title}</h2>
+      <section id={id} className={`py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden ${className}`}>
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 to-purple-50/30"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-100/20 rounded-full blur-3xl"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-6 leading-tight">
+              {title}
+            </h2>
             {subtitle && (
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">{subtitle}</p>
+              <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">{subtitle}</p>
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto mb-16">
             {options.map((option, index) => (
               <Card 
                 key={option.id} 
-                className="overflow-hidden hover-lift group cursor-pointer relative card-hover animate-scale-in" 
-                style={{ animationDelay: `${index * 0.2}s` }} 
+                className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer relative bg-white/80 backdrop-blur-sm hover:scale-105 animate-scale-in" 
+                style={{ animationDelay: `${index * 0.1}s` }} 
                 onClick={() => navigate(option.route)}
               >
                 {option.badge && (
-                  <div className="absolute top-4 right-4 z-10">
-                    <span className={`${option.badgeColor || 'bg-orange-500'} text-white px-3 py-1 text-sm font-bold rounded-full shadow-lg`}>
+                  <div className="absolute top-4 right-4 z-20">
+                    <span className={`${option.badgeColor || 'bg-orange-500'} text-white px-3 py-1.5 text-sm font-bold rounded-full shadow-lg animate-pulse`}>
                       {option.badge}
                     </span>
                   </div>
                 )}
-                <div className="relative h-48 overflow-hidden">
+                
+                <div className="relative h-56 overflow-hidden">
                   <img 
                     src={option.image} 
                     alt={option.alt} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <div className="absolute bottom-4 left-4">
-                    <div className="flex flex-wrap gap-2">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  
+                  {/* Enhanced features list */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <ul className="space-y-2">
                       {option.features.map((feature, idx) => (
-                        <span key={idx} className="text-xs bg-white/20 backdrop-blur-sm text-white px-2 py-1 rounded-full">
-                          {feature}
-                        </span>
+                        <li key={idx} className="flex items-center text-white/90 text-sm">
+                          <div className="w-1.5 h-1.5 bg-white rounded-full mr-3 flex-shrink-0"></div>
+                          <span className="font-medium backdrop-blur-sm bg-black/20 px-2 py-1 rounded-full">
+                            {feature}
+                          </span>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
                   </div>
                 </div>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-xl text-deep-blue-900">{option.title}</CardTitle>
-                      <p className="text-gray-600 text-sm font-medium">{option.subtitle}</p>
+                
+                <CardHeader className="pb-4 pt-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                        {option.title}
+                      </CardTitle>
+                      <p className="text-gray-500 text-sm font-medium uppercase tracking-wider">
+                        {option.subtitle}
+                      </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-deep-blue-900">{option.price}</p>
+                    <div className="text-right ml-4">
+                      <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                        {option.price}
+                      </p>
                       {option.priceNote && (
-                        <p className="text-xs text-emerald-600 font-medium">{option.priceNote}</p>
+                        <p className="text-xs text-emerald-600 font-semibold mt-1 bg-emerald-50 px-2 py-1 rounded-full">
+                          {option.priceNote}
+                        </p>
                       )}
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 mb-4">{option.description}</p>
-                  <Button className="w-full bg-gradient-to-r from-deep-blue-900 to-deep-blue-800 hover:from-deep-blue-800 hover:to-deep-blue-700 shadow-lg hover-lift">
+                
+                <CardContent className="pt-0 pb-6">
+                  <p className="text-gray-600 mb-6 leading-relaxed">{option.description}</p>
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                     Start Application
-                    <ArrowRight className="h-4 w-4 ml-2" />
+                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </CardContent>
               </Card>
             ))}
           </div>
 
-          <div className="text-center animate-fade-in" style={{ animationDelay: '0.5s' }}>
-            <div className="bg-gradient-to-r from-blue-50 to-yellow-50 rounded-xl p-8 max-w-3xl mx-auto">
-              <p className="text-lg text-gray-600 mb-6">
-                Need help choosing the right visa? Our experts have processed over 10,000 successful applications.
+          <div className="text-center animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            <div className="bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl p-10 max-w-4xl mx-auto shadow-lg border border-gray-100/50 backdrop-blur-sm">
+              <div className="mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4">
+                  <Calendar className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Need Expert Guidance?</h3>
+              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Our travel experts have successfully processed over <span className="font-bold text-blue-600">10,000</span> visa applications with a <span className="font-bold text-emerald-600">99% success rate</span>.
               </p>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-deep-blue-800 text-deep-blue-800 hover:bg-deep-blue-800 hover:text-white shadow-lg hover-lift" 
+                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" 
                 onClick={handleConsultation}
               >
-                <Calendar className="h-4 w-4 mr-2" />
-                Book Free Consultation
+                <Calendar className="h-5 w-5 mr-3" />
+                Book Free 30-Min Consultation
               </Button>
             </div>
           </div>
