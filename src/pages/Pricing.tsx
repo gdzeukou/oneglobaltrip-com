@@ -26,6 +26,8 @@ const Pricing = () => {
 
   const getPlanIcon = (planId: string) => {
     switch (planId) {
+      case 'passport_club':
+        return <Star className="h-8 w-8 text-emerald-600 mb-4" />;
       case 'visa_assist':
         return <Shield className="h-8 w-8 text-primary mb-4" />;
       case 'trip_bundle':
@@ -60,7 +62,7 @@ const Pricing = () => {
       {/* Pricing Cards */}
       <section className="py-16 bg-gradient-to-b from-background to-muted/20">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-4 gap-6">
             {BOOKING_PLANS.map((plan, index) => (
               <Card 
                 key={plan.id} 
@@ -71,11 +73,11 @@ const Pricing = () => {
                 }`}
                 onClick={() => handlePlanSelect(plan)}
               >
-                {plan.popular && (
+                {(plan.popular || plan.badge) && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                    <div className="bg-accent text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center shadow-lg">
+                    <div className={`${plan.badgeColor || 'bg-accent'} text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center shadow-lg`}>
                       <Star className="h-4 w-4 mr-1" />
-                      Most Popular
+                      {plan.badge || 'Most Popular'}
                     </div>
                   </div>
                 )}
@@ -89,7 +91,9 @@ const Pricing = () => {
                   </CardTitle>
                   <div className="mt-4">
                     <span className="text-4xl font-bold text-primary">${plan.price}</span>
-                    <span className="text-muted-foreground ml-2">per traveler</span>
+                    <span className="text-muted-foreground ml-2">
+                      {plan.isAnnual ? 'par an' : 'per traveler'}
+                    </span>
                   </div>
                   <p className="text-muted-foreground mt-4 text-sm">
                     {plan.description}
@@ -127,6 +131,22 @@ const Pricing = () => {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Passport Club Note */}
+      <section className="py-8 bg-emerald-50 border-t border-emerald-200">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4">
+            <Shield className="h-8 w-8 text-emerald-600" />
+          </div>
+          <h3 className="text-xl font-semibold text-emerald-800 mb-2">
+            Note importante pour le Passport Club
+          </h3>
+          <p className="text-emerald-700 max-w-2xl mx-auto">
+            <strong>Important :</strong> Les frais consulaires/VAC restent à la charge du voyageur.
+            Le Passport Club couvre uniquement nos services de conseil et d'assistance.
+          </p>
         </div>
       </section>
 

@@ -964,6 +964,41 @@ export type Database = {
         }
         Relationships: []
       }
+      membership_webhooks: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          processed: boolean | null
+          user_id: string | null
+          webhook_data: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          processed?: boolean | null
+          user_id?: string | null
+          webhook_data?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          processed?: boolean | null
+          user_id?: string | null
+          webhook_data?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "membership_webhooks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ogt_orders: {
         Row: {
           addons: Json
@@ -974,6 +1009,7 @@ export type Database = {
           created_at: string
           currency: string
           id: string
+          membership_duration_days: number | null
           order_reference: string
           order_status: string
           payment_status: string
@@ -996,6 +1032,7 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
+          membership_duration_days?: number | null
           order_reference?: string
           order_status?: string
           payment_status?: string
@@ -1018,6 +1055,7 @@ export type Database = {
           created_at?: string
           currency?: string
           id?: string
+          membership_duration_days?: number | null
           order_reference?: string
           order_status?: string
           payment_status?: string
@@ -1085,6 +1123,7 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          membership_expiry: string | null
           nationality: string | null
           passport_expiry: string | null
           passport_number: string | null
@@ -1097,6 +1136,7 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          membership_expiry?: string | null
           nationality?: string | null
           passport_expiry?: string | null
           passport_number?: string | null
@@ -1109,6 +1149,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          membership_expiry?: string | null
           nationality?: string | null
           passport_expiry?: string | null
           passport_number?: string | null
@@ -1476,6 +1517,10 @@ export type Database = {
       }
       is_admin: {
         Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      is_passport_club_member: {
+        Args: { user_id: string }
         Returns: boolean
       }
     }

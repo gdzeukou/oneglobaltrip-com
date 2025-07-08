@@ -2,6 +2,23 @@ import { BookingPlan, BookingAddOn } from '@/types/booking';
 
 export const BOOKING_PLANS: BookingPlan[] = [
   {
+    id: 'passport_club',
+    name: 'OGT Passport Club',
+    price: 279,
+    description: 'Abonnement annuel avec avantages exclusifs',
+    features: [
+      'Renouvellement de visa gratuit sur 1 dossier par an',
+      'Assistance post-arrivée (check-list + rendez-vous permis)',
+      '-15% immédiat sur tous nos services',
+      'Ligne prioritaire e-mail/WhatsApp (SLA 24h)',
+      'Newsletter conseils voyages réservée aux membres'
+    ],
+    sla: 'SLA 24h prioritaire',
+    badge: 'Économisez toute l\'année',
+    badgeColor: 'bg-emerald-500',
+    isAnnual: true
+  },
+  {
     id: 'visa_assist',
     name: 'Visa Assist',
     price: 129,
@@ -30,7 +47,9 @@ export const BOOKING_PLANS: BookingPlan[] = [
       '12h SLA'
     ],
     sla: '12h SLA',
-    popular: true
+    popular: true,
+    badge: 'Populaire',
+    badgeColor: 'bg-accent'
   },
   {
     id: 'ogt_elite',

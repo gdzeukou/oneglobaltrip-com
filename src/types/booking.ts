@@ -1,5 +1,5 @@
 export interface BookingPlan {
-  id: 'visa_assist' | 'trip_bundle' | 'ogt_elite';
+  id: 'visa_assist' | 'trip_bundle' | 'ogt_elite' | 'passport_club';
   name: string;
   price: number;
   originalPrice?: number;
@@ -7,6 +7,9 @@ export interface BookingPlan {
   features: string[];
   sla: string;
   popular?: boolean;
+  isAnnual?: boolean;
+  badge?: string;
+  badgeColor?: string;
 }
 
 export interface BookingAddOn {

@@ -10,6 +10,7 @@ interface CTAOption {
   subtitle: string;
   description: string;
   price: string;
+  priceNote?: string;
   image: string;
   alt: string;
   badge?: string;
@@ -58,7 +59,7 @@ const UnifiedCTA = ({
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto mb-12">
             {options.map((option, index) => (
               <Card 
                 key={option.id} 
@@ -98,6 +99,9 @@ const UnifiedCTA = ({
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold text-deep-blue-900">{option.price}</p>
+                      {option.priceNote && (
+                        <p className="text-xs text-emerald-600 font-medium">{option.priceNote}</p>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
