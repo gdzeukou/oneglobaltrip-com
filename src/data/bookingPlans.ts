@@ -5,16 +5,16 @@ export const BOOKING_PLANS: BookingPlan[] = [
     id: 'passport_club',
     name: 'OGT Passport Club',
     price: 279,
-    description: 'Abonnement annuel avec avantages exclusifs',
+    description: 'Annual membership with exclusive benefits',
     features: [
-      'Renouvellement de visa gratuit sur 1 dossier par an',
-      'Assistance post-arrivée (check-list + rendez-vous permis)',
-      '-15% immédiat sur tous nos services',
-      'Ligne prioritaire e-mail/WhatsApp (SLA 24h)',
-      'Newsletter conseils voyages réservée aux membres'
+      'Free visa renewal on 1 application per year',
+      'Post-arrival assistance (checklist + permit appointments)',
+      'Immediate 15% discount on all our services',
+      'Priority email/WhatsApp line (24h SLA)',
+      'Members-only travel tips newsletter'
     ],
-    sla: 'SLA 24h prioritaire',
-    badge: 'Économisez toute l\'année',
+    sla: '24h priority SLA',
+    badge: 'Save All Year',
     badgeColor: 'bg-emerald-500',
     isAnnual: true
   },
@@ -48,7 +48,7 @@ export const BOOKING_PLANS: BookingPlan[] = [
     ],
     sla: '12h SLA',
     popular: true,
-    badge: 'Populaire',
+    badge: 'Most Popular',
     badgeColor: 'bg-accent'
   },
   {

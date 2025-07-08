@@ -92,7 +92,7 @@ const Pricing = () => {
                   <div className="mt-4">
                     <span className="text-4xl font-bold text-primary">${plan.price}</span>
                     <span className="text-muted-foreground ml-2">
-                      {plan.isAnnual ? 'par an' : 'per traveler'}
+                      {plan.isAnnual ? 'per year' : 'per traveler'}
                     </span>
                   </div>
                   <p className="text-muted-foreground mt-4 text-sm">
@@ -141,11 +141,11 @@ const Pricing = () => {
             <Shield className="h-8 w-8 text-emerald-600" />
           </div>
           <h3 className="text-xl font-semibold text-emerald-800 mb-2">
-            Note importante pour le Passport Club
+            Important Passport Club Note
           </h3>
           <p className="text-emerald-700 max-w-2xl mx-auto">
-            <strong>Important :</strong> Les frais consulaires/VAC restent à la charge du voyageur.
-            Le Passport Club couvre uniquement nos services de conseil et d'assistance.
+            <strong>Important:</strong> Consulate/VAC fees remain the responsibility of the traveler.
+            The Passport Club only covers our advisory and assistance services.
           </p>
         </div>
       </section>
