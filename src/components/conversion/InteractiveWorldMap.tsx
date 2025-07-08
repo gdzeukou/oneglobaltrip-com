@@ -127,10 +127,15 @@ const InteractiveWorldMap = () => {
   ];
 
   const moods = [
-    { id: 'adventure', label: 'Adventure', color: 'bg-orange-100 text-orange-800' },
-    { id: 'romantic', label: 'Romantic', color: 'bg-pink-100 text-pink-800' },
-    { id: 'cultural', label: 'Cultural', color: 'bg-purple-100 text-purple-800' },
-    { id: 'relaxation', label: 'Relaxation', color: 'bg-blue-100 text-blue-800' }
+    { id: 'romantic', label: '💑 Romantic & Honeymoon', color: 'bg-pink-100 text-pink-800' },
+    { id: 'cultural', label: '🎭 Cultural & Heritage', color: 'bg-purple-100 text-purple-800' },
+    { id: 'party', label: '🎉 Party & Nightlife', color: 'bg-yellow-100 text-yellow-800' },
+    { id: 'family', label: '👨‍👩‍👧‍👦 Family-Friendly', color: 'bg-green-100 text-green-800' },
+    { id: 'luxury', label: '🛥️ Luxury & VIP', color: 'bg-amber-100 text-amber-800' },
+    { id: 'adventure', label: '🌍 Adventure & Thrill', color: 'bg-orange-100 text-orange-800' },
+    { id: 'wellness', label: '🧘 Wellness & Retreat', color: 'bg-emerald-100 text-emerald-800' },
+    { id: 'beach', label: '🏝️ Beach & Relaxation', color: 'bg-blue-100 text-blue-800' },
+    { id: 'spiritual', label: '🕌 Spiritual & Pilgrimage', color: 'bg-indigo-100 text-indigo-800' }
   ];
 
   const continents = ['Europe', 'Asia', 'South America', 'North America', 'Africa', 'Oceania'];
