@@ -40,11 +40,11 @@ export const BOOKING_PLANS: BookingPlan[] = [
     description: 'Complete travel planning with visa assistance',
     features: [
       'Visa Assist +',
-      '3 flight quotes',
-      '3 hotel quotes', 
-      'Insurance comparison',
-      'WhatsApp/phone support',
-      '12h SLA'
+      'a 4 star hotel',
+      'premium flight booking with airport lounges*',
+      'TripGift OGT',
+      'Insurance deals',
+      '24/7 support'
     ],
     sla: '12h SLA',
     popular: true,
