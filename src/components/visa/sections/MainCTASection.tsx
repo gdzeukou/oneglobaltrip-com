@@ -15,7 +15,7 @@ const MainCTASection = () => {
       badge: 'Save All Year',
       badgeColor: 'bg-emerald-500',
       route: '/pricing',
-      features: ['Free renewal', 'Post-arrival assistance', '15% off all services']
+      features: ['Free renewal', 'Post-arrival support', '15% discount']
     },
     {
       id: 'visa_assist',
@@ -27,7 +27,7 @@ const MainCTASection = () => {
       image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop',
       alt: 'Visa assistance service',
       route: ROUTES.SHORT_STAY_VISAS,
-      features: ['Application review', 'AI checklist', 'Form submission']
+      features: ['Application review', 'AI checklist', 'Tracking portal']
     },
     {
       id: 'trip_bundle',
@@ -41,7 +41,7 @@ const MainCTASection = () => {
       badge: 'Most Popular',
       badgeColor: 'bg-orange-500',
       route: ROUTES.PACKAGES,
-      features: ['Visa Assist +', '1 4star hotel', '1 flight', '1 activity of your choice']
+      features: ['Everything in Visa Assist', '4-star hotel', 'Premium flight', 'TripGift credit']
     },
     {
       id: 'ogt_elite',
@@ -53,7 +53,7 @@ const MainCTASection = () => {
       image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
       alt: 'Elite concierge service',
       route: '/pricing',
-      features: ['Dedicated agent', 'Priority slot hunt', 'Airport transfers']
+      features: ['Everything in Trip Bundle', 'Dedicated agent', 'Priority slot hunt']
     }
   ];
 

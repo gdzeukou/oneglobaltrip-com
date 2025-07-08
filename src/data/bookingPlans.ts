@@ -7,11 +7,11 @@ export const BOOKING_PLANS: BookingPlan[] = [
     price: 279,
     description: 'Annual membership with exclusive benefits',
     features: [
-      'Free visa renewal on 1 application per year',
-      'Post-arrival assistance (checklist + permit appointments)',
-      'Immediate 15% discount on all our services',
-      'Priority email/WhatsApp line (24h SLA)',
-      'Members-only travel tips newsletter'
+      '✓ **Free visa renewal** on one application each year',
+      '✓ **Post-arrival support** (check-lists + residence-permit appointments)',
+      '✓ **Instant 15% discount** on every Visa & Travel service',
+      '✓ **Priority email / WhatsApp line** (24 h SLA)',
+      '✓ **Members-only travel tips newsletter**'
     ],
     sla: '24h priority SLA',
     badge: 'Save All Year',
@@ -24,12 +24,11 @@ export const BOOKING_PLANS: BookingPlan[] = [
     price: 129,
     description: 'Essential visa processing with AI-powered assistance',
     features: [
-      'Application review',
-      'AI checklist',
-      'Form submission',
-      'VAC booking',
-      'Tracking portal',
-      '48h email SLA'
+      '✓ **Application review** with smart AI checklist',
+      '✓ **Form completion & VAC submission**',
+      '✓ **Real-time tracking portal**',
+      '✓ **48 h email SLA** (two-business-day replies)',
+      '✓ **Optional 24 h rush review** add-on (+$79)'
     ],
     sla: '48h email SLA'
   },
@@ -39,12 +38,12 @@ export const BOOKING_PLANS: BookingPlan[] = [
     price: 249,
     description: 'Complete travel planning with visa assistance',
     features: [
-      '🛂 Visa Assist + – end-to-end application handling with a smart AI checklist',
-      '🏨 Guaranteed 4-Star Hotel – hand-picked premium stay in the heart of your destination',
-      '✈️ Premium Flight + Lounge Access* – flexible tickets and lounge comfort en route',
-      '🎁 OGT TripGift Credit – travel voucher to spend however you like',
-      '🛡️ Comprehensive Travel Insurance – medical, baggage & cancellation covered',
-      '📞 24/7 Support – WhatsApp & phone, replies in under 2 hours'
+      '✓ **Everything in Visa Assist**',
+      '✓ **Guaranteed 4-star hotel** in prime location',
+      '✓ **Premium flight + lounge access***',
+      '✓ **OGT TripGift credit** to spend however you like',
+      '✓ **Comprehensive travel insurance** deals(medical, baggage, cancellation)',
+      '✓ **24/7 WhatsApp & phone support** (12 h SLA)'
     ],
     sla: '12h SLA',
     popular: true,
@@ -57,12 +56,12 @@ export const BOOKING_PLANS: BookingPlan[] = [
     price: 479,
     description: 'Premium concierge service with dedicated agent',
     features: [
-      'Trip Bundle +',
-      'Dedicated agent',
-      'Priority slot hunt',
-      'Airport transfer booking',
-      'Dining/event reservations',
-      '2h SLA & emergency helpline'
+      '✓ **Everything in Trip Bundle**',
+      '✓ **Dedicated human agent of your choice**',
+      '✓ **Priority biometric appointment slot hunt**',
+      '✓ **Airport transfer service**',
+      '✓ **Restaurant / event reservations**',
+      '✓ **2 h SLA & 24/7 emergency helpline**'
     ],
     sla: '2h SLA & emergency helpline'
   }
