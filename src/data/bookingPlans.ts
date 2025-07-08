@@ -39,12 +39,12 @@ export const BOOKING_PLANS: BookingPlan[] = [
     price: 249,
     description: 'Complete travel planning with visa assistance',
     features: [
-      'Visa Assist +',
-      'a 4 star hotel',
-      'premium flight booking with airport lounges*',
-      'TripGift OGT',
-      'Insurance deals',
-      '24/7 support'
+      '🛂 Visa Assist + – end-to-end application handling with a smart AI checklist',
+      '🏨 Guaranteed 4-Star Hotel – hand-picked premium stay in the heart of your destination',
+      '✈️ Premium Flight + Lounge Access* – flexible tickets and lounge comfort en route',
+      '🎁 OGT TripGift Credit – travel voucher to spend however you like',
+      '🛡️ Comprehensive Travel Insurance – medical, baggage & cancellation covered',
+      '📞 24/7 Support – WhatsApp & phone, replies in under 2 hours'
     ],
     sla: '12h SLA',
     popular: true,
