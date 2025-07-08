@@ -29,49 +29,75 @@ const Index = () => {
             id: 'passport_club',
             title: 'OGT Passport Club',
             subtitle: 'Annual Membership',
-            description: 'Free renewal • 15% off all services • Post-arrival assistance • Priority line',
+            description: 'Unlimited visa renewals with exclusive member benefits and year-round savings',
             price: '$279/year',
             image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
             alt: 'Passport Club membership',
             badge: 'Save All Year',
             badgeColor: 'bg-emerald-500',
             route: '/pricing',
-            features: ['Free renewal', 'Post-arrival support', '15% discount']
+            features: [
+              'Unlimited visa renewals at no extra cost',
+              '15% discount on all services and packages', 
+              'Priority customer support line',
+              'Post-arrival assistance and concierge',
+              'Access to exclusive member-only deals'
+            ]
           },
           {
             id: 'visa_assist',
             title: 'Visa Assist',
             subtitle: 'Essential Service',
-            description: '✓ Application review with smart AI checklist • ✓ Form completion & VAC submission • ✓ Real-time tracking portal • ✓ 48h email SLA',
+            description: 'Professional visa application support with AI-powered accuracy checks',
             price: '$129',
             image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop',
             alt: 'Visa assistance service',
             route: '/visas',
-            features: ['Application review', 'AI checklist', 'Tracking portal']
+            features: [
+              'Smart AI application review and validation',
+              'Complete form preparation and submission',
+              'Real-time application tracking portal',
+              'Document checklist and requirements guide',
+              '48-hour email response guarantee'
+            ]
           },
           {
             id: 'trip_bundle',
             title: 'Trip Bundle',
             subtitle: 'Complete Travel Package',
-            description: '✓ Everything in Visa Assist • ✓ Guaranteed 4-star hotel in prime location • ✓ Premium flight + lounge access* • ✓ OGT TripGift credit • ✓ Comprehensive travel insurance deals • ✓ 24/7 WhatsApp & phone support',
+            description: 'Full travel experience with visa, accommodation, and flight arrangements',
             price: '$249',
             image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
             alt: 'Complete travel bundle',
             badge: 'Most Popular',
             badgeColor: 'bg-orange-500',
             route: '/packages',
-            features: ['Everything in Visa Assist', '4-star hotel', 'Premium flight', 'TripGift credit']
+            features: [
+              'All Visa Assist services included',
+              'Guaranteed 4-star hotel in prime location',
+              'Premium flight booking with lounge access',
+              'OGT TripGift credit for activities',
+              'Comprehensive travel insurance coverage',
+              '24/7 WhatsApp and phone support'
+            ]
           },
           {
             id: 'ogt_elite',
             title: 'OGT Elite',
             subtitle: 'Concierge Premium',
-            description: '✓ Everything in Trip Bundle • ✓ Dedicated human agent of your choice • ✓ Priority biometric appointment slot hunt • ✓ Airport transfer service • ✓ Restaurant / event reservations • ✓ 2h SLA & 24/7 emergency helpline',
+            description: 'White-glove service with dedicated personal travel agent and VIP treatment',
             price: '$479',
             image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
             alt: 'Elite concierge service',
             route: '/pricing',
-            features: ['Everything in Trip Bundle', 'Dedicated agent', 'Priority slot hunt']
+            features: [
+              'All Trip Bundle services included',
+              'Dedicated personal travel agent',
+              'Priority biometric appointment booking',
+              'Airport transfer and VIP assistance',
+              'Restaurant and event reservations',
+              '2-hour response SLA with emergency hotline'
+            ]
           }
         ]}
       />
