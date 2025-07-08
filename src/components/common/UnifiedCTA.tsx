@@ -92,24 +92,26 @@ const UnifiedCTA = ({
                 </div>
                 
                 <CardHeader className="pb-4 pt-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
-                        {option.title}
-                      </CardTitle>
-                      <p className="text-gray-500 text-sm font-medium uppercase tracking-wider">
-                        {option.subtitle}
-                      </p>
-                    </div>
-                    <div className="text-right ml-4">
-                      <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                        {option.price}
-                      </p>
-                      {option.priceNote && (
-                        <p className="text-xs text-emerald-600 font-semibold mt-1 bg-emerald-50 px-2 py-1 rounded-full">
-                          {option.priceNote}
-                        </p>
-                      )}
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <CardTitle className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors leading-tight">
+                          {option.title}
+                        </CardTitle>
+                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium uppercase tracking-wider">
+                          {option.subtitle}
+                        </div>
+                      </div>
+                      <div className="text-right ml-4">
+                        <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                          {option.price}
+                        </div>
+                        {option.priceNote && (
+                          <div className="text-xs text-emerald-600 font-semibold mt-1 bg-emerald-50 px-2 py-1 rounded-full">
+                            {option.priceNote}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </CardHeader>
