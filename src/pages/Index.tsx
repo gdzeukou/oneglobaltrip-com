@@ -31,7 +31,7 @@ const Index = () => {
             subtitle: 'Professional visa assistance',
             description: 'Expert guidance for all your visa applications with 99% success rate',
             price: 'From €99',
-            image: '/lovable-uploads/3bee657a-be4d-476c-b496-1d6dd9f6031a.png',
+            image: '/lovable-uploads/8c96a8f4-0964-4d2e-8b84-1bd46ea0655d.png',
             alt: 'Visa services',
             badge: 'Most Popular',
             badgeColor: 'bg-orange-500',
