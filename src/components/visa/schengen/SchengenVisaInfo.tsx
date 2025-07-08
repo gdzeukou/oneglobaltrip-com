@@ -32,21 +32,22 @@ const SchengenVisaInfo = () => {
       name: 'Basic Package',
       price: '$193',
       features: [
-        'Document review',
-        'Application form assistance',
-        'Appointment booking',
-        'Email support'
+        '✓ **Application review** with smart AI checklist',
+        '✓ **Form completion & VAC submission**',
+        '✓ **Real-time tracking portal**',
+        '✓ **48 h email SLA** (two-business-day replies)'
       ]
     },
     {
       name: 'Premium Package',
       price: '$295',
       features: [
-        'Everything in Basic',
-        'Personal visa expert',
-        'Document preparation',
-        'Priority support',
-        'Travel insurance included'
+        '✓ **Everything in Visa Assist**',
+        '✓ **Guaranteed 4-star hotel** in prime location',
+        '✓ **Premium flight + lounge access***',
+        '✓ **OGT TripGift credit** to spend however you like',
+        '✓ **Comprehensive travel insurance** deals(medical, baggage, cancellation)',
+        '✓ **24/7 WhatsApp & phone support** (12 h SLA)'
       ],
       popular: true
     },
@@ -54,11 +55,12 @@ const SchengenVisaInfo = () => {
       name: 'VIP Package',
       price: '$495',
       features: [
-        'Everything in Premium',
-        'Express processing',
-        'Concierge service',
-        '24/7 phone support',
-        'Travel planning assistance'
+        '✓ **Everything in Trip Bundle**',
+        '✓ **Dedicated human agent of your choice**',
+        '✓ **Priority biometric appointment slot hunt**',
+        '✓ **Airport transfer service**',
+        '✓ **Restaurant / event reservations**',
+        '✓ **2 h SLA & 24/7 emergency helpline**'
       ]
     }
   ];

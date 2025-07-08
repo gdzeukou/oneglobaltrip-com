@@ -17,11 +17,11 @@ const VisaPricingPage = () => {
         price: "$175",
         description: "Essential visa processing service",
         features: [
-          "Visa application review",
-          "Document checklist",
-          "Application submission",
-          "Status tracking",
-          "Email support"
+          "✓ **Application review** with smart AI checklist",
+          "✓ **Form completion & VAC submission**",
+          "✓ **Real-time tracking portal**",
+          "✓ **48 h email SLA** (two-business-day replies)",
+          "✓ **Optional 24 h rush review** add-on (+$79)"
         ],
         popular: false
       },
@@ -30,12 +30,12 @@ const VisaPricingPage = () => {
         price: "$299",
         description: "Complete visa service with extras",
         features: [
-          "Everything in Basic",
-          "Priority processing",
-          "Phone support",
-          "Document verification",
-          "Travel insurance guidance",
-          "Appointment booking"
+          "✓ **Everything in Visa Assist**",
+          "✓ **Guaranteed 4-star hotel** in prime location",
+          "✓ **Premium flight + lounge access***",
+          "✓ **OGT TripGift credit** to spend however you like",
+          "✓ **Comprehensive travel insurance** deals(medical, baggage, cancellation)",
+          "✓ **24/7 WhatsApp & phone support** (12 h SLA)"
         ],
         popular: true
       },
@@ -44,12 +44,12 @@ const VisaPricingPage = () => {
         price: "$449",
         description: "Full-service visa assistance",
         features: [
-          "Everything in Standard",
-          "Dedicated agent",
-          "Rush processing available",
-          "Document translation",
-          "Photo service",
-          "Embassy liaison"
+          "✓ **Everything in Trip Bundle**",
+          "✓ **Dedicated human agent of your choice**",
+          "✓ **Priority biometric appointment slot hunt**",
+          "✓ **Airport transfer service**",
+          "✓ **Restaurant / event reservations**",
+          "✓ **2 h SLA & 24/7 emergency helpline**"
         ],
         popular: false
       }
