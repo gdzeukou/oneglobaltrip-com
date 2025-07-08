@@ -82,27 +82,13 @@ const UnifiedCTA = ({
                   </div>
                 )}
                 
-                <div className="relative h-56 overflow-hidden">
+                <div className="relative h-48 overflow-hidden">
                   <img 
                     src={option.image} 
                     alt={option.alt} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  
-                  {/* Enhanced features list */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <ul className="space-y-2">
-                      {option.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center text-white/90 text-sm">
-                          <div className="w-1.5 h-1.5 bg-white rounded-full mr-3 flex-shrink-0"></div>
-                          <span className="font-medium backdrop-blur-sm bg-black/20 px-2 py-1 rounded-full">
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
                 </div>
                 
                 <CardHeader className="pb-4 pt-6">
@@ -129,7 +115,18 @@ const UnifiedCTA = ({
                 </CardHeader>
                 
                 <CardContent className="pt-0 pb-6">
-                  <p className="text-gray-600 mb-6 leading-relaxed">{option.description}</p>
+                  <p className="text-gray-600 mb-4 leading-relaxed text-sm">{option.description}</p>
+                  
+                  {/* Features List */}
+                  <div className="mb-6 space-y-2">
+                    {option.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-center text-sm text-gray-700">
+                        <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mr-3 flex-shrink-0"></div>
+                        <span className="leading-tight">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
                   <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
                     Start Application
                     <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
