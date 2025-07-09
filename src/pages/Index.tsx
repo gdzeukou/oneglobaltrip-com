@@ -58,7 +58,8 @@ const Index = () => {
               'Biometric/Fingerprint Appointment Hunter',
               'Complete form preparation and submission',
               'Real-time application tracking portal',
-              'Document checklist and requirements guide'
+              'Document checklist and requirements guide',
+              '24/7 AI Travel Agent'
             ]
           },
           {
