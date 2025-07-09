@@ -55,10 +55,10 @@ const Index = () => {
             route: '/visas',
             features: [
               'Smart AI application review and validation',
+              'Biometric/Fingerprint Appointment Hunter',
               'Complete form preparation and submission',
               'Real-time application tracking portal',
-              'Document checklist and requirements guide',
-              '48-hour email response guarantee'
+              'Document checklist and requirements guide'
             ]
           },
           {
