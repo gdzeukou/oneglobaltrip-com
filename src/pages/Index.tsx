@@ -50,7 +50,7 @@ const Index = () => {
             subtitle: 'Essential Service',
             description: 'Professional visa application support with AI-powered accuracy checks',
             price: '$129',
-            image: 'https://images.unsplash.com/photo-1502602898536-47ad22581b52?w=800&h=600&fit=crop',
+            image: '/lovable-uploads/0eab89a7-31c2-4a08-9421-fa542434e4ce.png',
             alt: 'Visa assistance service',
             route: '/visas',
             features: [
