@@ -87,7 +87,7 @@ const Index = () => {
             subtitle: 'Concierge Premium',
             description: 'White-glove service with dedicated personal travel agent and VIP treatment',
             price: '$479',
-            image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
+            image: '/lovable-uploads/84f98d44-7bb4-4a46-a0d9-d2a6070256a9.png',
             alt: 'Elite concierge service',
             route: '/pricing',
             features: [
