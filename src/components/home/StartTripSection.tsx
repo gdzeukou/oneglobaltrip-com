@@ -6,7 +6,7 @@ import UnifiedTravelForm from '@/components/forms/UnifiedTravelForm';
 const StartTripSection = () => {
   return (
     <section className="py-16 bg-gradient-to-br from-yellow-50 to-blue-50">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="w-full mx-auto px-4 md:px-6 lg:px-8">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
             <Plane className="h-8 w-8 text-blue-600 mr-3" />

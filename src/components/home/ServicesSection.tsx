@@ -25,7 +25,7 @@ const ServicesSection = () => {
 
   return (
     <section className="py-24 bg-gradient-to-br from-secondary-50 to-accent-50/30" id="services">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-20">
           <h2 className="font-display text-luxury-lg md:text-luxury-xl font-bold text-primary mb-8 tracking-tight">
             Where Luxury Meets Authenticity

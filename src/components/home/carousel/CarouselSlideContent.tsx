@@ -13,7 +13,7 @@ const CarouselSlideContent = ({
 }: CarouselSlideContentProps) => {
   return <>
       <div className="absolute inset-0 flex items-end justify-start">
-        <div className="w-full p-4 sm:p-6 md:p-16 lg:p-24 max-w-7xl mx-auto">
+        <div className="w-full p-3 sm:p-4 md:p-8 lg:p-16 xl:p-24">
           <div className={`transition-all duration-700 ease-out ${isTransitioning ? 'opacity-0 translate-y-8 scale-95' : 'opacity-100 translate-y-0 scale-100'}`}>
             {/* Luxury destination title */}
             <h1 className="font-display text-2xl sm:text-3xl md:text-luxury-lg lg:text-luxury-xl font-bold text-white mb-4 sm:mb-6 drop-shadow-2xl tracking-tight leading-tight">

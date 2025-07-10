@@ -50,23 +50,23 @@ const UnifiedCTA = ({
 
   if (variant === 'main' && options.length > 0) {
     return (
-      <section id={id} className={`py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden ${className}`}>
+      <section id={id} className={`py-12 md:py-16 lg:py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden ${className}`}>
         {/* Background decoration */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 to-purple-50/30"></div>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-100/20 rounded-full blur-3xl"></div>
         
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-6 relative z-10">
-          <div className="text-center mb-12 md:mb-20 animate-fade-in">
+        <div className="w-full mx-auto px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-8 md:mb-12 lg:mb-16 animate-fade-in">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-6 leading-tight">
               {title}
             </h2>
             {subtitle && (
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-4">{subtitle}</p>
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-6xl mx-auto leading-relaxed px-2">{subtitle}</p>
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto mb-12 md:mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full mx-auto mb-8 md:mb-12 lg:mb-16">
             {options.map((option, index) => (
               <Card 
                 key={option.id} 
@@ -139,14 +139,14 @@ const UnifiedCTA = ({
           </div>
 
           <div className="text-center animate-fade-in" style={{ animationDelay: '0.8s' }}>
-            <div className="bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl p-6 sm:p-8 md:p-10 max-w-4xl mx-auto shadow-lg border border-gray-100/50 backdrop-blur-sm">
+            <div className="bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 w-full mx-auto shadow-lg border border-gray-100/50 backdrop-blur-sm">
               <div className="mb-6">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4">
                   <Calendar className="h-8 w-8 text-white" />
                 </div>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Need Expert Guidance?</h3>
-              <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 w-full mx-auto leading-relaxed">
                 Our travel experts have successfully processed over <span className="font-bold text-blue-600">10,000</span> visa applications with a <span className="font-bold text-emerald-600">99% success rate</span>.
               </p>
               <Button 
