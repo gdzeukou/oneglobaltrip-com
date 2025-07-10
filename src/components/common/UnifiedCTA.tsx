@@ -56,17 +56,17 @@ const UnifiedCTA = ({
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-100/20 rounded-full blur-3xl"></div>
         
-        <div className="max-w-8xl mx-auto px-4 lg:px-6 relative z-10">
-          <div className="text-center mb-20 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-6 leading-tight">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-6 relative z-10">
+          <div className="text-center mb-12 md:mb-20 animate-fade-in">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-6 leading-tight">
               {title}
             </h2>
             {subtitle && (
-              <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">{subtitle}</p>
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-4">{subtitle}</p>
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8 max-w-7xl mx-auto mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 max-w-7xl mx-auto mb-12 md:mb-20">
             {options.map((option, index) => (
               <Card 
                 key={option.id} 
@@ -82,7 +82,7 @@ const UnifiedCTA = ({
                   </div>
                 )}
                 
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-40 sm:h-48 overflow-hidden">
                   <img 
                     src={option.image} 
                     alt={option.alt} 
@@ -93,21 +93,21 @@ const UnifiedCTA = ({
                 
                 <CardHeader className="pb-4 pt-6">
                   <div className="space-y-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0 max-w-[60%]">
-                        <CardTitle className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors leading-tight">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg sm:text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors leading-tight">
                           {option.title}
                         </CardTitle>
-                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium uppercase tracking-wider">
+                        <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium uppercase tracking-wider">
                           {option.subtitle}
                         </div>
                       </div>
-                      <div className="text-right flex-shrink-0 min-w-[35%]">
-                        <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                      <div className="text-left sm:text-right flex-shrink-0">
+                        <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                           {option.price}
                         </div>
                         {option.priceNote && (
-                          <div className="text-xs text-emerald-600 font-semibold mt-1 bg-emerald-50 px-2 py-1 rounded-full">
+                          <div className="text-xs text-emerald-600 font-semibold mt-1 bg-emerald-50 px-2 py-1 rounded-full inline-block">
                             {option.priceNote}
                           </div>
                         )}
@@ -139,24 +139,25 @@ const UnifiedCTA = ({
           </div>
 
           <div className="text-center animate-fade-in" style={{ animationDelay: '0.8s' }}>
-            <div className="bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl p-10 max-w-4xl mx-auto shadow-lg border border-gray-100/50 backdrop-blur-sm">
+            <div className="bg-gradient-to-r from-blue-50 via-white to-purple-50 rounded-2xl p-6 sm:p-8 md:p-10 max-w-4xl mx-auto shadow-lg border border-gray-100/50 backdrop-blur-sm">
               <div className="mb-6">
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mb-4">
                   <Calendar className="h-8 w-8 text-white" />
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Need Expert Guidance?</h3>
-              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Need Expert Guidance?</h3>
+              <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed">
                 Our travel experts have successfully processed over <span className="font-bold text-blue-600">10,000</span> visa applications with a <span className="font-bold text-emerald-600">99% success rate</span>.
               </p>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" 
+                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-bold px-6 sm:px-8 py-3 sm:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 text-sm sm:text-base" 
                 onClick={handleConsultation}
               >
-                <Calendar className="h-5 w-5 mr-3" />
-                Book Free 30-Min Consultation
+                <Calendar className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3" />
+                <span className="hidden sm:inline">Book Free 30-Min Consultation</span>
+                <span className="sm:hidden">Free Consultation</span>
               </Button>
             </div>
           </div>

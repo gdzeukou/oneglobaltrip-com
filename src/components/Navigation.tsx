@@ -159,8 +159,8 @@ const Navigation = () => {
               </button>
             </div>
 
-            {/* Auth Section */}
-            <div className="flex items-center space-x-4">
+            {/* Auth Section - Hidden on mobile */}
+            <div className="hidden md:flex items-center space-x-4">
               <NavigationAuth />
             </div>
           </div>
@@ -252,6 +252,11 @@ const Navigation = () => {
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Free</span>
                 </Link>
               )}
+              
+              {/* Mobile Auth Section */}
+              <div className="pt-4 mt-4 border-t border-gray-200">
+                <NavigationAuth />
+              </div>
             </div>
           </div>
         )}
