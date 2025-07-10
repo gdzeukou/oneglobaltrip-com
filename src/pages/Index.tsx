@@ -68,7 +68,7 @@ const Index = () => {
             subtitle: 'Complete Travel Package',
             description: 'Full travel experience with visa, accommodation, and flight arrangements',
             price: '$249',
-            image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
+            image: '/lovable-uploads/2aa35fa9-6f77-4530-b502-0223423fa205.png',
             alt: 'Complete travel bundle',
             badge: 'Most Popular',
             badgeColor: 'bg-orange-500',
