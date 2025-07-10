@@ -4,7 +4,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import HeroCarousel from '@/components/home/HeroCarousel';
 import TrustIndicators from '@/components/home/TrustIndicators';
-import ServicesSection from '@/components/home/ServicesSection';
+
 import PromoSection from '@/components/home/PromoSection';
 import StartTripSection from '@/components/home/StartTripSection';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
@@ -105,7 +105,7 @@ const Index = () => {
       />
       <AITripRecommender />
       <InteractiveWorldMap />
-      <ServicesSection />
+      
       <TrustIndicators />
       <PromoSection />
       <StartTripSection />
