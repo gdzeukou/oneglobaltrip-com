@@ -78,8 +78,7 @@ const Index = () => {
               'Guaranteed 4-star hotel in prime location',
               'Premium flight booking with lounge access',
               'OGT TripGift credit for activities',
-              'Comprehensive travel insurance coverage',
-              '24/7 WhatsApp and phone support'
+              'Comprehensive Travel Insurance Picks'
             ]
           },
           {
