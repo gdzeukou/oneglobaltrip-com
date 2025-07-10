@@ -95,8 +95,7 @@ const Index = () => {
               'Dedicated Human Certified Travel Advisor',
               'Priority biometric appointment booking',
               'Airport transfer and VIP assistance',
-              'Restaurant and event reservations',
-              '2-hour response SLA with emergency hotline'
+              'Restaurant and event reservations'
             ]
           }
         ]}
