@@ -93,16 +93,16 @@ const UnifiedCTA = ({
                 
                 <CardHeader className="pb-4 pt-6">
                   <div className="space-y-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors leading-tight whitespace-nowrap">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0 max-w-[60%]">
+                        <CardTitle className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors leading-tight">
                           {option.title}
                         </CardTitle>
                         <div className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium uppercase tracking-wider">
                           {option.subtitle}
                         </div>
                       </div>
-                      <div className="text-right ml-4 flex-shrink-0">
+                      <div className="text-right flex-shrink-0 min-w-[35%]">
                         <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                           {option.price}
                         </div>
