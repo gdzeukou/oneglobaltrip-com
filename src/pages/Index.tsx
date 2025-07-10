@@ -26,11 +26,28 @@ const Index = () => {
         subtitle="From visa assistance to luxury packages, we handle everything for your dream trip"
         options={[
           {
+            id: 'ogt_elite',
+            title: 'OGT Elite',
+            subtitle: 'Concierge Premium',
+            description: 'White-glove service with dedicated personal travel agent and VIP treatment',
+            price: '$479',
+            image: '/lovable-uploads/84f98d44-7bb4-4a46-a0d9-d2a6070256a9.png',
+            alt: 'Elite concierge service',
+            route: '/pricing',
+            features: [
+              'All Trip Bundle services included',
+              'Dedicated Human Certified Travel Advisor',
+              'Priority biometric appointment booking',
+              'Airport transfer and VIP assistance',
+              'Restaurant and event reservations'
+            ]
+          },
+          {
             id: 'passport_club',
             title: 'OGT Passport Club',
             subtitle: 'Annual Membership',
             description: 'Unlimited visa renewals with exclusive member benefits and year-round savings',
-            price: '$279/y',
+            price: '$289/y',
             image: '/lovable-uploads/aa2bd5bf-60f3-4560-a840-674f0d86c971.png',
             alt: 'Passport Club membership',
             badge: 'Save All Year',
@@ -41,25 +58,10 @@ const Index = () => {
               '15% discount on all services and packages', 
               'Priority customer support line',
               'Post-arrival assistance and concierge',
-              'Access to exclusive member-only deals'
-            ]
-          },
-          {
-            id: 'visa_assist',
-            title: 'Visa Assist',
-            subtitle: 'Essential Service',
-            description: 'Professional visa application support with AI-powered accuracy checks',
-            price: '$129',
-            image: '/lovable-uploads/0eab89a7-31c2-4a08-9421-fa542434e4ce.png',
-            alt: 'Visa assistance service',
-            route: '/visas',
-            features: [
-              'Smart AI application review and validation',
-              'Biometric/Fingerprint Appointment Hunter',
-              'Complete form preparation and submission',
-              'Real-time application tracking portal',
-              'Document checklist and requirements guide',
-              '24/7 AI Travel Agent'
+              'Access to exclusive member-only deals',
+              'All Trip Bundles Included',
+              'Access to a Community of global frequent travelers',
+              '45% off when you bring in another traveler'
             ]
           },
           {
@@ -82,20 +84,21 @@ const Index = () => {
             ]
           },
           {
-            id: 'ogt_elite',
-            title: 'OGT Elite',
-            subtitle: 'Concierge Premium',
-            description: 'White-glove service with dedicated personal travel agent and VIP treatment',
-            price: '$479',
-            image: '/lovable-uploads/84f98d44-7bb4-4a46-a0d9-d2a6070256a9.png',
-            alt: 'Elite concierge service',
-            route: '/pricing',
+            id: 'visa_assist',
+            title: 'Ultimate Visa Assist',
+            subtitle: 'Essential Service',
+            description: 'Professional visa application support with AI-powered accuracy checks',
+            price: '$129',
+            image: '/lovable-uploads/0eab89a7-31c2-4a08-9421-fa542434e4ce.png',
+            alt: 'Visa assistance service',
+            route: '/visas',
             features: [
-              'All Trip Bundle services included',
-              'Dedicated Human Certified Travel Advisor',
-              'Priority biometric appointment booking',
-              'Airport transfer and VIP assistance',
-              'Restaurant and event reservations'
+              'Smart AI application review and validation',
+              'Biometric/Fingerprint Appointment Hunter',
+              'Complete form preparation and submission',
+              'Real-time application tracking portal',
+              'Document checklist and requirements guide',
+              '24/7 AI Travel Agent'
             ]
           }
         ]}
