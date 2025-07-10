@@ -148,20 +148,20 @@ const Dashboard = () => {
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <Tabs defaultValue="applications" className="space-y-6">
+        <Tabs defaultValue="trips" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="applications">My Applications</TabsTrigger>
             <TabsTrigger value="trips">My Trips</TabsTrigger>
+            <TabsTrigger value="applications">My Applications</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="applications">
-            <MyApplications />
-          </TabsContent>
-
           <TabsContent value="trips">
             <MyTrips />
+          </TabsContent>
+
+          <TabsContent value="applications">
+            <MyApplications />
           </TabsContent>
 
           <TabsContent value="profile">
