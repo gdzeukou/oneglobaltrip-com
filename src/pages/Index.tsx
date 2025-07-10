@@ -92,7 +92,7 @@ const Index = () => {
             route: '/pricing',
             features: [
               'All Trip Bundle services included',
-              'Dedicated personal travel agent',
+              'Dedicated Human Certified Travel Advisor',
               'Priority biometric appointment booking',
               'Airport transfer and VIP assistance',
               'Restaurant and event reservations',
