@@ -31,7 +31,7 @@ const Index = () => {
             subtitle: 'Annual Membership',
             description: 'Unlimited visa renewals with exclusive member benefits and year-round savings',
             price: '$279/y',
-            image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
+            image: '/lovable-uploads/aa2bd5bf-60f3-4560-a840-674f0d86c971.png',
             alt: 'Passport Club membership',
             badge: 'Save All Year',
             badgeColor: 'bg-emerald-500',
