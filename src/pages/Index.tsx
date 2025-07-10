@@ -30,7 +30,7 @@ const Index = () => {
             title: 'OGT Passport Club',
             subtitle: 'Annual Membership',
             description: 'Unlimited visa renewals with exclusive member benefits and year-round savings',
-            price: '$279/year',
+            price: '$279/y',
             image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=600&fit=crop',
             alt: 'Passport Club membership',
             badge: 'Save All Year',
