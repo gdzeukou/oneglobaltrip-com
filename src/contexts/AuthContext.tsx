@@ -8,7 +8,8 @@ import {
   performSignUp,
   performSignIn,
   performSignOut,
-  performResendVerification
+  performResendVerification,
+  signInWithProvider
 } from './auth/authService';
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -113,6 +114,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const handleSocialAuth = async (provider: 'google' | 'apple') => {
+    try {
+      console.log(`AuthContext: Starting ${provider} sign-in`);
+      const result = await signInWithProvider(provider);
+      
+      if (result.error) {
+        console.error(`AuthContext: ${provider} sign-in error:`, result.error);
+      } else {
+        console.log(`AuthContext: ${provider} sign-in initiated, user will be redirected`);
+      }
+      
+      return result;
+    } catch (error: any) {
+      console.error(`AuthContext: ${provider} sign-in error:`, error);
+      return { error: { message: error.message || `${provider} sign-in failed` } };
+    }
+  };
+
   const value = {
     user,
     session,
@@ -126,6 +145,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sendOTP: handleSendOTP,
     verifyOTP: handleVerifyOTP,
     clearOTPStep,
+    signInWithGoogle: () => handleSocialAuth('google'),
+    signInWithApple: () => handleSocialAuth('apple'),
   };
 
   console.log('AuthContext current state:', { 

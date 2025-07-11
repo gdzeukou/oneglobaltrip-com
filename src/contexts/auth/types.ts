@@ -20,4 +20,6 @@ export interface AuthContextType {
   sendOTP: (email: string, purpose: 'signup' | 'signin') => Promise<{ error: any }>;
   verifyOTP: (email: string, code: string, purpose: 'signup' | 'signin') => Promise<{ error: any }>;
   clearOTPStep: () => void;
+  signInWithGoogle: () => Promise<{ error: any }>;
+  signInWithApple: () => Promise<{ error: any }>;
 }

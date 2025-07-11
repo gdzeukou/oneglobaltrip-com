@@ -43,11 +43,23 @@ image_transformation = { enabled = true }
 [auth]
 enabled = true
 site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = ["https://127.0.0.1:3000", "https://sdeyqojklszwarfrputz.supabase.co/auth/v1/callback"]
 jwt_expiry = 3600
 enable_refresh_token_rotation = true
 refresh_token_reuse_interval = 10
 enable_manual_linking = false
+
+[auth.external.google]
+enabled = true
+client_id = ""
+secret = ""
+redirect_uri = ""
+
+[auth.external.apple]
+enabled = true
+client_id = ""
+secret = ""
+redirect_uri = ""
 
 [auth.email]
 enable_signup = true

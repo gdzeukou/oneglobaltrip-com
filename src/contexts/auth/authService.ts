@@ -1,6 +1,38 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { validateEmail } from '@/utils/validation';
+import { Provider } from '@supabase/supabase-js';
+
+// Social Authentication
+export const signInWithProvider = async (provider: Provider) => {
+  try {
+    console.log(`Initiating ${provider} OAuth sign-in`);
+    
+    const redirectUrl = `${window.location.origin}/auth/callback`;
+    
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        }
+      }
+    });
+
+    if (error) {
+      console.error(`${provider} OAuth error:`, error);
+      return { error: { message: error.message } };
+    }
+
+    console.log(`${provider} OAuth initiated successfully`);
+    return { error: null, data };
+  } catch (error: any) {
+    console.error(`${provider} sign-in error:`, error);
+    return { error: { message: error.message || `${provider} sign-in failed` } };
+  }
+};
 
 export const sendOTP = async (email: string, purpose: 'signup' | 'signin') => {
   try {

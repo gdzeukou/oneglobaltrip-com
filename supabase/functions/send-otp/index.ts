@@ -99,11 +99,19 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Send OTP via email using Resend
-    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      console.error('RESEND_API_KEY not found in environment variables');
+      throw new Error('Email service configuration error');
+    }
+    
+    const resend = new Resend(resendApiKey);
+    
+    console.log('Attempting to send email via Resend...');
     
     try {
-      await resend.emails.send({
-        from: "One Global Trip 🌍 <booking@oneglobaltrip.com>",
+      const emailResult = await resend.emails.send({
+        from: "One Global Trip 🌍 <noreply@oneglobaltrip.com>",
         to: [email],
         subject: "Your One Global Trip Verification Code",
         html: `
@@ -177,10 +185,38 @@ const handler = async (req: Request): Promise<Response> => {
           </html>
         `,
       });
-      console.log(`Email sent successfully to ${email}`);
+      
+      console.log(`Email sent successfully to ${email}`, { 
+        id: emailResult.data?.id,
+        from: "noreply@oneglobaltrip.com",
+        to: email 
+      });
+      
+      // Additional verification - check if we got a valid response
+      if (!emailResult.data?.id) {
+        console.warn('Email sent but no ID returned:', emailResult);
+      }
+      
     } catch (emailError) {
-      console.error('Email sending error:', emailError);
-      throw new Error('Failed to send verification email');
+      console.error('Email sending error details:', {
+        error: emailError,
+        message: emailError instanceof Error ? emailError.message : 'Unknown error',
+        email: email,
+        resendConfigured: !!resendApiKey
+      });
+      
+      // Provide more specific error messages
+      if (emailError instanceof Error) {
+        if (emailError.message.includes('domain')) {
+          throw new Error('Email domain not verified. Please verify oneglobaltrip.com in Resend dashboard.');
+        } else if (emailError.message.includes('API key')) {
+          throw new Error('Invalid email service credentials. Please check Resend API key.');
+        } else if (emailError.message.includes('rate limit')) {
+          throw new Error('Email rate limit exceeded. Please try again in a few minutes.');
+        }
+      }
+      
+      throw new Error(`Failed to send verification email: ${emailError instanceof Error ? emailError.message : 'Unknown error'}`);
     }
 
     return new Response(

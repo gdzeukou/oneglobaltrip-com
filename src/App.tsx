@@ -18,6 +18,7 @@ import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import TestEmailDelivery from "./pages/TestEmailDelivery";
 import Admin from "./pages/Admin";
 import AdminDashboard from "./pages/AdminDashboard";
 import Pricing from "./pages/Pricing";
@@ -147,6 +148,9 @@ function App() {
                 {/* Pricing routes */}
                 <Route path="/visas/pricing" element={<VisaPricingPage />} />
                 <Route path="/visa-pricing" element={<VisaPricingPage />} />
+                
+                {/* Testing routes */}
+                <Route path="/test-email" element={<TestEmailDelivery />} />
 
                 {/* Protected routes */}
                 <Route path="/dashboard" element={
