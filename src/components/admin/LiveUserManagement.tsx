@@ -234,7 +234,11 @@ const LiveUserManagement: React.FC = () => {
       });
 
       const usersArray = Array.from(userMap.values())
-        .filter(user => user.email !== 'anonymous' && !user.email.includes('system.local') || user.profile)
+        .filter(user => 
+          user.email !== 'anonymous' && 
+          !user.email.includes('system.local') &&
+          (user.profile || user.agent || user.totalSessions > 0 || user.email.includes('@'))
+        )
         .sort((a, b) => {
           if (a.isOnline && !b.isOnline) return -1;
           if (!a.isOnline && b.isOnline) return 1;
