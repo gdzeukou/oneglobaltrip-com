@@ -83,73 +83,158 @@ const UserManagement: React.FC = () => {
     try {
       setLoading(true);
       
-      // Get unique users from user_activity table since it contains email
-      const { data: activityData, error: activityError } = await supabase
+      const userData: UserData[] = [];
+      const processedUsers = new Set<string>();
+
+      // 1. Get all profiles (registered users)
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('*');
+
+      // 2. Get all form submissions (leads)
+      const { data: formSubmissions } = await supabase
+        .from('form_submissions')
+        .select('*');
+
+      // 3. Get users from user_activity (non-anonymous only)  
+      const { data: activityUsers } = await supabase
         .from('user_activity')
         .select('email, user_id')
-        .order('created_at', { ascending: false });
+        .neq('email', 'anonymous')
+        .not('email', 'is', null);
 
-      if (activityError) throw activityError;
+      // Process registered users from profiles
+      for (const profile of profiles || []) {
+        const userId = profile.id;
+        
+        // Try to get email from user_activity or use a placeholder
+        const activityUser = activityUsers?.find(u => u.user_id === userId);
+        const email = activityUser?.email || `user-${userId}@example.com`;
 
-      // Get unique users
-      const uniqueUsers = activityData?.reduce((acc, item) => {
-        if (!acc.find(u => u.email === item.email)) {
-          acc.push(item);
-        }
-        return acc;
-      }, [] as any[]) || [];
+        if (processedUsers.has(userId)) continue;
+        processedUsers.add(userId);
 
-      const userData: UserData[] = [];
-
-      for (const user of uniqueUsers) {
-        // Get profile data if user_id exists
-        let profile = null;
-        if (user.user_id) {
-          const { data: profileData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', user.user_id)
-            .single();
-          profile = profileData;
-        }
+        // Get user agent
+        const { data: agent } = await supabase
+          .from('user_agents')
+          .select('*')
+          .eq('user_id', userId)
+          .single();
 
         // Get recent activity
         const { data: activity } = await supabase
           .from('user_activity')
           .select('*')
-          .eq('email', user.email)
+          .eq('user_id', userId)
           .order('created_at', { ascending: false })
           .limit(10);
-
-        // Get user agent if user_id exists
-        let agent = null;
-        if (user.user_id) {
-          const { data: agentData } = await supabase
-            .from('user_agents')
-            .select('*')
-            .eq('user_id', user.user_id)
-            .single();
-          agent = agentData;
-        }
 
         // Count total sessions
         const { count: totalSessions } = await supabase
           .from('user_activity')
           .select('*', { count: 'exact', head: true })
-          .eq('email', user.email);
+          .eq('user_id', userId);
 
         // Get last seen
         const { data: lastActivity } = await supabase
           .from('user_activity')
           .select('last_seen')
-          .eq('email', user.email)
+          .eq('user_id', userId)
           .order('last_seen', { ascending: false })
           .limit(1)
           .single();
 
         userData.push({
-          profile: profile || {
-            id: user.user_id || 'unknown',
+          profile,
+          email,
+          recentActivity: activity || [],
+          agent: agent || null,
+          totalSessions: totalSessions || 0,
+          lastSeen: lastActivity?.last_seen || null
+        });
+      }
+
+      // Process form submissions (leads without profiles)
+      for (const submission of formSubmissions || []) {
+        if (processedUsers.has(submission.email)) continue;
+        processedUsers.add(submission.email);
+
+        // Get recent activity by email
+        const { data: activity } = await supabase
+          .from('user_activity')
+          .select('*')
+          .eq('email', submission.email)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        // Count total sessions
+        const { count: totalSessions } = await supabase
+          .from('user_activity')
+          .select('*', { count: 'exact', head: true })
+          .eq('email', submission.email);
+
+        // Get last seen
+        const { data: lastActivity } = await supabase
+          .from('user_activity')
+          .select('last_seen')
+          .eq('email', submission.email)
+          .order('last_seen', { ascending: false })
+          .limit(1)
+          .single();
+
+        userData.push({
+          profile: {
+            id: submission.user_id || submission.id,
+            first_name: submission.name.split(' ')[0] || null,
+            last_name: submission.name.split(' ').slice(1).join(' ') || null,
+            phone: submission.phone,
+            nationality: submission.nationality,
+            date_of_birth: null,
+            passport_number: null,
+            passport_expiry: null,
+            membership_expiry: null,
+            created_at: submission.created_at || new Date().toISOString(),
+            updated_at: submission.updated_at || new Date().toISOString()
+          },
+          email: submission.email,
+          recentActivity: activity || [],
+          agent: null,
+          totalSessions: totalSessions || 0,
+          lastSeen: lastActivity?.last_seen || null
+        });
+      }
+
+      // Process activity users (users with activity but no profile/submission)
+      for (const activityUser of activityUsers || []) {
+        if (processedUsers.has(activityUser.email)) continue;
+        processedUsers.add(activityUser.email);
+
+        // Get recent activity
+        const { data: activity } = await supabase
+          .from('user_activity')
+          .select('*')
+          .eq('email', activityUser.email)
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        // Count total sessions  
+        const { count: totalSessions } = await supabase
+          .from('user_activity')
+          .select('*', { count: 'exact', head: true })
+          .eq('email', activityUser.email);
+
+        // Get last seen
+        const { data: lastActivity } = await supabase
+          .from('user_activity')
+          .select('last_seen')
+          .eq('email', activityUser.email)
+          .order('last_seen', { ascending: false })
+          .limit(1)
+          .single();
+
+        userData.push({
+          profile: {
+            id: activityUser.user_id || 'unknown',
             first_name: null,
             last_name: null,
             phone: null,
@@ -158,17 +243,18 @@ const UserManagement: React.FC = () => {
             passport_number: null,
             passport_expiry: null,
             membership_expiry: null,
-            created_at: new Date().toISOString(),
+            created_at: activity?.[0]?.created_at || new Date().toISOString(),
             updated_at: new Date().toISOString()
           },
-          email: user.email || '',
+          email: activityUser.email,
           recentActivity: activity || [],
-          agent: agent || null,
+          agent: null,
           totalSessions: totalSessions || 0,
           lastSeen: lastActivity?.last_seen || null
         });
       }
 
+      console.log('Fetched user data:', userData);
       setUsers(userData);
     } catch (error) {
       console.error('Error fetching users:', error);
