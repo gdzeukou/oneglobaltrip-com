@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Send, Plus, MessageSquare, Sparkles, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -471,7 +471,16 @@ const AIChat = () => {
                 </Button>
                 <div className="flex items-center space-x-2">
                   <div className="relative">
-                    <Sparkles className="h-6 w-6 text-gradient-to-r from-blue-500 to-purple-600" />
+                    {agent?.avatar_url ? (
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src={agent.avatar_url} alt={agent.name} />
+                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs">
+                          {agent.name?.[0] || 'A'}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <Sparkles className="h-6 w-6 text-gradient-to-r from-blue-500 to-purple-600" />
+                    )}
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                   </div>
                   <div>
@@ -521,13 +530,20 @@ const AIChat = () => {
                     message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''
                   }`}>
                     <Avatar className="h-8 w-8 flex-shrink-0">
-                      <AvatarFallback className={
-                        message.role === 'user' 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'bg-secondary text-secondary-foreground'
-                      }>
-                        {message.role === 'user' ? 'U' : 'M'}
-                      </AvatarFallback>
+                      {message.role === 'user' ? (
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          U
+                        </AvatarFallback>
+                      ) : (
+                        <>
+                          {agent?.avatar_url ? (
+                            <AvatarImage src={agent.avatar_url} alt={agent.name} />
+                          ) : null}
+                          <AvatarFallback className="bg-secondary text-secondary-foreground">
+                            {agent?.name?.[0] || 'M'}
+                          </AvatarFallback>
+                        </>
+                      )}
                     </Avatar>
                     <div className={`rounded-lg px-4 py-3 ${
                       message.role === 'user'
@@ -547,8 +563,11 @@ const AIChat = () => {
               <div className="flex justify-start">
                 <div className="flex items-start space-x-3">
                   <Avatar className="h-8 w-8">
+                    {agent?.avatar_url ? (
+                      <AvatarImage src={agent.avatar_url} alt={agent.name} />
+                    ) : null}
                     <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                      M
+                      {agent?.name?.[0] || 'M'}
                     </AvatarFallback>
                   </Avatar>
                   <div className="bg-muted rounded-lg px-4 py-3 flex items-center space-x-2">
