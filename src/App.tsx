@@ -74,6 +74,8 @@ import VisaPricingPage from "./pages/visas/VisaPricingPage";
 import "./App.css";
 import AIAgentCreatorGate from "./components/auth/AIAgentCreatorGate";
 import PersonalizedAIProtectedRoute from "./components/auth/PersonalizedAIProtectedRoute";
+import AgentCreator from "./pages/AgentCreator";
+import AgentProtectedRoute from "./components/auth/AgentProtectedRoute";
 
 // New pages
 import About from "./pages/About";
@@ -119,6 +121,9 @@ function App() {
                 {/* AI Agent Auth Gate - shown to unauthenticated users trying to access AI agent */}
                 <Route path="/ai-agent-auth" element={<AIAgentCreatorGate />} />
                 
+                {/* Agent Creation - for authenticated users without an agent */}
+                <Route path="/agent/new" element={<AgentCreator />} />
+                
                 {/* Visa country routes */}
                 <Route path="/visas/short-stay/schengen" element={<SchengenShortStay />} />
                 <Route path="/visas/short-stay/schengen/apply" element={<SchengenShortStayApply />} />
@@ -158,12 +163,7 @@ function App() {
                 {/* Testing routes */}
                 <Route path="/test-email" element={<TestEmailDelivery />} />
 
-                {/* Protected routes */}
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
+                {/* Protected routes requiring authentication only */}
                 <Route path="/profile" element={
                   <ProtectedRoute>
                     <Profile />
@@ -172,11 +172,6 @@ function App() {
                 <Route path="/booking" element={
                   <ProtectedRoute>
                     <Booking />
-                  </ProtectedRoute>
-                } />
-                <Route path="/bookings" element={
-                  <ProtectedRoute>
-                    <Bookings />
                   </ProtectedRoute>
                 } />
                 <Route path="/admin" element={
@@ -190,11 +185,26 @@ function App() {
                   </ProtectedRoute>
                 } />
                 
-                {/* AI Chat - Now Protected with personalized AI agent auth gate */}
+                {/* Protected routes requiring AI agent setup */}
+                <Route path="/dashboard" element={
+                  <AgentProtectedRoute>
+                    <Dashboard />
+                  </AgentProtectedRoute>
+                } />
+                <Route path="/bookings" element={
+                  <AgentProtectedRoute>
+                    <Bookings />
+                  </AgentProtectedRoute>
+                } />
                 <Route path="/ai-chat" element={
-                  <PersonalizedAIProtectedRoute>
+                  <AgentProtectedRoute>
                     <AIChat />
-                  </PersonalizedAIProtectedRoute>
+                  </AgentProtectedRoute>
+                } />
+                <Route path="/startmytrip" element={
+                  <AgentProtectedRoute>
+                    <StartMyTrip />
+                  </AgentProtectedRoute>
                 } />
 
                 {/* Error routes */}

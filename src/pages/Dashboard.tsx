@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserAgent } from '@/hooks/useUserAgent';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,6 +9,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import AITravelAgent from '@/components/ai/AITravelAgent';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import MyApplications from '@/components/dashboard/MyApplications';
 import MyTrips from '@/components/dashboard/MyTrips';
 import MyProfile from '@/components/dashboard/MyProfile';
@@ -40,6 +42,7 @@ interface VisaApplication {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const { agent } = useUserAgent();
   const navigate = useNavigate();
 
   // Fetch user's visa applications
@@ -148,6 +151,41 @@ const Dashboard = () => {
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* AI Agent Welcome Section */}
+        <div className="bg-gradient-to-r from-primary to-purple-600 text-white rounded-lg p-8 mb-8">
+          <div className="flex items-start gap-4">
+            {agent?.avatar_url && (
+              <img 
+                src={agent.avatar_url} 
+                alt={agent.name}
+                className="w-16 h-16 rounded-full border-2 border-white/20 bg-white/10"
+              />
+            )}
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold mb-2">
+                Hi, I'm {agent?.name || 'your AI Travel Agent'}! ✈️
+              </h1>
+              <p className="text-lg opacity-90 mb-6">
+                Welcome back, {user?.user_metadata?.first_name || 'Traveler'}! Ready to explore the world together?
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <Button asChild variant="secondary" size="lg">
+                  <a href="#ai-chat" className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5" />
+                    Chat with {agent?.name || 'AI Travel Agent'}
+                  </a>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                  <a href="/startmytrip" className="flex items-center gap-2">
+                    <Plus className="w-5 h-5" />
+                    Plan a New Trip
+                  </a>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <Tabs defaultValue="trips" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="trips">My Trips</TabsTrigger>
@@ -174,7 +212,9 @@ const Dashboard = () => {
         </Tabs>
       </div>
 
-      <AITravelAgent />
+      <div id="ai-chat">
+        <AITravelAgent />
+      </div>
       <Footer />
     </div>
   );

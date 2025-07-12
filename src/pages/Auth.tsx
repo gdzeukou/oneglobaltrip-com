@@ -106,6 +106,7 @@ const Auth = () => {
   const handleOTPVerificationSuccess = () => {
     console.log('OTP verification successful, redirecting...');
     setIsLoading(false);
+    // New users will be redirected to agent creation by AgentProtectedRoute
     const from = location.state?.from?.pathname || '/dashboard';
     navigate(from, { replace: true });
   };

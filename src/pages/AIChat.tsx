@@ -9,6 +9,7 @@ import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import PersonalizedAITravelAgent from '@/components/ai/PersonalizedAITravelAgent';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
+import { useUserAgent } from '@/hooks/useUserAgent';
 
 interface Message {
   id: string;
@@ -25,6 +26,7 @@ interface Conversation {
 }
 
 const AIChat = () => {
+  const { agent } = useUserAgent();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -227,7 +229,7 @@ const AIChat = () => {
       console.log('❌ No user found, aborting');
       toast({
         title: "Authentication Required",
-        description: "Please log in to chat with AI Travel Agent.",
+        description: `Please log in to chat with ${agent?.name || 'AI Travel Agent'}.`,
         variant: "destructive"
       });
       return;
@@ -416,7 +418,7 @@ const AIChat = () => {
                 className="w-full justify-start space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <Plus className="h-4 w-4" />
-                <span>New Chat with {preferences.aiAgentName}</span>
+                <span>New Chat with {agent?.name || 'AI Travel Agent'}</span>
               </Button>
             </div>
             
@@ -551,7 +553,7 @@ const AIChat = () => {
                   </Avatar>
                   <div className="bg-muted rounded-lg px-4 py-3 flex items-center space-x-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">AI Travel Agent is searching flights and planning your trip...</span>
+                    <span className="text-sm text-muted-foreground">{agent?.name || 'AI Travel Agent'} is searching flights and planning your trip...</span>
                   </div>
                 </div>
               </div>
@@ -569,7 +571,7 @@ const AIChat = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Tell your AI Travel Agent about your travel plans... (e.g., 'Find flights from NYC to London in March')"
+                  placeholder={`Tell ${agent?.name || 'your AI Travel Agent'} about your travel plans... (e.g., 'Find flights from NYC to London in March')`}
                   className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background"
                   disabled={isLoading}
                 />
@@ -584,7 +586,7 @@ const AIChat = () => {
               </Button>
             </div>
             <p className="text-xs text-center text-muted-foreground mt-2">
-              AI Travel Agent can search real flights, help with bookings, and provide travel assistance - all free for members
+              {agent?.name || 'AI Travel Agent'} can search real flights, help with bookings, and provide travel assistance - all free for members
             </p>
           </div>
         </div>
