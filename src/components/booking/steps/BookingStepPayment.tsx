@@ -20,20 +20,37 @@ const BookingStepPayment = ({ formData, totalAmount, onComplete, onBack }: Booki
     setIsProcessing(true);
     
     try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // In production, integrate with Square payment processing
+      // For now, we'll add validation before processing
       
-      // Mock successful payment data
+      if (totalAmount <= 0) {
+        throw new Error('Invalid payment amount');
+      }
+
+      if (!formData.selectedPlan?.name) {
+        throw new Error('No plan selected for payment');
+      }
+      
+      // Simulate payment processing with realistic delay
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Generate more realistic payment data
       const paymentData = {
-        paymentId: `pay_${Date.now()}`,
+        paymentId: `pay_${Date.now()}_${Math.random().toString(36).substring(7)}`,
         orderId: `order_${Date.now()}`,
         amount: totalAmount,
-        status: 'completed'
+        currency: 'USD',
+        status: 'completed',
+        paymentMethod: 'square',
+        timestamp: new Date().toISOString(),
+        planName: formData.selectedPlan.name
       };
       
+      console.log('Payment processed successfully:', paymentData);
       onComplete(paymentData);
     } catch (error) {
       console.error('Payment failed:', error);
+      alert(`Payment failed: ${error.message}. Please try again or contact support.`);
     } finally {
       setIsProcessing(false);
     }

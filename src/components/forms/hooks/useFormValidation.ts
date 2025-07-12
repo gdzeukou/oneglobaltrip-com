@@ -31,13 +31,31 @@ export const useFormValidation = () => {
           validatePhone(formData.phone)
         );
       case 2:
+        if (type === 'consultation') {
+          return formData.destination.trim() !== '' && formData.travelDate.trim() !== '';
+        }
+        if (type === 'visa-application') {
+          return formData.nationality.trim() !== '' && formData.destination.trim() !== '' && formData.visaType.trim() !== '';
+        }
         if (type === 'package-booking') {
           return formData.selectedPackages.length > 0;
         }
         return true;
       case 3:
+        if (type === 'consultation') {
+          return formData.travelers.trim() !== '' && formData.budget.trim() !== '';
+        }
+        if (type === 'visa-application') {
+          return formData.departureDate.trim() !== '';
+        }
+        if (type === 'package-booking') {
+          return formData.destination.trim() !== '' && formData.travelDate.trim() !== '';
+        }
         return true;
       case 4:
+        if (type === 'package-booking') {
+          return formData.travelers.trim() !== '' && formData.budget.trim() !== '';
+        }
         return true;
       default:
         return false;

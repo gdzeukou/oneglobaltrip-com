@@ -1,9 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { useSecureFormSubmission } from './hooks/useSecureFormSubmission';
-import { useFormState } from './hooks/useFormState';
-import { useFormValidation } from './hooks/useFormValidation';
+import { useUnifiedForm } from './hooks/useUnifiedForm';
 import FormHeader from './FormHeader';
 import StepRenderer from './StepRenderer';
 import FormSteps from './FormSteps';
@@ -27,19 +25,13 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     handleInputChange,
     handleTravelNeedsChange,
     handlePackageSelection,
-    handleNext,
-    handlePrev
-  } = useFormState(type, preSelectedPackage);
+    handleSubmit,
+    isStepValid,
+    handleNextStep,
+    handlePrevStep,
+    trackActivity
+  } = useUnifiedForm(type, preSelectedPackage, onComplete);
 
-  const { validateStep, validateFormData } = useFormValidation();
-
-  const {
-    trackActivity,
-    saveFormSubmission,
-    sendWelcomeEmail,
-    checkSubmissionRateLimit,
-    handleSubmissionError
-  } = useSecureFormSubmission();
 
   useEffect(() => {
     trackActivity('form_start', { form_type: type });
@@ -53,68 +45,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank', 'width=800,height=700');
   };
 
-  const handleSubmit = async () => {
-    console.log('=== SECURE UNIFIED FORM SUBMISSION START ===');
 
-    // Enhanced validation with security checks
-    if (!validateFormData(formData)) {
-      return;
-    }
-
-    // Check rate limit (enhanced security)
-    const canSubmit = await checkSubmissionRateLimit(formData.email);
-    if (!canSubmit) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // Critical: Save to database with enhanced security
-      await saveFormSubmission(type, formData);
-      console.log('✅ Secure database save successful');
-
-      // Non-critical: Send welcome email
-      const emailSent = await sendWelcomeEmail(formData, type);
-
-      // Show success message
-      const messages = {
-        'consultation': "Thank you! Your consultation request has been submitted successfully.",
-        'visa-application': "Your visa application has been started! We'll review and contact you within 24 hours.",
-        'package-booking': "Booking request submitted! We'll contact you within 24 hours to confirm details."
-      };
-
-      let successDescription = messages[type];
-      if (!emailSent) {
-        successDescription += " (Note: We'll contact you directly as our email service is temporarily unavailable.)";
-      }
-
-      toast({
-        title: "Request Submitted Successfully!",
-        description: successDescription
-      });
-
-      // Trigger completion callback or Calendly
-      setTimeout(() => {
-        if (onComplete) {
-          onComplete();
-        } else {
-          openCalendly();
-        }
-      }, 1000);
-
-      console.log('✅ Secure form submission flow completed successfully');
-
-    } catch (error) {
-      handleSubmissionError(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const isStepValid = () => {
-    return validateStep(currentStep, formData, type);
-  };
 
   // Enhanced security wrapper for travel needs change
   const secureHandleTravelNeedsChange = (need: string, checked: boolean) => {
@@ -147,15 +78,6 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     handlePackageSelection(packageId, checked);
   };
 
-  const handleNextStep = () => {
-    handleNext();
-    trackActivity('form_next_step', { step: currentStep + 1, form_type: type }, formData.email);
-  };
-
-  const handlePrevStep = () => {
-    handlePrev();
-    trackActivity('form_prev_step', { step: currentStep - 1, form_type: type }, formData.email);
-  };
 
   return (
     <Card className="max-w-2xl mx-auto shadow-xl border-2 border-blue-200">

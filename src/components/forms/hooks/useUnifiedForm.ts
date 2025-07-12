@@ -89,10 +89,30 @@ export const useUnifiedForm = (
     return validateStep(formState.currentStep, formState.formData, type);
   };
 
+  const handleNextStep = () => {
+    if (!isStepValid()) {
+      toast({
+        title: "Please complete all required fields",
+        description: "Fill in all the required information before proceeding to the next step.",
+        variant: "destructive"
+      });
+      return;
+    }
+    formState.handleNext();
+    trackActivity('form_next_step', { step: formState.currentStep + 1, form_type: type }, formState.formData.email);
+  };
+
+  const handlePrevStep = () => {
+    formState.handlePrev();
+    trackActivity('form_prev_step', { step: formState.currentStep - 1, form_type: type }, formState.formData.email);
+  };
+
   return {
     ...formState,
     handleSubmit,
     isStepValid,
+    handleNextStep,
+    handlePrevStep,
     trackActivity
   };
 };
