@@ -6,21 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Plane, 
-  Hotel, 
-  Package, 
-  Plus, 
-  Calendar, 
-  MapPin, 
-  Clock,
-  CheckCircle2,
-  AlertTriangle,
-  DollarSign,
-  Users,
-  Loader2
-} from 'lucide-react';
-
+import { Plane, Hotel, Package, Plus, Calendar, MapPin, Clock, CheckCircle2, AlertTriangle, DollarSign, Users, Loader2 } from 'lucide-react';
 interface Booking {
   id: string;
   booking_type: string;
@@ -37,7 +23,6 @@ interface Booking {
   booking_details: any;
   created_at: string;
 }
-
 interface Trip {
   id: string;
   destination_country: string;
@@ -50,48 +35,50 @@ interface Trip {
   created_at: string;
   bookings: Booking[];
 }
-
 const MyTrips = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
-
-  const { data: trips = [], isLoading } = useQuery({
+  const {
+    data: trips = [],
+    isLoading
+  } = useQuery({
     queryKey: ['my-trips', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      
-      const { data, error } = await supabase
-        .from('trips')
-        .select(`
+      const {
+        data,
+        error
+      } = await supabase.from('trips').select(`
           *,
           bookings (*)
-        `)
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
+        `).eq('user_id', user.id).order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
       return data as Trip[];
     },
     enabled: !!user?.id
   });
-
-  const { data: allBookings = [], isLoading: bookingsLoading } = useQuery({
+  const {
+    data: allBookings = [],
+    isLoading: bookingsLoading
+  } = useQuery({
     queryKey: ['my-bookings', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
+      const {
+        data,
+        error
+      } = await supabase.from('bookings').select('*').eq('user_id', user.id).order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
       return data as Booking[];
     },
     enabled: !!user?.id
   });
-
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'confirmed':
@@ -106,7 +93,6 @@ const MyTrips = () => {
         return 'bg-gray-100 text-gray-800';
     }
   };
-
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case 'confirmed':
@@ -119,7 +105,6 @@ const MyTrips = () => {
         return <Calendar className="h-4 w-4" />;
     }
   };
-
   const getBookingIcon = (type: string) => {
     switch (type.toLowerCase()) {
       case 'flight':
@@ -133,28 +118,19 @@ const MyTrips = () => {
         return <Calendar className="h-5 w-5 text-gray-600" />;
     }
   };
-
   const filterBookings = (bookings: Booking[], category: string) => {
     if (category === 'all') return bookings;
-    return bookings.filter(booking => 
-      booking.booking_type.toLowerCase() === category || 
-      booking.booking_category?.toLowerCase() === category
-    );
+    return bookings.filter(booking => booking.booking_type.toLowerCase() === category || booking.booking_category?.toLowerCase() === category);
   };
-
   if (isLoading || bookingsLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
+    return <div className="flex items-center justify-center min-h-[400px]">
         <div className="flex items-center space-x-2">
           <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
           <span className="text-gray-600">Loading your trips...</span>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -163,11 +139,9 @@ const MyTrips = () => {
             Manage your flights, hotels, and travel packages
           </p>
         </div>
-        <Button
-          className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold flex items-center space-x-2 shadow-lg"
-        >
+        <Button className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold flex items-center space-x-2">
           <Plus className="h-4 w-4" />
-          <span>New Booking</span>
+          <span className="text-white">New Booking</span>
         </Button>
       </div>
 
@@ -181,10 +155,8 @@ const MyTrips = () => {
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
-          {allBookings.length > 0 ? (
-            <div className="grid gap-4">
-              {filterBookings(allBookings, 'all').map((booking) => (
-                <Card key={booking.id} className="hover:shadow-md transition-shadow">
+          {allBookings.length > 0 ? <div className="grid gap-4">
+              {filterBookings(allBookings, 'all').map(booking => <Card key={booking.id} className="hover:shadow-md transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-3">
@@ -207,39 +179,28 @@ const MyTrips = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-gray-600">
-                      {booking.check_in_date && (
-                        <div className="flex items-center space-x-2">
+                      {booking.check_in_date && <div className="flex items-center space-x-2">
                           <Calendar className="h-4 w-4" />
                           <span>Check-in: {new Date(booking.check_in_date).toLocaleDateString()}</span>
-                        </div>
-                      )}
-                      {booking.check_out_date && (
-                        <div className="flex items-center space-x-2">
+                        </div>}
+                      {booking.check_out_date && <div className="flex items-center space-x-2">
                           <Calendar className="h-4 w-4" />
                           <span>Check-out: {new Date(booking.check_out_date).toLocaleDateString()}</span>
-                        </div>
-                      )}
-                      {booking.cost && (
-                        <div className="flex items-center space-x-2">
+                        </div>}
+                      {booking.cost && <div className="flex items-center space-x-2">
                           <DollarSign className="h-4 w-4" />
                           <span>${booking.cost.toLocaleString()}</span>
-                        </div>
-                      )}
+                        </div>}
                       <div className="flex items-center space-x-2">
                         <Clock className="h-4 w-4" />
                         <span>Booked: {new Date(booking.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
 
-                    {booking.description && (
-                      <p className="mt-3 text-sm text-gray-700">{booking.description}</p>
-                    )}
+                    {booking.description && <p className="mt-3 text-sm text-gray-700">{booking.description}</p>}
                   </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <Card className="text-center py-12">
+                </Card>)}
+            </div> : <Card className="text-center py-12">
               <CardContent>
                 <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -253,14 +214,12 @@ const MyTrips = () => {
                   Make Your First Booking
                 </Button>
               </CardContent>
-            </Card>
-          )}
+            </Card>}
         </TabsContent>
 
         <TabsContent value="flight">
           <div className="grid gap-4">
-            {filterBookings(allBookings, 'flight').map((booking) => (
-              <Card key={booking.id} className="hover:shadow-md transition-shadow">
+            {filterBookings(allBookings, 'flight').map(booking => <Card key={booking.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3 mb-4">
                     <Plane className="h-6 w-6 text-blue-600" />
@@ -271,15 +230,13 @@ const MyTrips = () => {
                   </div>
                   {/* Flight-specific details would go here */}
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </TabsContent>
 
         <TabsContent value="hotel">
           <div className="grid gap-4">
-            {filterBookings(allBookings, 'hotel').map((booking) => (
-              <Card key={booking.id} className="hover:shadow-md transition-shadow">
+            {filterBookings(allBookings, 'hotel').map(booking => <Card key={booking.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3 mb-4">
                     <Hotel className="h-6 w-6 text-green-600" />
@@ -290,15 +247,13 @@ const MyTrips = () => {
                   </div>
                   {/* Hotel-specific details would go here */}
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </TabsContent>
 
         <TabsContent value="package">
           <div className="grid gap-4">
-            {filterBookings(allBookings, 'package').map((booking) => (
-              <Card key={booking.id} className="hover:shadow-md transition-shadow">
+            {filterBookings(allBookings, 'package').map(booking => <Card key={booking.id} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-3 mb-4">
                     <Package className="h-6 w-6 text-purple-600" />
@@ -309,15 +264,13 @@ const MyTrips = () => {
                   </div>
                   {/* Package-specific details would go here */}
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </TabsContent>
 
         <TabsContent value="trips">
           <div className="grid gap-4">
-            {trips.map((trip) => (
-              <Card key={trip.id} className="hover:shadow-md transition-shadow">
+            {trips.map(trip => <Card key={trip.id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center space-x-2">
@@ -349,26 +302,19 @@ const MyTrips = () => {
                     </div>
                   </div>
                   
-                  {trip.bookings && trip.bookings.length > 0 && (
-                    <div className="mt-4">
+                  {trip.bookings && trip.bookings.length > 0 && <div className="mt-4">
                       <h4 className="font-medium mb-2">Bookings ({trip.bookings.length})</h4>
                       <div className="flex flex-wrap gap-2">
-                        {trip.bookings.map((booking) => (
-                          <Badge key={booking.id} variant="outline">
+                        {trip.bookings.map(booking => <Badge key={booking.id} variant="outline">
                             {booking.booking_type}
-                          </Badge>
-                        ))}
+                          </Badge>)}
                       </div>
-                    </div>
-                  )}
+                    </div>}
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 export default MyTrips;
