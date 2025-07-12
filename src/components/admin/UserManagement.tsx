@@ -83,65 +83,85 @@ const UserManagement: React.FC = () => {
     try {
       setLoading(true);
       
-      // Fetch user profiles with auth user data
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
-      if (authError) throw authError;
+      // Get unique users from user_activity table since it contains email
+      const { data: activityData, error: activityError } = await supabase
+        .from('user_activity')
+        .select('email, user_id')
+        .order('created_at', { ascending: false });
+
+      if (activityError) throw activityError;
+
+      // Get unique users
+      const uniqueUsers = activityData?.reduce((acc, item) => {
+        if (!acc.find(u => u.email === item.email)) {
+          acc.push(item);
+        }
+        return acc;
+      }, [] as any[]) || [];
 
       const userData: UserData[] = [];
 
-      for (const authUser of authUsers.users) {
-        // Get profile data
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authUser.id)
-          .single();
+      for (const user of uniqueUsers) {
+        // Get profile data if user_id exists
+        let profile = null;
+        if (user.user_id) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.user_id)
+            .single();
+          profile = profileData;
+        }
 
         // Get recent activity
         const { data: activity } = await supabase
           .from('user_activity')
           .select('*')
-          .eq('email', authUser.email)
+          .eq('email', user.email)
           .order('created_at', { ascending: false })
           .limit(10);
 
-        // Get user agent
-        const { data: agent } = await supabase
-          .from('user_agents')
-          .select('*')
-          .eq('user_id', authUser.id)
-          .single();
+        // Get user agent if user_id exists
+        let agent = null;
+        if (user.user_id) {
+          const { data: agentData } = await supabase
+            .from('user_agents')
+            .select('*')
+            .eq('user_id', user.user_id)
+            .single();
+          agent = agentData;
+        }
 
         // Count total sessions
         const { count: totalSessions } = await supabase
           .from('user_activity')
           .select('*', { count: 'exact', head: true })
-          .eq('email', authUser.email);
+          .eq('email', user.email);
 
         // Get last seen
         const { data: lastActivity } = await supabase
           .from('user_activity')
           .select('last_seen')
-          .eq('email', authUser.email)
+          .eq('email', user.email)
           .order('last_seen', { ascending: false })
           .limit(1)
           .single();
 
         userData.push({
           profile: profile || {
-            id: authUser.id,
-            first_name: authUser.user_metadata?.first_name || null,
-            last_name: authUser.user_metadata?.last_name || null,
+            id: user.user_id || 'unknown',
+            first_name: null,
+            last_name: null,
             phone: null,
             nationality: null,
             date_of_birth: null,
             passport_number: null,
             passport_expiry: null,
             membership_expiry: null,
-            created_at: authUser.created_at,
-            updated_at: authUser.updated_at || authUser.created_at
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           },
-          email: authUser.email || '',
+          email: user.email || '',
           recentActivity: activity || [],
           agent: agent || null,
           totalSessions: totalSessions || 0,
