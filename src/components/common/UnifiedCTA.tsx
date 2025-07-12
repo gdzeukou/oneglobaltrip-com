@@ -123,7 +123,9 @@ const UnifiedCTA = ({
                   <div className="mb-6 space-y-2">
                     {option.features.map((feature, idx) => (
                       <div key={idx} className="flex items-center text-sm text-gray-700">
-                        <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mr-3 flex-shrink-0"></div>
+                        <div className="w-5 h-5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mr-3 flex-shrink-0 flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">{idx + 1}</span>
+                        </div>
                         <span className="leading-tight">{feature}</span>
                       </div>
                     ))}
