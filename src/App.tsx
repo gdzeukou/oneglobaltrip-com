@@ -76,6 +76,7 @@ import AIAgentCreatorGate from "./components/auth/AIAgentCreatorGate";
 import PersonalizedAIProtectedRoute from "./components/auth/PersonalizedAIProtectedRoute";
 import AgentCreator from "./pages/AgentCreator";
 import AgentProtectedRoute from "./components/auth/AgentProtectedRoute";
+import SessionTracker from "./components/SessionTracker";
 
 // New pages
 import About from "./pages/About";
@@ -93,6 +94,7 @@ function App() {
           <AuthProvider>
             <Toaster />
             <Sonner />
+            <SessionTracker />
             <BrowserRouter>
               <Routes>
                 {/* Public routes */}

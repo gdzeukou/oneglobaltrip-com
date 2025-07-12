@@ -22,6 +22,7 @@ import EmailTemplateManager from '@/components/admin/EmailTemplateManager';
 import AutomationManager from '@/components/admin/AutomationManager';
 import CalendarView from '@/components/admin/CalendarView';
 import UserManagement from '@/components/admin/UserManagement';
+import LiveUserManagement from '@/components/admin/LiveUserManagement';
 
 // Import new Supabase components
 import SupabaseConfigComponent from '@/components/admin/supabase/SupabaseConfig';
@@ -189,7 +190,7 @@ const AdminDashboard = () => {
         </TabsContent>
 
         <TabsContent value="users">
-          <UserManagement />
+          <LiveUserManagement />
         </TabsContent>
 
         <TabsContent value="leads">

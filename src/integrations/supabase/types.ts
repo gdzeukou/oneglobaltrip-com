@@ -1452,6 +1452,60 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sessions: {
+        Row: {
+          created_at: string | null
+          duration_seconds: number | null
+          email: string
+          ended_at: string | null
+          id: string
+          ip_address: string | null
+          is_active: boolean | null
+          last_activity: string | null
+          location_data: Json | null
+          pages_visited: number | null
+          session_id: string
+          started_at: string | null
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration_seconds?: number | null
+          email: string
+          ended_at?: string | null
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          last_activity?: string | null
+          location_data?: Json | null
+          pages_visited?: number | null
+          session_id: string
+          started_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          duration_seconds?: number | null
+          email?: string
+          ended_at?: string | null
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          last_activity?: string | null
+          location_data?: Json | null
+          pages_visited?: number | null
+          session_id?: string
+          started_at?: string | null
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       visa_applications: {
         Row: {
           application_data: Json | null
