@@ -23,16 +23,16 @@ const MayaProtectedRoute = ({ children }: MayaProtectedRouteProps) => {
 
   // Development bypass for Lovable environment
   if (isDevelopmentMode()) {
-    console.log('Development mode: Bypassing Maya authentication checks');
+    console.log('Development mode: Bypassing AI Travel Agent authentication checks');
     return <>{children}</>;
   }
 
-  // If OTP verification is required, redirect to Maya auth gate
+  // If OTP verification is required, redirect to AI Travel Agent auth gate
   if (otpStep?.isRequired) {
     return <Navigate to="/maya-auth" state={{ from: location }} replace />;
   }
 
-  // If no user, redirect to Maya auth gate instead of general auth
+  // If no user, redirect to AI Travel Agent auth gate instead of general auth
   if (!user) {
     return <Navigate to="/maya-auth" state={{ from: location }} replace />;
   }

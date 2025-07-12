@@ -90,7 +90,7 @@ const Navigation = () => {
                   Contact
                 </Link>
                 
-                {/* Maya AI Chat - Show different states based on auth */}
+                {/* AI Travel Agent Chat - Show different states based on auth */}
                 {user ? (
                   <Link
                     to="/ai-chat"
@@ -101,7 +101,7 @@ const Navigation = () => {
                     }`}
                   >
                     <Bot className="h-4 w-4" />
-                    <span>Maya AI</span>
+                    <span>AI Travel Agent</span>
                     <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-1">Free</span>
                   </Link>
                 ) : (
@@ -226,7 +226,7 @@ const Navigation = () => {
                 Contact
               </Link>
               
-              {/* Maya AI Chat - Mobile */}
+              {/* AI Travel Agent Chat - Mobile */}
               {user ? (
                 <Link
                   to="/ai-chat"
@@ -238,7 +238,7 @@ const Navigation = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Bot className="h-5 w-5" />
-                  <span>Maya AI</span>
+                  <span>AI Travel Agent</span>
                   <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Free</span>
                 </Link>
               ) : (

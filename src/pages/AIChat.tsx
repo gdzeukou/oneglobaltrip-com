@@ -211,12 +211,12 @@ const AIChat = () => {
   };
 
   const sendMessage = async () => {
-    console.log('🚀 Maya: Starting sendMessage process');
+    console.log('🚀 AI Travel Agent: Starting sendMessage process');
     console.log('📝 User state:', user ? `User ID: ${user.id}` : 'No user');
     console.log('💬 Input message:', inputMessage.substring(0, 50) + '...');
     console.log('🗣️ Current conversation ID:', currentConversationId);
-    console.log('🔧 Maya Test: Complete user object:', user);
-    console.log('🔧 Maya Test: Auth session:', session);
+    console.log('🔧 AI Travel Agent Test: Complete user object:', user);
+    console.log('🔧 AI Travel Agent Test: Auth session:', session);
 
     if (!inputMessage.trim()) {
       console.log('❌ Empty message, aborting');
@@ -227,7 +227,7 @@ const AIChat = () => {
       console.log('❌ No user found, aborting');
       toast({
         title: "Authentication Required",
-        description: "Please log in to chat with Maya.",
+        description: "Please log in to chat with AI Travel Agent.",
         variant: "destructive"
       });
       return;
@@ -259,14 +259,14 @@ const AIChat = () => {
     setInputMessage('');
     setIsLoading(true);
 
-    console.log('📡 Calling Maya Edge Function...');
+    console.log('📡 Calling AI Travel Agent Edge Function...');
     console.log('🔧 Function parameters:', {
       message: currentInputMessage.substring(0, 50) + '...',
       conversationId,
       userId: user.id,
       fullUrl: 'https://sdeyqojklszwarfrputz.supabase.co/functions/v1/ai-travel-agent'
     });
-    console.log('🔧 Maya Test: About to call supabase.functions.invoke...');
+    console.log('🔧 AI Travel Agent Test: About to call supabase.functions.invoke...');
 
     try {
       const startTime = Date.now();
@@ -284,25 +284,25 @@ const AIChat = () => {
 
       const endTime = Date.now();
       console.log(`⏱️ Function call completed in ${endTime - startTime}ms`);
-      console.log('📨 Maya response data:', data);
-      console.log('❌ Maya response error:', error);
+      console.log('📨 AI Travel Agent response data:', data);
+      console.log('❌ AI Travel Agent response error:', error);
 
       if (error) {
-        console.error('🚨 Maya function error details:', {
+        console.error('🚨 AI Travel Agent function error details:', {
           message: error.message,
           details: error.details,
           hint: error.hint,
           code: error.code
         });
-        throw new Error(error.message || 'Failed to get response from Maya');
+        throw new Error(error.message || 'Failed to get response from AI Travel Agent');
       }
 
       if (!data) {
-        console.error('🚨 No data received from Maya');
-        throw new Error('No response data received from Maya');
+        console.error('🚨 No data received from AI Travel Agent');
+        throw new Error('No response data received from AI Travel Agent');
       }
 
-      console.log('✅ Maya responded successfully:', data.response?.substring(0, 100) + '...');
+      console.log('✅ AI Travel Agent responded successfully:', data.response?.substring(0, 100) + '...');
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -327,7 +327,7 @@ const AIChat = () => {
         );
       }
     } catch (error) {
-      console.error('🚨 Maya Error - Full details:', {
+      console.error('🚨 AI Travel Agent Error - Full details:', {
         error,
         message: error?.message,
         stack: error?.stack,
@@ -376,7 +376,7 @@ const AIChat = () => {
       setMessages(prev => [...prev, errorAssistantMessage]);
       
       toast({
-        title: "Maya Connection Issue",
+        title: "AI Travel Agent Connection Issue",
         description: "I'm having trouble processing your request. Please see my message for details.",
         variant: "destructive"
       });
@@ -494,7 +494,7 @@ const AIChat = () => {
                   </div>
                 </div>
                 <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Maya is Ready to Help!
+                  AI Travel Agent is Ready to Help!
                 </h2>
                 <p className="text-muted-foreground mb-6 max-w-md mx-auto">
                   Your personal AI travel agent with real-time flight search and booking assistance
@@ -551,7 +551,7 @@ const AIChat = () => {
                   </Avatar>
                   <div className="bg-muted rounded-lg px-4 py-3 flex items-center space-x-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">Maya is searching flights and planning your trip...</span>
+                    <span className="text-sm text-muted-foreground">AI Travel Agent is searching flights and planning your trip...</span>
                   </div>
                 </div>
               </div>
@@ -569,7 +569,7 @@ const AIChat = () => {
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Tell Maya about your travel plans... (e.g., 'Find flights from NYC to London in March')"
+                  placeholder="Tell your AI Travel Agent about your travel plans... (e.g., 'Find flights from NYC to London in March')"
                   className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background"
                   disabled={isLoading}
                 />
@@ -584,7 +584,7 @@ const AIChat = () => {
               </Button>
             </div>
             <p className="text-xs text-center text-muted-foreground mt-2">
-              Maya can search real flights, help with bookings, and provide travel assistance - all free for members
+              AI Travel Agent can search real flights, help with bookings, and provide travel assistance - all free for members
             </p>
           </div>
         </div>

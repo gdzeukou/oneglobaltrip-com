@@ -49,11 +49,11 @@ const MayaVisaAssistant = ({ onClose, onComplete }: MayaVisaAssistantProps) => {
   }, [messages]);
 
   useEffect(() => {
-    // Initialize Maya with visa-specific welcome message
+    // Initialize AI Travel Agent with visa-specific welcome message
     setMessages([{
       id: 'welcome',
       role: 'assistant',
-      content: `🌟 **Welcome to your Schengen Visa Application with Maya!**
+      content: `🌟 **Welcome to your Schengen Visa Application with AI Travel Agent!**
 
 I'm here to guide you through your Schengen visa application step by step. I'll ask you questions in a conversational way to collect all the information needed for your official application form.
 
@@ -86,7 +86,7 @@ What is your full name as it appears on your passport? (First name and surname)`
 
     try {
       // Create a specialized prompt for visa application
-      const visaPrompt = `You are Maya, an expert visa application assistant helping a user complete their Schengen short-stay visa application. 
+      const visaPrompt = `You are an expert visa application assistant helping a user complete their Schengen short-stay visa application. 
 
 Current conversation context:
 - User is applying for a Schengen short-stay visa
@@ -144,7 +144,7 @@ Respond naturally and move the conversation forward to collect the next piece of
       }
 
     } catch (error) {
-      console.error('Maya visa assistant error:', error);
+      console.error('AI Travel Agent visa assistant error:', error);
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -165,7 +165,7 @@ What would you prefer?`,
       
       toast({
         title: "Connection Issue",
-        description: "Maya is having trouble connecting. You can continue with the traditional form.",
+        description: "AI Travel Agent is having trouble connecting. You can continue with the traditional form.",
         variant: "destructive"
       });
     }
@@ -193,7 +193,7 @@ What would you prefer?`,
   const handleCompleteApplication = () => {
     toast({
       title: "Application Generated!",
-      description: "Maya has prepared your visa application based on our conversation.",
+      description: "AI Travel Agent has prepared your visa application based on our conversation.",
     });
     onComplete(collectedData);
   };
@@ -205,7 +205,7 @@ What would you prefer?`,
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center space-x-2">
               <Sparkles className="h-5 w-5" />
-              <span>Maya - Schengen Visa Assistant</span>
+              <span>AI Travel Agent - Schengen Visa Assistant</span>
             </CardTitle>
             <Button
               onClick={onClose}
@@ -277,7 +277,7 @@ What would you prefer?`,
                     </Avatar>
                     <div className="bg-gray-100 rounded-lg px-4 py-3 flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-gray-600">Maya is processing...</span>
+                      <span className="text-sm text-gray-600">AI Travel Agent is processing...</span>
                     </div>
                   </div>
                 </div>
@@ -356,7 +356,7 @@ What would you prefer?`,
                 <span className="font-semibold text-blue-800 text-sm">Need Help?</span>
               </div>
               <p className="text-blue-700 text-xs">
-                Maya will explain each requirement and validate your responses. Take your time!
+                AI Travel Agent will explain each requirement and validate your responses. Take your time!
               </p>
             </div>
           </div>

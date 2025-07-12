@@ -41,7 +41,7 @@ const SchengenApplicationOptions = ({ onSelectMaya, onSelectTraditional }: Schen
                   <Bot className="h-8 w-8 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl text-gray-900">Start Applying with Maya</CardTitle>
+                  <CardTitle className="text-2xl text-gray-900">Start Applying with AI Travel Agent</CardTitle>
                   <p className="text-purple-600 font-medium">AI-Guided Conversational Experience</p>
                 </div>
               </div>
@@ -49,7 +49,7 @@ const SchengenApplicationOptions = ({ onSelectMaya, onSelectTraditional }: Schen
 
             <CardContent className="space-y-6">
               <p className="text-gray-600 leading-relaxed">
-                Let Maya, our intelligent AI assistant, guide you through your application with natural conversation. 
+                Let our intelligent AI Travel Agent guide you through your application with natural conversation. 
                 She'll ask the right questions, explain requirements, and ensure everything is completed perfectly.
               </p>
 
@@ -58,7 +58,7 @@ const SchengenApplicationOptions = ({ onSelectMaya, onSelectTraditional }: Schen
                   <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                   <div>
                     <p className="font-semibold text-gray-900">Intelligent Question Flow</p>
-                    <p className="text-sm text-gray-600">Maya adapts questions based on your responses</p>
+                    <p className="text-sm text-gray-600">AI Travel Agent adapts questions based on your responses</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
@@ -92,7 +92,7 @@ const SchengenApplicationOptions = ({ onSelectMaya, onSelectTraditional }: Schen
                 className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-3 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105"
               >
                 <Bot className="h-5 w-5 mr-2" />
-                Start with Maya AI
+                Start with AI Travel Agent
               </Button>
             </CardContent>
           </Card>

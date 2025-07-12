@@ -38,7 +38,7 @@ const StartMyTrip = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Store form data and navigate to Maya chat
+    // Store form data and navigate to AI Travel Agent chat
     localStorage.setItem('tripPlanningData', JSON.stringify(formData));
     navigate('/ai-chat');
   };
@@ -73,7 +73,7 @@ const StartMyTrip = () => {
               Let's Plan Your Perfect Trip
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Share your travel dreams with us, and Maya will create personalized recommendations just for you.
+              Share your travel dreams with us, and your AI Travel Agent will create personalized recommendations just for you.
             </p>
           </div>
 
@@ -244,7 +244,7 @@ const StartMyTrip = () => {
                     className="btn-luxury-accent px-12 py-4 text-lg font-bold"
                   >
                     <Bot className="h-6 w-6 mr-3" />
-                    Start Planning with Maya
+                    Start Planning with AI Travel Agent
                   </Button>
                 </div>
               </form>

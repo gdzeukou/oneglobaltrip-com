@@ -52,7 +52,7 @@ const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => {
           onClick={onClose}
         >
           <Plane className="h-4 w-4" />
-          <span>Maya AI</span>
+          <span>AI Travel Agent</span>
         </Link>
 
         {/* Bookings Link - Only show if user is authenticated */}

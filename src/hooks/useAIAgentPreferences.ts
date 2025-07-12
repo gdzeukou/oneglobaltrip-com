@@ -16,7 +16,7 @@ export interface AIAgentPreferences {
 }
 
 const defaultPreferences: AIAgentPreferences = {
-  aiAgentName: 'Maya',
+  aiAgentName: 'AI Travel Agent',
   aiAgentTravelStyle: null,
   aiAgentDreamDestinations: [],
   aiAgentVisaAssistance: true,
@@ -62,7 +62,7 @@ export const useAIAgentPreferences = () => {
 
       if (data) {
         setPreferences({
-          aiAgentName: data.ai_agent_name || 'Maya',
+          aiAgentName: data.ai_agent_name || 'AI Travel Agent',
           aiAgentTravelStyle: data.ai_agent_travel_style,
           aiAgentDreamDestinations: data.ai_agent_dream_destinations || [],
           aiAgentVisaAssistance: data.ai_agent_visa_assistance ?? true,

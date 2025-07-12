@@ -70,7 +70,7 @@ const MayaAuthGate = () => {
       if (result.error) {
         toast.error(result.error.message);
       } else {
-        toast.success('Welcome to Maya! Setting up your AI travel assistant...');
+        toast.success('Welcome to AI Travel Agent! Setting up your AI travel assistant...');
         // The auth context will handle the redirect
       }
     } catch (error: any) {
@@ -110,7 +110,7 @@ const MayaAuthGate = () => {
                   />
                 </div>
                 <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" disabled={loading}>
-                  {loading ? 'Verifying...' : 'Access Maya - Free'}
+                  {loading ? 'Verifying...' : 'Access AI Travel Agent - Free'}
                 </Button>
               </form>
             </CardContent>
@@ -138,7 +138,7 @@ const MayaAuthGate = () => {
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Meet <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Maya</span>
+              Meet Your <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">AI Travel Agent</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
@@ -201,7 +201,7 @@ const MayaAuthGate = () => {
             </div>
             <Users className="w-5 h-5 text-gray-400" />
           </div>
-          <p className="text-gray-600">Join thousands of travelers using Maya for their journeys</p>
+          <p className="text-gray-600">Join thousands of travelers using AI Travel Agent for their journeys</p>
           <div className="flex justify-center mt-2">
             {[1, 2, 3, 4, 5].map((i) => (
               <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
@@ -215,7 +215,7 @@ const MayaAuthGate = () => {
             <CardHeader className="text-center">
               <CardTitle className="text-2xl">Start Your Journey</CardTitle>
               <CardDescription>
-                Create your free account to access Maya
+                Create your free account to access AI Travel Agent
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -297,7 +297,7 @@ const MayaAuthGate = () => {
                       </Label>
                     </div>
                     <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" disabled={loading || !termsAccepted}>
-                      {loading ? 'Creating Account...' : 'Get Free Access to Maya'}
+                      {loading ? 'Creating Account...' : 'Get Free Access to AI Travel Agent'}
                     </Button>
                   </form>
                 </TabsContent>
@@ -316,7 +316,7 @@ const MayaAuthGate = () => {
                       />
                     </div>
                     <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700" disabled={loading}>
-                      {loading ? 'Sending Code...' : 'Access Maya - Free'}
+                      {loading ? 'Sending Code...' : 'Access AI Travel Agent - Free'}
                     </Button>
                   </form>
                 </TabsContent>

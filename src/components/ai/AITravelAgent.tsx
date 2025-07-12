@@ -39,7 +39,7 @@ const AITravelAgent = () => {
       setMessages([{
         id: 'welcome',
         role: 'assistant',
-        content: "Hi there! 👋 I'm Maya, your personal AI Travel Agent with real-time flight search capabilities!\n\nI can help you find and compare actual flights, discover the best routes, check real prices, and guide you through your entire travel journey - from visa assistance to booking confirmations.\n\nI work step by step to understand exactly what you need. To get started, could you tell me: are you planning a new trip? ✈️",
+        content: "Hi there! 👋 I'm your personal AI Travel Agent with real-time flight search capabilities!\n\nI can help you find and compare actual flights, discover the best routes, check real prices, and guide you through your entire travel journey - from visa assistance to booking confirmations.\n\nI work step by step to understand exactly what you need. To get started, could you tell me: are you planning a new trip? ✈️",
         timestamp: new Date()
       }]);
     }
@@ -59,7 +59,7 @@ const AITravelAgent = () => {
     setInputMessage('');
     setIsLoading(true);
 
-    console.log('🚀 Maya: Starting message send process');
+    console.log('🚀 AI Travel Agent: Starting message send process');
     console.log('📝 Message:', inputMessage);
     console.log('👤 User ID:', user.id);
     console.log('💬 Conversation ID:', conversationId);
@@ -100,7 +100,7 @@ const AITravelAgent = () => {
     
     while (retryCount < maxRetries) {
       try {
-        console.log(`📡 Maya: Attempt ${retryCount + 1}/${maxRetries} - Calling edge function via Supabase client`);
+        console.log(`📡 AI Travel Agent: Attempt ${retryCount + 1}/${maxRetries} - Calling edge function via Supabase client`);
         
         const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
           body: {
@@ -110,22 +110,22 @@ const AITravelAgent = () => {
           }
         });
 
-        console.log('📨 Maya: Edge function response received');
+        console.log('📨 AI Travel Agent: Edge function response received');
         console.log('✅ Data:', data);
         console.log('❌ Error:', error);
         console.log('🔍 Full response details:', { data, error });
 
         if (error) {
-          console.error('🚨 Maya: Edge function error:', error);
+          console.error('🚨 AI Travel Agent: Edge function error:', error);
           throw error;
         }
 
         if (!data || !data.response) {
-          console.error('🚨 Maya: Invalid response format:', data);
+          console.error('🚨 AI Travel Agent: Invalid response format:', data);
           throw new Error('Invalid response format from AI service');
         }
 
-        console.log('✅ Maya: Processing successful response');
+        console.log('✅ AI Travel Agent: Processing successful response');
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
@@ -135,21 +135,21 @@ const AITravelAgent = () => {
 
         setMessages(prev => [...prev, assistantMessage]);
         setConversationId(data.conversationId);
-        console.log('✅ Maya: Message successfully processed and stored');
+        console.log('✅ AI Travel Agent: Message successfully processed and stored');
         return; // Success, exit retry loop
 
       } catch (error) {
         retryCount++;
-        console.error(`❌ Maya: Attempt ${retryCount}/${maxRetries} failed:`, error);
+        console.error(`❌ AI Travel Agent: Attempt ${retryCount}/${maxRetries} failed:`, error);
         
         if (retryCount >= maxRetries) {
           // Final attempt failed - show fallback response
-          console.error('🚨 Maya: All retry attempts failed, showing fallback response');
+          console.error('🚨 AI Travel Agent: All retry attempts failed, showing fallback response');
           
           const fallbackMessage: Message = {
             id: (Date.now() + 1).toString(),
             role: 'assistant',
-            content: `🤖 **Maya AI Service Temporarily Unavailable**
+            content: `🤖 **AI Travel Agent Service Temporarily Unavailable**
 
 I'm experiencing technical difficulties right now, but I'm here to help! Here's what might be happening:
 
@@ -177,14 +177,14 @@ Contact support if this issue persists for more than 5 minutes.`,
           setMessages(prev => [...prev, fallbackMessage]);
           
           toast({
-            title: "Maya AI Temporarily Unavailable",
+            title: "AI Travel Agent Temporarily Unavailable",
             description: "I've provided a detailed status update in the chat. Please try again in a moment.",
             variant: "destructive"
           });
         } else {
           // Wait before retry with exponential backoff
           const delay = 1000 * Math.pow(2, retryCount - 1);
-          console.log(`⏳ Maya: Waiting ${delay}ms before retry`);
+          console.log(`⏳ AI Travel Agent: Waiting ${delay}ms before retry`);
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
@@ -231,7 +231,7 @@ Contact support if this issue persists for more than 5 minutes.`,
           <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
             <CardTitle className="flex items-center space-x-2">
               <Sparkles className="h-5 w-5" />
-              <span>Maya - AI Travel Agent</span>
+              <span>AI Travel Agent</span>
             </CardTitle>
           </CardHeader>
           
@@ -276,7 +276,7 @@ Contact support if this issue persists for more than 5 minutes.`,
                     </Avatar>
                     <div className="bg-gray-100 rounded-lg px-3 py-2 flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-gray-600">Maya is thinking...</span>
+                      <span className="text-sm text-gray-600">AI Travel Agent is thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -293,7 +293,7 @@ Contact support if this issue persists for more than 5 minutes.`,
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Tell Maya about your travel plans..."
+                  placeholder="Tell your AI Travel Agent about your travel plans..."
                   className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                   disabled={isLoading}
                 />

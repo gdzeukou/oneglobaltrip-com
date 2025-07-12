@@ -141,7 +141,7 @@ const Bookings = () => {
                 You haven't made any flight bookings yet. Start planning your next trip!
               </p>
               <Button onClick={() => window.location.href = '/ai-chat'}>
-                Book a Flight with Maya
+                Book a Flight with AI Travel Agent
               </Button>
             </CardContent>
           </Card>

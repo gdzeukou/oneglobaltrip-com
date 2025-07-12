@@ -55,7 +55,7 @@ const SchengenShortStay = () => {
   };
 
   const handleMayaComplete = (formData: any) => {
-    console.log('Maya application completed:', formData);
+    console.log('AI Travel Agent application completed:', formData);
     setShowMayaAssistant(false);
     setShowCalendly(true);
   };
@@ -164,7 +164,7 @@ const SchengenShortStay = () => {
         </div>
       </section>
 
-      {/* Maya Visa Assistant Modal */}
+      {/* AI Travel Agent Visa Assistant Modal */}
       {showMayaAssistant && (
         <MayaVisaAssistant
           onClose={() => setShowMayaAssistant(false)}
