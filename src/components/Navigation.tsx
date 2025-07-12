@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserAgent } from '@/hooks/useUserAgent';
 import { Plane, Bot } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import NavigationAuth from './navigation/NavigationAuth';
 
 const Navigation = () => {
@@ -102,7 +103,16 @@ const Navigation = () => {
                         : 'text-gray-700 hover:text-purple-700 hover:bg-purple-50'
                     }`}
                   >
-                    <Bot className="h-4 w-4" />
+                    {agent?.avatar_url ? (
+                      <Avatar className="h-4 w-4">
+                        <AvatarImage src={agent.avatar_url} alt={agent.name} />
+                        <AvatarFallback className="bg-gradient-to-r from-purple-500 to-blue-600 text-white text-xs">
+                          {agent.name?.[0] || 'A'}
+                        </AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <Bot className="h-4 w-4" />
+                    )}
                     <span>Chat with {agent?.name || 'AI Travel Agent'}</span>
                     <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-1">Free</span>
                   </Link>
@@ -239,7 +249,16 @@ const Navigation = () => {
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Bot className="h-5 w-5" />
+                  {agent?.avatar_url ? (
+                    <Avatar className="h-5 w-5">
+                      <AvatarImage src={agent.avatar_url} alt={agent.name} />
+                      <AvatarFallback className="bg-gradient-to-r from-purple-500 to-blue-600 text-white text-xs">
+                        {agent.name?.[0] || 'A'}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <Bot className="h-5 w-5" />
+                  )}
                   <span>Chat with {agent?.name || 'AI Travel Agent'}</span>
                   <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Free</span>
                 </Link>
