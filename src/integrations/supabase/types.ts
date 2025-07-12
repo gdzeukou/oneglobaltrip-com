@@ -1364,6 +1364,15 @@ export type Database = {
       }
       user_preferences: {
         Row: {
+          ai_agent_accessibility_needs: string[] | null
+          ai_agent_airline_accounts: Json | null
+          ai_agent_dietary_preferences: string[] | null
+          ai_agent_dream_destinations: string[] | null
+          ai_agent_name: string | null
+          ai_agent_personality_traits: Json | null
+          ai_agent_setup_completed: boolean | null
+          ai_agent_travel_style: string | null
+          ai_agent_visa_assistance: boolean | null
           created_at: string
           emergency_contacts: Json | null
           id: string
@@ -1374,6 +1383,15 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          ai_agent_accessibility_needs?: string[] | null
+          ai_agent_airline_accounts?: Json | null
+          ai_agent_dietary_preferences?: string[] | null
+          ai_agent_dream_destinations?: string[] | null
+          ai_agent_name?: string | null
+          ai_agent_personality_traits?: Json | null
+          ai_agent_setup_completed?: boolean | null
+          ai_agent_travel_style?: string | null
+          ai_agent_visa_assistance?: boolean | null
           created_at?: string
           emergency_contacts?: Json | null
           id?: string
@@ -1384,6 +1402,15 @@ export type Database = {
           user_id: string
         }
         Update: {
+          ai_agent_accessibility_needs?: string[] | null
+          ai_agent_airline_accounts?: Json | null
+          ai_agent_dietary_preferences?: string[] | null
+          ai_agent_dream_destinations?: string[] | null
+          ai_agent_name?: string | null
+          ai_agent_personality_traits?: Json | null
+          ai_agent_setup_completed?: boolean | null
+          ai_agent_travel_style?: string | null
+          ai_agent_visa_assistance?: boolean | null
           created_at?: string
           emergency_contacts?: Json | null
           id?: string

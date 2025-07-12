@@ -7,6 +7,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import PersonalizedAITravelAgent from '@/components/ai/PersonalizedAITravelAgent';
+import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 
 interface Message {
   id: string;
@@ -31,6 +33,7 @@ const AIChat = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, session } = useAuth();
+  const { preferences, getPersonalizedContext } = useAIAgentPreferences();
   const { toast } = useToast();
 
   const scrollToBottom = () => {
@@ -50,15 +53,40 @@ const AIChat = () => {
 
   useEffect(() => {
     if (user && messages.length === 0 && !currentConversationId) {
-      const welcomeMessage: Message = {
+      const context = getPersonalizedContext();
+      let welcomeMessage = '';
+
+      if (context && preferences.aiAgentSetupCompleted) {
+        welcomeMessage = `🎉 **Welcome back!** I'm ${context.agentName}, your personal AI Travel Agent!\n\n`;
+        
+        if (context.travelStyle) {
+          welcomeMessage += `I remember you're a ${context.travelStyle} traveler`;
+          if (context.dreamDestinations.length > 0) {
+            welcomeMessage += ` with dreams of visiting ${context.dreamDestinations.slice(0, 2).join(' and ')}${context.dreamDestinations.length > 2 ? ' (and more!)' : ''}`;
+          }
+          welcomeMessage += '. ';
+        }
+        
+        welcomeMessage += `\n\n✈️ **What I can help you with:**\n• Search real-time flights with live pricing\n• Find the best routes and deals matching your ${context.travelStyle || ''} style\n• Help with visa requirements and applications\n• Provide personalized travel recommendations\n• Guide you through complete booking process\n• Answer any travel-related questions\n\n`;
+        
+        if (context.dietaryPreferences.length > 0) {
+          welcomeMessage += `💡 I'll also keep in mind your dietary preferences (${context.dietaryPreferences.join(', ')}) when making recommendations.\n\n`;
+        }
+        
+        welcomeMessage += `🌟 **Ready to plan your next adventure?** Just tell me where you'd like to go!`;
+      } else {
+        welcomeMessage = `🎉 **Welcome to ${preferences.aiAgentName}!** I'm your personal AI Travel Agent, and I'm excited to help you plan your next adventure!\n\n✈️ **What I can do for you:**\n• Search real-time flights with live pricing\n• Find the best routes and deals\n• Help with visa requirements and applications\n• Provide personalized travel recommendations\n• Guide you through complete booking process\n• Answer any travel-related questions\n\n🌟 **Getting Started:**\nJust tell me where you'd like to go and when, and I'll take care of the rest! For example:\n• "I want to fly from New York to Paris in December"\n• "Help me find flights to Tokyo for my honeymoon"\n• "What visa do I need for Germany?"\n\nWhat travel plans can I help you with today? 🗺️`;
+      }
+
+      const message: Message = {
         id: 'welcome-' + Date.now(),
         role: 'assistant',
-        content: `🎉 **Welcome to Maya!** I'm your personal AI Travel Agent, and I'm excited to help you plan your next adventure!\n\n✈️ **What I can do for you:**\n• Search real-time flights with live pricing\n• Find the best routes and deals\n• Help with visa requirements and applications\n• Provide personalized travel recommendations\n• Guide you through complete booking process\n• Answer any travel-related questions\n\n🌟 **Getting Started:**\nJust tell me where you'd like to go and when, and I'll take care of the rest! For example:\n• "I want to fly from New York to Paris in December"\n• "Help me find flights to Tokyo for my honeymoon"\n• "What visa do I need for Germany?"\n\nWhat travel plans can I help you with today? 🗺️`,
+        content: welcomeMessage,
         timestamp: new Date()
       };
-      setMessages([welcomeMessage]);
+      setMessages([message]);
     }
-  }, [user, messages.length, currentConversationId]);
+  }, [user, messages.length, currentConversationId, preferences, getPersonalizedContext]);
 
   const loadConversations = async () => {
     if (!user) return;
@@ -134,7 +162,7 @@ const AIChat = () => {
       setMessages([{
         id: 'welcome',
         role: 'assistant',
-        content: "Hi there! 👋 I'm Maya, your personal AI Travel Agent with real-time flight search capabilities!\n\nI can search actual flights, compare live prices, find the best routes, and help with visas, bookings, and complete travel planning. I work step-by-step to understand your needs perfectly.\n\nWhat brings you here today? Are you planning a new adventure? ✈️",
+        content: `Hi there! 👋 I'm ${preferences.aiAgentName}, your personal AI Travel Agent with real-time flight search capabilities!\n\nI can search actual flights, compare live prices, find the best routes, and help with visas, bookings, and complete travel planning. I work step-by-step to understand your needs perfectly.\n\nWhat brings you here today? Are you planning a new adventure? ✈️`,
         timestamp: new Date()
       }]);
     } catch (error) {
@@ -243,13 +271,16 @@ const AIChat = () => {
     try {
       const startTime = Date.now();
       
-      const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
-        body: {
-          message: currentInputMessage,
-          conversationId,
-          userId: user.id
-        }
-      });
+        const context = getPersonalizedContext();
+        
+        const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
+          body: {
+            message: currentInputMessage,
+            conversationId,
+            userId: user.id,
+            personalizedContext: context
+          }
+        });
 
       const endTime = Date.now();
       console.log(`⏱️ Function call completed in ${endTime - startTime}ms`);
@@ -385,7 +416,7 @@ const AIChat = () => {
                 className="w-full justify-start space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <Plus className="h-4 w-4" />
-                <span>New Chat with Maya</span>
+                <span>New Chat with {preferences.aiAgentName}</span>
               </Button>
             </div>
             
@@ -442,7 +473,7 @@ const AIChat = () => {
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                   </div>
                   <div>
-                    <h1 className="text-lg font-semibold">Maya - Your AI Travel Agent</h1>
+                    <h1 className="text-lg font-semibold">{preferences.aiAgentName} - Your AI Travel Agent</h1>
                     <p className="text-xs text-muted-foreground">Free for all members • Real-time flight search</p>
                   </div>
                 </div>

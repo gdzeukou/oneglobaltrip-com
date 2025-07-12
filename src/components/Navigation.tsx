@@ -106,11 +106,11 @@ const Navigation = () => {
                   </Link>
                 ) : (
                   <Link
-                    to="/maya-auth"
+                    to="/ai-agent-auth"
                     className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-purple-700 hover:bg-purple-50 transition-all duration-200"
                   >
                     <Bot className="h-4 w-4" />
-                    <span>Maya AI</span>
+                    <span>Create AI Agent</span>
                     <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-1">Free</span>
                   </Link>
                 )}
@@ -243,12 +243,12 @@ const Navigation = () => {
                 </Link>
               ) : (
                 <Link
-                  to="/maya-auth"
+                  to="/ai-agent-auth"
                   className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-purple-700 hover:bg-purple-50 transition-all duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Bot className="h-5 w-5" />
-                  <span>Maya AI</span>
+                  <span>Create AI Agent</span>
                   <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Free</span>
                 </Link>
               )}
