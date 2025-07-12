@@ -164,7 +164,7 @@ const MyTrips = () => {
           </p>
         </div>
         <Button
-          className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold flex items-center space-x-2"
+          className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold flex items-center space-x-2 shadow-lg"
         >
           <Plus className="h-4 w-4" />
           <span>New Booking</span>
