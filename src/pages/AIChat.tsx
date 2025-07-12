@@ -475,8 +475,8 @@ const AIChat = () => {
                     <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                   </div>
                   <div>
-                    <h1 className="text-lg font-semibold">{preferences.aiAgentName} - Your AI Travel Agent</h1>
-                    <p className="text-xs text-muted-foreground">Free for all members • Real-time flight search</p>
+                    <h1 className="text-lg font-semibold">{agent?.name || 'AI Travel Agent'} - Your AI Travel Agent</h1>
+                    <p className="text-xs text-muted-foreground">Free for all members • Real-time flight search and more+</p>
                   </div>
                 </div>
               </div>
