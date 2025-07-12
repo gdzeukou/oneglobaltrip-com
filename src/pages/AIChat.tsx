@@ -415,10 +415,10 @@ const AIChat = () => {
             <div className="p-4 border-b border-border">
               <Button
                 onClick={createNewConversation}
-                className="w-full justify-start space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                className="w-full justify-start space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
               >
-                <Plus className="h-4 w-4" />
-                <span>New Chat with {agent?.name || 'AI Travel Agent'}</span>
+                <Plus className="h-4 w-4 text-white" />
+                <span className="text-white font-medium">New Chat with {agent?.name || 'AI Travel Agent'}</span>
               </Button>
             </div>
             
