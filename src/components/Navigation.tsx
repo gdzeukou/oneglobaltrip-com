@@ -29,7 +29,7 @@ const Navigation = () => {
                 className="flex items-center transition-all duration-200 hover:opacity-80"
               >
                 <img 
-                  src="/lovable-uploads/5b4dba4f-5616-4525-b9e3-909656247d46.png" 
+                  src="/lovable-uploads/b91448b5-fbc8-45b2-93f4-ed24bfa0d28d.png" 
                   alt="One Global Trip" 
                   className="h-12 w-auto"
                 />
