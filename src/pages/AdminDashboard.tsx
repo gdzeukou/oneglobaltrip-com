@@ -21,6 +21,7 @@ import EnhancedUserActivity from '@/components/admin/EnhancedUserActivity';
 import EmailTemplateManager from '@/components/admin/EmailTemplateManager';
 import AutomationManager from '@/components/admin/AutomationManager';
 import CalendarView from '@/components/admin/CalendarView';
+import UserManagement from '@/components/admin/UserManagement';
 
 // Import new Supabase components
 import SupabaseConfigComponent from '@/components/admin/supabase/SupabaseConfig';
@@ -94,8 +95,9 @@ const AdminDashboard = () => {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="leads">Leads</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="email">Email</TabsTrigger>
@@ -184,6 +186,10 @@ const AdminDashboard = () => {
           </div>
           
           <AnalyticsReports />
+        </TabsContent>
+
+        <TabsContent value="users">
+          <UserManagement />
         </TabsContent>
 
         <TabsContent value="leads">
