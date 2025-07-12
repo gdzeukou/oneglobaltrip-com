@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useUserAgent } from '@/hooks/useUserAgent';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ import { MapPin, Calendar, Users, PlaneTakeoff, Bot } from 'lucide-react';
 
 const StartMyTrip = () => {
   const navigate = useNavigate();
+  const { agent } = useUserAgent();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -244,7 +246,7 @@ const StartMyTrip = () => {
                     className="btn-luxury-accent px-12 py-4 text-lg font-bold"
                   >
                     <Bot className="h-6 w-6 mr-3" />
-                    Start Planning with AI Travel Agent
+                    Tell "{agent?.name || 'AI Travel Agent'}" to Plan this Trip for You
                   </Button>
                 </div>
               </form>

@@ -162,15 +162,15 @@ const Dashboard = () => {
               />
             )}
             <div className="flex-1">
-              <h1 className="text-3xl font-bold mb-2">
+              <h1 className="text-3xl font-bold mb-2 text-white font-extrabold">
                 Hi, I'm {agent?.name || 'your AI Travel Agent'}! ✈️
               </h1>
-              <p className="text-lg opacity-90 mb-6">
+              <p className="text-lg mb-6 text-white font-semibold">
                 Welcome back, {user?.user_metadata?.first_name || 'Traveler'}! Ready to explore the world together?
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild variant="secondary" size="lg">
-                  <a href="#ai-chat" className="flex items-center gap-2">
+                  <a href="/ai-chat" className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5" />
                     Chat with {agent?.name || 'AI Travel Agent'}
                   </a>

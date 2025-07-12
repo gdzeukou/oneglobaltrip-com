@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useUserAgent } from '@/hooks/useUserAgent';
 
 interface FormStepsProps {
   currentStep: number;
@@ -24,6 +25,7 @@ const FormSteps = ({
   type,
   isSubmitting = false
 }: FormStepsProps) => {
+  const { agent } = useUserAgent();
   return (
     <div className="flex justify-between pt-6 mt-6 border-t">
       <Button
@@ -51,7 +53,11 @@ const FormSteps = ({
           disabled={!isStepValid || isSubmitting}
           className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-blue-900 font-bold flex items-center space-x-2"
         >
-          {isSubmitting ? 'Submitting...' : (type === 'package-booking' ? 'Confirm Booking ($0 Down)' : 'Submit Request')}
+          {isSubmitting ? 'Submitting...' : (
+            type === 'package-booking' 
+              ? 'Confirm Booking ($0 Down)' 
+              : `Tell "${agent?.name || 'AI Travel Agent'}" to Plan this Trip for You`
+          )}
         </Button>
       )}
     </div>
