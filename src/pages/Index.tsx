@@ -54,14 +54,14 @@ const Index = () => {
             badgeColor: 'bg-emerald-500',
             route: '/pricing',
             features: [
+              'All Trip Bundles Included',
+              'Access to a Community of global frequent travelers',
+              '35% OFF for when you bring another traveler (both !)',
               'Unlimited visa renewals at no extra cost',
               '15% discount on all services and packages', 
               'Priority customer support line',
               'Post-arrival assistance and concierge',
-              'Access to exclusive member-only deals',
-              'All Trip Bundles Included',
-              'Access to a Community of global frequent travelers',
-              '45% off when you bring in another traveler'
+              'Access to exclusive member-only deals'
             ]
           },
           {
