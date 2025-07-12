@@ -114,7 +114,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const handleSocialAuth = async (provider: 'google' | 'apple') => {
+  const handleSocialAuth = async (provider: 'google' | 'facebook') => {
     try {
       console.log(`AuthContext: Starting ${provider} sign-in`);
       const result = await signInWithProvider(provider);
@@ -146,7 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     verifyOTP: handleVerifyOTP,
     clearOTPStep,
     signInWithGoogle: () => handleSocialAuth('google'),
-    signInWithApple: () => handleSocialAuth('apple'),
+    signInWithFacebook: () => handleSocialAuth('facebook'),
   };
 
   console.log('AuthContext current state:', { 
