@@ -33,6 +33,7 @@ import ShortStayVisas from "./pages/ShortStayVisas";
 import IntelligentApplication from "./pages/IntelligentApplication";
 import StartMyTrip from "./pages/StartMyTrip";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
 import DataDeletion from "./pages/DataDeletion";
 
 // Visa country pages
@@ -112,6 +113,7 @@ function App() {
                 <Route path="/intelligent-application" element={<IntelligentApplication />} />
                 <Route path="/startmytrip" element={<StartMyTrip />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-conditions" element={<TermsAndConditions />} />
                 <Route path="/data-deletion" element={<DataDeletion />} />
                 
                 {/* Maya Auth Gate - shown to unauthenticated users trying to access Maya */}
