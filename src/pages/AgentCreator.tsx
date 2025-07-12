@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -432,8 +432,36 @@ const AgentCreator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center px-4">
-      <Card className="w-full max-w-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Navigation Header */}
+      <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
+        <div className="w-full mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex-shrink-0">
+              <Link 
+                to="/" 
+                className="flex items-center transition-all duration-200 hover:opacity-80"
+              >
+                <img 
+                  src="/lovable-uploads/b91448b5-fbc8-45b2-93f4-ed24bfa0d28d.png" 
+                  alt="One Global Trip" 
+                  className="h-12 w-auto"
+                />
+              </Link>
+            </div>
+            
+            <div className="text-center">
+              <h1 className="text-lg font-semibold text-gray-900">Create Your AI Travel Agent</h1>
+              <p className="text-sm text-gray-600">Step {currentStep} of {totalSteps}</p>
+            </div>
+            
+            <div className="w-12"></div> {/* Spacer for centering */}
+          </div>
+        </div>
+      </nav>
+
+      <div className="flex items-center justify-center px-4 py-8">
+        <Card className="w-full max-w-2xl">
         <CardHeader>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -482,6 +510,7 @@ const AgentCreator = () => {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

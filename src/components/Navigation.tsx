@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserAgent } from '@/hooks/useUserAgent';
 import { Plane, Bot } from 'lucide-react';
 import NavigationAuth from './navigation/NavigationAuth';
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user } = useAuth();
+  const { agent } = useUserAgent();
   const location = useLocation();
 
   const toggleMobileMenu = () => {
@@ -101,7 +103,7 @@ const Navigation = () => {
                     }`}
                   >
                     <Bot className="h-4 w-4" />
-                    <span>AI Travel Agent</span>
+                    <span>Chat with {agent?.name || 'AI Travel Agent'}</span>
                     <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-1">Free</span>
                   </Link>
                 ) : (
@@ -238,7 +240,7 @@ const Navigation = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <Bot className="h-5 w-5" />
-                  <span>AI Travel Agent</span>
+                  <span>Chat with {agent?.name || 'AI Travel Agent'}</span>
                   <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Free</span>
                 </Link>
               ) : (
