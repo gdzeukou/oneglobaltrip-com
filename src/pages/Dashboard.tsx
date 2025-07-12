@@ -163,10 +163,10 @@ const Dashboard = () => {
             )}
             <div className="flex-1">
               <h1 className="text-3xl font-bold mb-2 text-white font-extrabold">
-                Hi, I'm {agent?.name || 'your AI Travel Agent'}! ✈️
+                Welcome {user?.user_metadata?.first_name || 'Traveler'}, I'm {agent?.name || 'Maya'} your personal AI Travel Agent! ✈️
               </h1>
               <p className="text-lg mb-6 text-white font-semibold">
-                Welcome back, {user?.user_metadata?.first_name || 'Traveler'}! Ready to explore the world together?
+                Ready to explore the world together? Let's plan your next amazing adventure!
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild variant="secondary" size="lg">
