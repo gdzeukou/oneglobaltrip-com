@@ -43,7 +43,7 @@ export const useProfileMutation = ({ onSuccess }: UseProfileMutationProps = {}) 
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+      queryClient.invalidateQueries({ queryKey: ['profile-check'] });
       toast({
         title: "Profile Created",
         description: "Your profile has been created successfully!",
