@@ -1,11 +1,11 @@
-// ISO-3166 Complete Country List
 export interface Country {
   code: string;
   name: string;
   flag: string;
 }
 
-export const countries: Country[] = [
+// Full country data with flags and codes for complex components
+export const countriesWithFlags: Country[] = [
   { code: 'AD', name: 'Andorra', flag: '🇦🇩' },
   { code: 'AE', name: 'United Arab Emirates', flag: '🇦🇪' },
   { code: 'AF', name: 'Afghanistan', flag: '🇦🇫' },
@@ -14,13 +14,11 @@ export const countries: Country[] = [
   { code: 'AL', name: 'Albania', flag: '🇦🇱' },
   { code: 'AM', name: 'Armenia', flag: '🇦🇲' },
   { code: 'AO', name: 'Angola', flag: '🇦🇴' },
-  { code: 'AQ', name: 'Antarctica', flag: '🇦🇶' },
   { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
   { code: 'AS', name: 'American Samoa', flag: '🇦🇸' },
   { code: 'AT', name: 'Austria', flag: '🇦🇹' },
   { code: 'AU', name: 'Australia', flag: '🇦🇺' },
   { code: 'AW', name: 'Aruba', flag: '🇦🇼' },
-  { code: 'AX', name: 'Aland Islands', flag: '🇦🇽' },
   { code: 'AZ', name: 'Azerbaijan', flag: '🇦🇿' },
   { code: 'BA', name: 'Bosnia and Herzegovina', flag: '🇧🇦' },
   { code: 'BB', name: 'Barbados', flag: '🇧🇧' },
@@ -31,20 +29,16 @@ export const countries: Country[] = [
   { code: 'BH', name: 'Bahrain', flag: '🇧🇭' },
   { code: 'BI', name: 'Burundi', flag: '🇧🇮' },
   { code: 'BJ', name: 'Benin', flag: '🇧🇯' },
-  { code: 'BL', name: 'Saint Barthelemy', flag: '🇧🇱' },
   { code: 'BM', name: 'Bermuda', flag: '🇧🇲' },
   { code: 'BN', name: 'Brunei', flag: '🇧🇳' },
   { code: 'BO', name: 'Bolivia', flag: '🇧🇴' },
-  { code: 'BQ', name: 'Bonaire, Saint Eustatius and Saba', flag: '🇧🇶' },
   { code: 'BR', name: 'Brazil', flag: '🇧🇷' },
   { code: 'BS', name: 'Bahamas', flag: '🇧🇸' },
   { code: 'BT', name: 'Bhutan', flag: '🇧🇹' },
-  { code: 'BV', name: 'Bouvet Island', flag: '🇧🇻' },
   { code: 'BW', name: 'Botswana', flag: '🇧🇼' },
   { code: 'BY', name: 'Belarus', flag: '🇧🇾' },
   { code: 'BZ', name: 'Belize', flag: '🇧🇿' },
   { code: 'CA', name: 'Canada', flag: '🇨🇦' },
-  { code: 'CC', name: 'Cocos Islands', flag: '🇨🇨' },
   { code: 'CD', name: 'Democratic Republic of the Congo', flag: '🇨🇩' },
   { code: 'CF', name: 'Central African Republic', flag: '🇨🇫' },
   { code: 'CG', name: 'Republic of the Congo', flag: '🇨🇬' },
@@ -58,8 +52,6 @@ export const countries: Country[] = [
   { code: 'CR', name: 'Costa Rica', flag: '🇨🇷' },
   { code: 'CU', name: 'Cuba', flag: '🇨🇺' },
   { code: 'CV', name: 'Cape Verde', flag: '🇨🇻' },
-  { code: 'CW', name: 'Curacao', flag: '🇨🇼' },
-  { code: 'CX', name: 'Christmas Island', flag: '🇨🇽' },
   { code: 'CY', name: 'Cyprus', flag: '🇨🇾' },
   { code: 'CZ', name: 'Czech Republic', flag: '🇨🇿' },
   { code: 'DE', name: 'Germany', flag: '🇩🇪' },
@@ -71,7 +63,6 @@ export const countries: Country[] = [
   { code: 'EC', name: 'Ecuador', flag: '🇪🇨' },
   { code: 'EE', name: 'Estonia', flag: '🇪🇪' },
   { code: 'EG', name: 'Egypt', flag: '🇪🇬' },
-  { code: 'EH', name: 'Western Sahara', flag: '🇪🇭' },
   { code: 'ER', name: 'Eritrea', flag: '🇪🇷' },
   { code: 'ES', name: 'Spain', flag: '🇪🇸' },
   { code: 'ET', name: 'Ethiopia', flag: '🇪🇹' },
@@ -95,13 +86,11 @@ export const countries: Country[] = [
   { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },
   { code: 'GQ', name: 'Equatorial Guinea', flag: '🇬🇶' },
   { code: 'GR', name: 'Greece', flag: '🇬🇷' },
-  { code: 'GS', name: 'South Georgia and the South Sandwich Islands', flag: '🇬🇸' },
   { code: 'GT', name: 'Guatemala', flag: '🇬🇹' },
   { code: 'GU', name: 'Guam', flag: '🇬🇺' },
   { code: 'GW', name: 'Guinea-Bissau', flag: '🇬🇼' },
   { code: 'GY', name: 'Guyana', flag: '🇬🇾' },
   { code: 'HK', name: 'Hong Kong', flag: '🇭🇰' },
-  { code: 'HM', name: 'Heard Island and McDonald Islands', flag: '🇭🇲' },
   { code: 'HN', name: 'Honduras', flag: '🇭🇳' },
   { code: 'HR', name: 'Croatia', flag: '🇭🇷' },
   { code: 'HT', name: 'Haiti', flag: '🇭🇹' },
@@ -153,7 +142,7 @@ export const countries: Country[] = [
   { code: 'ML', name: 'Mali', flag: '🇲🇱' },
   { code: 'MM', name: 'Myanmar', flag: '🇲🇲' },
   { code: 'MN', name: 'Mongolia', flag: '🇲🇳' },
-  { code: 'MO', name: 'Macao', flag: '🇲🇴' },
+  { code: 'MO', name: 'Macau', flag: '🇲🇴' },
   { code: 'MP', name: 'Northern Mariana Islands', flag: '🇲🇵' },
   { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
   { code: 'MR', name: 'Mauritania', flag: '🇲🇷' },
@@ -186,14 +175,14 @@ export const countries: Country[] = [
   { code: 'PK', name: 'Pakistan', flag: '🇵🇰' },
   { code: 'PL', name: 'Poland', flag: '🇵🇱' },
   { code: 'PM', name: 'Saint Pierre and Miquelon', flag: '🇵🇲' },
-  { code: 'PN', name: 'Pitcairn', flag: '🇵🇳' },
+  { code: 'PN', name: 'Pitcairn Islands', flag: '🇵🇳' },
   { code: 'PR', name: 'Puerto Rico', flag: '🇵🇷' },
-  { code: 'PS', name: 'Palestinian Territory', flag: '🇵🇸' },
+  { code: 'PS', name: 'Palestine', flag: '🇵🇸' },
   { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
   { code: 'PW', name: 'Palau', flag: '🇵🇼' },
   { code: 'PY', name: 'Paraguay', flag: '🇵🇾' },
   { code: 'QA', name: 'Qatar', flag: '🇶🇦' },
-  { code: 'RE', name: 'Reunion', flag: '🇷🇪' },
+  { code: 'RE', name: 'Réunion', flag: '🇷🇪' },
   { code: 'RO', name: 'Romania', flag: '🇷🇴' },
   { code: 'RS', name: 'Serbia', flag: '🇷🇸' },
   { code: 'RU', name: 'Russia', flag: '🇷🇺' },
@@ -214,7 +203,7 @@ export const countries: Country[] = [
   { code: 'SO', name: 'Somalia', flag: '🇸🇴' },
   { code: 'SR', name: 'Suriname', flag: '🇸🇷' },
   { code: 'SS', name: 'South Sudan', flag: '🇸🇸' },
-  { code: 'ST', name: 'Sao Tome and Principe', flag: '🇸🇹' },
+  { code: 'ST', name: 'São Tomé and Príncipe', flag: '🇸🇹' },
   { code: 'SV', name: 'El Salvador', flag: '🇸🇻' },
   { code: 'SX', name: 'Sint Maarten', flag: '🇸🇽' },
   { code: 'SY', name: 'Syria', flag: '🇸🇾' },
@@ -226,7 +215,7 @@ export const countries: Country[] = [
   { code: 'TH', name: 'Thailand', flag: '🇹🇭' },
   { code: 'TJ', name: 'Tajikistan', flag: '🇹🇯' },
   { code: 'TK', name: 'Tokelau', flag: '🇹🇰' },
-  { code: 'TL', name: 'East Timor', flag: '🇹🇱' },
+  { code: 'TL', name: 'Timor-Leste', flag: '🇹🇱' },
   { code: 'TM', name: 'Turkmenistan', flag: '🇹🇲' },
   { code: 'TN', name: 'Tunisia', flag: '🇹🇳' },
   { code: 'TO', name: 'Tonga', flag: '🇹🇴' },
@@ -241,11 +230,11 @@ export const countries: Country[] = [
   { code: 'US', name: 'United States', flag: '🇺🇸' },
   { code: 'UY', name: 'Uruguay', flag: '🇺🇾' },
   { code: 'UZ', name: 'Uzbekistan', flag: '🇺🇿' },
-  { code: 'VA', name: 'Vatican', flag: '🇻🇦' },
+  { code: 'VA', name: 'Vatican City', flag: '🇻🇦' },
   { code: 'VC', name: 'Saint Vincent and the Grenadines', flag: '🇻🇨' },
   { code: 'VE', name: 'Venezuela', flag: '🇻🇪' },
   { code: 'VG', name: 'British Virgin Islands', flag: '🇻🇬' },
-  { code: 'VI', name: 'U.S. Virgin Islands', flag: '🇻🇮' },
+  { code: 'VI', name: 'United States Virgin Islands', flag: '🇻🇮' },
   { code: 'VN', name: 'Vietnam', flag: '🇻🇳' },
   { code: 'VU', name: 'Vanuatu', flag: '🇻🇺' },
   { code: 'WF', name: 'Wallis and Futuna', flag: '🇼🇫' },
@@ -257,10 +246,12 @@ export const countries: Country[] = [
   { code: 'ZW', name: 'Zimbabwe', flag: '🇿🇼' }
 ];
 
-export const getCountryByCode = (code: string): Country | undefined => {
-  return countries.find(country => country.code === code);
-};
+// Simple array of country names for basic dropdowns
+export const countries = countriesWithFlags.map(country => country.name);
+
+// For backward compatibility with existing CountrySelector
+export default countriesWithFlags;
 
 export const getCountryByName = (name: string): Country | undefined => {
-  return countries.find(country => country.name.toLowerCase() === name.toLowerCase());
+  return countriesWithFlags.find(country => country.name === name);
 };

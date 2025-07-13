@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
-import { countries, getCountryByName, Country } from '@/data/countries';
+import countriesWithFlags, { getCountryByName, Country } from '@/data/countries';
 import { cn } from '@/lib/utils';
 
 interface CountrySelectorProps {
@@ -31,14 +31,14 @@ const CountrySelector = ({
   const [searchValue, setSearchValue] = useState("");
 
   const selectedCountry = useMemo(() => {
-    return getCountryByName(value) || countries.find(c => c.code === value);
+    return getCountryByName(value) || countriesWithFlags.find(c => c.code === value);
   }, [value]);
 
   const filteredCountries = useMemo(() => {
-    if (!searchValue) return countries;
+    if (!searchValue) return countriesWithFlags;
     
     const lowercaseSearch = searchValue.toLowerCase();
-    return countries.filter(country =>
+    return countriesWithFlags.filter(country =>
       country.name.toLowerCase().includes(lowercaseSearch) ||
       country.code.toLowerCase().includes(lowercaseSearch)
     );
