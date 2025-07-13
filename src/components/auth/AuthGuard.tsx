@@ -20,9 +20,8 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
     );
   }
 
-  if (user && needsProfile) {
-    return <ProfileCompletion onComplete={() => {}} />;
-  }
+  // No longer blocking access for incomplete profiles
+  // Profile completion is now optional
 
   return <>{children}</>;
 };
