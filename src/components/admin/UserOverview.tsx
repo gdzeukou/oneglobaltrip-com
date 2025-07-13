@@ -4,10 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Download, RefreshCw, User, UserCheck, Bot } from 'lucide-react';
+import { Download, RefreshCw, User, UserCheck, Bot, Mail, Calendar } from 'lucide-react';
 
 interface UserData {
   user_id: string;
+  email: string;
+  created_at: string;
   agent_name?: string;
   agent_preferences?: any;
   agent_created_at?: string;
@@ -19,24 +21,29 @@ interface UserData {
     nationality?: string;
     membership_expiry?: string;
   };
-  form_submissions?: any[];
-  session_count?: number;
+  form_submissions: any[];
+  session_count: number;
+  last_activity?: string;
 }
 
 interface UserStats {
+  total_users: number;
   total_agents: number;
   users_with_profiles: number;
   users_without_profiles: number;
   recent_activity: number;
+  form_only_users: number;
 }
 
 const UserOverview: React.FC = () => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [stats, setStats] = useState<UserStats>({
+    total_users: 0,
     total_agents: 0,
     users_with_profiles: 0,
     users_without_profiles: 0,
-    recent_activity: 0
+    recent_activity: 0,
+    form_only_users: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -44,109 +51,23 @@ const UserOverview: React.FC = () => {
     try {
       setLoading(true);
 
-      // Get all users with AI agents
-      const { data: agentsData, error: agentsError } = await supabase
-        .from('user_agents')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // Call our edge function to get complete user data including emails
+      const { data, error } = await supabase.functions.invoke('admin-users');
 
-      if (agentsError) {
-        console.error('Error fetching agents:', agentsError);
+      if (error) {
+        console.error('Error fetching users:', error);
         return;
       }
 
-      // Get all profiles
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*');
-
-      if (profilesError) {
-        console.error('Error fetching profiles:', profilesError);
-      }
-
-      // Get form submissions grouped by email
-      const { data: formsData, error: formsError } = await supabase
-        .from('form_submissions')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (formsError) {
-        console.error('Error fetching forms:', formsError);
-      }
-
-      // Get recent session activity
-      const { data: sessionsData, error: sessionsError } = await supabase
-        .from('user_sessions')
-        .select('user_id')
-        .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
-        .not('user_id', 'is', null);
-
-      if (sessionsError) {
-        console.error('Error fetching sessions:', sessionsError);
-      }
-
-      // Process the data
-      const userData: UserData[] = [];
-      const processedUserIds = new Set<string>();
-
-      // First, add users with AI agents
-      agentsData?.forEach(agent => {
-        if (!processedUserIds.has(agent.user_id)) {
-          const profile = profilesData?.find(p => p.id === agent.user_id);
-          const userForms = formsData?.filter(f => f.user_id === agent.user_id) || [];
-          
-          userData.push({
-            user_id: agent.user_id,
-            agent_name: agent.name,
-            agent_preferences: agent.preferences,
-            agent_created_at: agent.created_at,
-            has_profile: !!profile,
-            profile_data: profile ? {
-              first_name: profile.first_name,
-              last_name: profile.last_name,
-              phone: profile.phone,
-              nationality: profile.nationality,
-              membership_expiry: profile.membership_expiry
-            } : undefined,
-            form_submissions: userForms,
-            session_count: sessionsData?.filter(s => s.user_id === agent.user_id).length || 0
-          });
-          processedUserIds.add(agent.user_id);
-        }
+      setUsers(data.users || []);
+      setStats(data.stats || {
+        total_users: 0,
+        total_agents: 0,
+        users_with_profiles: 0,
+        users_without_profiles: 0,
+        recent_activity: 0,
+        form_only_users: 0
       });
-
-      // Then add users with profiles but no agents
-      profilesData?.forEach(profile => {
-        if (!processedUserIds.has(profile.id)) {
-          const userForms = formsData?.filter(f => f.user_id === profile.id) || [];
-          
-          userData.push({
-            user_id: profile.id,
-            has_profile: true,
-            profile_data: {
-              first_name: profile.first_name,
-              last_name: profile.last_name,
-              phone: profile.phone,
-              nationality: profile.nationality,
-              membership_expiry: profile.membership_expiry
-            },
-            form_submissions: userForms,
-            session_count: sessionsData?.filter(s => s.user_id === profile.id).length || 0
-          });
-          processedUserIds.add(profile.id);
-        }
-      });
-
-      // Calculate stats
-      const statsData: UserStats = {
-        total_agents: agentsData?.length || 0,
-        users_with_profiles: userData.filter(u => u.has_profile).length,
-        users_without_profiles: userData.filter(u => !u.has_profile).length,
-        recent_activity: new Set(sessionsData?.map(s => s.user_id)).size || 0
-      };
-
-      setUsers(userData);
-      setStats(statsData);
     } catch (error) {
       console.error('Error fetching user data:', error);
     } finally {
@@ -161,6 +82,7 @@ const UserOverview: React.FC = () => {
   const exportUsers = () => {
     const csvData = users.map(user => ({
       'User ID': user.user_id,
+      'Email': user.email,
       'Agent Name': user.agent_name || 'No Agent',
       'First Name': user.profile_data?.first_name || '',
       'Last Name': user.profile_data?.last_name || '',
@@ -170,7 +92,9 @@ const UserOverview: React.FC = () => {
       'Has AI Agent': user.agent_name ? 'Yes' : 'No',
       'Form Submissions': user.form_submissions?.length || 0,
       'Recent Sessions': user.session_count || 0,
+      'Last Activity': user.last_activity || '',
       'Agent Created': user.agent_created_at || '',
+      'Account Created': user.created_at || '',
       'Membership Status': user.profile_data?.membership_expiry ? 
         (new Date(user.profile_data.membership_expiry) > new Date() ? 'Active' : 'Expired') : 'No Membership'
     }));
@@ -298,12 +222,16 @@ const UserOverview: React.FC = () => {
                 ) : (
                   users.map((user) => (
                     <TableRow key={user.user_id}>
-                      <TableCell>
-                        <div className="font-medium">{getUserDisplayName(user)}</div>
-                        <div className="text-sm text-muted-foreground">
-                          ID: {user.user_id.slice(0, 8)}...
-                        </div>
-                      </TableCell>
+                       <TableCell>
+                         <div className="font-medium">{getUserDisplayName(user)}</div>
+                         <div className="text-sm text-muted-foreground flex items-center gap-1">
+                           <Mail className="h-3 w-3" />
+                           {user.email}
+                         </div>
+                         <div className="text-xs text-muted-foreground">
+                           ID: {user.user_id.slice(0, 8)}...
+                         </div>
+                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col gap-1">
                           <Badge variant={user.has_profile ? "default" : "secondary"}>
@@ -336,22 +264,37 @@ const UserOverview: React.FC = () => {
                           <Badge variant="outline">No AI Agent</Badge>
                         )}
                       </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          {user.profile_data?.phone && (
-                            <div>📞 {user.profile_data.phone}</div>
-                          )}
-                          {user.profile_data?.nationality && (
-                            <div>🌍 {user.profile_data.nationality}</div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div>Sessions: {user.session_count || 0}</div>
-                          <div>Forms: {user.form_submissions?.length || 0}</div>
-                        </div>
-                      </TableCell>
+                       <TableCell>
+                         <div className="text-sm space-y-1">
+                           {user.profile_data?.phone && (
+                             <div className="flex items-center gap-1">
+                               📞 {user.profile_data.phone}
+                             </div>
+                           )}
+                           {user.profile_data?.nationality && (
+                             <div className="flex items-center gap-1">
+                               🌍 {user.profile_data.nationality}
+                             </div>
+                           )}
+                           {user.profile_data?.first_name && user.profile_data?.last_name && (
+                             <div className="text-xs text-muted-foreground">
+                               {user.profile_data.first_name} {user.profile_data.last_name}
+                             </div>
+                           )}
+                         </div>
+                       </TableCell>
+                       <TableCell>
+                         <div className="text-sm space-y-1">
+                           <div>Sessions: {user.session_count || 0}</div>
+                           <div>Forms: {user.form_submissions?.length || 0}</div>
+                           {user.last_activity && (
+                             <div className="text-xs text-muted-foreground flex items-center gap-1">
+                               <Calendar className="h-3 w-3" />
+                               Last: {formatDate(user.last_activity)}
+                             </div>
+                           )}
+                         </div>
+                       </TableCell>
                       <TableCell>
                         <div className="text-sm">
                           {user.agent_created_at ? formatDate(user.agent_created_at) : 'N/A'}
