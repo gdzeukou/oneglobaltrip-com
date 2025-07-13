@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { useToast } from '@/hooks/use-toast';
 import { User, AlertCircle, CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
@@ -255,10 +256,9 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
 
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
+                <PhoneInput
                   value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                  onChange={(value) => setFormData(prev => ({ ...prev, phone: value }))}
                   placeholder="Enter phone number"
                 />
               </div>

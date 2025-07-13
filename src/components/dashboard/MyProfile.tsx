@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { 
   User, 
   CreditCard, 
@@ -326,11 +327,11 @@ const MyProfile = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
+                  <PhoneInput
                     value={profileData.phone || ''}
-                    onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                    disabled={!isEditing}
+                    onChange={(value) => setProfileData(prev => ({ ...prev, phone: value }))}
+                    placeholder="Enter phone number"
+                    className={!isEditing ? "pointer-events-none opacity-60" : ""}
                   />
                 </div>
                 <div className="space-y-2">
