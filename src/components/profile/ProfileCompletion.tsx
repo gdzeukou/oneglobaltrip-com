@@ -187,7 +187,11 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
                         date > new Date() || date < new Date("1900-01-01")
                       }
                       initialFocus
+                      showOutsideDays={false}
                       className={cn("p-3 pointer-events-auto")}
+                      captionLayout="dropdown-buttons"
+                      fromYear={1900}
+                      toYear={new Date().getFullYear()}
                     />
                   </PopoverContent>
                 </Popover>
@@ -248,7 +252,11 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
                         date < new Date()
                       }
                       initialFocus
+                      showOutsideDays={false}
                       className={cn("p-3 pointer-events-auto")}
+                      captionLayout="dropdown-buttons"
+                      fromYear={new Date().getFullYear()}
+                      toYear={new Date().getFullYear() + 20}
                     />
                   </PopoverContent>
                 </Popover>

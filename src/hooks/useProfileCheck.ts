@@ -17,6 +17,7 @@ export const useProfileCheck = () => {
         .single();
 
       if (error && error.code === 'PGRST116') {
+        // No profile exists yet
         return { hasProfile: false, profile: null };
       }
 
@@ -34,6 +35,8 @@ export const useProfileCheck = () => {
         profile: data
       };
     },
-    enabled: !!user?.id
+    enabled: !!user?.id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1
   });
 };
