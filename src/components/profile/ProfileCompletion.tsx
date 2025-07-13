@@ -7,15 +7,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
-import { User, AlertCircle } from 'lucide-react';
+import { User, AlertCircle, CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface ProfileData {
   first_name: string;
   last_name: string;
-  date_of_birth: string;
+  date_of_birth: Date | undefined;
   passport_number: string;
-  passport_expiry: string;
+  passport_expiry: Date | undefined;
   nationality: string;
   phone: string;
 }
@@ -38,9 +42,9 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
   const [formData, setFormData] = useState<ProfileData>({
     first_name: user?.user_metadata?.first_name || '',
     last_name: user?.user_metadata?.last_name || '',
-    date_of_birth: '',
+    date_of_birth: undefined,
     passport_number: '',
-    passport_expiry: '',
+    passport_expiry: undefined,
     nationality: '',
     phone: ''
   });
@@ -53,7 +57,13 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
         .from('profiles')
         .upsert({
           id: user.id,
-          ...data,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          date_of_birth: data.date_of_birth?.toISOString().split('T')[0],
+          passport_number: data.passport_number,
+          passport_expiry: data.passport_expiry?.toISOString().split('T')[0],
+          nationality: data.nationality,
+          phone: data.phone,
           updated_at: new Date().toISOString()
         });
       
@@ -101,7 +111,7 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
     createProfileMutation.mutate(formData);
   };
 
-  const updateField = (field: keyof ProfileData, value: string) => {
+  const updateDateField = (field: 'date_of_birth' | 'passport_expiry', value: Date | undefined) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -133,7 +143,7 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
                   <Input
                     id="first_name"
                     value={formData.first_name}
-                    onChange={(e) => updateField('first_name', e.target.value)}
+                    onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
                     placeholder="Enter first name"
                   />
                 </div>
@@ -142,26 +152,49 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
                   <Input
                     id="last_name"
                     value={formData.last_name}
-                    onChange={(e) => updateField('last_name', e.target.value)}
+                    onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
                     placeholder="Enter last name"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date_of_birth">Date of Birth *</Label>
-                <Input
-                  id="date_of_birth"
-                  type="date"
-                  value={formData.date_of_birth}
-                  onChange={(e) => updateField('date_of_birth', e.target.value)}
-                  required
-                />
+                <Label>Date of Birth *</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.date_of_birth && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.date_of_birth ? (
+                        format(formData.date_of_birth, "PPP")
+                      ) : (
+                        <span>Select your date of birth</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={formData.date_of_birth}
+                      onSelect={(date) => updateDateField('date_of_birth', date)}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="nationality">Nationality</Label>
-                <Select value={formData.nationality} onValueChange={(value) => updateField('nationality', value)}>
+                <Select value={formData.nationality} onValueChange={(value) => setFormData(prev => ({ ...prev, nationality: value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your nationality" />
                   </SelectTrigger>
@@ -180,21 +213,44 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
                 <Input
                   id="passport_number"
                   value={formData.passport_number}
-                  onChange={(e) => updateField('passport_number', e.target.value)}
+                  onChange={(e) => setFormData(prev => ({ ...prev, passport_number: e.target.value }))}
                   placeholder="Enter passport number"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="passport_expiry">Passport Expiry Date *</Label>
-                <Input
-                  id="passport_expiry"
-                  type="date"
-                  value={formData.passport_expiry}
-                  onChange={(e) => updateField('passport_expiry', e.target.value)}
-                  required
-                />
+                <Label>Passport Expiry Date *</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.passport_expiry && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.passport_expiry ? (
+                        format(formData.passport_expiry, "PPP")
+                      ) : (
+                        <span>Select passport expiry date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={formData.passport_expiry}
+                      onSelect={(date) => updateDateField('passport_expiry', date)}
+                      disabled={(date) =>
+                        date < new Date()
+                      }
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div className="space-y-2">
@@ -202,7 +258,7 @@ export const ProfileCompletion = ({ onComplete }: ProfileCompletionProps) => {
                 <Input
                   id="phone"
                   value={formData.phone}
-                  onChange={(e) => updateField('phone', e.target.value)}
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   placeholder="Enter phone number"
                 />
               </div>
