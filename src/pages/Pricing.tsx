@@ -54,7 +54,7 @@ const Pricing = () => {
           </p>
           <div className="flex items-center justify-center gap-2 text-sm text-white/80">
             <Clock className="h-4 w-4" />
-            <span>Starting from just $129 • Instant booking available</span>
+            <span>Starting from just $175 • Instant booking available</span>
           </div>
         </div>
       </section>

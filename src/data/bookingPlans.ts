@@ -21,7 +21,7 @@ export const BOOKING_PLANS: BookingPlan[] = [
   {
     id: 'visa_assist',
     name: 'Visa Assist',
-    price: 129,
+    price: 175,
     description: 'Essential visa processing with AI-powered assistance',
     features: [
       '✓ **Application review** with smart AI checklist',
@@ -35,7 +35,7 @@ export const BOOKING_PLANS: BookingPlan[] = [
   {
     id: 'trip_bundle',
     name: 'Trip Bundle',
-    price: 249,
+    price: 299,
     description: 'Complete travel planning with visa assistance',
     features: [
       '✓ **Everything in Visa Assist**',
@@ -53,7 +53,7 @@ export const BOOKING_PLANS: BookingPlan[] = [
   {
     id: 'ogt_elite',
     name: 'OGT Elite Concierge',
-    price: 479,
+    price: 449,
     description: 'Premium concierge service with dedicated agent',
     features: [
       '✓ **Everything in Trip Bundle**',
