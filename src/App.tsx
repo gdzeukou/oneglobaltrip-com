@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
@@ -92,10 +93,11 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <AuthProvider>
-            <Toaster />
-            <Sonner />
-            <SessionTracker />
-            <BrowserRouter>
+            <AuthGuard>
+              <Toaster />
+              <Sonner />
+              <SessionTracker />
+              <BrowserRouter>
               <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<Index />} />
@@ -214,6 +216,7 @@ function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
+            </AuthGuard>
           </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>

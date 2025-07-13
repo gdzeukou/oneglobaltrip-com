@@ -13,6 +13,7 @@ export interface AuthContextType {
   loading: boolean;
   isEmailVerified: boolean;
   otpStep: OTPStep | null;
+  needsProfile: boolean;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
   signIn: (email: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;

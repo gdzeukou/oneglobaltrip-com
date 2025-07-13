@@ -11,6 +11,7 @@ import {
   performResendVerification,
   signInWithProvider
 } from './auth/authService';
+import { useProfileCheck } from '@/hooks/useProfileCheck';
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
@@ -132,12 +133,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const { data: profileCheck } = useProfileCheck();
+
   const value = {
     user,
     session,
     loading,
     isEmailVerified,
     otpStep,
+    needsProfile: user && !loading && !profileCheck?.hasProfile,
     signUp: handleSignUp,
     signIn: performSignIn, // This will be handled by sendOTP
     signOut: handleSignOut,
