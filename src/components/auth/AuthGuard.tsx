@@ -21,7 +21,7 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
   }
 
   if (user && needsProfile) {
-    return <ProfileCompletion onComplete={() => window.location.reload()} />;
+    return <ProfileCompletion onComplete={() => {}} />;
   }
 
   return <>{children}</>;
