@@ -103,30 +103,34 @@ const Pricing = () => {
                   </div>
                 </CardHeader>
                 
-                <CardContent className="pt-0">
-                  <ul className="space-y-3 mb-8">
+                <CardContent className="pt-0 px-6">
+                  <ul className="space-y-4 mb-8">
                     {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start space-x-3">
-                        <Check className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-foreground">{feature}</span>
+                      <li key={featureIndex} className="flex items-start justify-center space-x-3 text-center">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-2 h-2 bg-purple-600 rounded-full flex-shrink-0 mt-2"></div>
+                          <span className="text-sm text-foreground leading-relaxed">{feature}</span>
+                        </div>
                       </li>
                     ))}
                   </ul>
                   
-                  <Button 
-                    className={`w-full font-semibold transition-all duration-200 ${
-                      plan.popular 
-                        ? 'bg-accent hover:bg-accent/90 text-white shadow-lg hover:shadow-xl' 
-                        : 'bg-primary hover:bg-primary/90 text-white'
-                    }`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePlanSelect(plan);
-                    }}
-                  >
-                    Book Now
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
+                  <div className="text-center">
+                    <Button 
+                      className={`w-full font-semibold transition-all duration-300 ${
+                        plan.popular 
+                          ? 'bg-accent hover:bg-accent/90 text-white shadow-lg hover:shadow-xl' 
+                          : 'bg-primary hover:bg-primary/90 text-white'
+                      } group-hover:scale-105`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePlanSelect(plan);
+                      }}
+                    >
+                      Book Now
+                      <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
