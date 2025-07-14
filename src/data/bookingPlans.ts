@@ -20,30 +20,30 @@ export const BOOKING_PLANS: BookingPlan[] = [
   },
   {
     id: 'visa_assist',
-    name: 'Visa Assist',
-    price: 175,
-    description: 'Essential visa processing with AI-powered assistance',
+    name: 'Ultimate Visa Assist',
+    price: 129,
+    description: 'Professional visa application support with AI-powered accuracy checks',
     features: [
-      '✓ **Application review** with smart AI checklist',
-      '✓ **Form completion & VAC submission**',
-      '✓ **Real-time tracking portal**',
-      '✓ **48 h email SLA** (two-business-day replies)',
-      '✓ **Optional 24 h rush review** add-on (+$79)'
+      'Smart AI application review and validation',
+      'Biometric/Fingerprint Appointment Hunter',
+      'Complete form preparation and submission',
+      'Real-time application tracking portal',
+      'Document checklist and requirements guide',
+      '24/7 AI Travel Agent'
     ],
     sla: '48h email SLA'
   },
   {
     id: 'trip_bundle',
     name: 'Trip Bundle',
-    price: 299,
-    description: 'Complete travel planning with visa assistance',
+    price: 249,
+    description: 'Full travel experience with visa, accommodation, and flight arrangements',
     features: [
-      '✓ **Everything in Visa Assist**',
-      '✓ **Guaranteed 4-star hotel** in prime location',
-      '✓ **Premium flight + lounge access***',
-      '✓ **OGT TripGift credit** to spend however you like',
-      '✓ **Comprehensive travel insurance** deals(medical, baggage, cancellation)',
-      '✓ **24/7 WhatsApp & phone support** (12 h SLA)'
+      'All Visa Assist services included',
+      'Guaranteed 4-star hotel in prime location',
+      'Premium flight booking with lounge access',
+      'OGT TripGift credit for activities',
+      'Comprehensive Travel Insurance Picks'
     ],
     sla: '12h SLA',
     popular: true,
@@ -52,16 +52,15 @@ export const BOOKING_PLANS: BookingPlan[] = [
   },
   {
     id: 'ogt_elite',
-    name: 'OGT Elite Concierge',
-    price: 449,
-    description: 'Premium concierge service with dedicated agent',
+    name: 'OGT Elite',
+    price: 479,
+    description: 'White-glove service with dedicated personal travel agent and VIP treatment',
     features: [
-      '✓ **Everything in Trip Bundle**',
-      '✓ **Dedicated human agent of your choice**',
-      '✓ **Priority biometric appointment slot hunt**',
-      '✓ **Airport transfer service**',
-      '✓ **Restaurant / event reservations**',
-      '✓ **2 h SLA & 24/7 emergency helpline**'
+      'All Trip Bundle services included',
+      'Dedicated Human Certified Travel Advisor',
+      'Priority biometric appointment booking',
+      'Airport transfer and VIP assistance',
+      'Restaurant and event reservations'
     ],
     sla: '2h SLA & emergency helpline'
   }
