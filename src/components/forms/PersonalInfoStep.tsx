@@ -3,6 +3,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PhoneInputEnhanced } from '@/components/ui/phone-input-enhanced';
 
 interface PersonalInfoStepProps {
   formData: any;
@@ -36,16 +37,13 @@ const PersonalInfoStep = ({ formData, onInputChange, type }: PersonalInfoStepPro
           />
         </div>
       </div>
-      <div>
-        <Label htmlFor="phone" className="text-base font-medium">Phone Number *</Label>
-        <Input
-          id="phone"
-          value={formData.phone}
-          onChange={(e) => onInputChange('phone', e.target.value)}
-          className="mt-1"
-          required
-        />
-      </div>
+      <PhoneInputEnhanced
+        value={formData.phone}
+        onChange={(value) => onInputChange('phone', value)}
+        label="Phone Number"
+        required
+        className="mt-1"
+      />
       {type === 'visa-application' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>

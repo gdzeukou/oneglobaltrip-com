@@ -4,7 +4,7 @@ export const BOOKING_PLANS: BookingPlan[] = [
   {
     id: 'passport_club',
     name: 'OGT Passport Club',
-    price: 279,
+    price: 289,
     description: 'Annual membership with exclusive benefits',
     features: [
       '✓ **Free visa renewal** on one application each year',

@@ -52,17 +52,19 @@ export const validateEmail = (email: string): boolean => {
   return true;
 };
 
-// Enhanced phone validation
+// Enhanced phone validation with better flexibility
 export const validatePhone = (phone: string): boolean => {
-  // Remove common separators for validation
-  const cleanPhone = phone.replace(/[\s\-\(\)\+\.]/g, '');
+  if (!phone || typeof phone !== 'string') return false;
   
-  // Must be 7-15 digits (international standard)
+  // Remove all common separators and whitespace for validation
+  const cleanPhone = phone.replace(/[\s\-\(\)\+\.\[\]]/g, '');
+  
+  // Allow international formats - 7-15 digits after cleaning
   const phoneRegex = /^\d{7,15}$/;
   if (!phoneRegex.test(cleanPhone)) return false;
   
-  // Check for injection patterns
-  if (phone.includes('<') || phone.includes('>') || phone.includes('script')) return false;
+  // Check for malicious patterns
+  if (phone.includes('<') || phone.includes('>') || phone.includes('script') || phone.includes('javascript')) return false;
   
   return true;
 };

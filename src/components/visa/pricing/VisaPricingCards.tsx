@@ -30,17 +30,17 @@ const VisaPricingCards = ({ visaType }: VisaPricingCardsProps) => {
         description: "Full travel experience with visa, accommodation, and flight arrangements",
         features: [
           "All Visa Assist services included",
-          "Guaranteed 4-star hotel in prime location",
+          "Guaranteed 4-star hotel in prime location", 
           "Premium flight booking with lounge access",
           "OGT TripGift credit for activities",
           "Comprehensive Travel Insurance Picks"
         ],
         popular: true,
         badge: "Most Popular",
-        badgeColor: "bg-orange-500"
+        badgeColor: "bg-accent"
       },
       {
-        name: "OGT Elite",
+        name: "OGT Elite", 
         price: "$479",
         description: "White-glove service with dedicated personal travel agent and VIP treatment",
         features: [
@@ -57,19 +57,19 @@ const VisaPricingCards = ({ visaType }: VisaPricingCardsProps) => {
     ],
     'long-stay': [
       {
-        name: "Residency Basic",
-        price: "$599",
-        description: "Essential long-stay visa service with comprehensive support",
+        name: "OGT Passport Club",
+        price: "$289",
+        description: "Annual membership with exclusive benefits",
         features: [
-          "Visa category assessment and consultation",
-          "Complete document preparation guidance",
-          "Application submission assistance",
-          "Real-time status tracking portal",
-          "Email support with 48h response time"
+          "✓ **Free visa renewal** on one application each year",
+          "✓ **Post-arrival support** (check-lists + residence-permit appointments)",
+          "✓ **Instant 15% discount** on every Visa & Travel service",
+          "✓ **Priority email / WhatsApp line** (24 h SLA)",
+          "✓ **Members-only travel tips newsletter**"
         ],
         popular: false,
-        badge: "Basic",
-        badgeColor: "bg-green-500"
+        badge: "Save All Year",
+        badgeColor: "bg-emerald-500"
       },
       {
         name: "Residency Plus",

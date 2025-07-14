@@ -46,7 +46,8 @@ export const useSecureFormSubmission = () => {
         is_online: true,
         last_seen: new Date().toISOString(),
         ip_address: 'unknown',
-        user_agent: navigator.userAgent.slice(0, 500) // Limit length
+        user_agent: navigator.userAgent.slice(0, 500), // Limit length
+        user_id: null // Explicitly set to null for anonymous users
       });
     } catch (error) {
       console.warn('Activity tracking failed (non-critical):', error);
@@ -158,7 +159,7 @@ export const useSecureFormSubmission = () => {
     if (!validatePhone(formData.phone)) {
       toast({
         title: "Invalid Phone Number", 
-        description: "Please enter a valid phone number.",
+        description: "Please enter a valid phone number (7-15 digits). Examples: +1-555-123-4567, (555) 123-4567, or 5551234567",
         variant: "destructive"
       });
       return false;
