@@ -7,7 +7,6 @@ export const BOOKING_PLANS: BookingPlan[] = [
     price: 289,
     description: 'Annual membership with exclusive benefits',
     features: [
-      'Free visa renewal on All Applications each year*',
       'All Trip Bundles Included',
       'Access to a Community of global frequent travelers',
       '35% OFF for when you bring another traveler (both !)',
