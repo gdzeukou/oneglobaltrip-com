@@ -119,10 +119,12 @@ export const useUnifiedForm = (
     
     if (!validationResult.isValid) {
       // Show specific error toast
-      const errorMessages = Object.values(validationResult.errors);
+      const errorMessages = Object.values(validationResult.errors).filter((msg): msg is string => typeof msg === 'string');
+      const firstError = errorMessages.length > 0 ? errorMessages[0] : "Fill in all the required information before proceeding.";
+      
       toast({
         title: "Please complete all required fields",
-        description: errorMessages.length > 0 ? errorMessages[0] : "Fill in all the required information before proceeding.",
+        description: firstError,
         variant: "destructive"
       });
       return;
