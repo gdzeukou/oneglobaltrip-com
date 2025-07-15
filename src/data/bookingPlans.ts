@@ -7,11 +7,15 @@ export const BOOKING_PLANS: BookingPlan[] = [
     price: 289,
     description: 'Annual membership with exclusive benefits',
     features: [
-      '✓ **Free visa renewal** on one application each year',
-      '✓ **Post-arrival support** (check-lists + residence-permit appointments)',
-      '✓ **Instant 15% discount** on every Visa & Travel service',
-      '✓ **Priority email / WhatsApp line** (24 h SLA)',
-      '✓ **Members-only travel tips newsletter**'
+      'Free visa renewal on All Applications each year*',
+      'All Trip Bundles Included',
+      'Access to a Community of global frequent travelers',
+      '35% OFF for when you bring another traveler (both !)',
+      'Unlimited visa renewals at no extra cost',
+      '15% discount on all services and packages',
+      'Priority customer support line',
+      'Post-arrival assistance and concierge',
+      'Access to exclusive member-only deals'
     ],
     sla: '24h priority SLA',
     badge: 'Save All Year',
