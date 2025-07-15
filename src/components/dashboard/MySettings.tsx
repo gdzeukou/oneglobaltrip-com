@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AIAgentSettings from './AIAgentSettings';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -212,6 +214,20 @@ const MySettings = () => {
         </p>
       </div>
 
+      <Tabs defaultValue="ai-agent" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="ai-agent">AI Agent</TabsTrigger>
+          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="privacy">Privacy</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="ai-agent">
+          <AIAgentSettings />
+        </TabsContent>
+
+        <TabsContent value="account" className="space-y-6">
+
       {/* Account Information */}
       <Card>
         <CardHeader>
@@ -315,8 +331,10 @@ const MySettings = () => {
         </CardContent>
       </Card>
 
-      {/* Notification Settings */}
-      <Card>
+        </TabsContent>
+
+        <TabsContent value="notifications" className="space-y-6">
+          <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Bell className="h-5 w-5" />
@@ -388,8 +406,10 @@ const MySettings = () => {
         </CardContent>
       </Card>
 
-      {/* Privacy Settings */}
-      <Card>
+        </TabsContent>
+
+        <TabsContent value="privacy" className="space-y-6">
+          <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Lock className="h-5 w-5" />
@@ -503,6 +523,8 @@ const MySettings = () => {
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
