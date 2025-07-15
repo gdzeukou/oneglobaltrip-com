@@ -81,16 +81,39 @@ export const verifyOTP = async (email: string, code: string, purpose: 'signup' |
     if (data?.success && data?.authData?.actionLink) {
       console.log('OTP verification successful, processing magic link authentication');
       
-      // Process the magic link directly by navigating to it
-      // This will trigger Supabase's authentication flow and redirect to our AuthCallback
+      // Extract tokens from the magic link URL for faster session establishment
       const magicLinkUrl = data.authData.actionLink;
-      console.log('Navigating to magic link for authentication:', magicLinkUrl);
+      console.log('Processing magic link for authentication');
       
-      // Navigate to the magic link - this will redirect and establish the session
-      window.location.href = magicLinkUrl;
-      
-      // Return success immediately since we're redirecting
-      return { error: null };
+      try {
+        const url = new URL(magicLinkUrl);
+        const accessToken = url.searchParams.get('access_token');
+        const refreshToken = url.searchParams.get('refresh_token');
+        
+        if (accessToken && refreshToken) {
+          // Set session directly for faster login
+          const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+          });
+          
+          if (sessionError) {
+            console.error('Session establishment error:', sessionError);
+            return { error: { message: sessionError.message } };
+          }
+          
+          console.log('Session established successfully');
+          return { error: null };
+        } else {
+          // Fallback to URL navigation if tokens not found
+          window.location.href = magicLinkUrl;
+          return { error: null };
+        }
+      } catch (urlError) {
+        console.error('URL parsing error, using fallback:', urlError);
+        window.location.href = magicLinkUrl;
+        return { error: null };
+      }
     }
 
     return { error: data?.error ? { message: data.error } : null };
