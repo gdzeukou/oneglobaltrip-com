@@ -9,6 +9,7 @@ import { Check, Star, ArrowRight, Clock, Shield, Zap } from 'lucide-react';
 import { BOOKING_PLANS } from '@/data/bookingPlans';
 import BookingModal from '@/components/booking/BookingModal';
 import { BookingPlan } from '@/types/booking';
+import TransparentPricingSection from '@/components/visa/TransparentPricingSection';
 
 const Pricing = () => {
   const location = useLocation();
@@ -58,6 +59,9 @@ const Pricing = () => {
           </div>
         </div>
       </section>
+
+      {/* Transparent Pricing Section */}
+      <TransparentPricingSection />
 
       {/* Pricing Cards */}
       <section className="py-16 bg-gradient-to-b from-background to-muted/20">
