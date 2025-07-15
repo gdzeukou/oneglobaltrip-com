@@ -16,8 +16,12 @@ export const useAuthState = () => {
   useEffect(() => {
     console.log('Setting up auth state listener...');
     
-    // Development bypass for Lovable environment
-    if (isDevelopmentMode()) {
+    // Only bypass in true development mode (not during OAuth flows)
+    const isRealDevelopment = window.location.hostname === 'localhost' && 
+                             !window.location.search.includes('access_token') && 
+                             !window.location.hash.includes('access_token');
+    
+    if (isDevelopmentMode() && isRealDevelopment) {
       console.log('Development mode detected, creating mock session');
       const mockUser = createMockUser() as User;
       const mockSession = createMockSession() as Session;
@@ -32,31 +36,35 @@ export const useAuthState = () => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state change:', event, session?.user?.email);
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+        console.log('Auth state change:', event, session?.user?.email || 'No user');
         
-        // Clear OTP step on successful auth
-        if (event === 'SIGNED_IN' && session?.user) {
-          console.log('User signed in successfully, clearing OTP step');
-          setOTPStep(null);
-          // Clear any pending data
-          localStorage.removeItem('pendingSignup');
-          localStorage.removeItem('pendingSignin');
-        }
+        // Prevent race conditions by ensuring we only update state once per event
+        setTimeout(() => {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+          
+          // Clear OTP step on successful auth
+          if (event === 'SIGNED_IN' && session?.user) {
+            console.log('User signed in successfully, clearing OTP step');
+            setOTPStep(null);
+            // Clear any pending data
+            localStorage.removeItem('pendingSignup');
+            localStorage.removeItem('pendingSignin');
+          }
 
-        if (event === 'SIGNED_OUT') {
-          console.log('User signed out, clearing OTP step');
-          setOTPStep(null);
-          localStorage.removeItem('pendingSignup');
-          localStorage.removeItem('pendingSignin');
-        }
+          if (event === 'SIGNED_OUT') {
+            console.log('User signed out, clearing OTP step');
+            setOTPStep(null);
+            localStorage.removeItem('pendingSignup');
+            localStorage.removeItem('pendingSignin');
+          }
 
-        // Handle token refresh
-        if (event === 'TOKEN_REFRESHED') {
-          console.log('Token refreshed successfully');
-        }
+          // Handle token refresh
+          if (event === 'TOKEN_REFRESHED') {
+            console.log('Token refreshed successfully');
+          }
+        }, 0);
       }
     );
 

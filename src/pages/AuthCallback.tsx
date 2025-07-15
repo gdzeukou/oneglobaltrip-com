@@ -67,16 +67,45 @@ const AuthCallback = () => {
           console.log('AuthCallback: Session set successfully:', !!data.session);
           console.log('AuthCallback: User authenticated:', data.session?.user?.email);
           
-          // Clear any pending auth data
-          localStorage.removeItem('pendingSignup');
-          localStorage.removeItem('pendingSignin');
-          
-          // Add small delay to ensure session is fully established
-          setTimeout(() => {
-            console.log('AuthCallback: Redirecting to dashboard');
-            navigate('/dashboard', { replace: true });
-          }, 100);
-          return;
+          if (data.session) {
+            // Verify session is properly established with retry logic
+            let sessionVerified = false;
+            let attempts = 0;
+            const maxAttempts = 5;
+            
+            while (!sessionVerified && attempts < maxAttempts) {
+              attempts++;
+              console.log(`AuthCallback: Session verification attempt ${attempts}`);
+              
+              const { data: { session: verifySession } } = await supabase.auth.getSession();
+              if (verifySession?.user?.id) {
+                sessionVerified = true;
+                console.log('AuthCallback: Session verified successfully');
+                break;
+              }
+              
+              // Wait before retry
+              await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            
+            if (sessionVerified) {
+              // Clear any pending auth data
+              localStorage.removeItem('pendingSignup');
+              localStorage.removeItem('pendingSignin');
+              
+              // Increased delay to ensure all auth state is properly updated
+              setTimeout(() => {
+                console.log('AuthCallback: Redirecting to dashboard');
+                navigate('/dashboard', { replace: true });
+              }, 500);
+              return;
+            } else {
+              console.error('AuthCallback: Session verification failed after multiple attempts');
+              setError('Session verification failed. Please try signing in again.');
+              setTimeout(() => navigate('/auth', { replace: true }), 3000);
+              return;
+            }
+          }
         }
 
         // Fallback: try to get existing session
@@ -93,11 +122,11 @@ const AuthCallback = () => {
         console.log('AuthCallback: Session check result:', !!data.session);
         console.log('AuthCallback: User from session:', data.session?.user?.email);
 
-        if (data.session) {
+        if (data.session?.user?.id) {
           console.log('AuthCallback: Existing session found, redirecting to dashboard');
           setTimeout(() => {
             navigate('/dashboard', { replace: true });
-          }, 100);
+          }, 500);
         } else {
           console.log('AuthCallback: No session found, redirecting to auth');
           setError('No authentication session found. Please sign in again.');

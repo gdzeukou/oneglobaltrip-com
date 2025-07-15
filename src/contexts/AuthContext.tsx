@@ -122,14 +122,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (result.error) {
         console.error(`AuthContext: ${provider} sign-in error:`, result.error);
+        return { error: result.error };
       } else {
         console.log(`AuthContext: ${provider} sign-in initiated, user will be redirected`);
+        return { error: null };
       }
-      
-      return result;
     } catch (error: any) {
-      console.error(`AuthContext: ${provider} sign-in error:`, error);
-      return { error: { message: error.message || `${provider} sign-in failed` } };
+      console.error(`AuthContext: ${provider} sign-in unexpected error:`, error);
+      return { error: { message: error.message || `An unexpected error occurred during ${provider} sign-in` } };
     }
   };
 
