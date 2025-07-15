@@ -14,6 +14,8 @@ interface StepRendererProps {
   onInputChange: (field: string, value: any) => void;
   onTravelNeedsChange: (need: string, checked: boolean) => void;
   onPackageSelection: (packageId: string, checked: boolean) => void;
+  errors?: Record<string, string>;
+  warnings?: Record<string, string>;
 }
 
 const StepRenderer = ({
@@ -22,7 +24,9 @@ const StepRenderer = ({
   formData,
   onInputChange,
   onTravelNeedsChange,
-  onPackageSelection
+  onPackageSelection,
+  errors = {},
+  warnings = {}
 }: StepRendererProps) => {
   const renderStep = () => {
     switch (currentStep) {
@@ -32,6 +36,8 @@ const StepRenderer = ({
             formData={formData}
             onInputChange={onInputChange}
             type={type}
+            errors={errors}
+            warnings={warnings}
           />
         );
 
@@ -57,6 +63,8 @@ const StepRenderer = ({
             <TravelInfoStep
               formData={formData}
               onInputChange={onInputChange}
+              errors={errors}
+              warnings={warnings}
             />
           );
         }
@@ -67,6 +75,8 @@ const StepRenderer = ({
             <PreferencesStep
               formData={formData}
               onInputChange={onInputChange}
+              errors={errors}
+              warnings={warnings}
             />
           );
         } else {
@@ -81,6 +91,8 @@ const StepRenderer = ({
               <PreferencesStep
                 formData={formData}
                 onInputChange={onInputChange}
+                errors={errors}
+                warnings={warnings}
               />
             </div>
           );

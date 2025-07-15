@@ -19,7 +19,6 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   const {
     currentStep,
     isSubmitting,
-    setIsSubmitting,
     formData,
     totalSteps,
     handleInputChange,
@@ -29,11 +28,13 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     isStepValid,
     handleNextStep,
     handlePrevStep,
-    trackActivity
+    trackActivity,
+    validationErrors,
+    validationWarnings
   } = useUnifiedForm(type, preSelectedPackage, onComplete);
 
-
   useEffect(() => {
+    console.log('UnifiedTravelForm mounted with type:', type);
     trackActivity('form_start', { form_type: type });
     
     if (!sessionStorage.getItem('session_id')) {
@@ -41,34 +42,34 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     }
   }, [type, trackActivity]);
 
-  const openCalendly = () => {
-    window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank', 'width=800,height=700');
-  };
+  useEffect(() => {
+    console.log('Form state changed:', {
+      currentStep,
+      isStepValid: isStepValid(),
+      errors: validationErrors,
+      warnings: validationWarnings,
+      formData
+    });
+  }, [currentStep, validationErrors, validationWarnings, formData]);
 
-
-
-  // Enhanced security wrapper for travel needs change
   const secureHandleTravelNeedsChange = (need: string, checked: boolean) => {
-    // Validate input to prevent XSS
+    console.log('Travel needs change:', need, checked);
     if (typeof need !== 'string' || typeof checked !== 'boolean') {
       console.warn('Invalid input types for travel needs change');
       return;
     }
     
-    // Sanitize the need string
-    const sanitizedNeed = need.trim().slice(0, 100); // Limit length
+    const sanitizedNeed = need.trim().slice(0, 100);
     handleTravelNeedsChange(sanitizedNeed, checked);
   };
 
-  // Enhanced security wrapper for package selection
   const secureHandlePackageSelection = (packageId: string, checked: boolean) => {
-    // Validate input to prevent tampering
+    console.log('Package selection change:', packageId, checked);
     if (typeof packageId !== 'string' || typeof checked !== 'boolean') {
       console.warn('Invalid input types for package selection');
       return;
     }
     
-    // Validate package ID format (UUID-like)
     const uuidRegex = /^[a-zA-Z0-9-_]+$/;
     if (!uuidRegex.test(packageId)) {
       console.warn('Invalid package ID format');
@@ -77,7 +78,6 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     
     handlePackageSelection(packageId, checked);
   };
-
 
   return (
     <Card className="max-w-2xl mx-auto shadow-xl border-2 border-blue-200">
@@ -96,6 +96,8 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
           onInputChange={handleInputChange}
           onTravelNeedsChange={secureHandleTravelNeedsChange}
           onPackageSelection={secureHandlePackageSelection}
+          errors={validationErrors}
+          warnings={validationWarnings}
         />
         
         <FormSteps
@@ -107,6 +109,7 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
           onSubmit={handleSubmit}
           type={type}
           isSubmitting={isSubmitting}
+          errors={validationErrors}
         />
 
         <p className="text-sm text-gray-500 text-center mt-4">

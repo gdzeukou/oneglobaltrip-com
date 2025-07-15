@@ -1,9 +1,9 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useSecureFormSubmission } from './useSecureFormSubmission';
 import { useFormState } from './useFormState';
-import { useFormValidation } from './useFormValidation';
+import { useImprovedFormValidation } from './useImprovedFormValidation';
 
 export const useUnifiedForm = (
   type: 'consultation' | 'visa-application' | 'package-booking',
@@ -12,7 +12,8 @@ export const useUnifiedForm = (
 ) => {
   const { toast } = useToast();
   const formState = useFormState(type, preSelectedPackage);
-  const { validateStep, validateFormData } = useFormValidation();
+  const { validateStep, validateFormData } = useImprovedFormValidation();
+  const [validationResult, setValidationResult] = useState({ isValid: true, errors: {}, warnings: {} });
 
   const {
     trackActivity,
@@ -22,19 +23,39 @@ export const useUnifiedForm = (
     handleSubmissionError
   } = useSecureFormSubmission();
 
+  // Load saved form data on mount
+  useEffect(() => {
+    formState.loadFormData();
+  }, []);
+
+  // Validate current step whenever form data or step changes
+  useEffect(() => {
+    const result = validateStep(formState.currentStep, formState.formData, type);
+    setValidationResult(result);
+    console.log('Validation updated for step', formState.currentStep, ':', result);
+  }, [formState.currentStep, formState.formData, type, validateStep]);
+
   const openCalendly = () => {
     window.open('https://calendly.com/camronm-oneglobaltrip/30min', '_blank', 'width=800,height=700');
   };
 
   const handleSubmit = async () => {
-    console.log('=== SECURE UNIFIED FORM SUBMISSION START ===');
+    console.log('=== UNIFIED FORM SUBMISSION START ===');
+    console.log('Current form data:', formState.formData);
 
-    // Enhanced validation with security checks
-    if (!validateFormData(formState.formData)) {
+    // Final validation
+    const finalValidation = validateFormData(formState.formData);
+    if (!finalValidation.isValid) {
+      console.log('Final validation failed:', finalValidation.errors);
+      toast({
+        title: "Please complete all required fields",
+        description: "Check the form for any missing or invalid information.",
+        variant: "destructive"
+      });
       return;
     }
 
-    // Check rate limit (enhanced security)
+    // Check rate limit
     const canSubmit = await checkSubmissionRateLimit(formState.formData.email);
     if (!canSubmit) {
       return;
@@ -43,11 +64,11 @@ export const useUnifiedForm = (
     formState.setIsSubmitting(true);
 
     try {
-      // Critical: Save to database with enhanced security
+      // Save to database
       await saveFormSubmission(type, formState.formData);
-      console.log('✅ Secure database save successful');
+      console.log('✅ Database save successful');
 
-      // Non-critical: Send welcome email
+      // Send welcome email (non-critical)
       const emailSent = await sendWelcomeEmail(formState.formData, type);
 
       // Show success message
@@ -67,6 +88,9 @@ export const useUnifiedForm = (
         description: successDescription
       });
 
+      // Clear saved form data
+      localStorage.removeItem(`form_data_${type}`);
+
       // Trigger completion callback or Calendly
       setTimeout(() => {
         if (onComplete) {
@@ -76,9 +100,10 @@ export const useUnifiedForm = (
         }
       }, 1000);
 
-      console.log('✅ Secure form submission flow completed successfully');
+      console.log('✅ Form submission completed successfully');
 
     } catch (error) {
+      console.error('Form submission error:', error);
       handleSubmissionError(error);
     } finally {
       formState.setIsSubmitting(false);
@@ -86,18 +111,24 @@ export const useUnifiedForm = (
   };
 
   const isStepValid = () => {
-    return validateStep(formState.currentStep, formState.formData, type);
+    return validationResult.isValid;
   };
 
   const handleNextStep = () => {
-    if (!isStepValid()) {
+    console.log('handleNextStep called, current validation:', validationResult);
+    
+    if (!validationResult.isValid) {
+      // Show specific error toast
+      const errorMessages = Object.values(validationResult.errors);
       toast({
         title: "Please complete all required fields",
-        description: "Fill in all the required information before proceeding to the next step.",
+        description: errorMessages.length > 0 ? errorMessages[0] : "Fill in all the required information before proceeding.",
         variant: "destructive"
       });
       return;
     }
+    
+    console.log('Validation passed, moving to next step');
     formState.handleNext();
     trackActivity('form_next_step', { step: formState.currentStep + 1, form_type: type }, formState.formData.email);
   };
@@ -113,6 +144,8 @@ export const useUnifiedForm = (
     isStepValid,
     handleNextStep,
     handlePrevStep,
-    trackActivity
+    trackActivity,
+    validationErrors: validationResult.errors,
+    validationWarnings: validationResult.warnings
   };
 };

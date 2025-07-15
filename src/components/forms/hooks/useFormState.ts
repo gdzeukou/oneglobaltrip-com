@@ -1,6 +1,25 @@
 
 import { useState } from 'react';
-import { FormData } from './useFormValidation';
+
+export interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  destination: string;
+  travelDate: string;
+  duration: string;
+  travelers: string;
+  budget: string;
+  selectedPackages: string[];
+  travelNeeds: string[];
+  otherNeeds: string;
+  specialRequests: string;
+  nationality: string;
+  visaType: string;
+  travelPurpose: string;
+  departureDate: string;
+  returnDate: string;
+}
 
 export const useFormState = (
   type: 'consultation' | 'visa-application' | 'package-booking',
@@ -8,6 +27,7 @@ export const useFormState = (
 ) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -23,45 +43,81 @@ export const useFormState = (
     specialRequests: '',
     nationality: '',
     visaType: '',
-    travelPurpose: 'tourism',
+    travelPurpose: '',
     departureDate: '',
     returnDate: ''
   });
 
-  const totalSteps = type === 'package-booking' ? 4 : 3;
+  // Save form data to localStorage for recovery
+  const saveFormData = (data: Partial<FormData>) => {
+    try {
+      const updatedData = { ...formData, ...data };
+      setFormData(updatedData);
+      localStorage.setItem(`form_data_${type}`, JSON.stringify(updatedData));
+      console.log('Form data saved:', updatedData);
+    } catch (error) {
+      console.warn('Failed to save form data to localStorage:', error);
+    }
+  };
 
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  // Load form data from localStorage on init
+  const loadFormData = () => {
+    try {
+      const saved = localStorage.getItem(`form_data_${type}`);
+      if (saved) {
+        const parsedData = JSON.parse(saved);
+        setFormData(parsedData);
+        console.log('Form data loaded from localStorage:', parsedData);
+      }
+    } catch (error) {
+      console.warn('Failed to load form data from localStorage:', error);
+    }
+  };
+
+  const handleInputChange = (field: keyof FormData, value: any) => {
+    console.log('Input change:', field, value);
+    saveFormData({ [field]: value });
   };
 
   const handleTravelNeedsChange = (need: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      travelNeeds: checked 
-        ? [...prev.travelNeeds, need]
-        : prev.travelNeeds.filter(n => n !== need)
-    }));
+    console.log('Travel needs change:', need, checked);
+    const updatedNeeds = checked
+      ? [...formData.travelNeeds, need]
+      : formData.travelNeeds.filter(n => n !== need);
+    saveFormData({ travelNeeds: updatedNeeds });
   };
 
   const handlePackageSelection = (packageId: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      selectedPackages: checked
-        ? [...prev.selectedPackages, packageId]
-        : prev.selectedPackages.filter(id => id !== packageId)
-    }));
+    console.log('Package selection change:', packageId, checked);
+    const updatedPackages = checked
+      ? [...formData.selectedPackages, packageId]
+      : formData.selectedPackages.filter(p => p !== packageId);
+    saveFormData({ selectedPackages: updatedPackages });
+  };
+
+  const getTotalSteps = () => {
+    switch (type) {
+      case 'consultation':
+        return 3;
+      case 'visa-application':
+        return 3;
+      case 'package-booking':
+        return 4;
+      default:
+        return 3;
+    }
   };
 
   const handleNext = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
-    }
+    const nextStep = Math.min(currentStep + 1, getTotalSteps());
+    console.log('Moving to next step:', nextStep);
+    setCurrentStep(nextStep);
   };
 
   const handlePrev = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+    const prevStep = Math.max(currentStep - 1, 1);
+    console.log('Moving to previous step:', prevStep);
+    setCurrentStep(prevStep);
   };
 
   return {
@@ -70,11 +126,13 @@ export const useFormState = (
     isSubmitting,
     setIsSubmitting,
     formData,
-    totalSteps,
+    totalSteps: getTotalSteps(),
     handleInputChange,
     handleTravelNeedsChange,
     handlePackageSelection,
     handleNext,
-    handlePrev
+    handlePrev,
+    loadFormData,
+    saveFormData
   };
 };
