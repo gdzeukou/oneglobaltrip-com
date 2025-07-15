@@ -213,53 +213,63 @@ Contact support if this issue persists for more than 5 minutes.`,
 
   return (
     <>
-      {/* Floating Chat Toggle Button */}
+      {/* Floating Chat Toggle Button - Mobile Optimized */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg transition-all duration-300 ${
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-lg transition-all duration-300 touch-manipulation ${
           isOpen 
             ? 'bg-red-500 hover:bg-red-600' 
             : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
         }`}
       >
-        {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        {isOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />}
       </Button>
 
-      {/* Chat Widget */}
+      {/* Chat Widget - Mobile Optimized */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-6 z-40 w-96 h-[500px] shadow-2xl border-2 border-blue-200">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
-            <CardTitle className="flex items-center space-x-2">
-              <Sparkles className="h-5 w-5" />
-              <span>AI Travel Agent</span>
+        <Card className="fixed inset-x-2 bottom-20 top-20 sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto z-40 sm:w-96 sm:h-[500px] shadow-2xl border-2 border-blue-200 flex flex-col">
+          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg flex-shrink-0">
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span className="text-sm sm:text-base truncate">AI Travel Agent</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsOpen(false)}
+                className="sm:hidden text-white hover:bg-white/20 h-8 w-8 p-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </CardTitle>
           </CardHeader>
           
-          <CardContent className="p-0 flex flex-col h-[420px]">
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <CardContent className="p-0 flex flex-col flex-1 min-h-0">
+            {/* Messages Area - Mobile Optimized */}
+            <div className="flex-1 overflow-y-auto px-3 py-4 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex items-start space-x-2 max-w-[85%] ${
+                  <div className={`flex items-start space-x-2 max-w-[90%] sm:max-w-[85%] ${
                     message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''
                   }`}>
-                    <Avatar className="h-8 w-8 flex-shrink-0">
+                    <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 mt-1">
                       <AvatarFallback className={
                         message.role === 'user' 
-                          ? 'bg-blue-100 text-blue-600' 
-                          : 'bg-purple-100 text-purple-600'
+                          ? 'bg-blue-100 text-blue-600 text-xs sm:text-sm' 
+                          : 'bg-purple-100 text-purple-600 text-xs sm:text-sm'
                       }>
                         {message.role === 'user' ? 'U' : 'M'}
                       </AvatarFallback>
                     </Avatar>
-                    <div className={`rounded-lg px-3 py-2 text-sm ${
+                    <div className={`rounded-lg px-3 py-2 text-sm sm:text-sm leading-relaxed ${
                       message.role === 'user'
                         ? 'bg-blue-500 text-white'
                         : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    }`} style={{ wordBreak: 'break-word' }}>
                       {formatMessage(message.content)}
                     </div>
                   </div>
@@ -269,14 +279,14 @@ Contact support if this issue persists for more than 5 minutes.`,
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="flex items-center space-x-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-purple-100 text-purple-600">
+                    <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
+                      <AvatarFallback className="bg-purple-100 text-purple-600 text-xs sm:text-sm">
                         M
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-gray-100 rounded-lg px-3 py-2 flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-gray-600">AI Travel Agent is thinking...</span>
+                      <span className="text-sm text-gray-600">Thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -285,23 +295,27 @@ Contact support if this issue persists for more than 5 minutes.`,
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area */}
-            <div className="border-t p-4">
+            {/* Input Area - Mobile Optimized */}
+            <div className="border-t p-3 sm:p-4 flex-shrink-0 bg-white">
               <div className="flex space-x-2">
-                <input
-                  type="text"
+                <textarea
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Tell your AI Travel Agent about your travel plans..."
-                  className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder="Ask about travel plans..."
+                  className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base sm:text-sm resize-none min-h-[40px] max-h-24 leading-normal"
                   disabled={isLoading}
+                  rows={1}
+                  style={{ 
+                    fontSize: '16px', // Prevents zoom on iOS
+                    transform: 'translateZ(0)' // Hardware acceleration for smooth scrolling
+                  }}
                 />
                 <Button
                   onClick={sendMessage}
                   disabled={!inputMessage.trim() || isLoading}
                   size="sm"
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-blue-600 hover:bg-blue-700 h-10 w-10 sm:h-9 sm:w-auto sm:px-3 flex-shrink-0 touch-manipulation"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

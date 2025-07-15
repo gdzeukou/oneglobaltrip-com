@@ -235,61 +235,69 @@ Contact support if this issue persists for more than 5 minutes.`,
 
   return (
     <>
-      {/* Floating Chat Toggle Button */}
+      {/* Floating Chat Toggle Button - Mobile Optimized */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-lg transition-all duration-300 ${
+        className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full shadow-lg transition-all duration-300 touch-manipulation ${
           isOpen 
             ? 'bg-red-500 hover:bg-red-600' 
             : `bg-gradient-to-r ${getAgentGradient()} hover:scale-110`
         }`}
       >
-        {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        {isOpen ? <X className="h-5 w-5 sm:h-6 sm:w-6" /> : <MessageCircle className="h-5 w-5 sm:h-6 sm:w-6" />}
       </Button>
 
-      {/* Chat Widget */}
+      {/* Chat Widget - Mobile Optimized */}
       {isOpen && (
-        <Card className="fixed bottom-24 right-6 z-40 w-96 h-[500px] shadow-2xl border-2 border-blue-200">
-          <CardHeader className={`bg-gradient-to-r ${getAgentGradient()} text-white rounded-t-lg`}>
+        <Card className="fixed inset-x-2 bottom-20 top-20 sm:bottom-24 sm:right-6 sm:left-auto sm:top-auto z-40 sm:w-96 sm:h-[500px] shadow-2xl border-2 border-blue-200 flex flex-col">
+          <CardHeader className={`bg-gradient-to-r ${getAgentGradient()} text-white rounded-t-lg flex-shrink-0`}>
             <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Sparkles className="h-5 w-5" />
-                <span>{preferences.aiAgentName} - Your AI Travel Agent</span>
+              <div className="flex items-center space-x-2 min-w-0 flex-1">
+                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                <span className="text-sm sm:text-base truncate">{preferences.aiAgentName}</span>
+                {preferences.aiAgentSetupCompleted && (
+                  <Settings className="h-3 w-3 sm:h-4 sm:w-4 opacity-75 flex-shrink-0" />
+                )}
               </div>
-              {preferences.aiAgentSetupCompleted && (
-                <Settings className="h-4 w-4 opacity-75" />
-              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsOpen(false)}
+                className="sm:hidden text-white hover:bg-white/20 h-8 w-8 p-0 flex-shrink-0"
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </CardTitle>
             {preferences.aiAgentTravelStyle && (
-              <p className="text-xs opacity-90">{preferences.aiAgentTravelStyle} Travel Style</p>
+              <p className="text-xs opacity-90 truncate">{preferences.aiAgentTravelStyle} Travel Style</p>
             )}
           </CardHeader>
           
-          <CardContent className="p-0 flex flex-col h-[420px]">
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <CardContent className="p-0 flex flex-col flex-1 min-h-0">
+            {/* Messages Area - Mobile Optimized */}
+            <div className="flex-1 overflow-y-auto px-3 py-4 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex items-start space-x-2 max-w-[85%] ${
+                  <div className={`flex items-start space-x-2 max-w-[90%] sm:max-w-[85%] ${
                     message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''
                   }`}>
-                    <Avatar className="h-8 w-8 flex-shrink-0">
+                    <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 mt-1">
                       <AvatarFallback className={
                         message.role === 'user' 
-                          ? 'bg-blue-100 text-blue-600' 
-                          : `bg-gradient-to-r ${getAgentGradient()} text-white`
+                          ? 'bg-blue-100 text-blue-600 text-xs sm:text-sm' 
+                          : `bg-gradient-to-r ${getAgentGradient()} text-white text-xs sm:text-sm`
                       }>
                         {message.role === 'user' ? 'U' : getAgentInitial()}
                       </AvatarFallback>
                     </Avatar>
-                    <div className={`rounded-lg px-3 py-2 text-sm ${
+                    <div className={`rounded-lg px-3 py-2 text-sm sm:text-sm leading-relaxed ${
                       message.role === 'user'
                         ? 'bg-blue-500 text-white'
                         : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    }`} style={{ wordBreak: 'break-word' }}>
                       {formatMessage(message.content)}
                     </div>
                   </div>
@@ -299,14 +307,14 @@ Contact support if this issue persists for more than 5 minutes.`,
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="flex items-center space-x-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className={`bg-gradient-to-r ${getAgentGradient()} text-white`}>
+                    <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
+                      <AvatarFallback className={`bg-gradient-to-r ${getAgentGradient()} text-white text-xs sm:text-sm`}>
                         {getAgentInitial()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-gray-100 rounded-lg px-3 py-2 flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-gray-600">{preferences.aiAgentName} is thinking...</span>
+                      <span className="text-sm text-gray-600">Thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -315,23 +323,27 @@ Contact support if this issue persists for more than 5 minutes.`,
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area */}
-            <div className="border-t p-4">
+            {/* Input Area - Mobile Optimized */}
+            <div className="border-t p-3 sm:p-4 flex-shrink-0 bg-white">
               <div className="flex space-x-2">
-                <input
-                  type="text"
+                <textarea
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder={`Tell ${preferences.aiAgentName} about your travel plans...`}
-                  className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  placeholder={`Message ${preferences.aiAgentName}...`}
+                  className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base sm:text-sm resize-none min-h-[40px] max-h-24 leading-normal"
                   disabled={isLoading}
+                  rows={1}
+                  style={{ 
+                    fontSize: '16px', // Prevents zoom on iOS
+                    transform: 'translateZ(0)' // Hardware acceleration for smooth scrolling
+                  }}
                 />
                 <Button
                   onClick={sendMessage}
                   disabled={!inputMessage.trim() || isLoading}
                   size="sm"
-                  className={`bg-gradient-to-r ${getAgentGradient()}`}
+                  className={`bg-gradient-to-r ${getAgentGradient()} h-10 w-10 sm:h-9 sm:w-auto sm:px-3 flex-shrink-0 touch-manipulation`}
                 >
                   <Send className="h-4 w-4" />
                 </Button>
