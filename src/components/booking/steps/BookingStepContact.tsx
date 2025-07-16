@@ -139,7 +139,12 @@ const BookingStepContact = ({ data, user, onComplete, onBack }: BookingStepConta
           <Button 
             type="submit" 
             className="flex-1 order-1 sm:order-2"
-            disabled={Object.keys(errors).some(key => errors[key]) || !formData.name.trim() || !formData.email.trim() || !formData.phone.trim()}
+            disabled={
+              (Object.keys(touched).length > 0 && Object.keys(errors).some(key => touched[key] && errors[key])) ||
+              !formData.name.trim() || 
+              !formData.email.trim() || 
+              !formData.phone.trim()
+            }
           >
             Continue
           </Button>

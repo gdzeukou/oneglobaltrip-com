@@ -18,11 +18,11 @@ const PhoneInputEnhanced = forwardRef<HTMLInputElement, PhoneInputEnhancedProps>
     
     const formatPhoneNumber = (input: string) => {
       // Remove all non-numeric characters except + at the beginning
-      let cleaned = input.replace(/[^\\d+]/g, '');
+      let cleaned = input.replace(/[^\d+]/g, '');
       
       // If it starts with +, keep only one + at the beginning
       if (cleaned.startsWith('+')) {
-        cleaned = '+' + cleaned.slice(1).replace(/\\+/g, '');
+        cleaned = '+' + cleaned.slice(1).replace(/\+/g, '');
       }
       
       return cleaned;
