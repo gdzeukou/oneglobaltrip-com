@@ -31,8 +31,6 @@ interface FormData {
 
 export const useSecureFormSubmission = () => {
   const { toast } = useToast();
-  
-  console.log('=== FORM SUBMISSION HOOK INITIALIZED ===');
 
   const trackActivity = async (actionType: string, actionData?: any, email?: string) => {
     try {
@@ -57,10 +55,6 @@ export const useSecureFormSubmission = () => {
   };
 
   const saveFormSubmission = async (type: string, formData: FormData) => {
-    console.log('=== SECURE FORM SUBMISSION START ===');
-    console.log('Form type:', type);
-    console.log('Raw form data:', formData);
-    console.log('Current user auth state:', await supabase.auth.getUser());
 
     // Enhanced validation
     if (!validateFormData(formData)) {
@@ -95,20 +89,14 @@ export const useSecureFormSubmission = () => {
       user_id: null
     };
 
-    console.log('Saving sanitized data to database');
-    console.log('Final submission data:', submissionData);
-
     const { data, error } = await supabase
       .from('form_submissions')
       .insert([submissionData])
       .select();
 
     if (error) {
-      console.error('❌ Database save failed:', error);
       throw new Error(`Database error: ${error.message}`);
     }
-
-    console.log('✅ Form saved to database successfully');
     await trackActivity('form_submit', { form_type: type }, formData.email);
     
     return data;
@@ -116,8 +104,6 @@ export const useSecureFormSubmission = () => {
 
   const sendWelcomeEmail = async (formData: FormData, type: string) => {
     try {
-      console.log('📧 Attempting to send welcome email...');
-      
       const { data, error } = await supabase.functions.invoke('send-welcome-email', {
         body: {
           name: formData.name,
@@ -128,15 +114,8 @@ export const useSecureFormSubmission = () => {
         }
       });
 
-      if (error) {
-        console.warn('⚠️ Welcome email failed (non-critical):', error);
-        return false;
-      }
-
-      console.log('✅ Welcome email sent successfully');
-      return true;
+      return !error;
     } catch (error) {
-      console.warn('⚠️ Welcome email service unavailable (non-critical):', error);
       return false;
     }
   };
@@ -211,7 +190,6 @@ export const useSecureFormSubmission = () => {
   };
 
   const handleSubmissionError = (error: any) => {
-    console.error('❌ Critical error in form submission:', error);
     
     let errorMessage = "There was an error submitting your form. Please try again or contact support directly.";
     

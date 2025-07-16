@@ -14,22 +14,12 @@ export const useAuthState = () => {
   const isEmailVerified = user?.email_confirmed_at ? true : false;
 
   useEffect(() => {
-    console.log('Setting up auth state listener...');
-    console.log('Current hostname:', window.location.hostname);
-    console.log('isDevelopmentMode():', isDevelopmentMode());
-    
-    // RE-ENABLE DEV MODE for testing
+    // Reduce console logging for performance
     const isLovableDomain = window.location.hostname.includes('lovable');
     
-    console.log('isLovableDomain:', isLovableDomain);
-    
     if (isLovableDomain) {
-      console.log('Lovable domain detected, creating mock session');
       const mockUser = createMockUser() as User;
       const mockSession = createMockSession() as Session;
-      
-      console.log('Mock user created:', mockUser);
-      console.log('Mock session created:', mockSession);
       
       setUser(mockUser);
       setSession(mockSession);
@@ -41,50 +31,34 @@ export const useAuthState = () => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state change:', event, session?.user?.email || 'No user');
+        // Update state directly without setTimeout to reduce delays
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
         
-        // Prevent race conditions by ensuring we only update state once per event
-        setTimeout(() => {
-          setSession(session);
-          setUser(session?.user ?? null);
-          setLoading(false);
-          
-          // Clear OTP step on successful auth
-          if (event === 'SIGNED_IN' && session?.user) {
-            console.log('User signed in successfully, clearing OTP step');
-            setOTPStep(null);
-            // Clear any pending data
-            localStorage.removeItem('pendingSignup');
-            localStorage.removeItem('pendingSignin');
-          }
+        // Clear OTP step on successful auth
+        if (event === 'SIGNED_IN' && session?.user) {
+          setOTPStep(null);
+          localStorage.removeItem('pendingSignup');
+          localStorage.removeItem('pendingSignin');
+        }
 
-          if (event === 'SIGNED_OUT') {
-            console.log('User signed out, clearing OTP step');
-            setOTPStep(null);
-            localStorage.removeItem('pendingSignup');
-            localStorage.removeItem('pendingSignin');
-          }
-
-          // Handle token refresh
-          if (event === 'TOKEN_REFRESHED') {
-            console.log('Token refreshed successfully');
-          }
-        }, 0);
+        if (event === 'SIGNED_OUT') {
+          setOTPStep(null);
+          localStorage.removeItem('pendingSignup');
+          localStorage.removeItem('pendingSignin');
+        }
       }
     );
 
     // THEN get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.email || 'No session');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    return () => {
-      console.log('Cleaning up auth state listener');
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   return {

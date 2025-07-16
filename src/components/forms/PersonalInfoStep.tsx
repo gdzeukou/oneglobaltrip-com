@@ -15,10 +15,7 @@ interface PersonalInfoStepProps {
 
 const PersonalInfoStep = ({ formData, onInputChange, type, errors = {}, warnings = {} }: PersonalInfoStepProps) => {
   const handleInputChange = (field: string, value: string) => {
-    console.log('PersonalInfoStep input change:', field, value);
-    console.log('Current form data before change:', formData);
     onInputChange(field, value);
-    console.log('onInputChange called for:', field, value);
   };
 
   return (

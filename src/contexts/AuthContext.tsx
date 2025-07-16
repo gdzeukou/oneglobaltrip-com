@@ -35,51 +35,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const handleSendOTP = async (email: string, purpose: 'signup' | 'signin') => {
     try {
-      console.log(`Handling send OTP for ${email}, purpose: ${purpose}`);
       const result = await sendOTP(email, purpose);
-      console.log('Send OTP result:', result);
       
       if (!result.error) {
-        console.log('Setting OTP step state');
         setOTPStep({
           isRequired: true,
           email,
           purpose
         });
-      } else {
-        console.error('Send OTP failed:', result.error);
       }
       return result;
     } catch (error: any) {
-      console.error('Error sending OTP:', error);
       return { error: { message: error.message || 'Failed to send verification code' } };
     }
   };
 
   const handleVerifyOTP = async (email: string, code: string, purpose: 'signup' | 'signin') => {
     try {
-      console.log(`Handling verify OTP for ${email}, purpose: ${purpose}`);
       const result = await verifyOTP(email, code, purpose);
-      console.log('Verify OTP result:', result);
       
-      // Handle the result properly - verifyOTP now returns either { error: any } or resolves without error
       const response = result as { error?: any };
       if (!response.error) {
-        console.log('OTP verified successfully, clearing OTP step');
         setOTPStep(null);
         return { error: null };
       } else {
-        console.error('Verify OTP failed:', response.error);
         return { error: response.error };
       }
     } catch (error: any) {
-      console.error('Error verifying OTP:', error);
       return { error: { message: error.message || 'Verification failed' } };
     }
   };
 
   const clearOTPStep = () => {
-    console.log('Clearing OTP step');
     setOTPStep(null);
     localStorage.removeItem('pendingSignup');
     localStorage.removeItem('pendingSignin');
@@ -153,12 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signInWithFacebook: () => handleSocialAuth('facebook'),
   };
 
-  console.log('AuthContext current state:', { 
-    hasUser: !!user, 
-    hasSession: !!session, 
-    loading, 
-    otpStep: otpStep ? `${otpStep.purpose} for ${otpStep.email}` : 'none' 
-  });
+  // Reduce verbose logging for better performance
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
