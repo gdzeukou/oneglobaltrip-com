@@ -18,10 +18,9 @@ export const useAuthState = () => {
     console.log('Current hostname:', window.location.hostname);
     console.log('isDevelopmentMode():', isDevelopmentMode());
     
-    // TEMPORARILY DISABLE DEV MODE to debug forms
-    const isLovableDomain = false; // window.location.hostname.includes('lovable');
+    // RE-ENABLE DEV MODE for testing
+    const isLovableDomain = window.location.hostname.includes('lovable');
     
-    console.log('TEMP: Dev mode disabled for form debugging');
     console.log('isLovableDomain:', isLovableDomain);
     
     if (isLovableDomain) {
