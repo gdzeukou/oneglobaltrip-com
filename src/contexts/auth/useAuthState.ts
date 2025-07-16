@@ -15,6 +15,8 @@ export const useAuthState = () => {
 
   useEffect(() => {
     console.log('Setting up auth state listener...');
+    console.log('Current hostname:', window.location.hostname);
+    console.log('isDevelopmentMode():', isDevelopmentMode());
     
     // Only bypass in true development mode (not during OAuth flows)
     const isRealDevelopment = (window.location.hostname === 'localhost' || 
@@ -23,10 +25,16 @@ export const useAuthState = () => {
                              !window.location.search.includes('access_token') && 
                              !window.location.hash.includes('access_token');
     
+    console.log('isRealDevelopment:', isRealDevelopment);
+    console.log('Should use dev mode:', isDevelopmentMode() && isRealDevelopment);
+    
     if (isDevelopmentMode() && isRealDevelopment) {
       console.log('Development mode detected, creating mock session');
       const mockUser = createMockUser() as User;
       const mockSession = createMockSession() as Session;
+      
+      console.log('Mock user created:', mockUser);
+      console.log('Mock session created:', mockSession);
       
       setUser(mockUser);
       setSession(mockSession);
