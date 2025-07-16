@@ -34,7 +34,10 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
   } = useUnifiedForm(type, preSelectedPackage, onComplete);
 
   useEffect(() => {
-    console.log('UnifiedTravelForm mounted with type:', type);
+    console.log('=== UNIFIED TRAVEL FORM MOUNTED ===');
+    console.log('Form type:', type);
+    console.log('Pre-selected package:', preSelectedPackage);
+    console.log('Window location:', window.location.href);
     trackActivity('form_start', { form_type: type });
     
     if (!sessionStorage.getItem('session_id')) {

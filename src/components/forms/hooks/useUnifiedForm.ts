@@ -41,7 +41,10 @@ export const useUnifiedForm = (
 
   const handleSubmit = async () => {
     console.log('=== UNIFIED FORM SUBMISSION START ===');
+    console.log('Form type:', type);
+    console.log('Is submitting already?', formState.isSubmitting);
     console.log('Current form data:', formState.formData);
+    console.log('Form validation state:', validationResult);
 
     // Final validation
     const finalValidation = validateFormData(formState.formData);

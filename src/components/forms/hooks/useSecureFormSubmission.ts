@@ -31,6 +31,8 @@ interface FormData {
 
 export const useSecureFormSubmission = () => {
   const { toast } = useToast();
+  
+  console.log('=== FORM SUBMISSION HOOK INITIALIZED ===');
 
   const trackActivity = async (actionType: string, actionData?: any, email?: string) => {
     try {
@@ -57,6 +59,8 @@ export const useSecureFormSubmission = () => {
   const saveFormSubmission = async (type: string, formData: FormData) => {
     console.log('=== SECURE FORM SUBMISSION START ===');
     console.log('Form type:', type);
+    console.log('Raw form data:', formData);
+    console.log('Current user auth state:', await supabase.auth.getUser());
 
     // Enhanced validation
     if (!validateFormData(formData)) {
@@ -92,6 +96,7 @@ export const useSecureFormSubmission = () => {
     };
 
     console.log('Saving sanitized data to database');
+    console.log('Final submission data:', submissionData);
 
     const { data, error } = await supabase
       .from('form_submissions')

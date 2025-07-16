@@ -12,6 +12,7 @@ import VisaFAQSection from '@/components/visa/sections/VisaFAQSection';
 import FooterCTASection from '@/components/visa/sections/FooterCTASection';
 import InternationalTestimonials from '@/components/conversion/InternationalTestimonials';
 import EnhancedTrustBadges from '@/components/conversion/EnhancedTrustBadges';
+import FormDebugger from '@/components/forms/FormDebugger';
 
 const Visas = () => {
   useEffect(() => {
@@ -33,6 +34,8 @@ const Visas = () => {
       </div>
       
       <VisasHeroSection onScrollToCTA={scrollToMainCTA} />
+      
+      <FormDebugger />
       
       <QuickVisaCheckSection />
       
