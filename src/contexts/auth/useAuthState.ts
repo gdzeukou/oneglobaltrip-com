@@ -18,18 +18,13 @@ export const useAuthState = () => {
     console.log('Current hostname:', window.location.hostname);
     console.log('isDevelopmentMode():', isDevelopmentMode());
     
-    // Only bypass in true development mode (not during OAuth flows)
-    const isRealDevelopment = (window.location.hostname === 'localhost' || 
-                              window.location.hostname.includes('lovable.app') ||
-                              window.location.hostname.includes('lovable.dev')) && 
-                             !window.location.search.includes('access_token') && 
-                             !window.location.hash.includes('access_token');
+    // Force dev mode on Lovable domains
+    const isLovableDomain = window.location.hostname.includes('lovable');
     
-    console.log('isRealDevelopment:', isRealDevelopment);
-    console.log('Should use dev mode:', isDevelopmentMode() && isRealDevelopment);
+    console.log('isLovableDomain:', isLovableDomain);
     
-    if (isDevelopmentMode() && isRealDevelopment) {
-      console.log('Development mode detected, creating mock session');
+    if (isLovableDomain) {
+      console.log('Lovable domain detected, creating mock session');
       const mockUser = createMockUser() as User;
       const mockSession = createMockSession() as Session;
       
