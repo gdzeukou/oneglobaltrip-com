@@ -17,7 +17,9 @@ export const useAuthState = () => {
     console.log('Setting up auth state listener...');
     
     // Only bypass in true development mode (not during OAuth flows)
-    const isRealDevelopment = window.location.hostname === 'localhost' && 
+    const isRealDevelopment = (window.location.hostname === 'localhost' || 
+                              window.location.hostname.includes('lovable.app') ||
+                              window.location.hostname.includes('lovable.dev')) && 
                              !window.location.search.includes('access_token') && 
                              !window.location.hash.includes('access_token');
     
