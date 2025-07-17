@@ -66,6 +66,8 @@ enable_signup = true
 double_confirm_changes = true
 enable_confirmations = false
 max_frequency = "1s"
+secure_email_change_enabled = true
+secure_password_change_enabled = true
 
 [auth.sms]
 enable_signup = true
