@@ -12,8 +12,11 @@ import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
 import MainCTASection from '@/components/visa/sections/MainCTASection';
-import AITripRecommender from '@/components/conversion/AITripRecommender';
-import InteractiveWorldMap from '@/components/conversion/InteractiveWorldMap';
+// Lazy load heavy components for better performance
+import { lazy, Suspense } from 'react';
+
+const AITripRecommender = lazy(() => import('@/components/conversion/AITripRecommender'));
+const InteractiveWorldMap = lazy(() => import('@/components/conversion/InteractiveWorldMap'));
 import UnifiedCTA from '@/components/common/UnifiedCTA';
 
 const Index = () => {
@@ -105,8 +108,12 @@ const Index = () => {
           }
         ]}
       />
-      <AITripRecommender />
-      <InteractiveWorldMap />
+      <Suspense fallback={<div className="h-64 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+        <AITripRecommender />
+      </Suspense>
+      <Suspense fallback={<div className="h-64 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+        <InteractiveWorldMap />
+      </Suspense>
       
       <TrustIndicators />
       <PromoSection />

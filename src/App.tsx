@@ -19,10 +19,11 @@ import ErrorPage from "./pages/ErrorPage";
 // Lazy load other components to improve initial load time
 import { lazy, Suspense } from 'react';
 
-const Visas = lazy(() => import("./pages/Visas"));
-const Packages = lazy(() => import("./pages/Packages"));
-const PackageDetails = lazy(() => import("./pages/PackageDetails"));
-const Contact = lazy(() => import("./pages/Contact"));
+// Load critical pages immediately to fix "pages down" issue
+import Visas from "./pages/Visas";
+import Packages from "./pages/Packages";
+import PackageDetails from "./pages/PackageDetails";
+import Contact from "./pages/Contact";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Profile = lazy(() => import("./pages/Profile"));
 const TestEmailDelivery = lazy(() => import("./pages/TestEmailDelivery"));
@@ -111,7 +112,7 @@ function App() {
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/auth/callback" element={<AuthCallback />} />
                   
-                  {/* Lazy loaded routes */}
+                  {/* Critical routes - immediately loaded */}
                   <Route path="/visas" element={<Visas />} />
                   <Route path="/packages" element={<Packages />} />
                   <Route path="/packages/:id" element={<PackageDetails />} />
