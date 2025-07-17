@@ -10,15 +10,24 @@ import { BOOKING_PLANS } from '@/data/bookingPlans';
 import BookingModal from '@/components/booking/BookingModal';
 import { BookingPlan } from '@/types/booking';
 import TransparentPricingSection from '@/components/visa/TransparentPricingSection';
+import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 const Pricing = () => {
   const location = useLocation();
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<BookingPlan | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const { trackPageView } = usePerformanceOptimization();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location.pathname]);
+    trackPageView('Pricing');
+    
+    // Simulate loading completion with minimal delay
+    const timer = setTimeout(() => setIsLoading(false), 100);
+    return () => clearTimeout(timer);
+  }, [location.pathname, trackPageView]);
 
   const handlePlanSelect = (plan: BookingPlan) => {
     setSelectedPlan(plan);
@@ -39,6 +48,10 @@ const Pricing = () => {
         return <Shield className="h-8 w-8 text-primary mb-4" />;
     }
   };
+
+  if (isLoading) {
+    return <LoadingScreen message="Loading pricing options..." />;
+  }
 
   return (
     <div className="min-h-screen bg-white">

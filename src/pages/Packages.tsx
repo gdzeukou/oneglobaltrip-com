@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -12,13 +12,21 @@ import FAQSection from '@/components/common/FAQSection';
 import { usePackageFilters } from '@/hooks/usePackageFilters';
 import { packages } from '@/data/packages';
 import { categories } from '@/data/packages';
+import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 const Packages = () => {
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
+  const { trackPageView } = usePerformanceOptimization();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location.pathname]);
+    trackPageView('Packages');
+    
+    const timer = setTimeout(() => setIsLoading(false), 100);
+    return () => clearTimeout(timer);
+  }, [location.pathname, trackPageView]);
 
   const {
     searchTerm,
@@ -53,6 +61,10 @@ const Packages = () => {
       answer: "Yes! We offer flexible payment options including installment plans and pay-later options. Contact us to discuss payment arrangements that work for your budget."
     }
   ];
+
+  if (isLoading) {
+    return <LoadingScreen message="Loading travel packages..." />;
+  }
 
   return (
     <div className="min-h-screen bg-white">
