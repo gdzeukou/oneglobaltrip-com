@@ -82,21 +82,23 @@ const Testimonials = lazy(() => import("./pages/Testimonials"));
 
 import "./App.css";
 import AgentProtectedRoute from "./components/auth/AgentProtectedRoute";
-import SessionTracker from "./components/SessionTracker";
+import LoadingBoundary from "./components/LoadingBoundary";
+// import SessionTracker from "./components/SessionTracker"; // Temporarily disabled
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <AuthProvider>
-            <AuthGuard>
-              <Toaster />
-              <Sonner />
-              <SessionTracker />
-              <BrowserRouter>
+      <LoadingBoundary>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <AuthProvider>
+              <AuthGuard>
+                <Toaster />
+                <Sonner />
+                {/* <SessionTracker /> Temporarily disabled for performance */}
+                <BrowserRouter>
               <Suspense fallback={
                 <div className="min-h-screen flex items-center justify-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -227,6 +229,7 @@ function App() {
           </AuthProvider>
         </TooltipProvider>
       </QueryClientProvider>
+      </LoadingBoundary>
     </ErrorBoundary>
   );
 }
