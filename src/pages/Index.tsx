@@ -12,6 +12,7 @@ import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
 import MainCTASection from '@/components/visa/sections/MainCTASection';
+import WhyChooseSection from '@/components/home/WhyChooseSection';
 // Lazy load heavy components for better performance
 import { lazy, Suspense } from 'react';
 
@@ -54,7 +55,7 @@ const Index = () => {
             title: 'Visa Assistance',
             subtitle: 'AI-Guided Support',
             description: 'AI-guided form filling with document verification and real-time embassy alerts',
-            price: '$30',
+            price: '$15',
             priceNote: 'per application',
             image: '/lovable-uploads/aa2bd5bf-60f3-4560-a840-674f0d86c971.png',
             alt: 'AI Visa Assistance',
@@ -74,8 +75,8 @@ const Index = () => {
             title: 'Global Explorer',
             subtitle: 'Premium Access',
             description: 'Unlimited visa support with real-time alerts and specific AI trip planning for all travel styles',
-            price: '$99/year',
-            priceNote: 'or $10/month',
+            price: '$49/year',
+            priceNote: 'or $5/month',
             image: '/lovable-uploads/2aa35fa9-6f77-4530-b502-0223423fa205.png',
             alt: 'Global Explorer Premium',
             badge: 'Most Popular',
@@ -99,6 +100,7 @@ const Index = () => {
       </Suspense>
       
       <TrustIndicators />
+      <WhyChooseSection />
       <PromoSection />
       <StartTripSection />
       <WhyChooseUsSection />

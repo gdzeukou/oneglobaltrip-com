@@ -20,12 +20,12 @@ export const BOOKING_PLANS: BookingPlan[] = [
   {
     id: 'visa_assist',
     name: 'Visa Assistance',
-    price: 30,
+    price: 15,
     description: 'One-time visa support with expert guidance and document verification',
     features: [
-      'Step-by-step form guidance',
+      'AI-guided visa form filling',
       'Document verification',
-      'Real-time embassy updates',
+      'Real-time embassy alerts',
       'Embassy appointment assistance',
       '98% success rate guarantee'
     ],
@@ -36,17 +36,17 @@ export const BOOKING_PLANS: BookingPlan[] = [
   {
     id: 'global_explorer',
     name: 'Global Explorer',
-    price: 10,
-    description: 'Premium subscription with unlimited visa assistance and advanced features',
+    price: 5,
+    description: 'Premium subscription with unlimited visa assistance and advanced AI features',
     features: [
       'Unlimited visa assistance',
-      'Niche AI itineraries (eco-tours, foodie trips, etc.)',
+      'Advanced AI customization (foodie tours, adventure hikes, nightlife)',
       'Real-time travel advisories',
-      'Offline access for low-connectivity travel',
+      'Offline access for remote travel',
       'Priority customer support',
-      'Exclusive member deals'
+      '$20 Expert Connect calls with human travel agents'
     ],
-    sla: 'Monthly subscription',
+    sla: 'Monthly subscription ($49/year)',
     popular: true,
     badge: 'Most Popular',
     badgeColor: 'bg-accent',
@@ -58,20 +58,20 @@ export const BOOKING_ADDONS: BookingAddOn[] = [
   {
     id: 'expedited_booking',
     name: 'Expedited Booking Support',
-    price: 15,
-    description: 'Priority booking assistance with faster response times'
+    price: 10,
+    description: 'Faster AI-driven flight/hotel reservations with priority support'
   },
   {
     id: 'niche_guide',
-    name: 'Niche Travel Guide',
-    price: 10,
-    description: 'Specialized guides for eco-tours, foodie trips, or cultural experiences'
+    name: 'Niche Travel Guides',
+    price: 7,
+    description: 'Tailored plans for specific interests (e.g., "Vegan Tokyo", "Barcelona Nightlife")'
   },
   {
     id: 'partner_discounts',
-    name: 'Exclusive Partner Discounts',
-    price: 5,
-    description: 'Unlock special deals and discounts from our travel partners'
+    name: 'Exclusive Discounts',
+    price: 3,
+    description: 'Partner offers with 10-15% commissions from Booking.com and Agoda'
   }
 ];
 

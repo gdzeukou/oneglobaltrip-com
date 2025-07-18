@@ -173,6 +173,12 @@ const Navigation = () => {
 
             {/* Auth Section - Hidden on mobile */}
             <div className="hidden md:flex items-center space-x-4">
+              <Link 
+                to="/ai-agent-auth" 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:scale-105 shadow-md"
+              >
+                Sign Up Free
+              </Link>
               <NavigationAuth />
             </div>
           </div>

@@ -26,19 +26,19 @@ const HeroSection = () => {
         <div className="text-center">
           <div className="flex items-center justify-center mb-8">
             <Sparkles className="h-6 md:h-8 w-6 md:w-8 text-amber-400 mr-3 animate-pulse" />
-            <span className="text-lg md:text-xl font-semibold text-amber-300 tracking-wide">Premium Travel Concierge</span>
+            <span className="text-lg md:text-xl font-semibold text-amber-300 tracking-wide">AI-Powered Travel Planning</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-tight">
-            <span className="block text-white">Your Dream</span>
+            <span className="block text-white">Your Free AI</span>
             <span className="block bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 bg-clip-text text-transparent">
-              Journey Awaits
+              Travel Agent
             </span>
           </h1>
           
           <p className="text-xl md:text-2xl lg:text-3xl mb-12 text-slate-200 max-w-4xl mx-auto leading-relaxed font-light">
-            From luxury cruises to cultural tours, we craft complete travel experiences. 
-            Flights, hotels, visas, and unforgettable adventures—all expertly planned for you.
+            Plan trips, simplify visas, and customize your AI for global adventures. 
+            Sign up free and get visa help from just $15 with our 98% success rate.
           </p>
 
           {/* Travel Services Icons */}
@@ -65,12 +65,12 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16 animate-scale-in" style={{ animationDelay: '0.5s' }}>
             <Button 
               size="lg"
-              className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold text-xl px-12 py-6 rounded-xl shadow-2xl hover:shadow-amber-500/25 transition-all duration-300 hover:scale-105 border-0"
+              className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-xl px-12 py-6 rounded-xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 hover:scale-105 border-0"
               asChild
             >
-              <Link to="/get-started">
-                <Calendar className="h-6 w-6 mr-3" />
-                Start Planning
+              <Link to="/ai-agent-auth">
+                <Sparkles className="h-6 w-6 mr-3" />
+                Sign Up Free
                 <ArrowRight className="h-6 w-6 ml-3" />
               </Link>
             </Button>
@@ -81,9 +81,9 @@ const HeroSection = () => {
               className="border-2 border-white/50 text-white hover:bg-white/10 hover:border-white font-bold text-xl px-12 py-6 rounded-xl shadow-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
               asChild
             >
-              <Link to="/packages">
+              <Link to="/pricing">
                 <Play className="h-6 w-6 mr-3" />
-                Free Consultation
+                View Plans
               </Link>
             </Button>
           </div>
@@ -92,22 +92,22 @@ const HeroSection = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto animate-slide-up" style={{ animationDelay: '0.7s' }}>
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20">
               <div className="flex items-center justify-center mb-4">
-                <div className="p-3 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full">
-                  <Globe className="h-6 md:h-8 w-6 md:w-8 text-white" />
-                </div>
-              </div>
-              <div className="text-3xl md:text-4xl font-bold text-white mb-2">150+</div>
-              <div className="text-sm md:text-base text-slate-300">Destinations</div>
-            </div>
-            
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20">
-              <div className="flex items-center justify-center mb-4">
                 <div className="p-3 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full">
                   <Users className="h-6 md:h-8 w-6 md:w-8 text-white" />
                 </div>
               </div>
-              <div className="text-3xl md:text-4xl font-bold text-white mb-2">25K+</div>
+              <div className="text-3xl md:text-4xl font-bold text-white mb-2">10K+</div>
               <div className="text-sm md:text-base text-slate-300">Happy Travelers</div>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20">
+              <div className="flex items-center justify-center mb-4">
+                <div className="p-3 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full">
+                  <Globe className="h-6 md:h-8 w-6 md:w-8 text-white" />
+                </div>
+              </div>
+              <div className="text-3xl md:text-4xl font-bold text-white mb-2">180+</div>
+              <div className="text-sm md:text-base text-slate-300">Countries</div>
             </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20">
@@ -116,8 +116,8 @@ const HeroSection = () => {
                   <Ship className="h-6 md:h-8 w-6 md:w-8 text-white" />
                 </div>
               </div>
-              <div className="text-3xl md:text-4xl font-bold text-white mb-2">500+</div>
-              <div className="text-sm md:text-base text-slate-300">Cruise Options</div>
+              <div className="text-3xl md:text-4xl font-bold text-white mb-2">98%</div>
+              <div className="text-sm md:text-base text-slate-300">Visa Success</div>
             </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 md:p-8 hover:bg-white/15 transition-all duration-300 hover:scale-105 border border-white/20">
@@ -127,7 +127,7 @@ const HeroSection = () => {
                 </div>
               </div>
               <div className="text-3xl md:text-4xl font-bold text-white mb-2">24/7</div>
-              <div className="text-sm md:text-base text-slate-300">Concierge Support</div>
+              <div className="text-sm md:text-base text-slate-300">Support</div>
             </div>
           </div>
 
