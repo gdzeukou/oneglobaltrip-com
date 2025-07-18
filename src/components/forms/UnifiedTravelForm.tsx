@@ -45,15 +45,18 @@ const UnifiedTravelForm = ({ type, preSelectedPackage, title, onComplete }: Unif
     }
   }, [type, trackActivity]);
 
+  // Only log significant state changes, not every validation cycle
   useEffect(() => {
-    console.log('Form state changed:', {
-      currentStep,
-      isStepValid: isStepValid(),
-      errors: validationErrors,
-      warnings: validationWarnings,
-      formData
-    });
-  }, [currentStep, validationErrors, validationWarnings, formData]);
+    const isDebugMode = localStorage.getItem('debug') === 'true';
+    if (isDebugMode) {
+      console.log('Form state changed:', {
+        currentStep,
+        isStepValid: isStepValid(),
+        errors: validationErrors,
+        warnings: validationWarnings
+      });
+    }
+  }, [currentStep]);
 
   const secureHandleTravelNeedsChange = (need: string, checked: boolean) => {
     console.log('Travel needs change:', need, checked);

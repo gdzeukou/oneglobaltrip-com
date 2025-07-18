@@ -31,8 +31,14 @@ export const useUnifiedForm = (
   // Validate current step whenever form data or step changes
   useEffect(() => {
     const result = validateStep(formState.currentStep, formState.formData, type);
-    setValidationResult(result);
-    console.log('Validation updated for step', formState.currentStep, ':', result);
+    // Only update if validation result actually changed to prevent infinite loops
+    setValidationResult(prev => {
+      if (JSON.stringify(prev) === JSON.stringify(result)) {
+        return prev;
+      }
+      console.log('Validation updated for step', formState.currentStep, ':', result);
+      return result;
+    });
   }, [formState.currentStep, formState.formData, type, validateStep]);
 
   const openCalendly = () => {
