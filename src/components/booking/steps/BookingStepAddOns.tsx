@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Minus } from 'lucide-react';
 import { BookingPlan, BookingAddOn } from '@/types/booking';
-import { BOOKING_ADDONS, getExtraTravelerAddon } from '@/data/bookingPlans';
+import { getRelevantAddons } from '@/data/bookingPlans';
 
 interface BookingStepAddOnsProps {
   selectedPlan: BookingPlan;
@@ -17,15 +17,8 @@ interface BookingStepAddOnsProps {
 const BookingStepAddOns = ({ selectedPlan, selectedAddOns, onComplete, onBack }: BookingStepAddOnsProps) => {
   const [addOns, setAddOns] = useState<Array<{ addOn: BookingAddOn; quantity: number }>>(selectedAddOns);
 
-  // Filter relevant add-ons based on the selected plan
-  const relevantAddOns = BOOKING_ADDONS.filter(addon => {
-    // Always show general add-ons
-    if (!addon.id.includes('extra_traveler')) return true;
-    
-    // Show the correct extra traveler addon for the selected plan
-    const extraTravelerAddon = getExtraTravelerAddon(selectedPlan.id);
-    return addon.id === extraTravelerAddon.id;
-  });
+  // Get relevant add-ons based on the selected plan
+  const relevantAddOns = getRelevantAddons(selectedPlan.id);
 
   const updateQuantity = (addonId: string, change: number) => {
     setAddOns(prev => {
@@ -77,7 +70,7 @@ const BookingStepAddOns = ({ selectedPlan, selectedAddOns, onComplete, onBack }:
       <div className="grid gap-4 mb-8">
         {relevantAddOns.map((addon) => {
           const quantity = getQuantity(addon.id);
-          const isPopular = addon.id === 'rush_prep' || addon.id === 'extra_traveler_bundle';
+          const isPopular = addon.id === 'expedited_booking' || addon.id === 'partner_discounts';
           
           return (
             <Card key={addon.id} className="relative">

@@ -1,22 +1,20 @@
 
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, Star, ArrowRight, Clock, Shield, Zap } from 'lucide-react';
+import { CheckCircle, Bot, Shield, Sparkles, Star, ArrowRight } from 'lucide-react';
 import { BOOKING_PLANS } from '@/data/bookingPlans';
-import BookingModal from '@/components/booking/BookingModal';
 import { BookingPlan } from '@/types/booking';
-import TransparentPricingSection from '@/components/visa/TransparentPricingSection';
 import { usePerformanceOptimization } from '@/hooks/usePerformanceOptimization';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { Badge } from '@/components/ui/badge';
 
 const Pricing = () => {
   const location = useLocation();
-  const [showBookingModal, setShowBookingModal] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<BookingPlan | null>(null);
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const { trackPageView } = usePerformanceOptimization();
 
@@ -30,20 +28,26 @@ const Pricing = () => {
   }, [location.pathname, trackPageView]);
 
   const handlePlanSelect = (plan: BookingPlan) => {
-    setSelectedPlan(plan);
-    setShowBookingModal(true);
+    if (plan.id === 'free_ai_agent') {
+      // Navigate to signup for free plan
+      navigate('/auth');
+    } else if (plan.id === 'visa_assist') {
+      // Navigate to visa application form
+      navigate('/visas/short-stay');
+    } else {
+      // Navigate to premium signup with trial
+      navigate('/auth?trial=premium');
+    }
   };
 
   const getPlanIcon = (planId: string) => {
     switch (planId) {
-      case 'passport_club':
-        return <Star className="h-8 w-8 text-emerald-600 mb-4" />;
+      case 'free_ai_agent':
+        return <Bot className="h-8 w-8 text-emerald-600 mb-4" />;
       case 'visa_assist':
-        return <Shield className="h-8 w-8 text-primary mb-4" />;
-      case 'trip_bundle':
-        return <Star className="h-8 w-8 text-primary mb-4" />;
-      case 'ogt_elite':
-        return <Zap className="h-8 w-8 text-primary mb-4" />;
+        return <Shield className="h-8 w-8 text-blue-600 mb-4" />;
+      case 'global_explorer':
+        return <Sparkles className="h-8 w-8 text-purple-600 mb-4" />;
       default:
         return <Shield className="h-8 w-8 text-primary mb-4" />;
     }
@@ -54,202 +58,123 @@ const Pricing = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       <Navigation />
       
       {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-br from-primary via-primary to-accent text-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 font-[Inter]">
-            Simple, Transparent Pricing
+      <div className="pt-24 pb-16 text-center relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 to-purple-50/30"></div>
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-100/20 rounded-full blur-3xl"></div>
+        
+        <div className="max-w-4xl mx-auto px-4 relative z-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            Your Passport to Worry-Free Travel
           </h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto text-white/90">
-            Choose the perfect service level for your travel needs. No hidden fees, no surprises.
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Start free with our AI Travel Agent. Upgrade for visa assistance or go premium for unlimited travel support.
           </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-white/80">
-            <Clock className="h-4 w-4" />
-            <span>Starting from just $129 • Instant booking available</span>
+          <div className="inline-flex items-center px-4 py-2 bg-emerald-100 text-emerald-800 rounded-full text-sm font-medium">
+            <CheckCircle className="h-4 w-4 mr-2" />
+            No credit card required to start • 98% visa success rate
           </div>
         </div>
-      </section>
-
-      {/* Transparent Pricing Section */}
-      <TransparentPricingSection />
+      </div>
 
       {/* Pricing Cards */}
-      <section className="py-16 bg-gradient-to-b from-background to-muted/20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid lg:grid-cols-4 gap-6">
-            {BOOKING_PLANS.map((plan, index) => (
-              <Card 
-                key={plan.id} 
-                className={`relative transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer ${
-                  plan.popular 
-                    ? 'border-2 border-accent shadow-lg ring-2 ring-accent/20' 
-                    : 'border border-border hover:border-accent/50'
-                }`}
-                onClick={() => handlePlanSelect(plan)}
-              >
-                {(plan.popular || plan.badge) && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                    <div className={`${plan.badgeColor || 'bg-accent'} text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center shadow-lg`}>
-                      <Star className="h-4 w-4 mr-1" />
-                      {plan.badge || 'Most Popular'}
-                    </div>
-                  </div>
-                )}
-                
-                <CardHeader className="text-center pt-8 pb-4">
-                  <div className="flex justify-center">
+      <div className="max-w-6xl mx-auto px-4 pb-16">
+        <div className="grid md:grid-cols-3 gap-8">
+          {BOOKING_PLANS.map((plan, index) => (
+            <Card 
+              key={plan.id} 
+              className={`relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer bg-white/90 backdrop-blur-sm hover:scale-105 ${
+                plan.popular ? 'ring-2 ring-purple-500 scale-105' : ''
+              }`}
+              onClick={() => handlePlanSelect(plan)}
+            >
+              {plan.badge && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+                  <Badge className={`${plan.badgeColor} text-white px-4 py-2 text-sm font-bold shadow-lg`}>
+                    {plan.badge}
+                  </Badge>
+                </div>
+              )}
+              
+              <CardHeader className="text-center pt-8 pb-6">
+                <div className="flex justify-center mb-4">
+                  <div className={`p-3 rounded-full ${
+                    plan.id === 'free_ai_agent' ? 'bg-emerald-100 text-emerald-600' :
+                    plan.id === 'visa_assist' ? 'bg-blue-100 text-blue-600' :
+                    'bg-purple-100 text-purple-600'
+                  }`}>
                     {getPlanIcon(plan.id)}
                   </div>
-                  <CardTitle className="text-2xl font-bold text-foreground font-[Inter]">
-                    {plan.name}
-                  </CardTitle>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-primary">${plan.price}</span>
-                    <span className="text-muted-foreground ml-2">
-                      {plan.isAnnual ? 'per year' : 'per traveler'}
-                    </span>
+                </div>
+                <CardTitle className="text-xl font-bold mb-2">{plan.name}</CardTitle>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-gray-900 mb-1">
+                    {plan.price === 0 ? 'Free' : `$${plan.price}`}
+                    {plan.id === 'global_explorer' && <span className="text-lg font-normal text-gray-500">/month</span>}
+                    {plan.id === 'visa_assist' && <span className="text-lg font-normal text-gray-500"> per visa</span>}
                   </div>
-                  <p className="text-muted-foreground mt-4 text-sm">
-                    {plan.description}
-                  </p>
-                  <div className="mt-2 text-xs font-medium text-accent">
-                    {plan.sla}
-                  </div>
-                </CardHeader>
+                  {plan.originalPrice && (
+                    <div className="text-sm text-gray-500 mb-2">
+                      or $99/year (save $21)
+                    </div>
+                  )}
+                  <p className="text-sm text-gray-500">{plan.sla}</p>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="px-6 pb-8">
+                <p className="text-gray-600 text-center mb-6 text-sm leading-relaxed">
+                  {plan.description}
+                </p>
                 
-                <CardContent className="pt-0 px-6">
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature, featureIndex) => (
-                      <li key={featureIndex} className="flex items-start justify-center space-x-3 text-center">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-2 h-2 bg-purple-600 rounded-full flex-shrink-0 mt-2"></div>
-                          <span className="text-sm text-foreground leading-relaxed">{feature}</span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                  
-                  <div className="text-center">
-                    <Button 
-                      className={`w-full font-semibold transition-all duration-300 ${
-                        plan.popular 
-                          ? 'bg-accent hover:bg-accent/90 text-white shadow-lg hover:shadow-xl' 
-                          : 'bg-primary hover:bg-primary/90 text-white'
-                      } group-hover:scale-105`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePlanSelect(plan);
-                      }}
-                    >
-                      Book Now
-                      <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start text-sm">
+                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <Button 
+                  className={`w-full font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 ${
+                    plan.id === 'free_ai_agent'
+                      ? 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white'
+                      : plan.popular 
+                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white' 
+                        : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
+                  }`}
+                >
+                  {plan.id === 'free_ai_agent' ? 'Build My Free AI Agent' : 
+                   plan.id === 'visa_assist' ? 'Get Visa Help $30' :
+                   'Upgrade to Global Explorer'}
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      </section>
+      </div>
 
-      {/* Passport Club Note */}
-      <section className="py-8 bg-emerald-50 border-t border-emerald-200">
+      {/* Success Rate Badge */}
+      <section className="py-12 bg-blue-50 border-t border-blue-200">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4">
-            <Shield className="h-8 w-8 text-emerald-600" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+            <Shield className="h-8 w-8 text-blue-600" />
           </div>
-          <h3 className="text-xl font-semibold text-emerald-800 mb-2">
-            Important Passport Club Note
+          <h3 className="text-xl font-semibold text-blue-800 mb-2">
+            98% Visa Success Rate
           </h3>
-          <p className="text-emerald-700 max-w-2xl mx-auto">
-            <strong>Important:</strong> Consulate/VAC fees remain the responsibility of the traveler.
-            The Passport Club only covers our advisory and assistance services.
+          <p className="text-blue-700 max-w-2xl mx-auto">
+            Our expert guidance and document verification process has helped thousands of travelers 
+            secure their visas successfully. Start your journey with confidence.
           </p>
         </div>
       </section>
-
-      {/* Additional Services */}
-      <section className="py-16 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-foreground mb-4 font-[Inter]">
-            Popular Add-Ons
-          </h2>
-          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Enhance your experience with our premium services
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="hover:shadow-lg transition-all duration-200 hover:scale-105">
-              <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Zap className="h-6 w-6 text-red-600" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Rush Document Prep</h3>
-                <p className="text-2xl font-bold text-primary mb-2">+$79</p>
-                <p className="text-muted-foreground text-sm">Expedited processing</p>
-              </CardContent>
-            </Card>
-            <Card className="hover:shadow-lg transition-all duration-200 hover:scale-105">
-              <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <ArrowRight className="h-6 w-6 text-blue-600" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Door-to-Door Courier</h3>
-                <p className="text-2xl font-bold text-primary mb-2">+$59</p>
-                <p className="text-muted-foreground text-sm">Secure pickup & delivery</p>
-              </CardContent>
-            </Card>
-            <Card className="hover:shadow-lg transition-all duration-200 hover:scale-105">
-              <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Check className="h-6 w-6 text-green-600" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Certified Translation</h3>
-                <p className="text-2xl font-bold text-primary mb-2">+$45</p>
-                <p className="text-muted-foreground text-sm">Per document</p>
-              </CardContent>
-            </Card>
-            <Card className="hover:shadow-lg transition-all duration-200 hover:scale-105">
-              <CardContent className="p-6 text-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Star className="h-6 w-6 text-purple-600" />
-                </div>
-                <h3 className="font-semibold text-lg mb-2">Extra Traveler</h3>
-                <p className="text-2xl font-bold text-primary mb-2">+$89-$199</p>
-                <p className="text-muted-foreground text-sm">Based on plan selected</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Transparency Notice */}
-      <section className="py-12 bg-yellow-50 border-t border-yellow-200">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-4">
-            <Shield className="h-8 w-8 text-yellow-600" />
-          </div>
-          <h3 className="text-xl font-semibold text-yellow-800 mb-2">
-            100% Transparent Pricing
-          </h3>
-          <p className="text-yellow-700 max-w-2xl mx-auto">
-            <strong>Important:</strong> Consulate & VAC fees (≈ $85–$160 per traveller) are paid directly 
-            to the embassy or VFS and are not included in our service fee. We'll provide exact amounts 
-            during your booking process.
-          </p>
-        </div>
-      </section>
-
-      {/* Booking Modal */}
-      {showBookingModal && selectedPlan && (
-        <BookingModal
-          isOpen={showBookingModal}
-          onClose={() => setShowBookingModal(false)}
-          selectedPlan={selectedPlan}
-        />
-      )}
 
       <Footer />
     </div>

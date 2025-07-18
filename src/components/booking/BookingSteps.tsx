@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BookingPlan, BookingFormData, TripDetails, BookingAddOn } from '@/types/booking';
-import { BOOKING_ADDONS, getExtraTravelerAddon } from '@/data/bookingPlans';
+import { BOOKING_ADDONS, getRelevantAddons } from '@/data/bookingPlans';
 import { useAuth } from '@/contexts/AuthContext';
 import { BookingProvider, useBooking } from './BookingContext';
 import BookingStepAuth from './steps/BookingStepAuth';

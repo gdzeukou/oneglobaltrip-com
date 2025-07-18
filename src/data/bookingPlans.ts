@@ -2,126 +2,86 @@ import { BookingPlan, BookingAddOn } from '@/types/booking';
 
 export const BOOKING_PLANS: BookingPlan[] = [
   {
-    id: 'passport_club',
-    name: 'OGT Passport Club',
-    price: 289,
-    description: 'Annual membership with exclusive benefits',
+    id: 'free_ai_agent',
+    name: 'Free AI Travel Agent',
+    price: 0,
+    description: 'Personalized trip planning powered by AI - completely free to start',
     features: [
-      'All Trip Bundles Included',
-      'Access to a Community of global frequent travelers',
-      '35% OFF for when you bring another traveler (both !)',
-      'Unlimited visa renewals at no extra cost',
-      '15% discount on all services and packages',
-      'Priority customer support line',
-      'Post-arrival assistance and concierge',
-      'Access to exclusive member-only deals'
+      'Personalized itineraries',
+      'Destination inspiration & tips',
+      'Up to 3 trips per month',
+      'Access to 180+ countries',
+      'Basic travel advice'
     ],
-    sla: '24h priority SLA',
-    badge: 'Save All Year',
-    badgeColor: 'bg-emerald-500',
-    isAnnual: true
+    sla: 'Community support',
+    badge: 'Start Free',
+    badgeColor: 'bg-emerald-500'
   },
   {
     id: 'visa_assist',
-    name: 'Ultimate Visa Assist',
-    price: 129,
-    description: 'Professional visa application support with AI-powered accuracy checks',
+    name: 'Visa Assistance',
+    price: 30,
+    description: 'One-time visa support with expert guidance and document verification',
     features: [
-      'Smart AI application review and validation',
-      'Biometric/Fingerprint Appointment Hunter',
-      'Complete form preparation and submission',
-      'Real-time application tracking portal',
-      'Document checklist and requirements guide',
-      '24/7 AI Travel Agent'
+      'Step-by-step form guidance',
+      'Document verification',
+      'Real-time embassy updates',
+      'Embassy appointment assistance',
+      '98% success rate guarantee'
     ],
-    sla: '48h email SLA'
+    sla: 'Per visa application',
+    badge: '98% Success Rate',
+    badgeColor: 'bg-blue-500'
   },
   {
-    id: 'trip_bundle',
-    name: 'Trip Bundle',
-    price: 249,
-    description: 'Full travel experience with visa, accommodation, and flight arrangements',
+    id: 'global_explorer',
+    name: 'Global Explorer',
+    price: 10,
+    description: 'Premium subscription with unlimited visa assistance and advanced features',
     features: [
-      'All Visa Assist services included',
-      'Guaranteed 4-star hotel in prime location',
-      'Premium flight booking with lounge access',
-      'OGT TripGift credit for activities',
-      'Comprehensive Travel Insurance Picks'
+      'Unlimited visa assistance',
+      'Niche AI itineraries (eco-tours, foodie trips, etc.)',
+      'Real-time travel advisories',
+      'Offline access for low-connectivity travel',
+      'Priority customer support',
+      'Exclusive member deals'
     ],
-    sla: '12h SLA',
+    sla: 'Monthly subscription',
     popular: true,
     badge: 'Most Popular',
-    badgeColor: 'bg-accent'
-  },
-  {
-    id: 'ogt_elite',
-    name: 'OGT Elite',
-    price: 479,
-    description: 'White-glove service with dedicated personal travel agent and VIP treatment',
-    features: [
-      'All Trip Bundle services included',
-      'Dedicated Human Certified Travel Advisor',
-      'Priority biometric appointment booking',
-      'Airport transfer and VIP assistance',
-      'Restaurant and event reservations'
-    ],
-    sla: '2h SLA & emergency helpline'
+    badgeColor: 'bg-accent',
+    originalPrice: 99
   }
 ];
 
 export const BOOKING_ADDONS: BookingAddOn[] = [
   {
-    id: 'rush_prep',
-    name: 'Rush Document Prep',
-    price: 79,
-    description: 'Expedited document review and preparation'
+    id: 'expedited_booking',
+    name: 'Expedited Booking Support',
+    price: 15,
+    description: 'Priority booking assistance with faster response times'
   },
   {
-    id: 'translation',
-    name: 'Certified Translation',
-    price: 45,
-    description: 'Per document certified translation service',
-    maxQuantity: 10
+    id: 'niche_guide',
+    name: 'Niche Travel Guide',
+    price: 10,
+    description: 'Specialized guides for eco-tours, foodie trips, or cultural experiences'
   },
   {
-    id: 'courier',
-    name: 'Door-to-Door Courier',
-    price: 59,
-    description: 'Secure document pickup and delivery service'
-  },
-  {
-    id: 'extra_traveler_visa',
-    name: 'Extra Traveler (Visa Assist)',
-    price: 89,
-    description: 'Additional traveler for Visa Assist plan',
-    maxQuantity: 10
-  },
-  {
-    id: 'extra_traveler_bundle',
-    name: 'Extra Traveler (Trip Bundle)',
-    price: 129,
-    description: 'Additional traveler for Trip Bundle plan',
-    maxQuantity: 10
-  },
-  {
-    id: 'extra_traveler_elite',
-    name: 'Extra Traveler (Elite)',
-    price: 199,
-    description: 'Additional traveler for OGT Elite plan',
-    maxQuantity: 10
+    id: 'partner_discounts',
+    name: 'Exclusive Partner Discounts',
+    price: 5,
+    description: 'Unlock special deals and discounts from our travel partners'
   }
 ];
 
-// Helper to get extra traveler addon based on plan
-export const getExtraTravelerAddon = (planId: string): BookingAddOn => {
-  switch (planId) {
-    case 'visa_assist':
-      return BOOKING_ADDONS.find(addon => addon.id === 'extra_traveler_visa')!;
-    case 'trip_bundle':
-      return BOOKING_ADDONS.find(addon => addon.id === 'extra_traveler_bundle')!;
-    case 'ogt_elite':
-      return BOOKING_ADDONS.find(addon => addon.id === 'extra_traveler_elite')!;
-    default:
-      return BOOKING_ADDONS.find(addon => addon.id === 'extra_traveler_visa')!;
+// Helper to get relevant addons based on plan
+export const getRelevantAddons = (planId: string): BookingAddOn[] => {
+  if (planId === 'global_explorer') {
+    return BOOKING_ADDONS;
   }
+  if (planId === 'visa_assist') {
+    return BOOKING_ADDONS.filter(addon => addon.id !== 'partner_discounts');
+  }
+  return [];
 };

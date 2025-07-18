@@ -1,5 +1,5 @@
 export interface BookingPlan {
-  id: 'visa_assist' | 'trip_bundle' | 'ogt_elite' | 'passport_club';
+  id: 'free_ai_agent' | 'visa_assist' | 'global_explorer';
   name: string;
   price: number;
   originalPrice?: number;
