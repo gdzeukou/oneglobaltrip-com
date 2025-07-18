@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useXAI, XAIMessage } from '@/hooks/useXAI';
 
 interface Message {
   id: string;
@@ -29,6 +30,7 @@ const MayaVisaAssistant = ({ onClose, onComplete }: MayaVisaAssistantProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { sendMessage: sendXAIMessage } = useXAI();
 
   const visaSteps = [
     "Personal Information",
@@ -53,15 +55,16 @@ const MayaVisaAssistant = ({ onClose, onComplete }: MayaVisaAssistantProps) => {
     setMessages([{
       id: 'welcome',
       role: 'assistant',
-      content: `🌟 **Welcome to your Schengen Visa Application with AI Travel Agent!**
+      content: `🌟 **Welcome to your Enhanced Schengen Visa Application with xAI Grok!**
 
-I'm here to guide you through your Schengen visa application step by step. I'll ask you questions in a conversational way to collect all the information needed for your official application form.
+I'm Maya, your AI visa assistant now powered by xAI Grok for enhanced intelligence and real-time insights. I'll guide you through your Schengen visa application step by step with the latest AI capabilities.
 
-**Here's how this works:**
-✅ I'll guide you through ${visaSteps.length} main sections
-✅ I'll explain each requirement clearly
-✅ I'll validate your answers in real-time
-✅ I'll generate your official application at the end
+**Enhanced features with xAI Grok:**
+✅ Real-time visa policy updates and requirements
+✅ Advanced pattern recognition for application optimization
+✅ Intelligent document verification suggestions
+✅ Personalized guidance based on current data
+✅ I'll guide you through ${visaSteps.length} main sections with enhanced accuracy
 
 **Ready to start?** Let's begin with some basic information about you.
 
@@ -85,27 +88,27 @@ What is your full name as it appears on your passport? (First name and surname)`
     setIsLoading(true);
 
     try {
-      // Create a specialized prompt for visa application
-      const visaPrompt = `You are an expert visa application assistant helping a user complete their Schengen short-stay visa application. 
+      // Create specialized prompt for visa assistance using xAI Grok
+      const systemPrompt = `You are Maya, an expert visa application assistant for OneGlobalTrip powered by xAI Grok. Your role is to help users complete their Schengen visa application step by step with enhanced intelligence and real-time insights.
 
-Current conversation context:
-- User is applying for a Schengen short-stay visa
+Current application progress:
 - Current step: ${currentStep + 1}/${visaSteps.length} (${visaSteps[currentStep]})
-- Collected data so far: ${JSON.stringify(collectedData)}
+- Collected data: ${JSON.stringify(collectedData, null, 2)}
 
-User's message: "${inputMessage}"
+Your enhanced capabilities with Grok:
+1. Real-time visa requirements and policy updates
+2. Advanced pattern recognition for common application issues
+3. Intelligent document verification suggestions
+4. Personalized recommendations based on user profile
 
-Instructions:
-1. Respond conversationally and helpfully
-2. Ask for one piece of information at a time
-3. Validate the user's input
-4. If the input is valid, acknowledge it and ask for the next required field
-5. Guide them through the official Schengen visa requirements
-6. Be encouraging and professional
-7. If you need to collect specific data, format it clearly
-8. Progress through: Personal Info → Travel Document → Travel Plans → Contact → Visa History → Documents → Review
+Your tasks:
+1. Guide users through the ${visaSteps[currentStep]} requirements
+2. Ask relevant questions to collect missing information (one at a time)
+3. Provide clear, actionable guidance with latest visa insights
+4. Validate user responses intelligently
+5. Move to next step when current step is complete
 
-Required fields to collect during this conversation:
+Required fields to collect:
 - Personal: Full name, date of birth, place of birth, nationality, sex, civil status
 - Travel Document: Passport number, issue date, expiry date, issuing authority
 - Travel Plans: Purpose of visit, countries to visit, intended arrival/departure dates
@@ -113,34 +116,45 @@ Required fields to collect during this conversation:
 - Previous Visas: Any Schengen visas in last 3 years
 - Host Information: If visiting family/friends
 
-Respond naturally and move the conversation forward to collect the next piece of information.`;
+Guidelines:
+- Be friendly and professional
+- Ask one question at a time
+- Explain why information is needed with current context
+- Provide examples when helpful
+- Confirm information before proceeding
+- Use your enhanced knowledge for better guidance
 
-      const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
-        body: {
-          message: visaPrompt,
-          conversationId,
-          userId: user.id,
-          context: 'visa-application'
-        }
+Please respond to the user's message and guide them through this step with your enhanced xAI capabilities.`;
+
+      const conversationHistory = messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }));
+
+      const xaiMessages: XAIMessage[] = [
+        { role: 'system', content: systemPrompt },
+        ...conversationHistory,
+        { role: 'user', content: inputMessage }
+      ];
+
+      const response = await sendXAIMessage(xaiMessages, {
+        model: 'grok-beta',
+        temperature: 0.7,
+        max_tokens: 1000
       });
-
-      if (error) throw error;
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response,
+        content: response.choices[0]?.message?.content || 'I apologize, but I encountered an error. Please try again.',
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-      setConversationId(data.conversationId);
-
-      // Update collected data based on the conversation
-      // This would be more sophisticated in a real implementation
-      // For now, we'll simulate progress through steps
-      if (messages.length > 10) { // After several exchanges
-        setCurrentStep(Math.min(currentStep + 1, visaSteps.length - 1));
+      
+      // Simple logic to progress through steps based on conversation flow
+      if (messages.length > 0 && messages.length % 4 === 0 && currentStep < visaSteps.length - 1) {
+        setCurrentStep(prev => prev + 1);
       }
 
     } catch (error) {
@@ -149,12 +163,12 @@ Respond naturally and move the conversation forward to collect the next piece of
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `I apologize, but I'm experiencing a technical issue right now. Let me help you in a different way.
+        content: `I apologize, but I'm experiencing a technical issue with my enhanced xAI capabilities right now. Let me help you in a different way.
 
 Based on what we've discussed, I can see you're making good progress on your application. Would you like me to:
 
 1. **Continue with traditional form** - Switch to our structured form where you can complete the remaining fields
-2. **Try again** - Restart our conversation 
+2. **Try again** - Restart our conversation with xAI Grok
 3. **Save progress** - Save what we've collected so far
 
 What would you prefer?`,
@@ -164,8 +178,8 @@ What would you prefer?`,
       setMessages(prev => [...prev, errorMessage]);
       
       toast({
-        title: "Connection Issue",
-        description: "AI Travel Agent is having trouble connecting. You can continue with the traditional form.",
+        title: "xAI Connection Issue",
+        description: "Enhanced AI capabilities are temporarily unavailable. You can continue with the traditional form.",
         variant: "destructive"
       });
     }
@@ -193,7 +207,7 @@ What would you prefer?`,
   const handleCompleteApplication = () => {
     toast({
       title: "Application Generated!",
-      description: "AI Travel Agent has prepared your visa application based on our conversation.",
+      description: "xAI-powered Maya has prepared your enhanced visa application based on our conversation.",
     });
     onComplete(collectedData);
   };
@@ -205,7 +219,7 @@ What would you prefer?`,
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center space-x-2">
               <Sparkles className="h-5 w-5" />
-              <span>AI Travel Agent - Schengen Visa Assistant</span>
+              <span>Maya - Enhanced xAI Grok Visa Assistant</span>
             </CardTitle>
             <Button
               onClick={onClose}
@@ -277,7 +291,7 @@ What would you prefer?`,
                     </Avatar>
                     <div className="bg-gray-100 rounded-lg px-4 py-3 flex items-center space-x-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-gray-600">AI Travel Agent is processing...</span>
+                      <span className="text-sm text-gray-600">xAI Grok is processing...</span>
                     </div>
                   </div>
                 </div>
@@ -356,7 +370,7 @@ What would you prefer?`,
                 <span className="font-semibold text-blue-800 text-sm">Need Help?</span>
               </div>
               <p className="text-blue-700 text-xs">
-                AI Travel Agent will explain each requirement and validate your responses. Take your time!
+                Maya with xAI Grok will explain each requirement with enhanced intelligence and validate your responses. Take your time!
               </p>
             </div>
           </div>

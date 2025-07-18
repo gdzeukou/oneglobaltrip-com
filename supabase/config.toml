@@ -1,5 +1,5 @@
 
-project_id = "aa67c92a-c215-493c-9406-0eed14fe879a"
+project_id = "sdeyqojklszwarfrputz"
 
 [api]
 enabled = true
@@ -103,4 +103,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.visa-eligibility-ai]
+verify_jwt = false
+
+[functions.xai-chat]
 verify_jwt = false
