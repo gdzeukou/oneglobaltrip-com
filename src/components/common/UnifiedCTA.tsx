@@ -130,7 +130,10 @@ const UnifiedCTA = ({
                   </div>
                   
                   <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                    Start Application
+                    {option.id === 'free_plan' ? 'Create My Free Travel Agent' : 
+                     option.id === 'visa_assistance' ? 'Apply with AI Help' : 
+                     option.id === 'global_explorer' ? 'Unlock Global Explorer Access' : 
+                     'Get Started'}
                     <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </CardContent>

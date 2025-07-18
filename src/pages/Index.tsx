@@ -27,83 +27,66 @@ const Index = () => {
       <HeroCarousel />
       <UnifiedCTA 
         variant="main"
-        title="Choose Your Perfect Travel Experience"
-        subtitle="From visa assistance to luxury packages, we handle everything for your dream trip"
+        title="Travel Smart. Travel Easy."
+        subtitle="Create Your AI Personal Travel Agent, no code, for free! Book from multiple platforms, create customized itineraries, guide you through your entire visa application and immigration, and more."
         options={[
           {
-            id: 'ogt_elite',
-            title: 'OGT Elite',
-            subtitle: 'Concierge Premium',
-            description: 'White-glove service with dedicated personal travel agent and VIP treatment',
-            price: '$479',
-            image: '/lovable-uploads/84f98d44-7bb4-4a46-a0d9-d2a6070256a9.png',
-            alt: 'Elite concierge service',
-            route: '/pricing',
-            features: [
-              'All Trip Bundle services included',
-              'Dedicated Human Certified Travel Advisor',
-              'Priority biometric appointment booking',
-              'Airport transfer and VIP assistance',
-              'Restaurant and event reservations'
-            ]
-          },
-          {
-            id: 'passport_club',
-            title: 'OGT Passport Club',
-            subtitle: 'Annual Membership',
-            description: 'Unlimited visa renewals with exclusive member benefits and year-round savings',
-            price: '$289/y',
-            image: '/lovable-uploads/aa2bd5bf-60f3-4560-a840-674f0d86c971.png',
-            alt: 'Passport Club membership',
-            badge: 'Save All Year',
-            badgeColor: 'bg-emerald-500',
-            route: '/pricing',
-            features: [
-              'All Trip Bundles Included',
-              'Access to a Community of global frequent travelers',
-              '35% OFF for when you bring another traveler (both !)',
-              'Unlimited visa renewals at no extra cost',
-              '15% discount on all services and packages', 
-              'Priority customer support line',
-              'Post-arrival assistance and concierge',
-              'Access to exclusive member-only deals'
-            ]
-          },
-          {
-            id: 'trip_bundle',
-            title: 'Trip Bundle',
-            subtitle: 'Complete Travel Package',
-            description: 'Full travel experience with visa, accommodation, and flight arrangements',
-            price: '$249',
-            image: '/lovable-uploads/2aa35fa9-6f77-4530-b502-0223423fa205.png',
-            alt: 'Complete travel bundle',
-            badge: 'Most Popular',
-            badgeColor: 'bg-orange-500',
-            route: '/packages',
-            features: [
-              'All Visa Assist services included',
-              'Guaranteed 4-star hotel in prime location',
-              'Premium flight booking with lounge access',
-              'OGT TripGift credit for activities',
-              'Comprehensive Travel Insurance Picks'
-            ]
-          },
-          {
-            id: 'visa_assist',
-            title: 'Ultimate Visa Assist',
-            subtitle: 'Essential Service',
-            description: 'Professional visa application support with AI-powered accuracy checks',
-            price: '$129',
+            id: 'free_plan',
+            title: 'Free Plan',
+            subtitle: 'AI Travel Agent',
+            description: 'Create your own AI travel agent that works in 180+ countries with smart itineraries and destination tips',
+            price: '$0',
             image: '/lovable-uploads/0eab89a7-31c2-4a08-9421-fa542434e4ce.png',
-            alt: 'Visa assistance service',
+            alt: 'Free AI Travel Agent',
+            badge: 'Get Started',
+            badgeColor: 'bg-emerald-500',
+            route: '/auth',
+            features: [
+              'Create your own AI travel agent',
+              'Plan 3 trips/month',
+              'Smart itineraries, destination tips, activity ideas',
+              'Works in 180+ countries',
+              'No code required'
+            ]
+          },
+          {
+            id: 'visa_assistance',
+            title: 'Visa Assistance',
+            subtitle: 'AI-Guided Support',
+            description: 'AI-guided form filling with document verification and real-time embassy alerts',
+            price: '$30',
+            priceNote: 'per application',
+            image: '/lovable-uploads/aa2bd5bf-60f3-4560-a840-674f0d86c971.png',
+            alt: 'AI Visa Assistance',
+            badge: '98% Success Rate',
+            badgeColor: 'bg-blue-500',
             route: '/visas',
             features: [
-              'Smart AI application review and validation',
-              'Biometric/Fingerprint Appointment Hunter',
-              'Complete form preparation and submission',
-              'Real-time application tracking portal',
-              'Document checklist and requirements guide',
-              '24/7 AI Travel Agent'
+              'AI-guided form filling',
+              'Document verification',
+              'Real-time embassy alerts',
+              'Powered by a 98% visa approval rate',
+              'Expert review available'
+            ]
+          },
+          {
+            id: 'global_explorer',
+            title: 'Global Explorer',
+            subtitle: 'Premium Access',
+            description: 'Unlimited visa support with real-time alerts and specific AI trip planning for all travel styles',
+            price: '$99/year',
+            priceNote: 'or $10/month',
+            image: '/lovable-uploads/2aa35fa9-6f77-4530-b502-0223423fa205.png',
+            alt: 'Global Explorer Premium',
+            badge: 'Most Popular',
+            badgeColor: 'bg-orange-500',
+            route: '/pricing',
+            features: [
+              'Unlimited visa support',
+              'Real-time flight price alerts',
+              'Specific AI trip planning (foodies, adventure, family trips)',
+              'Offline access for remote travel',
+              'Priority customer support'
             ]
           }
         ]}
