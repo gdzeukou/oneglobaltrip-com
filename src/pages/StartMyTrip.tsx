@@ -1,261 +1,245 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useUserAgent } from '@/hooks/useUserAgent';
+
+import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { MapPin, Calendar, Users, PlaneTakeoff, Bot } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { PlaneTakeoff, Sparkles, Users, MapPin, Heart, MessageCircle } from 'lucide-react';
+import StartTripModal from '@/components/trip-planning/StartTripModal';
 
 const StartMyTrip = () => {
-  const navigate = useNavigate();
-  const { agent } = useUserAgent();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    destinations: [],
-    travelType: '',
-    budget: '',
-    duration: '',
-    travelers: '',
-    interests: [],
-    specialRequests: ''
-  });
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const destinations = [
-    'France', 'Germany', 'Italy', 'Spain', 'Netherlands', 'Greece',
-    'Portugal', 'Switzerland', 'Austria', 'Belgium', 'Denmark', 'Sweden'
+  const features = [
+    {
+      icon: Sparkles,
+      title: "AI-Powered Planning",
+      description: "Your personal travel agent creates custom itineraries based on your preferences"
+    },
+    {
+      icon: MapPin,
+      title: "Expert Destination Knowledge",
+      description: "Get insider tips and hidden gems from our comprehensive travel database"
+    },
+    {
+      icon: Users,
+      title: "Personalized Experience",
+      description: "Every recommendation is tailored to your travel style and interests"
+    },
+    {
+      icon: Heart,
+      title: "24/7 Support",
+      description: "Your AI agent is always available to help with questions and adjustments"
+    }
   ];
 
-  const interests = [
-    'Cultural Sites', 'Museums', 'Food & Wine', 'Shopping', 'Nightlife',
-    'Adventure', 'Nature', 'History', 'Art', 'Architecture', 'Beaches'
+  const testimonials = [
+    {
+      name: "Sarah M.",
+      location: "New York",
+      text: "The AI agent created the perfect 2-week Europe itinerary for us. Every detail was spot-on!",
+      rating: 5
+    },
+    {
+      name: "James L.",
+      location: "California", 
+      text: "Amazing experience! The personalized recommendations saved us hours of research.",
+      rating: 5
+    },
+    {
+      name: "Emily R.",
+      location: "Texas",
+      text: "Our AI travel agent felt like having a personal concierge. Highly recommended!",
+      rating: 5
+    }
   ];
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Store form data and navigate to AI Travel Agent chat
-    localStorage.setItem('tripPlanningData', JSON.stringify(formData));
-    navigate('/ai-chat');
-  };
-
-  const handleDestinationChange = (destination: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      destinations: checked 
-        ? [...prev.destinations, destination]
-        : prev.destinations.filter(d => d !== destination)
-    }));
-  };
-
-  const handleInterestChange = (interest: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      interests: checked 
-        ? [...prev.interests, interest]
-        : prev.interests.filter(i => i !== interest)
-    }));
-  };
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <div className="pt-20 pb-16">
-        <div className="max-w-4xl mx-auto px-4">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
-              Let's Plan Your Perfect Trip
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Share your travel dreams with us, and your AI Travel Agent will create personalized recommendations just for you.
-            </p>
+      <div className="pt-20">
+        {/* Hero Section */}
+        <section className="py-16 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <div className="max-w-6xl mx-auto px-4 text-center">
+            <div className="max-w-3xl mx-auto mb-12">
+              <div className="flex items-center justify-center mb-6">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-full">
+                  <PlaneTakeoff className="h-12 w-12 text-white" />
+                </div>
+              </div>
+              
+              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+                Let's Plan Your 
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Dream Trip</span>
+              </h1>
+              
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Meet your personal AI Travel Agent who will create a customized travel experience 
+                tailored exactly to your preferences, budget, and dreams.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                <Button 
+                  size="lg"
+                  onClick={() => setModalOpen(true)}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                >
+                  <Sparkles className="h-6 w-6 mr-3" />
+                  Start Planning My Trip
+                </Button>
+                
+                <div className="flex items-center text-green-600 font-semibold">
+                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                  <span>$0 Down • Free Consultation</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center space-x-1">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="w-5 h-5 text-yellow-400 fill-current">⭐</div>
+                ))}
+                <span className="ml-2 text-gray-600 font-medium">Trusted by 10,000+ travelers</span>
+              </div>
+            </div>
           </div>
+        </section>
 
-          {/* Form */}
-          <Card className="card-luxury">
-            <CardHeader>
-              <CardTitle className="flex items-center text-2xl">
-                <PlaneTakeoff className="h-6 w-6 mr-3 text-accent" />
-                Tell Us About Your Dream Trip
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-8">
-                {/* Personal Information */}
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div>
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email Address *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      value={formData.phone}
-                      onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                    />
-                  </div>
-                </div>
+        {/* Features Section */}
+        <section className="py-16 bg-white">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                Why Choose Our AI Travel Agent?
+              </h2>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                Experience the future of travel planning with personalized AI assistance
+              </p>
+            </div>
 
-                {/* Trip Details */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <Label>Travel Type *</Label>
-                    <Select value={formData.travelType} onValueChange={(value) => setFormData(prev => ({ ...prev, travelType: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select travel type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="leisure">Leisure / Tourism</SelectItem>
-                        <SelectItem value="business">Business</SelectItem>
-                        <SelectItem value="family">Family Visit</SelectItem>
-                        <SelectItem value="education">Education</SelectItem>
-                        <SelectItem value="medical">Medical</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Number of Travelers *</Label>
-                    <Select value={formData.travelers} onValueChange={(value) => setFormData(prev => ({ ...prev, travelers: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="How many travelers?" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">Just me</SelectItem>
-                        <SelectItem value="2">2 travelers</SelectItem>
-                        <SelectItem value="3-4">3-4 travelers</SelectItem>
-                        <SelectItem value="5+">5+ travelers</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <Label>Trip Duration</Label>
-                    <Select value={formData.duration} onValueChange={(value) => setFormData(prev => ({ ...prev, duration: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="How long is your trip?" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1-3">1-3 days</SelectItem>
-                        <SelectItem value="4-7">4-7 days</SelectItem>
-                        <SelectItem value="1-2">1-2 weeks</SelectItem>
-                        <SelectItem value="3-4">3-4 weeks</SelectItem>
-                        <SelectItem value="1month+">1 month or more</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label>Budget Range</Label>
-                    <Select value={formData.budget} onValueChange={(value) => setFormData(prev => ({ ...prev, budget: value }))}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="What's your budget?" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="budget">Budget ($1,000 - $2,500)</SelectItem>
-                        <SelectItem value="mid">Mid-range ($2,500 - $5,000)</SelectItem>
-                        <SelectItem value="luxury">Luxury ($5,000 - $10,000)</SelectItem>
-                        <SelectItem value="premium">Premium ($10,000+)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Destinations */}
-                <div>
-                  <Label className="text-lg font-semibold mb-4 block">
-                    <MapPin className="h-5 w-5 inline mr-2" />
-                    Which destinations interest you?
-                  </Label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {destinations.map((destination) => (
-                      <div key={destination} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={destination}
-                          checked={formData.destinations.includes(destination)}
-                          onCheckedChange={(checked) => handleDestinationChange(destination, checked as boolean)}
-                        />
-                        <Label htmlFor={destination} className="text-sm">{destination}</Label>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {features.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300">
+                    <CardContent className="p-6">
+                      <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                        <Icon className="h-8 w-8 text-white" />
                       </div>
-                    ))}
-                  </div>
-                </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+                      <p className="text-gray-600">{feature.description}</p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
-                {/* Interests */}
-                <div>
-                  <Label className="text-lg font-semibold mb-4 block">
-                    What are you most interested in?
-                  </Label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {interests.map((interest) => (
-                      <div key={interest} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={interest}
-                          checked={formData.interests.includes(interest)}
-                          onCheckedChange={(checked) => handleInterestChange(interest, checked as boolean)}
-                        />
-                        <Label htmlFor={interest} className="text-sm">{interest}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+        {/* How It Works */}
+        <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                How It Works
+              </h2>
+              <p className="text-xl text-gray-600">
+                Get your personalized travel plan in just a few simple steps
+              </p>
+            </div>
 
-                {/* Special Requests */}
-                <div>
-                  <Label htmlFor="special-requests">
-                    Any special requests or requirements?
-                  </Label>
-                  <Textarea
-                    id="special-requests"
-                    placeholder="Tell us about any accessibility needs, dietary restrictions, special occasions, or anything else we should know..."
-                    value={formData.specialRequests}
-                    onChange={(e) => setFormData(prev => ({ ...prev, specialRequests: e.target.value }))}
-                    rows={4}
-                  />
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center text-2xl font-bold">
+                  1
                 </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">Share Your Dreams</h3>
+                <p className="text-gray-600">Tell us about your ideal trip through our interactive questionnaire</p>
+              </div>
 
-                {/* Submit Button */}
-                <div className="flex justify-center pt-6">
-                  <Button 
-                    type="submit" 
-                    size="lg"
-                    className="btn-luxury-accent px-12 py-4 text-lg font-bold"
-                  >
-                    <Bot className="h-6 w-6 mr-3" />
-                    Tell "{agent?.name || 'AI Travel Agent'}" to Plan this Trip for You
-                  </Button>
+              <div className="text-center">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center text-2xl font-bold">
+                  2
                 </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">AI Creates Your Plan</h3>
+                <p className="text-gray-600">Your personal AI agent analyzes your preferences and creates custom recommendations</p>
+              </div>
+
+              <div className="text-center">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center text-2xl font-bold">
+                  3
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">Refine & Book</h3>
+                <p className="text-gray-600">Chat with your AI agent to perfect your itinerary and get booking assistance</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="py-16 bg-white">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                What Our Travelers Say
+              </h2>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {testimonials.map((testimonial, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow duration-300">
+                  <CardContent className="p-6">
+                    <div className="flex items-center mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <div key={i} className="w-5 h-5 text-yellow-400 fill-current">⭐</div>
+                      ))}
+                    </div>
+                    <p className="text-gray-600 mb-4 italic">"{testimonial.text}"</p>
+                    <div>
+                      <p className="font-semibold text-gray-900">{testimonial.name}</p>
+                      <p className="text-sm text-gray-500">{testimonial.location}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Ready to Start Your Adventure?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              Join thousands of travelers who have discovered their perfect trips with our AI travel agents.
+            </p>
+            
+            <Button 
+              size="lg"
+              onClick={() => setModalOpen(true)}
+              className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            >
+              <MessageCircle className="h-6 w-6 mr-3" />
+              Start My Trip Planning
+            </Button>
+
+            <div className="mt-6 flex items-center justify-center text-blue-100">
+              <div className="w-3 h-3 bg-green-400 rounded-full mr-2"></div>
+              <span>No credit card required • Get started in 2 minutes</span>
+            </div>
+          </div>
+        </section>
       </div>
 
       <Footer />
+
+      {/* Trip Planning Modal */}
+      <StartTripModal 
+        open={modalOpen} 
+        onOpenChange={setModalOpen}
+      />
     </div>
   );
 };
