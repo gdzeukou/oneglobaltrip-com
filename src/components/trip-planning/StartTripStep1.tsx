@@ -2,7 +2,8 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sparkles, User, Mail, Phone } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Sparkles, User, Mail, Phone, Heart } from 'lucide-react';
 
 interface StartTripStep1Props {
   formData: any;
@@ -11,109 +12,93 @@ interface StartTripStep1Props {
 
 const StartTripStep1 = ({ formData, updateFormData }: StartTripStep1Props) => {
   return (
-    <div className="space-y-8 py-4">
-      {/* Welcome Header */}
+    <div className="space-y-6 py-4 max-w-md mx-auto">
+      {/* Profile Setup Header */}
       <div className="text-center space-y-4">
-        <div className="flex items-center justify-center mb-4">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-full">
-            <Sparkles className="h-8 w-8 text-white" />
+        <div className="relative mx-auto w-24 h-24 rounded-full bg-gradient-to-br from-pink-500 via-purple-500 to-blue-500 p-1">
+          <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+            <Heart className="h-8 w-8 text-pink-500" />
           </div>
         </div>
-        <h3 className="text-3xl font-bold text-gray-900">Welcome! Let's Create Magic Together</h3>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Your personal AI Travel Agent is ready to craft the perfect trip just for you. 
-          Let's start by getting to know each other!
+        <h3 className="text-2xl font-bold text-gray-900">Let's get to know you! 💕</h3>
+        <p className="text-gray-600">
+          Create your travel profile to find your perfect trip match
         </p>
       </div>
 
-      {/* AI Agent Naming */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border-2 border-blue-100">
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-2 rounded-lg">
-            <Sparkles className="h-5 w-5 text-white" />
+      {/* AI Agent Card */}
+      <Card className="overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 hover:shadow-lg transition-all">
+        <CardContent className="p-6">
+          <div className="text-center space-y-4">
+            <div className="text-4xl">🤖</div>
+            <h4 className="text-lg font-semibold text-gray-900">What should I call your AI travel buddy?</h4>
+            <Input
+              placeholder="Give me a cute name! ✨"
+              value={formData.agentName}
+              onChange={(e) => updateFormData('agentName', e.target.value)}
+              className="text-center text-lg py-3 border-2 border-purple-200 focus:border-purple-500 rounded-full"
+            />
+            {formData.agentName && (
+              <div className="bg-white/70 rounded-full px-4 py-2">
+                <p className="text-purple-700 font-medium">
+                  Hey, I'm {formData.agentName}! Ready to find your dream trip? 🌟
+                </p>
+              </div>
+            )}
           </div>
-          <h4 className="text-xl font-semibold text-gray-900">Name Your AI Travel Agent</h4>
-        </div>
-        <p className="text-gray-600 mb-4">Give your AI assistant a name to make your experience more personal!</p>
-        <Input
-          placeholder="e.g., TravelBuddy, Explorer, Marco..."
-          value={formData.agentName}
-          onChange={(e) => updateFormData('agentName', e.target.value)}
-          className="text-lg py-3 border-2 border-blue-200 focus:border-blue-500"
-        />
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* Personal Information */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border-2 border-gray-100">
-        <h4 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-          <User className="h-5 w-5 mr-3 text-blue-600" />
-          About You
-        </h4>
-        
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-base font-medium">Full Name *</Label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+      {/* Personal Info Cards */}
+      <div className="space-y-4">
+        <Card className="overflow-hidden hover:shadow-lg transition-all bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
+          <CardContent className="p-6">
+            <div className="text-center space-y-4">
+              <div className="text-3xl">👋</div>
+              <h4 className="text-lg font-semibold text-gray-900">What's your name?</h4>
               <Input
-                id="name"
-                placeholder="Your full name"
+                placeholder="Your name here"
                 value={formData.name}
                 onChange={(e) => updateFormData('name', e.target.value)}
-                className="pl-10 py-3 border-2 border-gray-200 focus:border-blue-500"
+                className="text-center text-lg py-3 border-2 border-blue-200 focus:border-blue-500 rounded-full"
                 required
               />
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-base font-medium">Email Address *</Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <Card className="overflow-hidden hover:shadow-lg transition-all bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200">
+          <CardContent className="p-6">
+            <div className="text-center space-y-4">
+              <div className="text-3xl">📧</div>
+              <h4 className="text-lg font-semibold text-gray-900">Your email?</h4>
               <Input
-                id="email"
                 type="email"
-                placeholder="your.email@example.com"
+                placeholder="your@email.com"
                 value={formData.email}
                 onChange={(e) => updateFormData('email', e.target.value)}
-                className="pl-10 py-3 border-2 border-gray-200 focus:border-blue-500"
+                className="text-center text-lg py-3 border-2 border-green-200 focus:border-green-500 rounded-full"
                 required
               />
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="phone" className="text-base font-medium">Phone Number (Optional)</Label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <Card className="overflow-hidden hover:shadow-lg transition-all bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200">
+          <CardContent className="p-6">
+            <div className="text-center space-y-4">
+              <div className="text-3xl">📱</div>
+              <h4 className="text-lg font-semibold text-gray-900">Phone number? <span className="text-sm text-gray-500">(optional)</span></h4>
               <Input
-                id="phone"
                 placeholder="+1 (555) 123-4567"
                 value={formData.phone}
                 onChange={(e) => updateFormData('phone', e.target.value)}
-                className="pl-10 py-3 border-2 border-gray-200 focus:border-blue-500"
+                className="text-center text-lg py-3 border-2 border-orange-200 focus:border-orange-500 rounded-full"
               />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-
-      {/* Preview */}
-      {formData.agentName && (
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border-2 border-blue-200">
-          <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-full">
-              <Sparkles className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <p className="text-blue-900 font-medium">
-                Great! <span className="font-bold">{formData.agentName}</span> is ready to help you plan an amazing trip!
-              </p>
-              <p className="text-blue-700 text-sm">Let's continue to learn about your travel dreams...</p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

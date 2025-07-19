@@ -33,22 +33,18 @@ const StartTripStep2 = ({ formData, updateFormData }: StartTripStep2Props) => {
   ];
 
   return (
-    <div className="space-y-8 py-4">
+    <div className="space-y-6 py-4 max-w-md mx-auto">
       {/* Header */}
       <div className="text-center space-y-3">
-        <div className="flex items-center justify-center mb-4">
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-full">
-            <Plane className="h-8 w-8 text-white" />
-          </div>
-        </div>
-        <h3 className="text-3xl font-bold text-gray-900">What's Your Dream trip Vibe?</h3>
-        <p className="text-lg text-gray-600">Tell us about the type of journey you're envisioning</p>
+        <div className="text-6xl mb-4">✈️</div>
+        <h3 className="text-2xl font-bold text-gray-900">What's your vibe? 🌟</h3>
+        <p className="text-gray-600">Swipe through and pick what feels right!</p>
       </div>
 
       {/* Travel Type Selection */}
       <div className="space-y-4">
-        <h4 className="text-xl font-semibold text-gray-900">Travel Purpose</h4>
-        <div className="grid md:grid-cols-2 gap-4">
+        <h4 className="text-lg font-semibold text-gray-900 text-center">What brings you joy? 💫</h4>
+        <div className="space-y-3">
           {travelTypes.map((type) => {
             const Icon = type.icon;
             const isSelected = formData.travelType === type.id;
@@ -56,26 +52,26 @@ const StartTripStep2 = ({ formData, updateFormData }: StartTripStep2Props) => {
             return (
               <Card 
                 key={type.id}
-                className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
+                className={`cursor-pointer transition-all duration-300 hover:scale-[1.02] ${
                   isSelected 
-                    ? 'ring-4 ring-blue-300 bg-gradient-to-r from-blue-50 to-purple-50 border-blue-300' 
-                    : 'hover:shadow-lg hover:border-gray-300'
+                    ? 'ring-4 ring-pink-300 bg-gradient-to-r from-pink-50 to-purple-50 border-pink-300 shadow-lg' 
+                    : 'hover:shadow-md hover:border-gray-300 bg-white'
                 }`}
                 onClick={() => updateFormData('travelType', type.id)}
               >
-                <CardContent className="p-4">
+                <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
-                    <div className={`bg-gradient-to-r ${type.color} p-3 rounded-lg`}>
+                    <div className={`bg-gradient-to-r ${type.color} p-4 rounded-full`}>
                       <Icon className="h-6 w-6 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h5 className="font-semibold text-gray-900">{type.label}</h5>
-                      <p className="text-sm text-gray-600">{type.description}</p>
+                      <h5 className="font-bold text-gray-900 text-lg">{type.label}</h5>
+                      <p className="text-gray-600">{type.description}</p>
                     </div>
                     {isSelected && (
-                      <div className="text-blue-600">
-                        <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                          <span className="text-white text-sm">✓</span>
+                      <div className="text-pink-600">
+                        <div className="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-lg">💕</span>
                         </div>
                       </div>
                     )}
@@ -89,8 +85,8 @@ const StartTripStep2 = ({ formData, updateFormData }: StartTripStep2Props) => {
 
       {/* Number of Travelers */}
       <div className="space-y-4">
-        <h4 className="text-xl font-semibold text-gray-900">How Many Travelers?</h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <h4 className="text-lg font-semibold text-gray-900 text-center">Who's coming along? 👫</h4>
+        <div className="grid grid-cols-2 gap-3">
           {travelerCounts.map((count) => {
             const isSelected = formData.travelers === count.id;
             
@@ -99,19 +95,19 @@ const StartTripStep2 = ({ formData, updateFormData }: StartTripStep2Props) => {
                 key={count.id}
                 className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
                   isSelected 
-                    ? 'ring-4 ring-green-300 bg-gradient-to-r from-green-50 to-blue-50 border-green-300' 
-                    : 'hover:shadow-lg hover:border-gray-300'
+                    ? 'ring-4 ring-blue-300 bg-gradient-to-br from-blue-50 to-purple-50 border-blue-300 shadow-lg' 
+                    : 'hover:shadow-md hover:border-gray-300 bg-white'
                 }`}
                 onClick={() => updateFormData('travelers', count.id)}
               >
-                <CardContent className="p-4 text-center">
-                  <div className="text-3xl mb-2">{count.icon}</div>
-                  <h5 className="font-semibold text-gray-900">{count.label}</h5>
-                  <p className="text-xs text-gray-600">{count.description}</p>
+                <CardContent className="p-6 text-center">
+                  <div className="text-4xl mb-3">{count.icon}</div>
+                  <h5 className="font-bold text-gray-900">{count.label}</h5>
+                  <p className="text-sm text-gray-600">{count.description}</p>
                   {isSelected && (
-                    <div className="mt-2">
-                      <div className="w-5 h-5 bg-green-600 rounded-full flex items-center justify-center mx-auto">
-                        <span className="text-white text-xs">✓</span>
+                    <div className="mt-3">
+                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mx-auto">
+                        <span className="text-white">💙</span>
                       </div>
                     </div>
                   )}
@@ -124,32 +120,36 @@ const StartTripStep2 = ({ formData, updateFormData }: StartTripStep2Props) => {
 
       {/* Trip Duration */}
       <div className="space-y-4">
-        <h4 className="text-xl font-semibold text-gray-900">How Long is Your Adventure?</h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <h4 className="text-lg font-semibold text-gray-900 text-center">How long do you want to escape? ⏰</h4>
+        <div className="grid grid-cols-1 gap-3">
           {durations.map((duration) => {
             const isSelected = formData.duration === duration.id;
             
             return (
               <Card 
                 key={duration.id}
-                className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
+                className={`cursor-pointer transition-all duration-300 hover:scale-[1.02] ${
                   isSelected 
-                    ? 'ring-4 ring-purple-300 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-300' 
-                    : 'hover:shadow-lg hover:border-gray-300'
+                    ? 'ring-4 ring-purple-300 bg-gradient-to-r from-purple-50 to-pink-50 border-purple-300 shadow-lg' 
+                    : 'hover:shadow-md hover:border-gray-300 bg-white'
                 }`}
                 onClick={() => updateFormData('duration', duration.id)}
               >
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl mb-2">{duration.icon}</div>
-                  <h5 className="font-semibold text-gray-900 text-sm">{duration.label}</h5>
-                  <p className="text-xs text-gray-600">{duration.description}</p>
-                  {isSelected && (
-                    <div className="mt-2">
-                      <div className="w-5 h-5 bg-purple-600 rounded-full flex items-center justify-center mx-auto">
-                        <span className="text-white text-xs">✓</span>
-                      </div>
+                <CardContent className="p-5">
+                  <div className="flex items-center space-x-4">
+                    <div className="text-3xl">{duration.icon}</div>
+                    <div className="flex-1">
+                      <h5 className="font-bold text-gray-900">{duration.label}</h5>
+                      <p className="text-gray-600">{duration.description}</p>
                     </div>
-                  )}
+                    {isSelected && (
+                      <div className="text-purple-600">
+                        <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                          <span className="text-white">✨</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             );
