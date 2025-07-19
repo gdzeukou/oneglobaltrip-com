@@ -1,3 +1,4 @@
+
 import { BookingPlan, BookingAddOn } from '@/types/booking';
 
 export const BOOKING_PLANS: BookingPlan[] = [
@@ -48,8 +49,8 @@ export const BOOKING_PLANS: BookingPlan[] = [
     ],
     sla: 'Monthly subscription ($49/year)',
     popular: true,
-    badge: 'Most Popular',
-    badgeColor: 'bg-accent',
+    badge: 'Best Choice',
+    badgeColor: 'bg-gradient-to-r from-purple-600 to-pink-600',
     originalPrice: 99
   }
 ];
