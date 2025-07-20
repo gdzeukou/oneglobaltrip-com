@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { X, ArrowLeft, ArrowRight } from 'lucide-react';
 import StartTripStep1 from './StartTripStep1';
@@ -8,7 +8,6 @@ import StartTripStep2 from './StartTripStep2';
 import StartTripStep3 from './StartTripStep3';
 import StartTripStep4 from './StartTripStep4';
 import StartTripStep5 from './StartTripStep5';
-import StartTripProgress from './StartTripProgress';
 import { useNavigate } from 'react-router-dom';
 
 interface FormData {
@@ -122,7 +121,12 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0 bg-gradient-to-br from-blue-50 to-purple-50">
-        {/* Header with Progress */}
+        <DialogTitle className="sr-only">Plan Your Dream Trip</DialogTitle>
+        <DialogDescription className="sr-only">
+          Complete your travel preferences to get personalized trip recommendations
+        </DialogDescription>
+        
+        {/* Header */}
         <div className="p-6 pb-0">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-gray-900">Plan Your Dream Trip</h2>
@@ -135,7 +139,6 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <StartTripProgress currentStep={currentStep} totalSteps={totalSteps} />
         </div>
 
         {/* Step Content */}
@@ -157,10 +160,6 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
               <ArrowLeft className="h-4 w-4" />
               <span>Previous</span>
             </Button>
-
-            <div className="text-sm text-gray-500">
-              Step {currentStep} of {totalSteps}
-            </div>
 
             {currentStep < totalSteps ? (
               <Button
