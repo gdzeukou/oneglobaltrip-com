@@ -114,14 +114,9 @@ const Pricing = () => {
                 <div className="text-center">
                   <div className="text-4xl font-bold text-gray-900 mb-1">
                     {plan.price === 0 ? 'Free' : `$${plan.price}`}
-                    {plan.id === 'global_explorer' && <span className="text-lg font-normal text-gray-500">/month</span>}
+                    {plan.id === 'global_explorer' && <span className="text-lg font-normal text-gray-500">/year</span>}
                     {plan.id === 'visa_assist' && <span className="text-lg font-normal text-gray-500"> per visa</span>}
                   </div>
-                  {plan.originalPrice && (
-                    <div className="text-sm text-gray-500 mb-2">
-                      or $99/year (save $21)
-                    </div>
-                  )}
                   <p className="text-sm text-gray-500">{plan.sla}</p>
                 </div>
               </CardHeader>
@@ -150,7 +145,7 @@ const Pricing = () => {
                   }`}
                 >
                   {plan.id === 'free_ai_agent' ? 'Build My Free AI Agent' : 
-                   plan.id === 'visa_assist' ? 'Get Visa Help $30' :
+                   plan.id === 'visa_assist' ? 'Get Visa Help $75' :
                    'Upgrade to Global Explorer'}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>

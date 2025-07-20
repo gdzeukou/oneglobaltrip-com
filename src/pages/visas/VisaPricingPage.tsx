@@ -1,24 +1,17 @@
 
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import VisaPricingHero from '@/components/visa/pricing/VisaPricingHero';
-import VisaPricingCards from '@/components/visa/pricing/VisaPricingCards';
-import VisaPricingInfo from '@/components/visa/pricing/VisaPricingInfo';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const VisaPricingPage = () => {
   const { visaType } = useParams<{ visaType: string }>();
+  const navigate = useNavigate();
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Navigation />
-      <VisaPricingHero visaType={visaType} />
-      <VisaPricingCards visaType={visaType} />
-      <VisaPricingInfo />
-      <Footer />
-    </div>
-  );
+  useEffect(() => {
+    // Redirect to main pricing page
+    navigate('/pricing', { replace: true });
+  }, [navigate]);
+
+  return null;
 };
 
 export default VisaPricingPage;

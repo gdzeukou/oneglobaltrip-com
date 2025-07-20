@@ -1,6 +1,7 @@
 import React from 'react';
 import SimplifiedNavigation from '@/components/SimplifiedNavigation';
 import Footer from '@/components/Footer';
+import HeroCarousel from '@/components/home/HeroCarousel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, CheckCircle, Globe, Shield, Clock, Heart } from 'lucide-react';
@@ -47,35 +48,8 @@ const SimplifiedHome = () => {
     <div className="min-h-screen bg-white">
       <SimplifiedNavigation />
       
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 via-white to-purple-50 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Plan Your Perfect Trip with
-              <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                AI-Powered Assistance
-              </span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              From destination recommendations to visa support, we make travel planning simple, 
-              fast, and stress-free. Join thousands of happy travelers.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button size="lg" asChild className="text-lg px-8 py-4">
-                <Link to="/startmytrip">
-                  Start Planning My Trip
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <div className="flex items-center text-green-600">
-                <CheckCircle className="h-5 w-5 mr-2" />
-                <span className="font-medium">Free to start • No credit card required</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Hero Carousel */}
+      <HeroCarousel />
 
       {/* Features Section */}
       <section className="py-16 bg-white">

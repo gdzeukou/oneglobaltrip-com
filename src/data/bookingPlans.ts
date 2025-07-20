@@ -21,7 +21,7 @@ export const BOOKING_PLANS: BookingPlan[] = [
   {
     id: 'visa_assist',
     name: 'Visa Assistance',
-    price: 15,
+    price: 75,
     description: 'One-time visa support with expert guidance and document verification',
     features: [
       'AI-guided visa form filling',
@@ -37,7 +37,7 @@ export const BOOKING_PLANS: BookingPlan[] = [
   {
     id: 'global_explorer',
     name: 'Global Explorer',
-    price: 5,
+    price: 69,
     description: 'Premium subscription with unlimited visa assistance and advanced AI features',
     features: [
       'Unlimited visa assistance',
@@ -47,11 +47,11 @@ export const BOOKING_PLANS: BookingPlan[] = [
       'Priority customer support',
       '$20 Expert Connect calls with human travel agents'
     ],
-    sla: 'Monthly subscription ($49/year)',
+    sla: 'Annual subscription',
     popular: true,
     badge: 'Best Choice',
     badgeColor: 'bg-gradient-to-r from-purple-600 to-pink-600',
-    originalPrice: 99
+    originalPrice: null
   }
 ];
 
