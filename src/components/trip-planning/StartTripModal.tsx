@@ -9,6 +9,7 @@ import StartTripStep3 from './StartTripStep3';
 import StartTripStep4 from './StartTripStep4';
 import StartTripStep5 from './StartTripStep5';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface FormData {
   // Personal Info
@@ -41,6 +42,7 @@ interface StartTripModalProps {
 
 const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -76,10 +78,16 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
   };
 
   const handleComplete = () => {
-    // Store form data and navigate to AI chat
+    // Store form data for lead generation
     localStorage.setItem('tripPlanningData', JSON.stringify(formData));
     onOpenChange(false);
-    navigate('/ai-chat');
+    
+    // Navigate to auth if not logged in, dashboard if logged in
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      navigate('/auth?redirect=dashboard&source=trip-planning');
+    }
   };
 
   const isStepValid = () => {
@@ -174,7 +182,7 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
                 disabled={!isStepValid()}
                 className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 flex items-center space-x-2"
               >
-                <span>Complete & Create Account</span>
+                <span>{user ? 'Continue to Dashboard' : 'Create Account & Continue'}</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             )}

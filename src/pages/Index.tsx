@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Navigation from '@/components/Navigation';
+import SimplifiedNavigation from '@/components/SimplifiedNavigation';
 import Footer from '@/components/Footer';
 import HeroCarousel from '@/components/home/HeroCarousel';
 import TrustIndicators from '@/components/home/TrustIndicators';
@@ -23,7 +23,7 @@ import UnifiedCTA from '@/components/common/UnifiedCTA';
 const Index = () => {
   return (
     <div className="min-h-screen bg-white">
-      <Navigation />
+      <SimplifiedNavigation />
       <ProfileSuggestionBanner />
       <HeroCarousel />
       <UnifiedCTA 
