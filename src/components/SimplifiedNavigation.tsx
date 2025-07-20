@@ -15,7 +15,7 @@ import {
 const SimplifiedNavigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
-  const { agent } = useUnifiedAIAgent();
+  const { agent, hasAgent } = useUnifiedAIAgent();
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -74,7 +74,7 @@ const SimplifiedNavigation = () => {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
-                {agent.hasAgent && (
+                {hasAgent && (
                   <Button variant="outline" asChild className="flex items-center space-x-2">
                     <Link to="/ai-chat">
                       <Bot className="h-4 w-4" />
@@ -152,7 +152,7 @@ const SimplifiedNavigation = () => {
             
             {user ? (
               <div className="border-t border-gray-200 pt-3 mt-3">
-                {agent.hasAgent && (
+                {hasAgent && (
                   <Link
                     to="/ai-chat"
                     className="flex items-center space-x-2 px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-md"

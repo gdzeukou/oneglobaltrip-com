@@ -1,4 +1,4 @@
-import { ArrowRight, Phone, Calendar } from 'lucide-react';
+import { ArrowRight, Phone, Calendar, Bot, Shield, Sparkles, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
@@ -57,88 +57,167 @@ const UnifiedCTA = ({
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-100/20 rounded-full blur-3xl"></div>
         
         <div className="w-full mx-auto px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-8 md:mb-12 lg:mb-16 animate-fade-in">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-6 leading-tight">
-              {title}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Your Passport to Worry-Free Travel
             </h2>
-            {subtitle && (
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-6xl mx-auto leading-relaxed px-2">{subtitle}</p>
-            )}
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+              Start free with our AI Travel Agent. Upgrade for visa assistance or go premium for unlimited travel support.
+            </p>
+            <div className="inline-flex items-center px-4 py-2 bg-emerald-100 text-emerald-800 rounded-full text-sm font-medium">
+              <CheckCircle className="h-4 w-4 mr-2" />
+              No credit card required to start • 98% visa success rate
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full mx-auto mb-8 md:mb-12 lg:mb-16">
-            {options.map((option, index) => (
-              <Card 
-                key={option.id} 
-                className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer relative bg-white/80 backdrop-blur-sm hover:scale-105 animate-scale-in" 
-                style={{ animationDelay: `${index * 0.1}s` }} 
-                onClick={() => navigate(option.route)}
-              >
-                {option.badge && (
-                  <div className="absolute top-4 right-4 z-20">
-                    <span className={`${option.badgeColor || 'bg-orange-500'} text-white px-3 py-1.5 text-sm font-bold rounded-full shadow-lg animate-pulse`}>
-                      {option.badge}
-                    </span>
+          {/* Pricing Grid */}
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {/* Free AI Agent */}
+            <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer bg-white/90 backdrop-blur-sm hover:scale-105 rounded-lg">
+              <div className="text-center pt-8 pb-6">
+                <div className="flex justify-center mb-4">
+                  <div className="p-3 rounded-full bg-emerald-100 text-emerald-600">
+                    <Bot className="h-8 w-8" />
                   </div>
-                )}
-                
-                <div className="relative h-40 sm:h-48 overflow-hidden">
-                  <img 
-                    src={option.image} 
-                    alt={option.alt} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
                 </div>
+                <h3 className="text-xl font-bold mb-2">Free AI Travel Agent</h3>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-gray-900 mb-1">Free</div>
+                  <p className="text-sm text-gray-500">Forever</p>
+                </div>
+              </div>
+              
+              <div className="px-6 pb-8">
+                <p className="text-gray-600 text-center mb-6 text-sm leading-relaxed">
+                  Get personalized travel recommendations and basic planning assistance with our AI agent.
+                </p>
                 
-                <CardHeader className="pb-4 pt-6">
-                  <div className="space-y-3">
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
-                      <div className="flex-1 min-w-0">
-                        <CardTitle className="text-lg sm:text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors leading-tight">
-                          {option.title}
-                        </CardTitle>
-                        <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-medium uppercase tracking-wider">
-                          {option.subtitle}
-                        </div>
-                      </div>
-                      <div className="text-left sm:text-right flex-shrink-0">
-                        <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                          {option.price}
-                        </div>
-                        {option.priceNote && (
-                          <div className="text-xs text-emerald-600 font-semibold mt-1 bg-emerald-50 px-2 py-1 rounded-full inline-block">
-                            {option.priceNote}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Personalized AI Travel Agent</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Travel recommendations</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Basic itinerary planning</span>
+                  </li>
+                </ul>
                 
-                <CardContent className="pt-0 pb-6">
-                  <p className="text-gray-600 mb-4 leading-relaxed text-sm">{option.description}</p>
-                  
-                  {/* Features List */}
-                  <div className="mb-6 space-y-2">
-                    {option.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-center text-sm text-gray-700">
-                        <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 mr-3 flex-shrink-0"></div>
-                        <span className="leading-tight">{feature}</span>
-                      </div>
-                    ))}
+                <Button 
+                  onClick={() => navigate('/auth')}
+                  className="w-full font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white"
+                >
+                  Build My Free AI Agent
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Visa Assistance */}
+            <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer bg-white/90 backdrop-blur-sm hover:scale-105 rounded-lg">
+              <div className="text-center pt-8 pb-6">
+                <div className="flex justify-center mb-4">
+                  <div className="p-3 rounded-full bg-blue-100 text-blue-600">
+                    <Shield className="h-8 w-8" />
                   </div>
-                  
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                    {option.id === 'free_plan' ? 'Create My Free Travel Agent' : 
-                     option.id === 'visa_assistance' ? 'Apply with AI Help' : 
-                     option.id === 'global_explorer' ? 'Unlock Global Explorer Access' : 
-                     'Get Started'}
-                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+                <h3 className="text-xl font-bold mb-2">Visa Assistance</h3>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-gray-900 mb-1">$75</div>
+                  <p className="text-sm text-gray-500">per visa</p>
+                </div>
+              </div>
+              
+              <div className="px-6 pb-8">
+                <p className="text-gray-600 text-center mb-6 text-sm leading-relaxed">
+                  Expert guidance and document preparation for your visa applications with 98% success rate.
+                </p>
+                
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Document review & preparation</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Application submission support</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">98% approval success rate</span>
+                  </li>
+                </ul>
+                
+                <Button 
+                  onClick={() => navigate('/visas/short-stay')}
+                  className="w-full font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                >
+                  Get Visa Help $75
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Global Explorer */}
+            <div className="relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer bg-white/90 backdrop-blur-sm hover:scale-105 ring-2 ring-purple-500 scale-105 rounded-lg">
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+                <div className="bg-purple-600 text-white px-4 py-2 text-sm font-bold shadow-lg rounded-full">
+                  Most Popular
+                </div>
+              </div>
+              
+              <div className="text-center pt-8 pb-6">
+                <div className="flex justify-center mb-4">
+                  <div className="p-3 rounded-full bg-purple-100 text-purple-600">
+                    <Sparkles className="h-8 w-8" />
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold mb-2">Global Explorer</h3>
+                <div className="text-center">
+                  <div className="text-4xl font-bold text-gray-900 mb-1">
+                    $69<span className="text-lg font-normal text-gray-500">/year</span>
+                  </div>
+                  <p className="text-sm text-gray-500">30-day free trial</p>
+                </div>
+              </div>
+              
+              <div className="px-6 pb-8">
+                <p className="text-gray-600 text-center mb-6 text-sm leading-relaxed">
+                  Complete travel solution with unlimited AI assistance, visa support, and exclusive perks.
+                </p>
+                
+                <ul className="space-y-3 mb-8">
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Everything in Free + Visa Assistance</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Unlimited travel planning</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Priority support</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Exclusive travel deals</span>
+                  </li>
+                </ul>
+                
+                <Button 
+                  onClick={() => navigate('/auth?trial=premium')}
+                  className="w-full font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                >
+                  Upgrade to Global Explorer
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            </div>
           </div>
 
           <div className="text-center animate-fade-in" style={{ animationDelay: '0.8s' }}>
