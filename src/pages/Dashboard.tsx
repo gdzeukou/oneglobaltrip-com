@@ -24,7 +24,8 @@ import {
   MapPin,
   Sparkles,
   Plus,
-  Loader2
+  Loader2,
+  Bot
 } from 'lucide-react';
 
 interface VisaApplication {
@@ -44,6 +45,7 @@ const Dashboard = () => {
   const { user, signOut } = useAuth();
   const { agent } = useUserAgent();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('trips');
 
   // Fetch user's visa applications
   const { data: applications = [], isLoading, error } = useQuery({
@@ -163,30 +165,52 @@ const Dashboard = () => {
             )}
             <div className="flex-1">
               <h1 className="text-3xl font-bold mb-2 text-white font-extrabold">
-                Welcome {user?.user_metadata?.first_name || 'Traveler'}, I'm {agent?.name || 'Maya'} your personal AI Travel Agent! ✈️
+                Welcome {user?.user_metadata?.first_name || 'Traveler'}! {agent?.name ? `I'm ${agent.name}, your personal AI Travel Agent! ✈️` : 'Ready to create your AI Travel Agent? ✈️'}
               </h1>
               <p className="text-lg mb-6 text-white font-semibold">
-                Ready to explore the world together? Let's plan your next amazing adventure!
+                {agent?.name ? 'Ready to explore the world together? Let\'s plan your next amazing adventure!' : 'Let\'s create your personalized AI Travel Agent to start planning amazing trips!'}
               </p>
               <div className="flex flex-wrap gap-4">
-                <Button asChild variant="secondary" size="lg">
-                  <a href="/ai-chat" className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5" />
-                    Chat with {agent?.name || 'AI Travel Agent'}
-                  </a>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-                  <a href="/startmytrip" className="flex items-center gap-2">
-                    <Plus className="w-5 h-5" />
-                    Plan a New Trip
-                  </a>
-                </Button>
+                {agent?.name ? (
+                  <>
+                    <Button asChild variant="secondary" size="lg">
+                      <a href="/ai-chat" className="flex items-center gap-2">
+                        <Sparkles className="w-5 h-5" />
+                        Chat with {agent.name}
+                      </a>
+                    </Button>
+                    <Button asChild variant="outline" size="lg" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                      <a href="/startmytrip" className="flex items-center gap-2">
+                        <Plus className="w-5 h-5" />
+                        Plan a New Trip
+                      </a>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      variant="secondary" 
+                      size="lg"
+                      onClick={() => setActiveTab('settings')}
+                      className="flex items-center gap-2"
+                    >
+                      <Bot className="w-5 h-5" />
+                      Create Your AI Travel Agent
+                    </Button>
+                    <Button asChild variant="outline" size="lg" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                      <a href="/startmytrip" className="flex items-center gap-2">
+                        <Plus className="w-5 h-5" />
+                        Plan a Trip
+                      </a>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
         </div>
 
-        <Tabs defaultValue="trips" className="space-y-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="trips">My Trips</TabsTrigger>
             <TabsTrigger value="applications">My Applications</TabsTrigger>
