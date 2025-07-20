@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { PlaneTakeoff, Sparkles, Users, MapPin, Heart, MessageCircle } from 'lucide-react';
 import StartTripModal from '@/components/trip-planning/StartTripModal';
+import { useAuth } from '@/contexts/AuthContext';
 
 const StartMyTrip = () => {
+  const { user } = useAuth();
   const [modalOpen, setModalOpen] = useState(false);
 
   const features = [
@@ -86,13 +88,15 @@ const StartMyTrip = () => {
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
                   <Sparkles className="h-6 w-6 mr-3" />
-                  Start Planning My Trip
+                  {user ? 'Start Planning My Trip' : 'Get Started Free'}
                 </Button>
                 
-                <div className="flex items-center text-green-600 font-semibold">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                  <span>$0 Down • Free Consultation</span>
-                </div>
+                {!user && (
+                  <div className="flex items-center text-green-600 font-semibold">
+                    <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                    <span>$0 Down • Free Consultation</span>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-center space-x-1">

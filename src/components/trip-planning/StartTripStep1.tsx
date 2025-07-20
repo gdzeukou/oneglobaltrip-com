@@ -22,34 +22,10 @@ const StartTripStep1 = ({ formData, updateFormData }: StartTripStep1Props) => {
         </div>
         <h3 className="text-2xl font-bold text-gray-900">Let's get to know you! 💕</h3>
         <p className="text-gray-600">
-          Create your travel profile to find your perfect trip match
+          Tell us about yourself to get personalized travel recommendations
         </p>
       </div>
 
-      {/* AI Agent Card */}
-      <Card className="overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 hover:shadow-lg transition-all">
-        <CardContent className="p-6">
-          <div className="text-center space-y-4">
-            <div className="text-4xl">🤖</div>
-            <h4 className="text-lg font-semibold text-gray-900">What should I call your AI travel buddy?</h4>
-            <Input
-              placeholder="Give me a cute name! ✨"
-              value={formData.agentName}
-              onChange={(e) => updateFormData('agentName', e.target.value)}
-              className="text-center text-lg py-3 border-2 border-purple-200 focus:border-purple-500 rounded-full"
-            />
-            {formData.agentName && (
-              <div className="bg-white/70 rounded-full px-4 py-2">
-                <p className="text-purple-700 font-medium">
-                  Hey, I'm {formData.agentName}! Ready to find your dream trip? 🌟
-                </p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Personal Info Cards */}
       <div className="space-y-4">
         <Card className="overflow-hidden hover:shadow-lg transition-all bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
           <CardContent className="p-6">

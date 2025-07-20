@@ -15,7 +15,6 @@ interface FormData {
   name: string;
   email: string;
   phone: string;
-  agentName: string;
   
   // Trip Vision
   travelType: string;
@@ -47,7 +46,6 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
     name: '',
     email: '',
     phone: '',
-    agentName: '',
     travelType: '',
     travelers: '',
     duration: '',
@@ -87,7 +85,7 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return formData.name && formData.email && formData.agentName;
+        return formData.name && formData.email;
       case 2:
         return formData.travelType && formData.travelers && formData.duration;
       case 3:
@@ -176,7 +174,7 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
                 disabled={!isStepValid()}
                 className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 flex items-center space-x-2"
               >
-                <span>Start Planning with {formData.agentName || 'AI Agent'}</span>
+                <span>Complete & Create Account</span>
                 <ArrowRight className="h-4 w-4" />
               </Button>
             )}
