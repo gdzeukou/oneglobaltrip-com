@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { useUserAgent } from '@/hooks/useUserAgent';
+import { useUnifiedAIAgent } from '@/hooks/useUnifiedAIAgent';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -43,7 +43,7 @@ interface VisaApplication {
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
-  const { agent } = useUserAgent();
+  const { agent, hasAgent } = useUnifiedAIAgent();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('trips');
 
@@ -156,7 +156,7 @@ const Dashboard = () => {
         {/* AI Agent Welcome Section */}
         <div className="bg-gradient-to-r from-primary to-purple-600 text-white rounded-lg p-8 mb-8">
           <div className="flex items-start gap-4">
-            {agent?.avatar_url && (
+            {agent.avatar_url && (
               <img 
                 src={agent.avatar_url} 
                 alt={agent.name}
@@ -165,13 +165,13 @@ const Dashboard = () => {
             )}
             <div className="flex-1">
               <h1 className="text-3xl font-bold mb-2 text-white font-extrabold">
-                Welcome {user?.user_metadata?.first_name || 'Traveler'}! {agent?.name ? `I'm ${agent.name}, your personal AI Travel Agent! ✈️` : 'Ready to create your AI Travel Agent? ✈️'}
+                Welcome {user?.user_metadata?.first_name || 'Traveler'}! {hasAgent ? `I'm ${agent.name}, your personal AI Travel Agent! ✈️` : 'Ready to create your AI Travel Agent? ✈️'}
               </h1>
               <p className="text-lg mb-6 text-white font-semibold">
-                {agent?.name ? 'Ready to explore the world together? Let\'s plan your next amazing adventure!' : 'Let\'s create your personalized AI Travel Agent to start planning amazing trips!'}
+                {hasAgent ? 'Ready to explore the world together? Let\'s plan your next amazing adventure!' : 'Let\'s create your personalized AI Travel Agent to start planning amazing trips!'}
               </p>
               <div className="flex flex-wrap gap-4">
-                {agent?.name ? (
+                {hasAgent ? (
                   <>
                     <Button asChild variant="secondary" size="lg">
                       <a href="/ai-chat" className="flex items-center gap-2">

@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { useUnifiedAIAgent } from '@/hooks/useUnifiedAIAgent';
+import { Menu, X, User, LogOut, Bot } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,6 +15,7 @@ import {
 const SimplifiedNavigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { agent } = useUnifiedAIAgent();
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -24,6 +27,16 @@ const SimplifiedNavigation = () => {
     { name: 'Packages', path: '/packages' },
     { name: 'Pricing', path: '/pricing' },
   ];
+
+  const getUserDisplayName = () => {
+    if (user?.user_metadata?.first_name) {
+      return user.user_metadata.first_name;
+    }
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    return 'Account';
+  };
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
@@ -60,29 +73,39 @@ const SimplifiedNavigation = () => {
           {/* Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-2">
-                    <User className="h-4 w-4" />
-                    <span>{user.user_metadata?.first_name || 'Account'}</span>
+              <>
+                {agent.hasAgent && (
+                  <Button variant="outline" asChild className="flex items-center space-x-2">
+                    <Link to="/ai-chat">
+                      <Bot className="h-4 w-4" />
+                      <span>Chat with {agent.name}</span>
+                    </Link>
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link to="/dashboard">Dashboard</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/profile">Profile</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/bookings">My Bookings</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => signOut()}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="flex items-center space-x-2">
+                      <User className="h-4 w-4" />
+                      <span>{getUserDisplayName()}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile">Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/bookings">My Bookings</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => signOut()}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             ) : (
               <div className="flex items-center space-x-3">
                 <Button variant="outline" asChild>
@@ -129,6 +152,16 @@ const SimplifiedNavigation = () => {
             
             {user ? (
               <div className="border-t border-gray-200 pt-3 mt-3">
+                {agent.hasAgent && (
+                  <Link
+                    to="/ai-chat"
+                    className="flex items-center space-x-2 px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-md"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Bot className="h-4 w-4" />
+                    <span>Chat with {agent.name}</span>
+                  </Link>
+                )}
                 <Link
                   to="/dashboard"
                   className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-900 hover:bg-blue-50 rounded-md"

@@ -14,18 +14,37 @@ export const useAuthState = () => {
   const isEmailVerified = user?.email_confirmed_at ? true : false;
 
   useEffect(() => {
-    // Simplified auth initialization for better performance
-    const isLovableDomain = window.location.hostname.includes('lovable');
-    
-    if (isLovableDomain) {
-      // Quick mock setup for development
-      setUser(createMockUser() as User);
-      setSession(createMockSession() as Session);
-      setLoading(false);
-      return;
-    }
+    // First, try to get the real session
+    const initializeAuth = async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        
+        if (currentSession) {
+          // Real authenticated user found
+          setSession(currentSession);
+          setUser(currentSession.user);
+          setLoading(false);
+          return;
+        }
+        
+        // Only use mock auth if no real session exists and we're in development
+        const isLovableDomain = window.location.hostname.includes('lovable');
+        if (isLovableDomain && isDevelopmentMode()) {
+          setUser(createMockUser() as User);
+          setSession(createMockSession() as Session);
+          setLoading(false);
+          return;
+        }
+        
+        // No session found, continue with normal auth flow
+        setLoading(false);
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        setLoading(false);
+      }
+    };
 
-    // Simplified auth state management
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
@@ -41,15 +60,8 @@ export const useAuthState = () => {
       }
     );
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    }).catch(() => {
-      // Graceful fallback if auth fails
-      setLoading(false);
-    });
+    // Initialize auth
+    initializeAuth();
 
     return () => subscription.unsubscribe();
   }, []);

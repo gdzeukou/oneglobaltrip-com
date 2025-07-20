@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -88,13 +87,13 @@ const StartMyTrip = () => {
                   className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
                   <Sparkles className="h-6 w-6 mr-3" />
-                  {user ? 'Start Planning My Trip' : 'Get Started Free'}
+                  {user ? 'Start Planning My Trip' : 'Get Started - Free Account'}
                 </Button>
                 
                 {!user && (
                   <div className="flex items-center text-green-600 font-semibold">
                     <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                    <span>$0 Down • Free Consultation</span>
+                    <span>Free Account • No Credit Card Required</span>
                   </div>
                 )}
               </div>
@@ -231,7 +230,7 @@ const StartMyTrip = () => {
 
             <div className="mt-6 flex items-center justify-center text-blue-100">
               <div className="w-3 h-3 bg-green-400 rounded-full mr-2"></div>
-              <span>No credit card required • Get started in 2 minutes</span>
+              <span>{user ? 'Continue with your account' : 'Free account • Get started in 2 minutes'}</span>
             </div>
           </div>
         </section>
