@@ -120,15 +120,15 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0 bg-gradient-to-br from-blue-50 to-purple-50">
+      <DialogContent className="max-w-4xl h-[90vh] p-0 bg-gradient-to-br from-blue-50 to-purple-50 flex flex-col">
         <DialogTitle className="sr-only">Plan Your Dream Trip</DialogTitle>
         <DialogDescription className="sr-only">
           Complete your travel preferences to get personalized trip recommendations
         </DialogDescription>
         
         {/* Header */}
-        <div className="p-6 pb-0">
-          <div className="flex items-center justify-between mb-4">
+        <div className="p-6 pb-4 flex-shrink-0">
+          <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">Plan Your Dream Trip</h2>
             <Button
               variant="ghost"
@@ -141,15 +141,15 @@ const StartTripModal = ({ open, onOpenChange }: StartTripModalProps) => {
           </div>
         </div>
 
-        {/* Step Content */}
-        <div className="px-6 py-4 flex-1 overflow-y-auto">
-          <div className="animate-fade-in">
+        {/* Step Content - Scrollable */}
+        <div className="flex-1 overflow-y-auto px-6">
+          <div className="animate-fade-in pb-6">
             {renderStep()}
           </div>
         </div>
 
         {/* Footer with Navigation */}
-        <div className="p-6 pt-0 border-t bg-white/50 backdrop-blur-sm">
+        <div className="p-6 pt-4 border-t bg-white/50 backdrop-blur-sm flex-shrink-0">
           <div className="flex justify-between items-center">
             <Button
               variant="outline"
