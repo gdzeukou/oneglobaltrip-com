@@ -173,12 +173,14 @@ const Navigation = () => {
 
             {/* Auth Section - Hidden on mobile */}
             <div className="hidden md:flex items-center space-x-4">
-              <Link 
-                to="/ai-agent-auth" 
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
-              >
-                Sign Up Free
-              </Link>
+              {!user && (
+                <Link 
+                  to="/ai-agent-auth" 
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                >
+                  Sign Up Free
+                </Link>
+              )}
               <NavigationAuth />
             </div>
           </div>
