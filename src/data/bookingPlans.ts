@@ -9,10 +9,10 @@ export const BOOKING_PLANS: BookingPlan[] = [
     description: 'Personalized trip planning powered by AI - completely free to start',
     features: [
       'Personalized itineraries',
-      'Destination inspiration & tips',
-      'Up to 3 trips per month',
+      'Unlimited direct purchase through Hotels, Flights, Rentals, Cruises, more...',
+      'Destination Inspiration and Tips',
       'Access to 180+ countries',
-      'Basic travel advice'
+      'E-Visa Wizard'
     ],
     sla: 'Community support',
     badge: 'Start Free',

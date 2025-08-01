@@ -95,15 +95,23 @@ const UnifiedCTA = ({
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-start text-sm">
                     <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">Personalized AI Travel Agent</span>
+                    <span className="text-gray-700">Personalized itineraries</span>
                   </li>
                   <li className="flex items-start text-sm">
                     <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">Travel recommendations</span>
+                    <span className="text-gray-700">Unlimited direct purchase through Hotels, Flights, Rentals, Cruises, more...</span>
                   </li>
                   <li className="flex items-start text-sm">
                     <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">Basic itinerary planning</span>
+                    <span className="text-gray-700">Destination Inspiration and Tips</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Access to 180+ countries</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">E-Visa Wizard</span>
                   </li>
                 </ul>
                 
