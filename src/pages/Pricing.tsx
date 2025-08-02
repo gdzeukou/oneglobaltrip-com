@@ -204,27 +204,67 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* Enterprise Banner */}
-      <section className="py-16 bg-white">
+      {/* Industry Partnership Showcase */}
+      <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-slate-900 to-blue-900 rounded-3xl p-8 md:p-12 text-white text-center">
-            <h3 className="text-2xl md:text-3xl font-bold mb-4">
-              Managing thousands of trips a year?
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              Trusted Industry Partnerships
             </h3>
-            <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
-              Our Enterprise Global Mobility Suite combines visas, travel bookings, and compliance into one seamless platform.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              We collaborate with leading industry partners to deliver seamless global mobility solutions
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
-                onClick={() => window.open('https://calendly.com/oneglobaltrip/enterprise-consultation', '_blank')}
-                className="bg-white text-slate-900 hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
-              >
-                Contact Sales →
-              </Button>
-              <div className="flex items-center gap-2 text-gray-300">
-                <Clock className="h-4 w-4" />
-                <span className="text-sm">15-minute consultation</span>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 md:p-12 border border-blue-100">
+            <div className="grid md:grid-cols-3 gap-8 mb-8">
+              {/* IATA Partnership */}
+              <div className="text-center">
+                <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
+                  <Building2 className="h-10 w-10 text-blue-600" />
+                </div>
+                <h4 className="text-xl font-bold text-gray-900 mb-2">IATA</h4>
+                <p className="text-gray-600">Official airline industry partnership for seamless flight bookings and compliance</p>
+              </div>
+
+              {/* Expedia Partnership */}
+              <div className="text-center">
+                <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
+                  <Globe className="h-10 w-10 text-emerald-600" />
+                </div>
+                <h4 className="text-xl font-bold text-gray-900 mb-2">Expedia Group</h4>
+                <p className="text-gray-600">Global inventory access with competitive rates and instant confirmations</p>
+              </div>
+
+              {/* SAP Concur Partnership */}
+              <div className="text-center">
+                <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
+                  <TrendingUp className="h-10 w-10 text-purple-600" />
+                </div>
+                <h4 className="text-xl font-bold text-gray-900 mb-2">SAP Concur</h4>
+                <p className="text-gray-600">Enterprise expense management integration for streamlined reporting</p>
+              </div>
+            </div>
+
+            <div className="text-center border-t border-blue-200 pt-8">
+              <h4 className="text-2xl font-bold text-gray-900 mb-4">
+                Enterprise Global Mobility Suite
+              </h4>
+              <p className="text-lg text-gray-700 mb-6 max-w-3xl mx-auto">
+                Managing thousands of trips a year? Our enterprise platform combines visas, travel bookings, and compliance with industry-leading partnerships.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <Button 
+                  size="lg" 
+                  onClick={() => window.open('https://calendly.com/oneglobaltrip/enterprise-consultation', '_blank')}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg font-semibold"
+                >
+                  Contact Sales →
+                </Button>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <Clock className="h-4 w-4" />
+                  <span className="text-sm">15-minute consultation</span>
+                </div>
               </div>
             </div>
           </div>
