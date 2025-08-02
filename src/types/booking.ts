@@ -1,7 +1,7 @@
 export interface BookingPlan {
-  id: 'free_ai_agent' | 'visa_assist' | 'global_explorer';
+  id: 'free_ai_agent' | 'visa_assist' | 'global_explorer' | 'enterprise_global_mobility';
   name: string;
-  price: number;
+  price: number | null;
   originalPrice?: number;
   description: string;
   features: string[];
@@ -10,6 +10,9 @@ export interface BookingPlan {
   isAnnual?: boolean;
   badge?: string;
   badgeColor?: string;
+  contactSales?: boolean;
+  enterprise?: boolean;
+  customPrice?: string;
 }
 
 export interface BookingAddOn {

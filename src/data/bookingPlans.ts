@@ -52,6 +52,28 @@ export const BOOKING_PLANS: BookingPlan[] = [
     badge: 'Best Choice',
     badgeColor: 'bg-gradient-to-r from-purple-600 to-pink-600',
     originalPrice: null
+  },
+  {
+    id: 'enterprise_global_mobility',
+    name: 'Enterprise Global Mobility Suite',
+    price: null,
+    description: 'All-in-one travel & visa management for global teams. AI-powered. Human-backed. Built to move your business faster.',
+    features: [
+      'Bulk Visa Management - Manage 50+ employee visas at once with real-time embassy alerts, priority scheduling',
+      'Corporate Travel Concierge - Flights, hotels, car rentals, trains, event tickets — all optimized for cost, comfort, and policy compliance',
+      'AI-Powered Travel Agent 24/7 - Get instant itineraries, rebooking assistance, and budget-friendly options in seconds',
+      'Dedicated Human Travel Managers - Complex visas? VIP travelers? We\'ve got real experts on standby for white-glove service',
+      'Centralized Dashboard for HR & Finance - One platform for tracking trips, approvals, spend, visas, and compliance — secure, scalable, and audit-ready',
+      'Seamless Integrations - Plug into your existing tools (Workday, SAP Concur, Slack, Teams) and watch admin work disappear',
+      'Actionable Insights & Cost Savings - Advanced reporting uncovers hidden savings and ensures every trip aligns with company policy',
+      'Global Reach, Local Expertise - 180+ countries. On-the-ground partners. 24/7 traveler support anywhere in the world'
+    ],
+    sla: 'Custom enterprise solution',
+    contactSales: true,
+    enterprise: true,
+    customPrice: 'Contact Sales',
+    badge: 'Enterprise',
+    badgeColor: 'bg-gradient-to-r from-slate-700 to-blue-800'
   }
 ];
 
