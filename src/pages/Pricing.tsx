@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, Globe, Shield, Users, Phone, Clock, TrendingUp, Award } from 'lucide-react';
+import { ArrowRight, Building2, Globe, Shield, Users, Phone, Clock, TrendingUp, Award, Check } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -171,8 +171,9 @@ const Pricing = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {BOOKING_PLANS.map((plan) => {
+          {/* Main 3 Plans */}
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8 mb-16">
+            {BOOKING_PLANS.filter(plan => !plan.enterprise).map((plan) => {
               const Icon = getPlanIcon(plan.id);
               const features = plan.features.map(feature => ({
                 name: feature,
@@ -180,7 +181,7 @@ const Pricing = () => {
               }));
 
               return (
-                <div key={plan.id} className={plan.enterprise ? 'lg:col-span-1' : ''}>
+                <div key={plan.id}>
                   <PricingCard
                     title={plan.name}
                     subtitle={plan.sla}
@@ -195,12 +196,74 @@ const Pricing = () => {
                     customPrice={plan.customPrice}
                     onSelect={() => handlePlanSelect(plan)}
                     buttonText={getButtonText(plan)}
-                    className={plan.enterprise ? 'lg:transform lg:scale-105' : ''}
                   />
                 </div>
               );
             })}
           </div>
+
+          {/* Enterprise Plan - Square Layout */}
+          {BOOKING_PLANS.filter(plan => plan.enterprise).map((plan) => {
+            const Icon = getPlanIcon(plan.id);
+            const features = plan.features.map(feature => ({
+              name: feature,
+              included: true
+            }));
+
+            return (
+              <div key={plan.id} className="max-w-4xl mx-auto">
+                <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 rounded-3xl p-8 md:p-12 text-white shadow-2xl">
+                  <div className="grid md:grid-cols-2 gap-8 items-center">
+                    {/* Left Side - Content */}
+                    <div>
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                          <Building2 className="h-6 w-6 text-white" />
+                        </div>
+                        <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
+                          Enterprise
+                        </Badge>
+                      </div>
+                      
+                      <h3 className="text-3xl font-bold text-white mb-2">{plan.name}</h3>
+                      <p className="text-gray-200 mb-6">{plan.sla}</p>
+                      
+                      <div className="text-center mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
+                        <span className="text-4xl font-bold text-white">{plan.customPrice}</span>
+                        <p className="text-sm mt-2 text-gray-300">Custom pricing for your organization</p>
+                      </div>
+                      
+                      <div className="mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
+                        <p className="text-sm text-gray-200 italic">
+                          "We cut corporate travel chaos in half while boosting traveler satisfaction by 3x."
+                        </p>
+                      </div>
+                      
+                      <Button 
+                        onClick={() => handlePlanSelect(plan)}
+                        className="w-full bg-white text-slate-900 hover:bg-gray-100 font-semibold py-3 text-lg"
+                      >
+                        {getButtonText(plan)}
+                      </Button>
+                    </div>
+                    
+                    {/* Right Side - Features */}
+                    <div>
+                      <h4 className="text-xl font-semibold text-white mb-4">Everything included:</h4>
+                      <ul className="space-y-3">
+                        {features.map((feature, index) => (
+                          <li key={index} className="flex items-start">
+                            <Check className="h-5 w-5 mr-3 mt-0.5 flex-shrink-0 text-emerald-400" />
+                            <span className="text-white">{feature.name}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 
