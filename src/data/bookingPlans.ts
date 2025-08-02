@@ -21,23 +21,23 @@ export const BOOKING_PLANS: BookingPlan[] = [
   {
     id: 'visa_assist',
     name: 'Visa Assistance',
-    price: 75,
+    price: 69,
     description: 'One-time visa support with expert guidance and document verification',
     features: [
-      'AI-guided visa form filling',
-      'Document verification',
+      'AI-Guided Visa Form Filling',
+      'Human Visa Officer Analysis',
+      'Biometrics Appointment assistance',
       'Real-time embassy alerts',
-      'Embassy appointment assistance',
       '98% success rate guarantee'
     ],
-    sla: 'Per visa application',
+    sla: 'per visa application',
     badge: '98% Success Rate',
     badgeColor: 'bg-blue-500'
   },
   {
     id: 'global_explorer',
     name: 'Global Explorer',
-    price: 69,
+    price: 189,
     description: 'Premium subscription with unlimited visa assistance and advanced AI features',
     features: [
       'Unlimited visa assistance',
@@ -45,7 +45,7 @@ export const BOOKING_PLANS: BookingPlan[] = [
       'Real-time travel advisories',
       'Offline access for remote travel',
       'Priority customer support',
-      '$20 Expert Connect calls with human travel agents'
+      'Connect and talk with Certified Travel Advisors around the globe'
     ],
     sla: 'Annual subscription',
     popular: true,

@@ -133,38 +133,46 @@ const UnifiedCTA = ({
                     <Shield className="h-8 w-8" />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Visa Assistance</h3>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-gray-900 mb-1">$75</div>
-                  <p className="text-sm text-gray-500">per visa</p>
-                </div>
-              </div>
-              
-              <div className="px-6 pb-8">
-                <p className="text-gray-600 text-center mb-6 text-sm leading-relaxed">
-                  Expert guidance and document preparation for your visa applications with 98% success rate.
-                </p>
-                
-                <ul className="space-y-3 mb-8">
-                  <li className="flex items-start text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">Document review & preparation</span>
-                  </li>
-                  <li className="flex items-start text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">Application submission support</span>
-                  </li>
-                  <li className="flex items-start text-sm">
-                    <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-700">98% approval success rate</span>
-                  </li>
-                </ul>
-                
-                <Button 
-                  onClick={() => navigate('/visas/short-stay')}
-                  className="w-full font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                >
-                  Get Visa Help $75
+                 <h3 className="text-xl font-bold mb-2">Visa Assistance</h3>
+                 <div className="text-center">
+                   <div className="text-4xl font-bold text-gray-900 mb-1">$69</div>
+                   <p className="text-sm text-gray-500">per visa</p>
+                 </div>
+               </div>
+               
+               <div className="px-6 pb-8">
+                 <p className="text-gray-600 text-center mb-6 text-sm leading-relaxed">
+                   Expert guidance and document preparation for your visa applications with 98% success rate.
+                 </p>
+                 
+                 <ul className="space-y-3 mb-8">
+                   <li className="flex items-start text-sm">
+                     <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                     <span className="text-gray-700">AI-Guided Visa Form Filling</span>
+                   </li>
+                   <li className="flex items-start text-sm">
+                     <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                     <span className="text-gray-700">Human Visa Officer Analysis</span>
+                   </li>
+                   <li className="flex items-start text-sm">
+                     <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                     <span className="text-gray-700">Biometrics Appointment assistance</span>
+                   </li>
+                   <li className="flex items-start text-sm">
+                     <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                     <span className="text-gray-700">Real-time embassy alerts</span>
+                   </li>
+                   <li className="flex items-start text-sm">
+                     <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                     <span className="text-gray-700">98% success rate guarantee</span>
+                   </li>
+                 </ul>
+                 
+                 <Button 
+                   onClick={() => navigate('/visas/short-stay')}
+                   className="w-full font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                 >
+                   Get Visa Help $69
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </div>
@@ -184,13 +192,13 @@ const UnifiedCTA = ({
                     <Sparkles className="h-8 w-8" />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Global Explorer</h3>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-gray-900 mb-1">
-                    $69<span className="text-lg font-normal text-gray-500">/year</span>
-                  </div>
-                  <p className="text-sm text-gray-500">30-day free trial</p>
-                </div>
+                 <h3 className="text-xl font-bold mb-2">Global Explorer</h3>
+                 <div className="text-center">
+                   <div className="text-4xl font-bold text-gray-900 mb-1">
+                     $189<span className="text-lg font-normal text-gray-500">/year</span>
+                   </div>
+                   <p className="text-sm text-gray-500">30-day free trial</p>
+                 </div>
               </div>
               
               <div className="px-6 pb-8">
