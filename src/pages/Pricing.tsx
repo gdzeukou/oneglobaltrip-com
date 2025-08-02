@@ -144,8 +144,8 @@ const Pricing = () => {
                         : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white'
                   }`}
                 >
-                  {plan.id === 'free_ai_agent' ? 'Build My Free AI Agent' : 
-                   plan.id === 'visa_assist' ? 'Get Visa Help $75' :
+                   {plan.id === 'free_ai_agent' ? 'Build My Free AI Agent' : 
+                   plan.id === 'visa_assist' ? 'Get Visa Help $69' :
                    'Upgrade to Global Explorer'}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>

@@ -75,7 +75,7 @@ const Index = () => {
             title: 'Global Explorer',
             subtitle: 'Premium Access',
             description: 'Unlimited visa support with real-time alerts and specific AI trip planning for all travel styles',
-            price: '$69/year',
+            price: '$189/year',
             priceNote: '',
             image: '/lovable-uploads/2aa35fa9-6f77-4530-b502-0223423fa205.png',
             alt: 'Global Explorer Premium',

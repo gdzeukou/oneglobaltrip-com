@@ -56,7 +56,7 @@ const WhyChooseSection = () => {
                   Expert Connect Calls
                 </h3>
                 <p className="text-gray-600">
-                  Need insider tips? Connect with real travel agents for $20 calls to discover hidden gems like Barcelona's secret rooftop bars.
+                  Connect and talk with Certified Travel Advisors around the globe to discover hidden gems like Barcelona's secret rooftop bars.
                 </p>
               </div>
             </div>
@@ -101,7 +101,7 @@ const WhyChooseSection = () => {
                   className="flex items-center space-x-1"
                 >
                   <Phone className="h-4 w-4" />
-                  <span>Expert Call $20</span>
+                  <span>Connect with Advisors</span>
                 </Button>
               </div>
             </div>

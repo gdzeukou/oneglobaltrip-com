@@ -46,7 +46,7 @@ const ReadyToBookCTA = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold text-foreground">Ready to Book?</h3>
-                  <p className="text-sm text-muted-foreground">Starting from $75</p>
+                  <p className="text-sm text-muted-foreground">Starting from $69</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
