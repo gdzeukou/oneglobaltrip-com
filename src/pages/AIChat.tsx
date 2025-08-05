@@ -1,15 +1,17 @@
+
 import { useState, useEffect, useRef } from 'react';
-import { Send, Plus, MessageSquare, Sparkles, Loader2, Trash2 } from 'lucide-react';
+import { Sparkles, Loader2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import PersonalizedAITravelAgent from '@/components/ai/PersonalizedAITravelAgent';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { useUserAgent } from '@/hooks/useUserAgent';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { ChatHeader } from '@/components/ai/ChatHeader';
+import { MessageBubble } from '@/components/ai/MessageBubble';
+import { ChatInput } from '@/components/ai/ChatInput';
 
 interface Message {
   id: string;
@@ -32,11 +34,11 @@ const AIChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, session } = useAuth();
   const { preferences, getPersonalizedContext } = useAIAgentPreferences();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -217,8 +219,6 @@ const AIChat = () => {
     console.log('📝 User state:', user ? `User ID: ${user.id}` : 'No user');
     console.log('💬 Input message:', inputMessage.substring(0, 50) + '...');
     console.log('🗣️ Current conversation ID:', currentConversationId);
-    console.log('🔧 AI Travel Agent Test: Complete user object:', user);
-    console.log('🔧 AI Travel Agent Test: Auth session:', session);
 
     if (!inputMessage.trim()) {
       console.log('❌ Empty message, aborting');
@@ -261,33 +261,17 @@ const AIChat = () => {
     setInputMessage('');
     setIsLoading(true);
 
-    console.log('📡 Calling AI Travel Agent Edge Function...');
-    console.log('🔧 Function parameters:', {
-      message: currentInputMessage.substring(0, 50) + '...',
-      conversationId,
-      userId: user.id,
-      fullUrl: 'https://sdeyqojklszwarfrputz.supabase.co/functions/v1/ai-travel-agent'
-    });
-    console.log('🔧 AI Travel Agent Test: About to call supabase.functions.invoke...');
-
     try {
-      const startTime = Date.now();
+      const context = getPersonalizedContext();
       
-        const context = getPersonalizedContext();
-        
-        const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
-          body: {
-            message: currentInputMessage,
-            conversationId,
-            userId: user.id,
-            personalizedContext: context
-          }
-        });
-
-      const endTime = Date.now();
-      console.log(`⏱️ Function call completed in ${endTime - startTime}ms`);
-      console.log('📨 AI Travel Agent response data:', data);
-      console.log('❌ AI Travel Agent response error:', error);
+      const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
+        body: {
+          message: currentInputMessage,
+          conversationId,
+          userId: user.id,
+          personalizedContext: context
+        }
+      });
 
       if (error) {
         console.error('🚨 AI Travel Agent function error details:', {
@@ -387,228 +371,96 @@ const AIChat = () => {
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
+  // Group messages by sender and add timestamps
+  const processedMessages = messages.map((message, index) => {
+    const prevMessage = messages[index - 1];
+    const nextMessage = messages[index + 1];
+    
+    const isGrouped = prevMessage && prevMessage.role === message.role;
+    const showTimestamp = !prevMessage || 
+      prevMessage.role !== message.role ||
+      (message.timestamp.getTime() - prevMessage.timestamp.getTime()) > 300000; // 5 minutes
 
-  const formatMessage = (content: string) => {
-    return content
-      .split('\n')
-      .map((line, index) => (
-        <div key={index} className={line.trim() === '' ? 'mb-2' : ''}>
-          {line}
-        </div>
-      ));
-  };
+    return {
+      ...message,
+      isGrouped,
+      showTimestamp
+    };
+  });
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="flex flex-col h-screen bg-background">
+      {/* Navigation - Hidden on mobile for full screen chat */}
+      {!isMobile && <Navigation />}
       
-      <div className="flex h-[calc(100vh-80px)]">
-        {/* Sidebar */}
-        {isSidebarOpen && (
-          <div className="w-80 bg-card border-r border-border flex flex-col">
-            <div className="p-4 border-b border-border">
-              <Button
-                onClick={createNewConversation}
-                className="w-full justify-start space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold"
-              >
-                <Plus className="h-4 w-4 text-white" />
-                <span className="text-white font-medium">New Chat with {agent?.name || 'AI Travel Agent'}</span>
-              </Button>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto">
-              {conversations.map((conversation) => (
-                <div
-                  key={conversation.id}
-                  className={`p-3 m-2 rounded-lg cursor-pointer group hover:bg-muted/50 transition-colors ${
-                    currentConversationId === conversation.id ? 'bg-muted' : ''
-                  }`}
-                  onClick={() => selectConversation(conversation.id)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2 flex-1 min-w-0">
-                      <MessageSquare className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      <span className="text-sm font-medium truncate">
-                        {conversation.title}
-                      </span>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteConversation(conversation.id);
-                      }}
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Chat Header */}
+        <ChatHeader
+          conversations={conversations}
+          currentConversationId={currentConversationId}
+          onSelectConversation={selectConversation}
+          onCreateConversation={createNewConversation}
+          onDeleteConversation={deleteConversation}
+          isMobile={isMobile}
+        />
 
-        {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <div className="border-b border-border bg-card p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                >
-                  <MessageSquare className="h-4 w-4" />
-                </Button>
-                <div className="flex items-center space-x-2">
-                  <div className="relative">
-                    {agent?.avatar_url ? (
-                      <Avatar className="h-6 w-6">
-                        <AvatarImage src={agent.avatar_url} alt={agent.name} />
-                        <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs">
-                          {agent.name?.[0] || 'A'}
-                        </AvatarFallback>
-                      </Avatar>
-                    ) : (
-                      <Sparkles className="h-6 w-6 text-gradient-to-r from-blue-500 to-purple-600" />
-                    )}
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                  </div>
-                  <div>
-                    <h1 className="text-lg font-semibold">{agent?.name || 'AI Travel Agent'} - Your AI Travel Agent</h1>
-                    <p className="text-xs text-muted-foreground">Free for all members • Real-time flight search and more+</p>
-                  </div>
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto">
+          {messages.length === 0 && !currentConversationId ? (
+            <div className="flex items-center justify-center h-full p-6">
+              <div className="text-center max-w-md">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="h-8 w-8 text-primary" />
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            {messages.length === 0 && !currentConversationId ? (
-              <div className="text-center py-12">
-                <div className="relative mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto">
-                    <Sparkles className="h-10 w-10 text-white" />
-                  </div>
-                  <div className="absolute -top-2 -right-6 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center animate-bounce">
-                    <span className="text-xs font-bold text-white">✓</span>
-                  </div>
-                </div>
-                <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  AI Travel Agent is Ready to Help!
+                <h2 className="text-xl font-semibold mb-2">
+                  Welcome to {agent?.name || 'AI Travel Agent'}
                 </h2>
-                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                <p className="text-muted-foreground mb-6 text-sm">
                   Your personal AI travel agent with real-time flight search and booking assistance
                 </p>
-                <div className="flex flex-wrap justify-center gap-2 mb-6">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">✈️ Real-time Flights</span>
-                  <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">🔒 Secure Booking</span>
-                  <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">🆓 Completely Free</span>
-                </div>
-                <Button onClick={createNewConversation} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Button onClick={createNewConversation} className="w-full sm:w-auto">
                   <Plus className="h-4 w-4 mr-2" />
                   Start Planning Your Trip
                 </Button>
               </div>
-            ) : (
-              messages.map((message) => (
-                <div
+            </div>
+          ) : (
+            <div className="py-4">
+              {processedMessages.map((message) => (
+                <MessageBubble
                   key={message.id}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`flex items-start space-x-3 max-w-3xl ${
-                    message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''
-                  }`}>
-                    <Avatar className="h-8 w-8 flex-shrink-0">
-                      {message.role === 'user' ? (
-                        <AvatarFallback className="bg-primary text-primary-foreground">
-                          U
-                        </AvatarFallback>
-                      ) : (
-                        <>
-                          {agent?.avatar_url ? (
-                            <AvatarImage src={agent.avatar_url} alt={agent.name} />
-                          ) : null}
-                          <AvatarFallback className="bg-secondary text-secondary-foreground">
-                            {agent?.name?.[0] || 'M'}
-                          </AvatarFallback>
-                        </>
-                      )}
-                    </Avatar>
-                    <div className={`rounded-lg px-4 py-3 ${
-                      message.role === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted text-foreground'
-                    }`}>
-                      <div className="prose prose-sm max-w-none">
-                        {formatMessage(message.content)}
-                      </div>
+                  message={message}
+                  isGrouped={message.isGrouped}
+                  showTimestamp={message.showTimestamp}
+                />
+              ))}
+              
+              {isLoading && (
+                <div className="px-4 mb-4">
+                  <div className="flex justify-start">
+                    <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3 flex items-center space-x-2 max-w-[85%] sm:max-w-[70%]">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm text-muted-foreground">
+                        {agent?.name || 'AI Travel Agent'} is thinking...
+                      </span>
                     </div>
                   </div>
                 </div>
-              ))
-            )}
-            
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="flex items-start space-x-3">
-                  <Avatar className="h-8 w-8">
-                    {agent?.avatar_url ? (
-                      <AvatarImage src={agent.avatar_url} alt={agent.name} />
-                    ) : null}
-                    <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                      {agent?.name?.[0] || 'M'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="bg-muted rounded-lg px-4 py-3 flex items-center space-x-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">{agent?.name || 'AI Travel Agent'} is searching flights and planning your trip...</span>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input Area */}
-          <div className="border-t border-border bg-card p-4">
-            <div className="flex space-x-3 max-w-4xl mx-auto">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={inputMessage}
-                  onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder={`Tell ${agent?.name || 'your AI Travel Agent'} about your travel plans... (e.g., 'Find flights from NYC to London in March')`}
-                  className="w-full px-4 py-3 border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-background"
-                  disabled={isLoading}
-                />
-              </div>
-              <Button
-                onClick={sendMessage}
-                disabled={!inputMessage.trim() || isLoading}
-                size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-              >
-                <Send className="h-4 w-4" />
-              </Button>
+              )}
+              
+              <div ref={messagesEndRef} />
             </div>
-            <p className="text-xs text-center text-muted-foreground mt-2">
-              {agent?.name || 'AI Travel Agent'} can search real flights, help with bookings, and provide travel assistance - all free for members
-            </p>
-          </div>
+          )}
         </div>
+
+        {/* Chat Input */}
+        <ChatInput
+          value={inputMessage}
+          onChange={setInputMessage}
+          onSend={sendMessage}
+          isLoading={isLoading}
+          placeholder={`Message ${agent?.name || 'AI Travel Agent'}...`}
+        />
       </div>
     </div>
   );
