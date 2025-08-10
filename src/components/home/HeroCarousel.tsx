@@ -27,12 +27,8 @@ const HeroCarousel = () => {
     autoPlayInterval: 5500,
   });
 
-  const {
-    handleTouchStart,
-    handleTouchMove,
-    handleTouchEnd,
-    handleKeyDown,
-  } = useCarouselTouch(nextSlide, prevSlide);
+  const { handleTouchStart, handleTouchMove, handleTouchEnd, handleKeyDown } =
+    useCarouselTouch(nextSlide, prevSlide);
 
   const currentSlideData = useMemo(() => heroSlides[currentSlide], [currentSlide]);
 
@@ -69,10 +65,9 @@ const HeroCarousel = () => {
 
       {/* Trust badge top-left */}
       <div className="absolute top-4 left-4 z-10">
-        <div className="backdrop-blur-md bg-black/50 text-white font-semibold rounded-full px-4 py-2 text-xs sm:text-sm flex items-center gap-3">
-          <span className="inline-flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-green-400"></span>98% Visa Success Rate</span>
-          <span className="hidden sm:inline-block">•</span>
-          <span className="hidden sm:inline-flex">10,000+ Happy Travelers</span>
+        <div className="backdrop-blur-md bg-black/60 text-white font-bold rounded-full px-4 py-2 text-xs sm:text-sm flex items-center gap-2">
+          <span className="inline-flex items-center"><span className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2" /></span>
+          <span className="inline-flex">98% Visa Success Rate - 10,000+ Happy Travelers</span>
         </div>
       </div>
 
