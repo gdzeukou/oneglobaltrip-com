@@ -13,6 +13,7 @@ import { ChatHeader } from '@/components/ai/ChatHeader';
 import { MessageBubble } from '@/components/ai/MessageBubble';
 import { ChatInput } from '@/components/ai/ChatInput';
 import VoiceInterface from '@/components/ai/VoiceInterface';
+import { getDisplayAgentName } from '@/utils/displayAgentName';
 
 interface Message {
   id: string;
@@ -40,7 +41,7 @@ const AIChat = () => {
   const { preferences, getPersonalizedContext } = useAIAgentPreferences();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const displayAgentName = agent?.name || preferences?.aiAgentName || 'AI Travel Agent';
+  const displayAgentName = getDisplayAgentName(agent?.name, preferences?.aiAgentName);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,7 +56,7 @@ const AIChat = () => {
   const capitalizeWords = (s?: string | null) => (s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : '');
 
   const generateDynamicGreeting = async (): Promise<string> => {
-    const agentName = agent?.name || preferences.aiAgentName || 'your AI Travel Agent';
+    const agentName = getDisplayAgentName(agent?.name, preferences.aiAgentName) || 'your AI Travel Agent';
     const context = getPersonalizedContext();
     const now = new Date();
 
@@ -520,7 +521,6 @@ const AIChat = () => {
           )}
         </div>
 
-{/* Chat Input */}
         <ChatInput
           value={inputMessage}
           onChange={setInputMessage}

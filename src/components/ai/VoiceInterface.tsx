@@ -6,7 +6,8 @@ import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { useUserAgent } from '@/hooks/useUserAgent';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Mic, Square, MessageCircle } from 'lucide-react';
+import { Mic, Square } from 'lucide-react';
+import { getDisplayAgentName } from '@/utils/displayAgentName';
 
 interface VoiceInterfaceProps {
   onSpeakingChange: (speaking: boolean) => void;
@@ -25,8 +26,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const titleSetRef = useRef<boolean>(false);
   const [firstName, setFirstName] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
-  const [showTranscript, setShowTranscript] = useState(false);
-  const displayAgentName = userAgent?.name || preferences?.aiAgentName || 'AI Travel Agent';
+  const displayAgentName = getDisplayAgentName(userAgent?.name, preferences?.aiAgentName);
 
   const ensureConversation = async (): Promise<string | null> => {
     if (voiceConversationId) return voiceConversationId;
@@ -163,8 +163,7 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
     chatRef.current?.disconnect();
     setIsConnected(false);
     onSpeakingChange(false);
-    setShowTranscript(true);
-    toast({ title: 'Voice chat ended', description: 'Transcript is ready below.' });
+    toast({ title: 'Voice chat ended', description: 'Conversation saved.' });
   };
 
   useEffect(() => {
@@ -175,20 +174,6 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
 
   return (
     <>
-      {/* Transcript panel */}
-      {showTranscript && transcript.length > 0 && (
-        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-50 w-[92vw] max-w-xl max-h-72 overflow-y-auto rounded-2xl border border-border bg-popover p-4 shadow-xl">
-          <h3 className="text-sm font-semibold mb-2">Voice Chat Transcript</h3>
-          <div className="space-y-2 text-sm">
-            {transcript.map((m, i) => (
-              <div key={i} className="leading-snug">
-                <span className="font-medium">{m.role === 'user' ? 'You' : displayAgentName}:</span>{' '}
-                <span className={m.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}>{m.content}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Floating controls */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
@@ -196,15 +181,6 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
           <span className="rounded-full border border-border bg-background/80 backdrop-blur px-3 py-1">
             You’re chatting with <span className="text-primary font-semibold">{displayAgentName}</span>
           </span>
-          {transcript.length > 0 && (
-            <button
-              onClick={() => setShowTranscript((v) => !v)}
-              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <MessageCircle className="h-4 w-4" />
-              {showTranscript ? 'Hide' : 'Transcript'}
-            </button>
-          )}
         </div>
 
         <Button

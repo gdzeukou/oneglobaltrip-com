@@ -19,6 +19,7 @@ import { useXAI, XAIMessage } from '@/hooks/useXAI';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { useUserAgent } from '@/hooks/useUserAgent';
+import { getDisplayAgentName } from '@/utils/displayAgentName';
 
 interface ChatMessage {
   id: string;
@@ -48,7 +49,7 @@ export const XAIChatbot = ({
   const { user } = useAuth();
   const { preferences } = useAIAgentPreferences();
   const { agent } = useUserAgent();
-  const displayAgentName = agent?.name || preferences?.aiAgentName || 'AI Assistant';
+  const displayAgentName = getDisplayAgentName(agent?.name, preferences?.aiAgentName);
 
   const contextPrompts = {
     travel: `You are ${displayAgentName}, an expert travel assistant powered by xAI Grok. Help users with travel planning, destinations, bookings, and travel advice with real-time insights and enhanced intelligence.`,

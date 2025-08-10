@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useXAI, XAIMessage } from '@/hooks/useXAI';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { useUserAgent } from '@/hooks/useUserAgent';
+import { getDisplayAgentName } from '@/utils/displayAgentName';
 
 interface Message {
   id: string;
@@ -35,7 +36,7 @@ const MayaVisaAssistant = ({ onClose, onComplete }: MayaVisaAssistantProps) => {
   const { sendMessage: sendXAIMessage } = useXAI();
   const { preferences } = useAIAgentPreferences();
   const { agent } = useUserAgent();
-  const displayAgentName = agent?.name || preferences?.aiAgentName || 'AI Assistant';
+  const displayAgentName = getDisplayAgentName(agent?.name, preferences?.aiAgentName);
   const agentInitial = displayAgentName.charAt(0).toUpperCase();
 
   const visaSteps = [

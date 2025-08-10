@@ -8,6 +8,7 @@ import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useUserAgent } from '@/hooks/useUserAgent';
+import { getDisplayAgentName } from '@/utils/displayAgentName';
 
 interface Message {
   id: string;
@@ -27,7 +28,7 @@ const PersonalizedAITravelAgent = () => {
   const { preferences, getPersonalizedContext } = useAIAgentPreferences();
   const { toast } = useToast();
   const { agent: userAgent } = useUserAgent();
-  const displayAgentName = userAgent?.name || preferences.aiAgentName || 'AI Travel Agent';
+  const displayAgentName = getDisplayAgentName(userAgent?.name, preferences.aiAgentName);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

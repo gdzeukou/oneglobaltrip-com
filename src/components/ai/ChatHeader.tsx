@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { MessageSquare, Plus, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUserAgent } from '@/hooks/useUserAgent';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { ConversationsModal } from './ConversationsModal';
+import { getDisplayAgentName } from '@/utils/displayAgentName';
 
 interface Conversation {
   id: string;
@@ -34,7 +34,7 @@ export const ChatHeader = ({
   const [showConversations, setShowConversations] = useState(false);
   const { agent } = useUserAgent();
   const { preferences } = useAIAgentPreferences();
-  const displayAgentName = agent?.name || preferences?.aiAgentName || 'AI Travel Agent';
+  const displayAgentName = getDisplayAgentName(agent?.name, preferences?.aiAgentName);
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
