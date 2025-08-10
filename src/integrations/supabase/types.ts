@@ -1647,6 +1647,45 @@ export type Database = {
         }
         Relationships: []
       }
+      voice_transcripts: {
+        Row: {
+          call_id: string
+          conversation_id: string | null
+          created_at: string
+          duration_seconds: number | null
+          ended_at: string | null
+          entities: Json
+          id: string
+          summary: string | null
+          turns: Json
+          user_id: string
+        }
+        Insert: {
+          call_id: string
+          conversation_id?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          entities?: Json
+          id?: string
+          summary?: string | null
+          turns?: Json
+          user_id: string
+        }
+        Update: {
+          call_id?: string
+          conversation_id?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          ended_at?: string | null
+          entities?: Json
+          id?: string
+          summary?: string | null
+          turns?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

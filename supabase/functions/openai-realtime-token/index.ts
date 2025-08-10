@@ -29,8 +29,60 @@ serve(async (req) => {
       body: JSON.stringify({
         model: "gpt-4o-realtime-preview-2024-12-17",
         voice,
-        instructions: instructions ||
-          "You are OneGlobalTrip's AI Travel Agent. Be concise, friendly, and proactive. Help with flights, routes, visas, hotels, and planning. Use step-by-step questions when needed.",
+        instructions:
+          instructions ||
+          "You are OneGlobalTrip's real-time Voice Travel Agent. Narrate progress while tools run. Never say 'I'll be back shortly'.",
+        modalities: ["text", "audio"],
+        input_audio_format: "pcm16",
+        output_audio_format: "pcm16",
+        tool_choice: "auto",
+        tools: [
+          {
+            type: "function",
+            name: "list_airports",
+            description: "Quick IATA lookup for airports by query text.",
+            parameters: {
+              type: "object",
+              properties: { query: { type: "string" } },
+              required: ["query"],
+            },
+          },
+          {
+            type: "function",
+            name: "search_flights",
+            description:
+              "Search flights with optional flexibility. Return 10 best options with prices.",
+            parameters: {
+              type: "object",
+              properties: {
+                origin: { type: "string" },
+                destination: { type: "string" },
+                departDate: { type: "string" },
+                returnDate: { type: "string", nullable: true },
+                pax: { type: "integer", default: 1 },
+                cabin: { type: "string", nullable: true },
+                nonstopOnly: { type: "boolean", default: false },
+                maxPriceUSD: { type: "number", nullable: true },
+              },
+              required: ["origin", "destination", "departDate"],
+            },
+          },
+          {
+            type: "function",
+            name: "hold_or_book",
+            description: "Place a 24-hour hold or book the selected itinerary.",
+            parameters: {
+              type: "object",
+              properties: {
+                itineraryId: { type: "string" },
+                passengerDetails: { type: "object" },
+                paymentMethod: { type: "object" },
+                holdOnly: { type: "boolean", default: true },
+              },
+              required: ["itineraryId"],
+            },
+          },
+        ],
       }),
     });
 

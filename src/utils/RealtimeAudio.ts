@@ -200,6 +200,17 @@ export class RealtimeChat {
     this.dc.send(JSON.stringify({ type: 'response.create' }));
   }
 
+  // Interrupt current assistant speech/output (barge-in)
+  interrupt() {
+    try {
+      if (this.dc && this.dc.readyState === 'open') {
+        this.dc.send(JSON.stringify({ type: 'response.cancel' }));
+      }
+    } catch (e) {
+      console.warn('interrupt failed', e);
+    }
+  }
+
   disconnect() {
     this.recorder?.stop();
     this.dc?.close();
