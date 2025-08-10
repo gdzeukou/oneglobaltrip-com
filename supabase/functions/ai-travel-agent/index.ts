@@ -818,8 +818,9 @@ serve(async (req) => {
       );
     }
 
-    const { message, conversationId, userId } = await req.json();
-    console.log('Request received:', { message: message?.substring(0, 100) + '...', conversationId, userId });
+    const body = await req.json();
+    const { message, conversationId, userId, personalizedContext } = body;
+    console.log('Request received:', { message: message?.substring(0, 100) + '...', conversationId, userId, hasPersonalizedContext: !!personalizedContext });
 
     if (!message || !userId) {
       console.error('Missing required fields:', { message: !!message, userId: !!userId });
@@ -888,10 +889,42 @@ serve(async (req) => {
 
     console.log('Retrieved conversation history:', messages?.length || 0, 'messages');
 
-    // Build OpenAI messages array
+    // Build OpenAI messages array with personalization
+    let agentName = personalizedContext?.aiAgentName || personalizedContext?.ai_agent_name || null;
+    let travelStyle = personalizedContext?.travelStyle || personalizedContext?.ai_agent_travel_style || null;
+    let dreamDestinations = personalizedContext?.dreamDestinations || personalizedContext?.ai_agent_dream_destinations || null;
+    let personalityTraits = personalizedContext?.personalityTraits || personalizedContext?.ai_agent_personality_traits || null;
+
+    if (!agentName || !travelStyle || !personalityTraits || !dreamDestinations) {
+      try {
+        const { data: prefs } = await supabase
+          .from('user_preferences')
+          .select('ai_agent_name, ai_agent_travel_style, ai_agent_personality_traits, ai_agent_dream_destinations')
+          .eq('user_id', userId)
+          .single();
+        agentName = agentName || prefs?.ai_agent_name || 'AI Travel Agent';
+        travelStyle = travelStyle || prefs?.ai_agent_travel_style || undefined;
+        personalityTraits = personalityTraits || prefs?.ai_agent_personality_traits || undefined;
+        dreamDestinations = dreamDestinations || prefs?.ai_agent_dream_destinations || undefined;
+      } catch (_) {
+        agentName = agentName || 'AI Travel Agent';
+      }
+    }
+
+    const personalizationHeader = [
+      `Your name is ${agentName}. Always introduce yourself as ${agentName}.`,
+      `If the user asks your name, respond exactly: "I'm ${agentName}."`,
+      'Do not call yourself OneGlobalTrip\'s AI unless specifically asked about the company.',
+      travelStyle ? `Adapt tone and recommendations for a ${travelStyle} traveler.` : '',
+      Array.isArray(dreamDestinations) && dreamDestinations.length ? `User dream destinations: ${dreamDestinations.join(', ')}.` : '',
+      personalityTraits ? `Reflect these traits: ${typeof personalityTraits === 'string' ? personalityTraits : JSON.stringify(personalityTraits)}.` : ''
+    ].filter(Boolean).join('\n');
+
+    const systemPrompt = `${personalizationHeader}\n\n${TRAVEL_AGENT_SYSTEM_PROMPT}`;
+
     const openAIMessages = [
-      { role: 'system', content: TRAVEL_AGENT_SYSTEM_PROMPT },
-      ...(messages || []).map(msg => ({ role: msg.role, content: msg.content }))
+      { role: 'system', content: systemPrompt },
+      ...(messages || []).map(msg => ({ role: msg.role as 'system' | 'user' | 'assistant', content: msg.content }))
     ];
 
     console.log('🚀 Starting OpenAI API call');

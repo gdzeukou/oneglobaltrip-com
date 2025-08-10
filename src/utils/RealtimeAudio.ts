@@ -68,11 +68,14 @@ export class RealtimeChat {
     this.audioEl.autoplay = true;
   }
 
-  async init() {
+  async init(options?: { instructions?: string; voice?: string }) {
     try {
       // 1) Get ephemeral token from our Supabase Edge Function
       const { data, error } = await supabase.functions.invoke('openai-realtime-token', {
-        body: {},
+        body: {
+          voice: options?.voice,
+          instructions: options?.instructions,
+        },
       });
       if (error) throw error;
       const EPHEMERAL_KEY = data?.client_secret?.value;

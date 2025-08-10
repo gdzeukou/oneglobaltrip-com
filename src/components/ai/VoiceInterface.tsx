@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { RealtimeChat } from '@/utils/RealtimeAudio';
+import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 
 interface VoiceInterfaceProps {
   onSpeakingChange: (speaking: boolean) => void;
@@ -11,6 +12,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const { toast } = useToast();
   const [isConnected, setIsConnected] = useState(false);
   const chatRef = useRef<RealtimeChat | null>(null);
+  const { preferences } = useAIAgentPreferences();
 
   const handleMessage = (event: any) => {
     console.log('Received Realtime event:', event);
@@ -24,7 +26,15 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const startConversation = async () => {
     try {
       chatRef.current = new RealtimeChat(handleMessage);
-      await chatRef.current.init();
+      const agentName = preferences?.aiAgentName || 'AI Travel Agent';
+      await chatRef.current.init({
+        voice: 'alloy',
+        instructions:
+          `You are OneGlobalTrip's AI Travel Agent named ${agentName}. ` +
+          `Always introduce yourself as ${agentName}. ` +
+          `If asked for your name, reply exactly: "I'm ${agentName}." ` +
+          `Be friendly, proactive, and concise. Ask at most 1–2 follow-up questions per turn.`,
+      });
       setIsConnected(true);
       toast({ title: 'Connected', description: 'Voice interface is ready' });
     } catch (error) {
