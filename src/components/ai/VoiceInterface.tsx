@@ -181,9 +181,9 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
     <>
 
       {/* Floating controls */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
+      <div className="fixed bottom-24 right-6 flex flex-col items-end gap-2 z-50">
         <div className="flex items-center gap-3 text-xs sm:text-sm">
-          <span className="rounded-full border border-border bg-background/80 backdrop-blur px-3 py-1">
+          <span className="rounded-full border border-border bg-background/80 backdrop-blur px-3 py-1 shadow-sm">
             You’re chatting with <span className="text-primary font-semibold">{displayAgentName}</span>
           </span>
         </div>
@@ -191,10 +191,10 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
         <Button
           onClick={isConnected ? endConversation : startConversation}
           size="icon"
-          className="h-14 w-14 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
+          className="h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
           aria-label={isConnected ? 'End voice chat' : 'Start voice chat'}
         >
-          {isConnected ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+          {isConnected ? <Square className="h-5 w-5 sm:h-6 sm:w-6" /> : <Mic className="h-5 w-5 sm:h-6 sm:w-6" />}
         </Button>
       </div>
     </>

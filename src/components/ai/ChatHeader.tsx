@@ -6,6 +6,7 @@ import { useUserAgent } from '@/hooks/useUserAgent';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { ConversationsModal } from './ConversationsModal';
 import { getDisplayAgentName } from '@/utils/displayAgentName';
+import { Link } from 'react-router-dom';
 
 interface Conversation {
   id: string;
@@ -72,16 +73,21 @@ export const ChatHeader = ({
           </div>
         </div>
 
-        {/* Right - New Chat */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onCreateConversation}
-          className="flex items-center space-x-1 text-muted-foreground hover:text-foreground"
-        >
-          <Plus className="h-4 w-4" />
-          {!isMobile && <span className="text-sm">New</span>}
-        </Button>
+        {/* Right - Actions */}
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onCreateConversation}
+            className="flex items-center space-x-1 text-muted-foreground hover:text-foreground"
+          >
+            <Plus className="h-4 w-4" />
+            {!isMobile && <span className="text-sm">New</span>}
+          </Button>
+          <Button asChild variant="outline" size="sm" className="ml-1">
+            <Link to="/settings">Customize</Link>
+          </Button>
+        </div>
       </div>
 
       <ConversationsModal

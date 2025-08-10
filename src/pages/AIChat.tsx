@@ -39,7 +39,7 @@ const AIChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, session } = useAuth();
-  const { preferences, getPersonalizedContext } = useAIAgentPreferences();
+  const { preferences, getPersonalizedContext, loading: prefsLoading } = useAIAgentPreferences();
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const displayAgentName = getDisplayAgentName(agent?.name, preferences?.aiAgentName);
@@ -137,7 +137,7 @@ const AIChat = () => {
   }, [user]);
 
   useEffect(() => {
-    if (user && messages.length === 0 && !currentConversationId) {
+    if (user && !prefsLoading && messages.length === 0 && !currentConversationId) {
       (async () => {
         const greeting = await generateDynamicGreeting();
         const message: Message = {
@@ -149,7 +149,7 @@ const AIChat = () => {
         setMessages([message]);
       })();
     }
-  }, [user, messages.length, currentConversationId, preferences, conversations]);
+  }, [user, prefsLoading, messages.length, currentConversationId, preferences, conversations]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -461,8 +461,8 @@ const AIChat = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      {/* Navigation - Hidden on mobile for full screen chat */}
-      {!isMobile && <Navigation />}
+      {/* Navigation - Always visible */}
+      <Navigation />
       
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Chat Header */}

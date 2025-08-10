@@ -82,6 +82,7 @@ const About = lazy(() => import("./pages/About"));
 const Blog = lazy(() => import("./pages/Blog"));
 const Services = lazy(() => import("./pages/Services"));
 const Testimonials = lazy(() => import("./pages/Testimonials"));
+const Settings = lazy(() => import("./pages/Settings"));
 
 import "./App.css";
 import AgentProtectedRoute from "./components/auth/AgentProtectedRoute";
@@ -196,6 +197,11 @@ function App() {
                       <Route path="/concierge" element={
                         <ProtectedRoute requireEmailVerification={false}>
                           <Concierge />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/settings" element={
+                        <ProtectedRoute requireEmailVerification={false}>
+                          <Settings />
                         </ProtectedRoute>
                       } />
                       
