@@ -110,3 +110,6 @@ verify_jwt = false
 
 [functions.openai-realtime-token]
 verify_jwt = false
+
+[functions.conversation-title]
+verify_jwt = false
