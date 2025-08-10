@@ -11,11 +11,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
+import { getDisplayAgentName } from '@/utils/displayAgentName';
 
 const SimplifiedNavigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const { agent, hasAgent } = useUnifiedAIAgent();
+  const { preferences } = useAIAgentPreferences();
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -37,6 +40,8 @@ const SimplifiedNavigation = () => {
     }
     return 'Account';
   };
+
+  const displayAgentName = getDisplayAgentName(agent?.name, preferences?.aiAgentName);
 
   return (
     <nav className="bg-white shadow-sm border-b border-gray-100 sticky top-0 z-50">
@@ -78,7 +83,7 @@ const SimplifiedNavigation = () => {
                   <Button variant="outline" asChild className="flex items-center space-x-2">
                     <Link to="/ai-chat">
                       <Bot className="h-4 w-4" />
-                      <span>Chat with {agent.name}</span>
+                      <span>Chat with {displayAgentName}</span>
                     </Link>
                   </Button>
                 )}
@@ -159,7 +164,7 @@ const SimplifiedNavigation = () => {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <Bot className="h-4 w-4" />
-                    <span>Chat with {agent.name}</span>
+                    <span>Chat with {displayAgentName}</span>
                   </Link>
                 )}
                 <Link

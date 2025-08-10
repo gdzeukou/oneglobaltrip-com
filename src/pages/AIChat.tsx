@@ -14,6 +14,7 @@ import { MessageBubble } from '@/components/ai/MessageBubble';
 import { ChatInput } from '@/components/ai/ChatInput';
 import VoiceInterface from '@/components/ai/VoiceInterface';
 import { getDisplayAgentName } from '@/utils/displayAgentName';
+import { useLocation } from 'react-router-dom';
 
 interface Message {
   id: string;
@@ -42,6 +43,7 @@ const AIChat = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const displayAgentName = getDisplayAgentName(agent?.name, preferences?.aiAgentName);
+  const location = useLocation();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -148,6 +150,15 @@ const AIChat = () => {
       })();
     }
   }, [user, messages.length, currentConversationId, preferences, conversations]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const cid = params.get('cid');
+    if (cid && cid !== currentConversationId) {
+      setCurrentConversationId(cid);
+      loadMessages(cid);
+    }
+  }, [location.search]);
 
   const loadConversations = async () => {
     if (!user) return;

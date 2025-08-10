@@ -7,6 +7,8 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, Mail, Phone, MapPin, Calendar, FileText, Edit2 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useProfileMutation } from '@/hooks/useProfileMutation';
 
 const Profile = () => {
   const location = useLocation();
@@ -22,10 +24,48 @@ const Profile = () => {
     passportNumber: '',
     passportExpiry: ''
   });
+  const mutation = useProfileMutation({ onSuccess: () => setIsEditing(false) });
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!user?.id) return;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, phone, nationality, date_of_birth, passport_number, passport_expiry')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (data) {
+        setProfileData({
+          firstName: data.first_name || '',
+          lastName: data.last_name || '',
+          email: user.email || '',
+          phone: data.phone || '',
+          nationality: data.nationality || '',
+          dateOfBirth: data.date_of_birth || '',
+          passportNumber: data.passport_number || '',
+          passportExpiry: data.passport_expiry || ''
+        });
+      }
+    };
+    loadProfile();
+  }, [user?.id]);
+
+  const handleSave = () => {
+    if (!user?.id) return;
+    mutation.mutate({
+      first_name: profileData.firstName,
+      last_name: profileData.lastName,
+      date_of_birth: profileData.dateOfBirth ? new Date(profileData.dateOfBirth) : undefined,
+      passport_number: profileData.passportNumber,
+      passport_expiry: profileData.passportExpiry ? new Date(profileData.passportExpiry) : undefined,
+      nationality: profileData.nationality,
+      phone: profileData.phone,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -195,8 +235,8 @@ const Profile = () => {
                   
                   {isEditing && (
                     <div className="mt-6 flex space-x-4">
-                      <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-                        Save Changes
+                      <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={handleSave} disabled={mutation.isPending}>
+                        {mutation.isPending ? 'Saving...' : 'Save Changes'}
                       </Button>
                       <Button 
                         variant="outline" 

@@ -86,6 +86,7 @@ const Testimonials = lazy(() => import("./pages/Testimonials"));
 import "./App.css";
 import AgentProtectedRoute from "./components/auth/AgentProtectedRoute";
 import LoadingBoundary from "./components/LoadingBoundary";
+import GlobalChatWidget from "./components/ai/GlobalChatWidget";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,7 @@ function App() {
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
+                  <GlobalChatWidget />
                   <Suspense fallback={
                     <div className="min-h-screen flex items-center justify-center">
                       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

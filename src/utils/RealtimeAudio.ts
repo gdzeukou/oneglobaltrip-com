@@ -98,6 +98,32 @@ export class RealtimeChat {
       this.dc.addEventListener('message', (e) => {
         try {
           const event = JSON.parse(e.data);
+
+          // Send session update after session is created
+          if (event.type === 'session.created') {
+            const update = {
+              type: 'session.update',
+              session: {
+                modalities: ['text', 'audio'],
+                instructions: options?.instructions || '',
+                voice: options?.voice || 'alloy',
+                input_audio_format: 'pcm16',
+                output_audio_format: 'pcm16',
+                input_audio_transcription: { model: 'whisper-1' },
+                turn_detection: {
+                  type: 'server_vad',
+                  threshold: 0.5,
+                  prefix_padding_ms: 300,
+                  silence_duration_ms: 1000,
+                },
+                tool_choice: 'auto',
+                temperature: 0.8,
+                max_response_output_tokens: 'inf',
+              },
+            };
+            this.dc?.send(JSON.stringify(update));
+          }
+
           // Forward to UI
           this.onMessage(event);
         } catch (err) {
@@ -128,19 +154,9 @@ export class RealtimeChat {
 
       await this.pc.setRemoteDescription(answer);
 
-      // 5) Start recording and streaming mic audio chunks via data channel if needed
-      this.recorder = new AudioRecorder((audioData) => {
-        // Optionally send audio buffers via data channel events if needed
-        if (this.dc?.readyState === 'open') {
-          this.dc.send(
-            JSON.stringify({
-              type: 'input_audio_buffer.append',
-              audio: this.encodeAudioData(audioData),
-            })
-          );
-        }
-      });
-      await this.recorder.start();
+      // 5) Mic is already streamed via WebRTC track. Avoid sending duplicate audio over data channel.
+      // If needed in the future, implement manual buffering with VAD disabled.
+      // await this.recorder?.start();
     } catch (error) {
       console.error('Error initializing realtime chat:', error);
       throw error;

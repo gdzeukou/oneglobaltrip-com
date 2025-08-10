@@ -5,12 +5,15 @@ import { useUserAgent } from '@/hooks/useUserAgent';
 import { Plane, Bot } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import NavigationAuth from './navigation/NavigationAuth';
+import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
+import { getDisplayAgentName } from '@/utils/displayAgentName';
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user } = useAuth();
   const { agent } = useUserAgent();
   const location = useLocation();
+  const { preferences } = useAIAgentPreferences();
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -19,6 +22,8 @@ const Navigation = () => {
   const isActive = (path: string) => {
     return location.pathname === path;
   };
+
+  const displayAgentName = getDisplayAgentName(agent?.name, preferences?.aiAgentName) || 'AI Travel Agent';
 
   return (
     <>
@@ -104,16 +109,16 @@ const Navigation = () => {
                     }`}
                   >
                     {agent?.avatar_url ? (
-                      <Avatar className="h-4 w-4">
-                        <AvatarImage src={agent.avatar_url} alt={agent.name} />
-                        <AvatarFallback className="bg-gradient-to-r from-purple-500 to-blue-600 text-white text-xs">
-                          {agent.name?.[0] || 'A'}
-                        </AvatarFallback>
-                      </Avatar>
+                        <Avatar className="h-4 w-4">
+                          <AvatarImage src={agent.avatar_url} alt={agent.name} />
+                          <AvatarFallback className="bg-gradient-to-r from-purple-500 to-blue-600 text-white text-xs">
+                            {agent.name?.[0] || 'A'}
+                          </AvatarFallback>
+                        </Avatar>
                     ) : (
                       <Bot className="h-4 w-4" />
                     )}
-                    <span>Chat with {agent?.name || 'AI Travel Agent'}</span>
+                    <span>Chat with {displayAgentName}</span>
                     <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-1">Free</span>
                   </Link>
                 ) : (
@@ -267,7 +272,7 @@ const Navigation = () => {
                   ) : (
                     <Bot className="h-5 w-5" />
                   )}
-                  <span>Chat with {agent?.name || 'AI Travel Agent'}</span>
+                  <span>Chat with {displayAgentName}</span>
                   <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Free</span>
                 </Link>
               ) : (

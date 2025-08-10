@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Mic, Square } from 'lucide-react';
 import { getDisplayAgentName } from '@/utils/displayAgentName';
+import { useNavigate } from 'react-router-dom';
 
 interface VoiceInterfaceProps {
   onSpeakingChange: (speaking: boolean) => void;
@@ -20,6 +21,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const { preferences } = useAIAgentPreferences();
   const { agent: userAgent } = useUserAgent();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [voiceConversationId, setVoiceConversationId] = useState<string | null>(null);
   const userBufferRef = useRef<string>('');
   const assistantBufferRef = useRef<string>('');
@@ -163,6 +165,9 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
     chatRef.current?.disconnect();
     setIsConnected(false);
     onSpeakingChange(false);
+    if (voiceConversationId) {
+      navigate(`/ai-chat?cid=${voiceConversationId}`);
+    }
     toast({ title: 'Voice chat ended', description: 'Conversation saved.' });
   };
 
