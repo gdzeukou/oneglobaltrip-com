@@ -119,7 +119,7 @@ const UserManagement: React.FC = () => {
           .from('user_agents')
           .select('*')
           .eq('user_id', userId)
-          .single();
+          .maybeSingle();
 
         // Get recent activity
         const { data: activity } = await supabase
@@ -142,7 +142,7 @@ const UserManagement: React.FC = () => {
           .eq('user_id', userId)
           .order('last_seen', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         userData.push({
           profile,
@@ -180,7 +180,7 @@ const UserManagement: React.FC = () => {
           .eq('email', submission.email)
           .order('last_seen', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         userData.push({
           profile: {
@@ -230,7 +230,7 @@ const UserManagement: React.FC = () => {
           .eq('email', activityUser.email)
           .order('last_seen', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
 
         userData.push({
           profile: {
