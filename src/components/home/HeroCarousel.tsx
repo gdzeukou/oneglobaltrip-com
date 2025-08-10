@@ -65,9 +65,9 @@ const HeroCarousel = () => {
 
       {/* Trust badge top-left */}
       <div className="absolute top-4 left-4 z-10">
-        <div className="backdrop-blur-md bg-black/60 text-white font-bold rounded-full px-4 py-2 text-xs sm:text-sm flex items-center gap-2">
+        <div className="backdrop-blur-md bg-black/60 text-white font-extrabold rounded-full px-4 py-2 text-xs sm:text-sm flex items-center gap-2">
           <span className="inline-flex items-center"><span className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2" /></span>
-          <span className="inline-flex font-extrabold text-white drop-shadow-xl">98% Visa Success Rate - 10,000+ Happy Travelers</span>
+          <span className="inline-flex text-white font-extrabold drop-shadow-xl">98% Visa Success Rate - 10,000+ Happy Travelers</span>
         </div>
       </div>
 

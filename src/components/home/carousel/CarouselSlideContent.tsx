@@ -28,7 +28,7 @@ const CarouselSlideContent = ({ slide, isTransitioning }: CarouselSlideContentPr
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
             <Button size="lg" className="relative overflow-hidden rounded-full px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-bold tracking-wide transition-all duration-500 w-full sm:w-auto bg-gradient-to-r from-primary via-primary/90 to-primary/80 text-primary-foreground animate-glow-pulse" asChild>
               <Link to="/startmytrip">
-                <span className="relative z-10 flex items-center justify-center">
+                <span className="relative z-10 flex items-center justify-center font-extrabold text-white drop-shadow-xl">
                   <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3" />
                   Plan My Perfect Trip
                 </span>
@@ -38,7 +38,7 @@ const CarouselSlideContent = ({ slide, isTransitioning }: CarouselSlideContentPr
 
             <Button size="lg" variant="outline" className="rounded-full border-white/40 text-white hover:bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold tracking-wide transition-all duration-300 w-full sm:w-auto" asChild>
               <Link to="/packages">
-                <span className="flex items-center">
+                <span className="flex items-center font-extrabold text-white drop-shadow-md">
                   <PlaneTakeoff className="h-5 w-5 mr-2" />
                   Explore Packages
                 </span>
