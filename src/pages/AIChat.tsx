@@ -48,6 +48,82 @@ const AIChat = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Greeting helpers
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const capitalizeWords = (s?: string | null) => (s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : '');
+
+  const generateDynamicGreeting = async (): Promise<string> => {
+    const agentName = preferences.aiAgentName || agent?.name || 'your AI Travel Agent';
+    const context = getPersonalizedContext();
+    const now = new Date();
+
+    // Fetch recent activity signals
+    let recentActivities: any[] = [];
+    try {
+      if (user) {
+        const { data } = await supabase
+          .from('user_activity')
+          .select('action_type, action_data, page_visited, created_at, last_seen')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(10);
+        recentActivities = data || [];
+      }
+    } catch (e) {
+      console.warn('Failed to fetch activity signals:', e);
+    }
+
+    const lastCityFromEvent = recentActivities.find((a) => a?.action_type === 'city_view')?.action_data?.city as
+      | string
+      | undefined;
+
+    const lastCityFromPath = (() => {
+      const pv = recentActivities.find(
+        (a) => typeof a?.page_visited === 'string' && /city|destinations/i.test(a.page_visited || '')
+      )?.page_visited as string | undefined;
+      if (!pv) return undefined;
+      const match = pv.match(/\/(city|destinations)\/([^\/?#]+)/i);
+      return match?.[2]?.replace(/-/g, ' ');
+    })();
+
+    const lastCity = lastCityFromEvent || lastCityFromPath;
+    const lastVisa = recentActivities.find((a) => a?.action_type === 'visa_flow_start')?.action_data?.country as
+      | string
+      | undefined;
+
+    const lastActivityTs = recentActivities[0]?.created_at ? new Date(recentActivities[0].created_at).getTime() : 0;
+    const lastConvTs = conversations[0]?.updated_at ? new Date(conversations[0].updated_at).getTime() : 0;
+    const mostRecentTs = Math.max(lastActivityTs, lastConvTs);
+    const isRecent = mostRecentTs > 0 && now.getTime() - mostRecentTs < 30 * DAY_MS;
+
+    const dream = context?.dreamDestinations?.[0];
+    const travelStyle = context?.travelStyle;
+
+    const hook = lastCity
+      ? `Still thinking about ${capitalizeWords(lastCity)}?`
+      : lastVisa
+      ? `Want to finish your ${lastVisa} visa step?`
+      : dream
+      ? `Quick idea for ${dream}…`
+      : 'Got 60 seconds? Let\u2019s lock something great.';
+
+    const windowText = 'your preferred dates';
+
+    if (isRecent) {
+      if (lastVisa) {
+        return `${hook} I can complete your checklist and book your appointment now. Prefer that or should I price flights first?`;
+      }
+      if (lastCity) {
+        return `${hook} I can price flights + a hotel for ${windowText} or draft a 3-day plan—your pick.`;
+      }
+      return `${hook} I can price a bundle or set a fare alert. What sounds better?`;
+    }
+
+    const firstName = (user?.user_metadata as any)?.first_name as string | undefined;
+    const intro = firstName ? `Welcome back, ${firstName}! ` : 'Welcome back! ';
+    const styleLine = travelStyle ? `As a ${travelStyle} traveler, ` : '';
+    return `${intro}${hook} ${styleLine}Want me to price it or refine a route first?`;
+  };
   // Load conversations on mount
   useEffect(() => {
     if (user) {
@@ -57,40 +133,18 @@ const AIChat = () => {
 
   useEffect(() => {
     if (user && messages.length === 0 && !currentConversationId) {
-      const context = getPersonalizedContext();
-      let welcomeMessage = '';
-
-      if (context && preferences.aiAgentSetupCompleted) {
-        welcomeMessage = `🎉 **Welcome back!** I'm ${context.agentName}, your personal AI Travel Agent!\n\n`;
-        
-        if (context.travelStyle) {
-          welcomeMessage += `I remember you're a ${context.travelStyle} traveler`;
-          if (context.dreamDestinations.length > 0) {
-            welcomeMessage += ` with dreams of visiting ${context.dreamDestinations.slice(0, 2).join(' and ')}${context.dreamDestinations.length > 2 ? ' (and more!)' : ''}`;
-          }
-          welcomeMessage += '. ';
-        }
-        
-        welcomeMessage += `\n\n✈️ **What I can help you with:**\n• Search real-time flights with live pricing\n• Find the best routes and deals matching your ${context.travelStyle || ''} style\n• Help with visa requirements and applications\n• Provide personalized travel recommendations\n• Guide you through complete booking process\n• Answer any travel-related questions\n\n`;
-        
-        if (context.dietaryPreferences.length > 0) {
-          welcomeMessage += `💡 I'll also keep in mind your dietary preferences (${context.dietaryPreferences.join(', ')}) when making recommendations.\n\n`;
-        }
-        
-        welcomeMessage += `🌟 **Ready to plan your next adventure?** Just tell me where you'd like to go!`;
-      } else {
-        welcomeMessage = `🎉 **Welcome to ${preferences.aiAgentName}!** I'm your personal AI Travel Agent, and I'm excited to help you plan your next adventure!\n\n✈️ **What I can do for you:**\n• Search real-time flights with live pricing\n• Find the best routes and deals\n• Help with visa requirements and applications\n• Provide personalized travel recommendations\n• Guide you through complete booking process\n• Answer any travel-related questions\n\n🌟 **Getting Started:**\nJust tell me where you'd like to go and when, and I'll take care of the rest! For example:\n• "I want to fly from New York to Paris in December"\n• "Help me find flights to Tokyo for my honeymoon"\n• "What visa do I need for Germany?"\n\nWhat travel plans can I help you with today? 🗺️`;
-      }
-
-      const message: Message = {
-        id: 'welcome-' + Date.now(),
-        role: 'assistant',
-        content: welcomeMessage,
-        timestamp: new Date()
-      };
-      setMessages([message]);
+      (async () => {
+        const greeting = await generateDynamicGreeting();
+        const message: Message = {
+          id: 'welcome-' + Date.now(),
+          role: 'assistant',
+          content: greeting,
+          timestamp: new Date(),
+        };
+        setMessages([message]);
+      })();
     }
-  }, [user, messages.length, currentConversationId, preferences, getPersonalizedContext]);
+  }, [user, messages.length, currentConversationId, preferences, conversations]);
 
   const loadConversations = async () => {
     if (!user) return;
@@ -162,13 +216,16 @@ const AIChat = () => {
       setCurrentConversationId(newConversation.id);
       setMessages([]);
       
-      // Add welcome message
-      setMessages([{
-        id: 'welcome',
-        role: 'assistant',
-        content: `Hi there! 👋 I'm ${preferences.aiAgentName}, your personal AI Travel Agent with real-time flight search capabilities!\n\nI can search actual flights, compare live prices, find the best routes, and help with visas, bookings, and complete travel planning. I work step-by-step to understand your needs perfectly.\n\nWhat brings you here today? Are you planning a new adventure? ✈️`,
-        timestamp: new Date()
-      }]);
+      // Add personalized greeting
+      const greeting = await generateDynamicGreeting();
+      setMessages([
+        {
+          id: 'welcome',
+          role: 'assistant',
+          content: greeting,
+          timestamp: new Date(),
+        },
+      ]);
     } catch (error) {
       console.error('Error creating conversation:', error);
       toast({
