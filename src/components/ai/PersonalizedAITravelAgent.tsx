@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useUserAgent } from '@/hooks/useUserAgent';
 
 interface Message {
   id: string;
@@ -25,6 +26,8 @@ const PersonalizedAITravelAgent = () => {
   const { user } = useAuth();
   const { preferences, getPersonalizedContext } = useAIAgentPreferences();
   const { toast } = useToast();
+  const { agent: userAgent } = useUserAgent();
+  const displayAgentName = userAgent?.name || preferences.aiAgentName || 'AI Travel Agent';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -64,7 +67,7 @@ const PersonalizedAITravelAgent = () => {
         
         welcomeMessage += 'What travel adventure can I help you plan today? ✈️';
       } else {
-        welcomeMessage = `Hi there! 👋 I'm ${preferences.aiAgentName}, your AI Travel Agent with real-time flight search capabilities!\n\nI can help you find and compare actual flights, discover the best routes, check real prices, and guide you through your entire travel journey - from visa assistance to booking confirmations.\n\nTo get started, could you tell me: are you planning a new trip? ✈️`;
+        welcomeMessage = `Hi there! 👋 I'm ${displayAgentName}, your AI Travel Agent with real-time flight search capabilities!\n\nI can help you find and compare actual flights, discover the best routes, check real prices, and guide you through your entire travel journey - from visa assistance to booking confirmations.\n\nTo get started, could you tell me: are you planning a new trip? ✈️`;
       }
 
       setMessages([{
@@ -90,7 +93,7 @@ const PersonalizedAITravelAgent = () => {
     setInputMessage('');
     setIsLoading(true);
 
-    console.log(`🚀 ${preferences.aiAgentName}: Starting message send process`);
+    console.log(`🚀 ${displayAgentName}: Starting message send process`);
     console.log('📝 Message:', inputMessage);
     console.log('👤 User ID:', user.id);
     console.log('💬 Conversation ID:', conversationId);
@@ -98,14 +101,12 @@ const PersonalizedAITravelAgent = () => {
     const context = getPersonalizedContext();
     console.log('🎯 Personalized context:', context);
     
-    const functionUrl = `https://sdeyqojklszwarfrputz.supabase.co/functions/v1/ai-travel-agent`;
-    
     let retryCount = 0;
     const maxRetries = 3;
     
     while (retryCount < maxRetries) {
       try {
-        console.log(`📡 ${preferences.aiAgentName}: Attempt ${retryCount + 1}/${maxRetries} - Calling edge function`);
+        console.log(`📡 ${displayAgentName}: Attempt ${retryCount + 1}/${maxRetries} - Calling edge function`);
         
         const { data, error } = await supabase.functions.invoke('ai-travel-agent', {
           body: {
@@ -121,16 +122,16 @@ const PersonalizedAITravelAgent = () => {
         console.log('❌ Error:', error);
 
         if (error) {
-          console.error(`🚨 ${preferences.aiAgentName}: Edge function error:`, error);
+          console.error(`🚨 ${displayAgentName}: Edge function error:`, error);
           throw error;
         }
 
         if (!data || !data.response) {
-          console.error(`🚨 ${preferences.aiAgentName}: Invalid response format:`, data);
+          console.error(`🚨 ${displayAgentName}: Invalid response format:`, data);
           throw new Error('Invalid response format from AI service');
         }
 
-        console.log(`✅ ${preferences.aiAgentName}: Processing successful response`);
+        console.log(`✅ ${displayAgentName}: Processing successful response`);
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
@@ -140,20 +141,20 @@ const PersonalizedAITravelAgent = () => {
 
         setMessages(prev => [...prev, assistantMessage]);
         setConversationId(data.conversationId);
-        console.log(`✅ ${preferences.aiAgentName}: Message successfully processed and stored`);
+        console.log(`✅ ${displayAgentName}: Message successfully processed and stored`);
         return;
 
       } catch (error) {
         retryCount++;
-        console.error(`❌ ${preferences.aiAgentName}: Attempt ${retryCount}/${maxRetries} failed:`, error);
+        console.error(`❌ ${displayAgentName}: Attempt ${retryCount}/${maxRetries} failed:`, error);
         
         if (retryCount >= maxRetries) {
-          console.error(`🚨 ${preferences.aiAgentName}: All retry attempts failed, showing fallback response`);
+          console.error(`🚨 ${displayAgentName}: All retry attempts failed, showing fallback response`);
           
           const fallbackMessage: Message = {
             id: (Date.now() + 1).toString(),
             role: 'assistant',
-            content: `🤖 **${preferences.aiAgentName} is Temporarily Unavailable**
+            content: `🤖 **${displayAgentName} is Temporarily Unavailable**
 
 I'm experiencing technical difficulties right now, but I'm here to help! Here's what might be happening:
 
@@ -181,13 +182,13 @@ Contact support if this issue persists for more than 5 minutes.`,
           setMessages(prev => [...prev, fallbackMessage]);
           
           toast({
-            title: `${preferences.aiAgentName} Temporarily Unavailable`,
+            title: `${displayAgentName} Temporarily Unavailable`,
             description: "I've provided a detailed status update in the chat. Please try again in a moment.",
             variant: "destructive"
           });
         } else {
           const delay = 1000 * Math.pow(2, retryCount - 1);
-          console.log(`⏳ ${preferences.aiAgentName}: Waiting ${delay}ms before retry`);
+          console.log(`⏳ ${displayAgentName}: Waiting ${delay}ms before retry`);
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
@@ -214,7 +215,7 @@ Contact support if this issue persists for more than 5 minutes.`,
   };
 
   const getAgentInitial = () => {
-    return preferences.aiAgentName.charAt(0).toUpperCase();
+    return displayAgentName.charAt(0).toUpperCase();
   };
 
   const getAgentGradient = () => {
@@ -254,7 +255,7 @@ Contact support if this issue persists for more than 5 minutes.`,
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center space-x-2 min-w-0 flex-1">
                 <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                <span className="text-sm sm:text-base truncate">{preferences.aiAgentName}</span>
+                <span className="text-sm sm:text-base truncate">{displayAgentName}</span>
                 {preferences.aiAgentSetupCompleted && (
                   <Settings className="h-3 w-3 sm:h-4 sm:w-4 opacity-75 flex-shrink-0" />
                 )}
@@ -330,7 +331,7 @@ Contact support if this issue persists for more than 5 minutes.`,
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder={`Message ${preferences.aiAgentName}...`}
+                  placeholder={`Message ${displayAgentName}...`}
                   className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base sm:text-sm resize-none min-h-[40px] max-h-24 leading-normal"
                   disabled={isLoading}
                   rows={1}

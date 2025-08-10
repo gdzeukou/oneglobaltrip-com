@@ -40,7 +40,7 @@ const AIChat = () => {
   const { preferences, getPersonalizedContext } = useAIAgentPreferences();
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const displayAgentName = preferences?.aiAgentName || agent?.name || 'AI Travel Agent';
+  const displayAgentName = agent?.name || preferences?.aiAgentName || 'AI Travel Agent';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -55,7 +55,7 @@ const AIChat = () => {
   const capitalizeWords = (s?: string | null) => (s ? s.replace(/\b\w/g, (c) => c.toUpperCase()) : '');
 
   const generateDynamicGreeting = async (): Promise<string> => {
-    const agentName = preferences.aiAgentName || agent?.name || 'your AI Travel Agent';
+    const agentName = agent?.name || preferences.aiAgentName || 'your AI Travel Agent';
     const context = getPersonalizedContext();
     const now = new Date();
 
