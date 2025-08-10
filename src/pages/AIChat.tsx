@@ -40,6 +40,7 @@ const AIChat = () => {
   const { preferences, getPersonalizedContext } = useAIAgentPreferences();
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  const displayAgentName = preferences?.aiAgentName || agent?.name || 'AI Travel Agent';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -287,7 +288,7 @@ const AIChat = () => {
       console.log('❌ No user found, aborting');
       toast({
         title: "Authentication Required",
-        description: `Please log in to chat with ${agent?.name || 'AI Travel Agent'}.`,
+        description: `Please log in to chat with ${displayAgentName}.`,
         variant: "destructive"
       });
       return;
@@ -461,6 +462,14 @@ const AIChat = () => {
           onDeleteConversation={deleteConversation}
           isMobile={isMobile}
         />
+        <div className="px-4 pt-2">
+          <div className="max-w-4xl mx-auto">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-muted/30 px-3 py-1 text-sm">
+              <span className="font-medium">You’re chatting with</span>
+              <span className="text-primary font-semibold">{displayAgentName}</span>
+            </div>
+          </div>
+        </div>
 
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto">
@@ -471,7 +480,7 @@ const AIChat = () => {
                   <Sparkles className="h-8 w-8 text-primary" />
                 </div>
                 <h2 className="text-xl font-semibold mb-2">
-                  Welcome to {agent?.name || 'AI Travel Agent'}
+                  Welcome to {displayAgentName}
                 </h2>
                 <p className="text-muted-foreground mb-6 text-sm">
                   Your personal AI travel agent with real-time flight search and booking assistance
@@ -499,7 +508,7 @@ const AIChat = () => {
                     <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3 flex items-center space-x-2 max-w-[85%] sm:max-w-[70%]">
                       <Loader2 className="h-4 w-4 animate-spin" />
                       <span className="text-sm text-muted-foreground">
-                        {agent?.name || 'AI Travel Agent'} is thinking...
+                        {displayAgentName} is thinking...
                       </span>
                     </div>
                   </div>
@@ -517,7 +526,7 @@ const AIChat = () => {
           onChange={setInputMessage}
           onSend={sendMessage}
           isLoading={isLoading}
-          placeholder={`Message ${agent?.name || 'AI Travel Agent'}...`}
+          placeholder={`Message ${displayAgentName}...`}
         />
         <VoiceInterface onSpeakingChange={() => {}} />
       </div>
