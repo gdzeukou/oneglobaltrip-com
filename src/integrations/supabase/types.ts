@@ -1224,6 +1224,48 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_contexts: {
+        Row: {
+          budget_range: string | null
+          created_at: string
+          date_window: Json | null
+          destinations: string[]
+          id: string
+          notes: string | null
+          party_size: number | null
+          saved_quotes: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          budget_range?: string | null
+          created_at?: string
+          date_window?: Json | null
+          destinations?: string[]
+          id?: string
+          notes?: string | null
+          party_size?: number | null
+          saved_quotes?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          budget_range?: string | null
+          created_at?: string
+          date_window?: Json | null
+          destinations?: string[]
+          id?: string
+          notes?: string | null
+          party_size?: number | null
+          saved_quotes?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       trips: {
         Row: {
           created_at: string
@@ -1403,14 +1445,21 @@ export type Database = {
           ai_agent_setup_completed: boolean | null
           ai_agent_travel_style: string | null
           ai_agent_visa_assistance: boolean | null
+          budget_band: string | null
           created_at: string
           emergency_contacts: Json | null
+          home_airports: string[] | null
           id: string
+          loyalty_ids: Json | null
           notification_settings: Json | null
+          passports: string[] | null
+          preference_vector: Json | null
           privacy_settings: Json | null
+          tracking_opt_in: boolean | null
           travel_preferences: Json | null
           updated_at: string
           user_id: string
+          voice_opt_in: boolean | null
         }
         Insert: {
           ai_agent_accessibility_needs?: string[] | null
@@ -1422,14 +1471,21 @@ export type Database = {
           ai_agent_setup_completed?: boolean | null
           ai_agent_travel_style?: string | null
           ai_agent_visa_assistance?: boolean | null
+          budget_band?: string | null
           created_at?: string
           emergency_contacts?: Json | null
+          home_airports?: string[] | null
           id?: string
+          loyalty_ids?: Json | null
           notification_settings?: Json | null
+          passports?: string[] | null
+          preference_vector?: Json | null
           privacy_settings?: Json | null
+          tracking_opt_in?: boolean | null
           travel_preferences?: Json | null
           updated_at?: string
           user_id: string
+          voice_opt_in?: boolean | null
         }
         Update: {
           ai_agent_accessibility_needs?: string[] | null
@@ -1441,14 +1497,21 @@ export type Database = {
           ai_agent_setup_completed?: boolean | null
           ai_agent_travel_style?: string | null
           ai_agent_visa_assistance?: boolean | null
+          budget_band?: string | null
           created_at?: string
           emergency_contacts?: Json | null
+          home_airports?: string[] | null
           id?: string
+          loyalty_ids?: Json | null
           notification_settings?: Json | null
+          passports?: string[] | null
+          preference_vector?: Json | null
           privacy_settings?: Json | null
+          tracking_opt_in?: boolean | null
           travel_preferences?: Json | null
           updated_at?: string
           user_id?: string
+          voice_opt_in?: boolean | null
         }
         Relationships: []
       }
