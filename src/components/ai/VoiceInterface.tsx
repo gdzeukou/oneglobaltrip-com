@@ -26,7 +26,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const [firstName, setFirstName] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const [showTranscript, setShowTranscript] = useState(false);
-  const displayAgentName = preferences?.aiAgentName || userAgent?.name || 'AI Travel Agent';
+  const displayAgentName = userAgent?.name || preferences?.aiAgentName || 'AI Travel Agent';
 
   const ensureConversation = async (): Promise<string | null> => {
     if (voiceConversationId) return voiceConversationId;

@@ -35,7 +35,7 @@ const MayaVisaAssistant = ({ onClose, onComplete }: MayaVisaAssistantProps) => {
   const { sendMessage: sendXAIMessage } = useXAI();
   const { preferences } = useAIAgentPreferences();
   const { agent } = useUserAgent();
-  const displayAgentName = preferences?.aiAgentName || agent?.name || 'AI Assistant';
+  const displayAgentName = agent?.name || preferences?.aiAgentName || 'AI Assistant';
   const agentInitial = displayAgentName.charAt(0).toUpperCase();
 
   const visaSteps = [

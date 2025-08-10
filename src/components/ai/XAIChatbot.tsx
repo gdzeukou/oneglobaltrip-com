@@ -48,7 +48,7 @@ export const XAIChatbot = ({
   const { user } = useAuth();
   const { preferences } = useAIAgentPreferences();
   const { agent } = useUserAgent();
-  const displayAgentName = preferences?.aiAgentName || agent?.name || 'AI Assistant';
+  const displayAgentName = agent?.name || preferences?.aiAgentName || 'AI Assistant';
 
   const contextPrompts = {
     travel: `You are ${displayAgentName}, an expert travel assistant powered by xAI Grok. Help users with travel planning, destinations, bookings, and travel advice with real-time insights and enhanced intelligence.`,

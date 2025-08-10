@@ -34,7 +34,7 @@ export const ChatHeader = ({
   const [showConversations, setShowConversations] = useState(false);
   const { agent } = useUserAgent();
   const { preferences } = useAIAgentPreferences();
-  const displayAgentName = preferences?.aiAgentName || agent?.name || 'AI Travel Agent';
+  const displayAgentName = agent?.name || preferences?.aiAgentName || 'AI Travel Agent';
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
