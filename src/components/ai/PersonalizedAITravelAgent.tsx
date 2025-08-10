@@ -27,7 +27,7 @@ const PersonalizedAITravelAgent = () => {
   const { preferences, getPersonalizedContext } = useAIAgentPreferences();
   const { toast } = useToast();
   const { agent: userAgent } = useUserAgent();
-  const displayAgentName = userAgent?.name || preferences.aiAgentName || 'AI Travel Agent';
+  const displayAgentName = preferences.aiAgentName || userAgent?.name || 'AI Travel Agent';
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

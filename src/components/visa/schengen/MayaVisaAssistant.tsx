@@ -7,6 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useXAI, XAIMessage } from '@/hooks/useXAI';
+import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
+import { useUserAgent } from '@/hooks/useUserAgent';
 
 interface Message {
   id: string;
@@ -31,6 +33,10 @@ const MayaVisaAssistant = ({ onClose, onComplete }: MayaVisaAssistantProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { sendMessage: sendXAIMessage } = useXAI();
+  const { preferences } = useAIAgentPreferences();
+  const { agent } = useUserAgent();
+  const displayAgentName = preferences?.aiAgentName || agent?.name || 'AI Assistant';
+  const agentInitial = displayAgentName.charAt(0).toUpperCase();
 
   const visaSteps = [
     "Personal Information",
@@ -55,20 +61,7 @@ const MayaVisaAssistant = ({ onClose, onComplete }: MayaVisaAssistantProps) => {
     setMessages([{
       id: 'welcome',
       role: 'assistant',
-      content: `🌟 **Welcome to your Enhanced Schengen Visa Application with xAI Grok!**
-
-I'm Maya, your AI visa assistant now powered by xAI Grok for enhanced intelligence and real-time insights. I'll guide you through your Schengen visa application step by step with the latest AI capabilities.
-
-**Enhanced features with xAI Grok:**
-✅ Real-time visa policy updates and requirements
-✅ Advanced pattern recognition for application optimization
-✅ Intelligent document verification suggestions
-✅ Personalized guidance based on current data
-✅ I'll guide you through ${visaSteps.length} main sections with enhanced accuracy
-
-**Ready to start?** Let's begin with some basic information about you.
-
-What is your full name as it appears on your passport? (First name and surname)`,
+      content: `🌟 **Welcome to your Enhanced Schengen Visa Application with xAI Grok!**\n\nI'm ${displayAgentName}, your AI visa assistant now powered by xAI Grok for enhanced intelligence and real-time insights. I'll guide you through your Schengen visa application step by step with the latest AI capabilities.\n\n**Enhanced features with xAI Grok:**\n✅ Real-time visa policy updates and requirements\n✅ Advanced pattern recognition for application optimization\n✅ Intelligent document verification suggestions\n✅ Personalized guidance based on current data\n✅ I'll guide you through ${visaSteps.length} main sections with enhanced accuracy\n\n**Ready to start?** Let's begin with some basic information about you.\n\nWhat is your full name as it appears on your passport? (First name and surname)`,
       timestamp: new Date()
     }]);
   }, []);
@@ -89,7 +82,7 @@ What is your full name as it appears on your passport? (First name and surname)`
 
     try {
       // Create specialized prompt for visa assistance using xAI Grok
-      const systemPrompt = `You are Maya, an expert visa application assistant for OneGlobalTrip powered by xAI Grok. Your role is to help users complete their Schengen visa application step by step with enhanced intelligence and real-time insights.
+      const systemPrompt = `You are ${displayAgentName}, an expert visa application assistant for OneGlobalTrip powered by xAI Grok. Your role is to help users complete their Schengen visa application step by step with enhanced intelligence and real-time insights.
 
 Current application progress:
 - Current step: ${currentStep + 1}/${visaSteps.length} (${visaSteps[currentStep]})
@@ -207,7 +200,7 @@ What would you prefer?`,
   const handleCompleteApplication = () => {
     toast({
       title: "Application Generated!",
-      description: "xAI-powered Maya has prepared your enhanced visa application based on our conversation.",
+      description: `xAI-powered ${displayAgentName} has prepared your enhanced visa application based on our conversation.`,
     });
     onComplete(collectedData);
   };
@@ -219,7 +212,7 @@ What would you prefer?`,
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center space-x-2">
               <Sparkles className="h-5 w-5" />
-              <span>Maya - Enhanced xAI Grok Visa Assistant</span>
+              <span>{displayAgentName} - Enhanced xAI Grok Visa Assistant</span>
             </CardTitle>
             <Button
               onClick={onClose}
@@ -265,7 +258,7 @@ What would you prefer?`,
                           ? 'bg-blue-100 text-blue-600' 
                           : 'bg-purple-100 text-purple-600'
                       }>
-                        {message.role === 'user' ? user?.email?.[0]?.toUpperCase() || 'U' : 'M'}
+                        {message.role === 'user' ? user?.email?.[0]?.toUpperCase() || 'U' : agentInitial}
                       </AvatarFallback>
                     </Avatar>
                     <div className={`rounded-lg px-4 py-3 ${
@@ -286,7 +279,7 @@ What would you prefer?`,
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-purple-100 text-purple-600">
-                        M
+                        {agentInitial}
                       </AvatarFallback>
                     </Avatar>
                     <div className="bg-gray-100 rounded-lg px-4 py-3 flex items-center space-x-2">
@@ -370,7 +363,7 @@ What would you prefer?`,
                 <span className="font-semibold text-blue-800 text-sm">Need Help?</span>
               </div>
               <p className="text-blue-700 text-xs">
-                Maya with xAI Grok will explain each requirement with enhanced intelligence and validate your responses. Take your time!
+                {displayAgentName} with xAI Grok will explain each requirement with enhanced intelligence and validate your responses. Take your time!
               </p>
             </div>
           </div>

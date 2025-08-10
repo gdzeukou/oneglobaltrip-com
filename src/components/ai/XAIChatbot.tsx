@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { useXAI, XAIMessage } from '@/hooks/useXAI';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
+import { useUserAgent } from '@/hooks/useUserAgent';
 
 interface ChatMessage {
   id: string;
@@ -44,11 +46,14 @@ export const XAIChatbot = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { sendMessage: sendXAIMessage, loading, error } = useXAI();
   const { user } = useAuth();
+  const { preferences } = useAIAgentPreferences();
+  const { agent } = useUserAgent();
+  const displayAgentName = preferences?.aiAgentName || agent?.name || 'AI Assistant';
 
   const contextPrompts = {
-    travel: "You are Maya, an expert travel assistant powered by xAI Grok. Help users with travel planning, destinations, bookings, and travel advice with real-time insights and enhanced intelligence.",
-    visa: "You are Maya, a visa application expert powered by xAI Grok. Provide intelligent guidance on visa requirements, application processes, and documentation with the latest policy updates.",
-    general: "You are Maya, a helpful assistant powered by xAI Grok. Assist users with various travel and visa related questions using enhanced AI capabilities."
+    travel: `You are ${displayAgentName}, an expert travel assistant powered by xAI Grok. Help users with travel planning, destinations, bookings, and travel advice with real-time insights and enhanced intelligence.`,
+    visa: `You are ${displayAgentName}, a visa application expert powered by xAI Grok. Provide intelligent guidance on visa requirements, application processes, and documentation with the latest policy updates.`,
+    general: `You are ${displayAgentName}, a helpful assistant powered by xAI Grok. Assist users with various travel and visa related questions using enhanced AI capabilities.`
   };
 
   const scrollToBottom = () => {
@@ -72,7 +77,7 @@ export const XAIChatbot = ({
       const defaultWelcome: ChatMessage = {
         id: 'welcome',
         role: 'assistant',
-        content: `Hello! I'm Maya, your AI assistant powered by xAI Grok. I'm here to help you with ${context === 'travel' ? 'travel planning and bookings' : context === 'visa' ? 'visa applications and requirements' : 'your questions'} using enhanced intelligence and real-time insights.\n\nHow can I assist you today?`,
+        content: `Hello! I'm ${displayAgentName}, your AI assistant powered by xAI Grok. I'm here to help you with ${context === 'travel' ? 'travel planning and bookings' : context === 'visa' ? 'visa applications and requirements' : 'your questions'} using enhanced intelligence and real-time insights.\n\nHow can I assist you today?`,
         timestamp: new Date()
       };
       setMessages([defaultWelcome]);
@@ -171,7 +176,7 @@ export const XAIChatbot = ({
               <Bot className="h-5 w-5" />
               <Zap className="h-3 w-3 absolute -top-1 -right-1 text-yellow-300" />
             </div>
-            <span>Maya - xAI Grok Assistant</span>
+            <span>{displayAgentName} - xAI Grok Assistant</span>
           </CardTitle>
           {onClose && (
             <Button
@@ -268,7 +273,7 @@ export const XAIChatbot = ({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask Maya anything..."
+              placeholder={`Ask ${displayAgentName} anything...`}
               className="flex-1"
               disabled={loading}
             />

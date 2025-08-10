@@ -205,7 +205,7 @@ const AIAgentSettings = () => {
                   id="agent_name"
                   value={agentName}
                   onChange={(e) => setAgentName(e.target.value)}
-                  placeholder="e.g., Maya, Alex, Sarah..."
+                  placeholder="e.g., Danielle, Alex, Sarah..."
                   className="max-w-md"
                 />
               </div>

@@ -4,6 +4,7 @@ import { MessageSquare, Plus, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUserAgent } from '@/hooks/useUserAgent';
+import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { ConversationsModal } from './ConversationsModal';
 
 interface Conversation {
@@ -32,6 +33,8 @@ export const ChatHeader = ({
 }: ChatHeaderProps) => {
   const [showConversations, setShowConversations] = useState(false);
   const { agent } = useUserAgent();
+  const { preferences } = useAIAgentPreferences();
+  const displayAgentName = preferences?.aiAgentName || agent?.name || 'AI Travel Agent';
 
   const currentConversation = conversations.find(c => c.id === currentConversationId);
 
@@ -61,7 +64,7 @@ export const ChatHeader = ({
           ) : null}
           <div className="text-center">
             <h1 className="text-sm font-medium truncate max-w-[200px]">
-              {currentConversation?.title || agent?.name || 'AI Travel Agent'}
+              {currentConversation?.title || displayAgentName}
             </h1>
             {!isMobile && (
               <p className="text-xs text-muted-foreground">Online</p>
