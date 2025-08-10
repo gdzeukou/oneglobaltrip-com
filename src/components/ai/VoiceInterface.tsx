@@ -3,8 +3,10 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { RealtimeChat } from '@/utils/RealtimeAudio';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
+import { useUserAgent } from '@/hooks/useUserAgent';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { Mic, Square, MessageCircle } from 'lucide-react';
 
 interface VoiceInterfaceProps {
   onSpeakingChange: (speaking: boolean) => void;
@@ -15,11 +17,16 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const [isConnected, setIsConnected] = useState(false);
   const chatRef = useRef<RealtimeChat | null>(null);
   const { preferences } = useAIAgentPreferences();
+  const { agent: userAgent } = useUserAgent();
   const { user } = useAuth();
   const [voiceConversationId, setVoiceConversationId] = useState<string | null>(null);
   const userBufferRef = useRef<string>('');
   const assistantBufferRef = useRef<string>('');
   const titleSetRef = useRef<boolean>(false);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [transcript, setTranscript] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
+  const [showTranscript, setShowTranscript] = useState(false);
+  const displayAgentName = preferences?.aiAgentName || userAgent?.name || 'AI Travel Agent';
 
   const ensureConversation = async (): Promise<string | null> => {
     if (voiceConversationId) return voiceConversationId;
@@ -37,15 +44,16 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
     return data.id;
   };
 
-  const saveMessage = async (role: 'user' | 'assistant', content: string) => {
-    const cid = await ensureConversation();
-    if (!cid || !content.trim()) return;
-    await supabase.from('chat_messages').insert({
-      conversation_id: cid,
-      role,
-      content,
-    });
-  };
+const saveMessage = async (role: 'user' | 'assistant', content: string) => {
+  const cid = await ensureConversation();
+  if (!cid || !content.trim()) return;
+  await supabase.from('chat_messages').insert({
+    conversation_id: cid,
+    role,
+    content,
+  });
+  setTranscript((prev) => [...prev, { role, content }]);
+};
 
   const maybeUpdateTitle = async () => {
     if (titleSetRef.current) return;
@@ -109,14 +117,31 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
 
   const startConversation = async () => {
     try {
+      // Reset state and fetch user's first name if available
+      setTranscript([]);
+      titleSetRef.current = false;
+      if (user && !firstName) {
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('first_name')
+            .eq('id', user.id)
+            .maybeSingle();
+          if (profile?.first_name) setFirstName(profile.first_name);
+        } catch (e) {
+          console.warn('Failed to fetch first name', e);
+        }
+      }
+
       chatRef.current = new RealtimeChat(handleMessage);
-      const agentName = preferences?.aiAgentName || 'AI Travel Agent';
+      const agentName = displayAgentName;
       await chatRef.current.init({
         voice: 'alloy',
         instructions:
           `You are OneGlobalTrip's AI Travel Agent named ${agentName}. ` +
           `Always introduce yourself as ${agentName}. ` +
-          `If asked for your name, reply exactly: "I'm ${agentName}." ` +
+          `If asked for your name, reply exactly: \"I'm ${agentName}.\" ` +
+          `${firstName ? `The user's first name is ${firstName}. Address them by their first name naturally. ` : ''}` +
           `Be friendly, proactive, and concise. Ask at most 1–2 follow-up questions per turn.`,
       });
       if (user) {
@@ -138,6 +163,8 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
     chatRef.current?.disconnect();
     setIsConnected(false);
     onSpeakingChange(false);
+    setShowTranscript(true);
+    toast({ title: 'Voice chat ended', description: 'Transcript is ready below.' });
   };
 
   useEffect(() => {
@@ -147,17 +174,49 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   }, []);
 
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-50">
-      {!isConnected ? (
-        <Button onClick={startConversation} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-          Start Voice Chat
-        </Button>
-      ) : (
-        <Button onClick={endConversation} variant="secondary">
-          End Voice Chat
-        </Button>
+    <>
+      {/* Transcript panel */}
+      {showTranscript && transcript.length > 0 && (
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-50 w-[92vw] max-w-xl max-h-72 overflow-y-auto rounded-2xl border border-border bg-popover p-4 shadow-xl">
+          <h3 className="text-sm font-semibold mb-2">Voice Chat Transcript</h3>
+          <div className="space-y-2 text-sm">
+            {transcript.map((m, i) => (
+              <div key={i} className="leading-snug">
+                <span className="font-medium">{m.role === 'user' ? 'You' : displayAgentName}:</span>{' '}
+                <span className={m.role === 'user' ? 'text-foreground' : 'text-muted-foreground'}>{m.content}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
-    </div>
+
+      {/* Floating controls */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-50">
+        <div className="flex items-center gap-3 text-xs sm:text-sm">
+          <span className="rounded-full border border-border bg-background/80 backdrop-blur px-3 py-1">
+            You’re chatting with <span className="text-primary font-semibold">{displayAgentName}</span>
+          </span>
+          {transcript.length > 0 && (
+            <button
+              onClick={() => setShowTranscript((v) => !v)}
+              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <MessageCircle className="h-4 w-4" />
+              {showTranscript ? 'Hide' : 'Transcript'}
+            </button>
+          )}
+        </div>
+
+        <Button
+          onClick={isConnected ? endConversation : startConversation}
+          size="icon"
+          className="h-14 w-14 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg"
+          aria-label={isConnected ? 'End voice chat' : 'Start voice chat'}
+        >
+          {isConnected ? <Square className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
+        </Button>
+      </div>
+    </>
   );
 };
 
