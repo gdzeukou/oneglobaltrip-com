@@ -12,7 +12,7 @@ export const LiveTranscriptOverlay: React.FC<LiveTranscriptOverlayProps> = ({ us
   if (!userText && !assistantText) return null;
 
   return (
-    <div className="fixed inset-0 z-40 pointer-events-none flex items-end sm:items-center justify-center p-4 sm:px-6">
+    <div className="fixed inset-0 z-40 pointer-events-none flex items-center justify-center p-4 sm:px-6">
       <div className="w-full max-w-3xl space-y-3">
         {assistantText && (
           <div className="pointer-events-none w-full text-center">

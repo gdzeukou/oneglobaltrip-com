@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserAgent } from '@/hooks/useUserAgent';
+import { supabase } from '@/integrations/supabase/client';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -54,6 +55,8 @@ const AIAgentSettings = () => {
   
   // Loading state
   const [isSaving, setIsSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   useEffect(() => {
     if (agent) {
@@ -161,6 +164,51 @@ const AIAgentSettings = () => {
     setAccessibilityNeeds(accessibilityNeeds.filter(n => n !== need));
   };
 
+  const triggerAvatarSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    try {
+      setUploadingAvatar(true);
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      const publicUrl = publicUrlData.publicUrl;
+
+      setAvatarUrl(publicUrl);
+
+      if (agent) {
+        await updateAgent({ avatar_url: publicUrl });
+      }
+
+      toast({ title: 'Avatar updated', description: 'Your agent avatar has been updated.' });
+    } catch (err: any) {
+      console.error('Avatar upload failed', err);
+      toast({
+        title: 'Avatar upload failed',
+        description: err.message || 'Please ensure the avatars bucket exists and is public.',
+        variant: 'destructive',
+      });
+    } finally {
+      setUploadingAvatar(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
   if (agentLoading || preferencesLoading) {
     return (
       <Card>
@@ -186,15 +234,22 @@ const AIAgentSettings = () => {
           {/* Agent Avatar and Name */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
             <div className="flex flex-col items-center space-y-2">
-              <Avatar className="h-20 w-20">
+              <Avatar className="h-20 w-20 cursor-pointer" onClick={triggerAvatarSelect}>
                 <AvatarImage src={avatarUrl} alt={agentName} />
                 <AvatarFallback className="text-lg">
                   {agentName.split(' ').map(n => n[0]).join('').toUpperCase() || 'AI'}
                 </AvatarFallback>
               </Avatar>
-              <Button variant="outline" size="sm" className="text-xs">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarFileChange}
+              />
+              <Button variant="outline" size="sm" className="text-xs" onClick={triggerAvatarSelect} disabled={uploadingAvatar}>
                 <Camera className="h-3 w-3 mr-1" />
-                Change
+                {uploadingAvatar ? 'Uploading...' : 'Change'}
               </Button>
             </div>
             

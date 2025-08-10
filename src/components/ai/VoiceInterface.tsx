@@ -30,6 +30,7 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const [transcript, setTranscript] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const [liveUserText, setLiveUserText] = useState('');
   const [liveAssistantText, setLiveAssistantText] = useState('');
+  const [isConnecting, setIsConnecting] = useState(false);
   const displayAgentName = getDisplayAgentName(userAgent?.name, preferences?.aiAgentName);
   const ensureConversation = async (): Promise<string | null> => {
     if (voiceConversationId) return voiceConversationId;
@@ -162,6 +163,8 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
   };
 
   const startConversation = async () => {
+    if (isConnected || isConnecting) return;
+    setIsConnecting(true);
     try {
       // Reset state and fetch user's first name if available
       setTranscript([]);
@@ -179,6 +182,9 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
         }
       }
 
+      // Ensure previous session is disconnected before starting a new one
+      chatRef.current?.disconnect();
+
       chatRef.current = new RealtimeChat(handleMessage);
       const agentName = displayAgentName;
       await chatRef.current.init({
@@ -186,7 +192,7 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
         instructions:
           `You are OneGlobalTrip's AI Travel Agent named ${agentName}. ` +
           `Always introduce yourself as ${agentName}. ` +
-          `If asked for your name, reply exactly: \"I'm ${agentName}.\" ` +
+          `If asked for your name, reply exactly: "I'm ${agentName}." ` +
           `${firstName ? `The user's first name is ${firstName}. Address them by their first name naturally. ` : ''}` +
           `Be friendly, proactive, and concise. Ask at most 1–2 follow-up questions per turn.`,
       });
@@ -206,12 +212,15 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
         description: error instanceof Error ? error.message : 'Failed to start conversation',
         variant: 'destructive',
       });
+    } finally {
+      setIsConnecting(false);
     }
   };
 
   const endConversation = () => {
     chatRef.current?.disconnect();
     setIsConnected(false);
+    setIsConnecting(false);
     onSpeakingChange(false);
     if (voiceConversationId) {
       navigate(`/ai-chat?cid=${voiceConversationId}`);
