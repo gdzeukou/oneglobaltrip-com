@@ -146,10 +146,14 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
           `${firstName ? `The user's first name is ${firstName}. Address them by their first name naturally. ` : ''}` +
           `Be friendly, proactive, and concise. Ask at most 1–2 follow-up questions per turn.`,
       });
+      let cid: string | null = null;
       if (user) {
-        await ensureConversation();
+        cid = await ensureConversation();
       }
       setIsConnected(true);
+      if (cid) {
+        navigate(`/ai-chat?cid=${cid}`);
+      }
       toast({ title: 'Connected', description: 'Voice interface is ready' });
     } catch (error) {
       console.error('Error starting conversation:', error);

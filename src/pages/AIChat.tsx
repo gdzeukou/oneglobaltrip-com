@@ -209,6 +209,41 @@ const AIChat = () => {
       });
     }
   };
+  
+  // Realtime subscription for new messages during live voice calls
+  useEffect(() => {
+    if (!currentConversationId) return;
+
+    const channel = supabase
+      .channel(`chat-messages-${currentConversationId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `conversation_id=eq.${currentConversationId}`,
+        },
+        (payload) => {
+          const newMsg: any = payload.new;
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === newMsg.id)) return prev;
+            const formatted: Message = {
+              id: newMsg.id,
+              role: newMsg.role as 'user' | 'assistant',
+              content: newMsg.content,
+              timestamp: new Date(newMsg.created_at),
+            };
+            return [...prev, formatted];
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentConversationId]);
 
   const createNewConversation = async () => {
     if (!user) return;
