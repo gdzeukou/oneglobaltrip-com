@@ -12,6 +12,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { ChatHeader } from '@/components/ai/ChatHeader';
 import { MessageBubble } from '@/components/ai/MessageBubble';
 import { ChatInput } from '@/components/ai/ChatInput';
+import VoiceInterface from '@/components/ai/VoiceInterface';
 
 interface Message {
   id: string;
@@ -510,7 +511,7 @@ const AIChat = () => {
           )}
         </div>
 
-        {/* Chat Input */}
+{/* Chat Input */}
         <ChatInput
           value={inputMessage}
           onChange={setInputMessage}
@@ -518,6 +519,7 @@ const AIChat = () => {
           isLoading={isLoading}
           placeholder={`Message ${agent?.name || 'AI Travel Agent'}...`}
         />
+        <VoiceInterface onSpeakingChange={() => {}} />
       </div>
     </div>
   );
