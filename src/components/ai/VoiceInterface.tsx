@@ -28,8 +28,9 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const titleSetRef = useRef<boolean>(false);
   const [firstName, setFirstName] = useState<string | null>(null);
   const [transcript, setTranscript] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
+  const [liveUserText, setLiveUserText] = useState('');
+  const [liveAssistantText, setLiveAssistantText] = useState('');
   const displayAgentName = getDisplayAgentName(userAgent?.name, preferences?.aiAgentName);
-
   const ensureConversation = async (): Promise<string | null> => {
     if (voiceConversationId) return voiceConversationId;
     if (!user) return null;
@@ -49,12 +50,16 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
 const saveMessage = async (role: 'user' | 'assistant', content: string) => {
   const cid = await ensureConversation();
   if (!cid || !content.trim()) return;
-  await supabase.from('chat_messages').insert({
+  const { error } = await supabase.from('chat_messages').insert({
     conversation_id: cid,
     role,
     content,
   });
-  setTranscript((prev) => [...prev, { role, content }]);
+  if (error) {
+    console.error('Failed to insert chat message', error);
+  } else {
+    setTranscript((prev) => [...prev, { role, content }]);
+  }
 };
 
   const maybeUpdateTitle = async () => {
@@ -72,47 +77,82 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
   const handleMessage = (event: any) => {
     console.log('Received Realtime event:', event);
 
-    // User transcript accumulation
-    if (event.type === 'input_audio_transcription.delta' || event.type === 'response.input_text.delta') {
-      userBufferRef.current += event.delta || event.text || '';
-      return;
-    }
-    if (event.type === 'response.created') {
-      if (userBufferRef.current.trim()) {
-        saveMessage('user', userBufferRef.current.trim());
-        userBufferRef.current = '';
-      }
+    // USER TRANSCRIPTS (multiple possible event names from Realtime API)
+    if (
+      event &&
+      [
+        'input_audio_transcription.delta',
+        'input_transcript.delta',
+        'response.input_text.delta',
+        'input.text.delta',
+      ].includes(event.type)
+    ) {
+      const chunk = event.delta || event.text || '';
+      userBufferRef.current += chunk;
+      setLiveUserText(userBufferRef.current);
       return;
     }
 
-    // Assistant transcript accumulation
     if (
-      event.type === 'response.audio_transcript.delta' ||
-      event.type === 'response.output_text.delta'
+      event &&
+      [
+        'input_audio_transcription.done',
+        'input_audio_transcription.completed',
+        'input_transcript.done',
+        'input_transcript.completed',
+        'input_audio_buffer.speech_stopped',
+      ].includes(event.type)
     ) {
-      assistantBufferRef.current += event.delta || event.text || '';
+      const text = userBufferRef.current.trim();
+      if (text) {
+        saveMessage('user', text);
+      }
+      userBufferRef.current = '';
+      setLiveUserText('');
+      return;
+    }
+
+    // ASSISTANT TRANSCRIPTS
+    if (
+      event &&
+      [
+        'response.audio_transcript.delta',
+        'response.output_text.delta',
+        'response.text.delta',
+      ].includes(event.type)
+    ) {
+      const chunk = event.delta || event.text || '';
+      assistantBufferRef.current += chunk;
+      setLiveAssistantText(assistantBufferRef.current);
       onSpeakingChange(true);
       return;
     }
 
     if (
-      event.type === 'response.audio.done' ||
-      event.type === 'response.output_text.done' ||
-      event.type === 'response.done'
+      event &&
+      [
+        'response.audio.done',
+        'response.output_text.done',
+        'response.done',
+        'response.completed',
+        'response.audio_transcript.done',
+      ].includes(event.type)
     ) {
-      if (assistantBufferRef.current.trim()) {
-        saveMessage('assistant', assistantBufferRef.current.trim());
-        assistantBufferRef.current = '';
-        maybeUpdateTitle();
+      const text = assistantBufferRef.current.trim();
+      if (text) {
+        saveMessage('assistant', text);
       }
+      assistantBufferRef.current = '';
+      setLiveAssistantText('');
+      maybeUpdateTitle();
       onSpeakingChange(false);
       return;
     }
 
     // Fallback speaking indicator
-    if (event.type === 'response.audio.delta') {
+    if (event?.type === 'response.audio.delta') {
       onSpeakingChange(true);
-    } else if (event.type === 'response.audio.done') {
+    } else if (event?.type === 'response.audio.done') {
       onSpeakingChange(false);
     }
   };
@@ -183,6 +223,15 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
 
   return (
     <>
+      {/* Live captions overlay */}
+      {isConnected && (liveAssistantText || liveUserText) && (
+        <div className="fixed inset-0 z-40 pointer-events-none flex items-center justify-center px-6">
+          <p className="pointer-events-none text-center text-2xl sm:text-3xl leading-snug font-medium text-foreground bg-background/70 backdrop-blur rounded-2xl px-5 py-4 shadow">
+            {liveAssistantText || liveUserText}
+          </p>
+          <span aria-live="polite" className="sr-only">{liveAssistantText || liveUserText}</span>
+        </div>
+      )}
 
       {/* Floating controls */}
       <div className="fixed bottom-24 right-6 flex flex-col items-end gap-2 z-50">
