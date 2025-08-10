@@ -30,6 +30,11 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const [transcript, setTranscript] = useState<{ role: 'user' | 'assistant'; content: string }[]>([]);
   const [liveUserText, setLiveUserText] = useState('');
   const [liveAssistantText, setLiveAssistantText] = useState('');
+  // Linger the last finalized captions on screen for better readability
+  const [lingerUserText, setLingerUserText] = useState('');
+  const [lingerAssistantText, setLingerAssistantText] = useState('');
+  const userLingerTimeoutRef = useRef<number | null>(null);
+  const assistantLingerTimeoutRef = useRef<number | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const displayAgentName = getDisplayAgentName(userAgent?.name, preferences?.aiAgentName);
   const ensureConversation = async (): Promise<string | null> => {
@@ -94,6 +99,12 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
     ) {
       const chunk = event.delta || event.text || '';
       userBufferRef.current += chunk;
+      // When new live user text arrives, clear any lingering text and timers
+      if (userLingerTimeoutRef.current) {
+        clearTimeout(userLingerTimeoutRef.current);
+        userLingerTimeoutRef.current = null;
+      }
+      setLingerUserText('');
       setLiveUserText(userBufferRef.current);
       return;
     }
@@ -114,6 +125,14 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
       }
       userBufferRef.current = '';
       setLiveUserText('');
+      // Linger finalized user text for a few seconds so it's readable
+      setLingerUserText(text);
+      if (userLingerTimeoutRef.current) {
+        clearTimeout(userLingerTimeoutRef.current);
+      }
+      userLingerTimeoutRef.current = window.setTimeout(() => {
+        setLingerUserText('');
+      }, 4000);
       return;
     }
 
@@ -128,6 +147,12 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
     ) {
       const chunk = event.delta || event.text || '';
       assistantBufferRef.current += chunk;
+      // Clear any lingering assistant text when new live arrives
+      if (assistantLingerTimeoutRef.current) {
+        clearTimeout(assistantLingerTimeoutRef.current);
+        assistantLingerTimeoutRef.current = null;
+      }
+      setLingerAssistantText('');
       setLiveAssistantText(assistantBufferRef.current);
       onSpeakingChange(true);
       return;
@@ -149,6 +174,14 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
       }
       assistantBufferRef.current = '';
       setLiveAssistantText('');
+      // Linger finalized assistant text for readability
+      setLingerAssistantText(text);
+      if (assistantLingerTimeoutRef.current) {
+        clearTimeout(assistantLingerTimeoutRef.current);
+      }
+      assistantLingerTimeoutRef.current = window.setTimeout(() => {
+        setLingerAssistantText('');
+      }, 4000);
       maybeUpdateTitle();
       onSpeakingChange(false);
       return;
@@ -231,16 +264,22 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
   useEffect(() => {
     return () => {
       chatRef.current?.disconnect();
+      if (userLingerTimeoutRef.current) {
+        clearTimeout(userLingerTimeoutRef.current);
+      }
+      if (assistantLingerTimeoutRef.current) {
+        clearTimeout(assistantLingerTimeoutRef.current);
+      }
     };
   }, []);
 
   return (
     <>
       {/* Live captions overlay */}
-      {isConnected && (liveAssistantText || liveUserText) && (
+      {isConnected && ((liveAssistantText || liveUserText) || (lingerAssistantText || lingerUserText)) && (
         <LiveTranscriptOverlay
-          userText={liveUserText}
-          assistantText={liveAssistantText}
+          userText={liveUserText || lingerUserText}
+          assistantText={liveAssistantText || lingerAssistantText}
           agentName={displayAgentName}
           agentAvatarUrl={userAgent?.avatar_url}
         />
