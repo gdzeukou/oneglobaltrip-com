@@ -36,7 +36,7 @@ const CarouselSlideContent = ({ slide, isTransitioning }: CarouselSlideContentPr
               </Link>
             </Button>
 
-            <Button size="lg" variant="outline" className="rounded-full border-white/40 text-white hover:bg-white/10 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold tracking-wide transition-all duration-300 w-full sm:w-auto" asChild>
+            <Button size="lg" variant="outline" className="rounded-full px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-extrabold tracking-wide transition-all duration-300 w-full sm:w-auto bg-black/70 text-white border-white/60 hover:bg-black/80 hover:border-white/80 backdrop-blur-sm shadow-lg" asChild>
               <Link to="/packages">
                 <span className="flex items-center font-extrabold text-white drop-shadow-md">
                   <PlaneTakeoff className="h-5 w-5 mr-2" />
