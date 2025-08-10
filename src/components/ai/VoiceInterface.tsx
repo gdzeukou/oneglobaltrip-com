@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Mic, Square } from 'lucide-react';
 import { getDisplayAgentName } from '@/utils/displayAgentName';
 import { useNavigate } from 'react-router-dom';
-
+import LiveTranscriptOverlay from '@/components/ai/LiveTranscriptOverlay';
 interface VoiceInterfaceProps {
   onSpeakingChange: (speaking: boolean) => void;
 }
@@ -33,12 +33,16 @@ const VoiceInterface: React.FC<VoiceInterfaceProps> = ({ onSpeakingChange }) => 
   const displayAgentName = getDisplayAgentName(userAgent?.name, preferences?.aiAgentName);
   const ensureConversation = async (): Promise<string | null> => {
     if (voiceConversationId) return voiceConversationId;
-    if (!user) return null;
+    // Create conversation for both authenticated and anonymous users
+    const payload: any = { title: 'Voice Chat' };
+    if (user?.id) payload.user_id = user.id;
+
     const { data, error } = await supabase
       .from('chat_conversations')
-      .insert({ user_id: user.id, title: 'Voice Chat' })
+      .insert(payload)
       .select()
       .single();
+
     if (error) {
       console.error('Failed to create voice conversation', error);
       return null;
@@ -225,12 +229,12 @@ const saveMessage = async (role: 'user' | 'assistant', content: string) => {
     <>
       {/* Live captions overlay */}
       {isConnected && (liveAssistantText || liveUserText) && (
-        <div className="fixed inset-0 z-40 pointer-events-none flex items-center justify-center px-6">
-          <p className="pointer-events-none text-center text-2xl sm:text-3xl leading-snug font-medium text-foreground bg-background/70 backdrop-blur rounded-2xl px-5 py-4 shadow">
-            {liveAssistantText || liveUserText}
-          </p>
-          <span aria-live="polite" className="sr-only">{liveAssistantText || liveUserText}</span>
-        </div>
+        <LiveTranscriptOverlay
+          userText={liveUserText}
+          assistantText={liveAssistantText}
+          agentName={displayAgentName}
+          agentAvatarUrl={userAgent?.avatar_url}
+        />
       )}
 
       {/* Floating controls */}
