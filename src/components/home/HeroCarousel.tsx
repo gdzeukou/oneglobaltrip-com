@@ -3,12 +3,8 @@ import { heroSlides } from '@/data/heroSlides';
 import { useCarousel } from '@/hooks/useCarousel';
 import { useCarouselTouch } from '@/hooks/useCarouselTouch';
 import CarouselSlides from './carousel/CarouselSlides';
-import CarouselSlideContent from './carousel/CarouselSlideContent';
 import CarouselNavigation from './carousel/CarouselNavigation';
 import CarouselIndicators from './carousel/CarouselIndicators';
-import PlaneRouteOverlay from './hero/PlaneRouteOverlay';
-import PassportStamps from './hero/PassportStamps';
-import '@/styles/hero-animations.css';
 
 const HeroCarousel = () => {
   const {
@@ -43,7 +39,7 @@ const HeroCarousel = () => {
       onMouseLeave={resume}
       tabIndex={0}
       role="region"
-      aria-label="Luxury travel destinations carousel"
+      aria-label="Travel destinations image slideshow"
       aria-live="polite"
     >
       <CarouselSlides
@@ -53,25 +49,6 @@ const HeroCarousel = () => {
         direction={direction}
         isTransitioning={isTransitioning}
       />
-
-      {/* Subtle gradient scrims for readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
-      {/* Animated overlays */}
-      <PlaneRouteOverlay />
-      <PassportStamps slideKey={currentSlideData.id} />
-
-      {/* Trust badge top-left */}
-      <div className="absolute top-4 left-4 z-10">
-        <div className="backdrop-blur-md bg-black/60 text-white font-extrabold rounded-full px-4 py-2 text-xs sm:text-sm flex items-center gap-2">
-          <span className="inline-flex items-center"><span className="h-2.5 w-2.5 rounded-full bg-green-400 mr-2" /></span>
-          <span className="inline-flex text-white font-extrabold drop-shadow-xl">98% Visa Success Rate - 10,000+ Happy Travelers</span>
-        </div>
-      </div>
-
-      <CarouselSlideContent slide={currentSlideData} isTransitioning={isTransitioning} />
 
       <CarouselNavigation onPrevSlide={prevSlide} onNextSlide={nextSlide} />
 
