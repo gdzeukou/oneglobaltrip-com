@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import FlagIcon from './FlagIcon';
 
 interface CountryContext {
   flag: string;
@@ -205,9 +206,10 @@ const LocalizationProvider = () => {
         "flex items-center justify-center w-8 h-8 rounded-full",
         "bg-white/50 border border-primary/10 shadow-sm"
       )}>
-        <span className="text-2xl leading-none select-none" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto' }}>
-          {context?.flag || '🌍'}
-        </span>
+        <FlagIcon 
+          countryCode={selectedCountry} 
+          className="w-6 h-4 rounded-sm shadow-sm" 
+        />
       </div>
       <span className="text-sm font-medium text-primary">
         {isDetecting ? 'Detecting location...' : detectedLocation || context.name}
