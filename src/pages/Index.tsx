@@ -11,8 +11,13 @@ import StartTripSection from '@/components/home/StartTripSection';
 import WhyChooseUsSection from '@/components/home/WhyChooseUsSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
-import MainCTASection from '@/components/visa/sections/MainCTASection';
 import WhyChooseSection from '@/components/home/WhyChooseSection';
+
+// Phase 2 MVP Components - High ROI Features
+import SmartVisaChecker from '@/components/visa/SmartVisaChecker';
+import LiveStats from '@/components/social-proof/LiveStats';
+import TrustBadgesEnhanced from '@/components/social-proof/TrustBadgesEnhanced';
+import FloatingChatWidget from '@/components/chat/FloatingChatWidget';
 import UnifiedCTA from '@/components/common/UnifiedCTA';
 
 const Index = () => {
@@ -48,13 +53,26 @@ const Index = () => {
         ]}
       />
       
+      {/* Phase 2: Smart Visa Checker - Core Revenue Driver */}
+      <SmartVisaChecker />
+      
+      {/* Phase 2: Live Social Proof */}
+      <LiveStats />
+      
       <TrustIndicators />
+      
+      {/* Phase 2: Enhanced Trust Badges */}
+      <TrustBadgesEnhanced />
       <WhyChooseSection />
       <PromoSection />
       <StartTripSection />
       <WhyChooseUsSection />
       <TestimonialsSection />
       <CTASection />
+      
+      {/* Phase 2: Floating AI Chat Widget - Always Visible */}
+      <FloatingChatWidget />
+      
       <Footer />
     </div>
   );
