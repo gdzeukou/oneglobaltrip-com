@@ -205,8 +205,8 @@ const LocalizationProvider = () => {
         "flex items-center justify-center w-8 h-8 rounded-full",
         "bg-white/50 border border-primary/10 shadow-sm"
       )}>
-        <span className="text-2xl leading-none">
-          {context.flag}
+        <span className="text-2xl leading-none select-none" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto' }}>
+          {context?.flag || '🌍'}
         </span>
       </div>
       <span className="text-sm font-medium text-primary">
