@@ -196,14 +196,22 @@ const LocalizationProvider = () => {
   // Only show the detected location, no dropdown
   return (
     <div className={cn(
-      "flex items-center space-x-2 px-3 py-2 rounded-full",
-      "bg-primary/5 border border-primary/10",
-      "transition-all duration-300"
+      "flex items-center space-x-3 px-4 py-2 rounded-full",
+      "bg-gradient-to-r from-primary/5 to-primary/10",
+      "border border-primary/20 shadow-sm",
+      "transition-all duration-300 hover:shadow-md"
     )}>
-      <Globe className="h-4 w-4 text-primary" />
-      <span className="text-xl">{context.flag}</span>
+      <Globe className="h-4 w-4 text-primary/70" />
+      <div className={cn(
+        "flex items-center justify-center w-8 h-8 rounded-full",
+        "bg-white/50 border border-primary/10 shadow-sm"
+      )}>
+        <span className="text-lg leading-none filter drop-shadow-sm">
+          {context.flag}
+        </span>
+      </div>
       <span className="text-sm font-medium text-primary">
-        {isDetecting ? 'Detecting...' : detectedLocation || context.name}
+        {isDetecting ? 'Detecting location...' : detectedLocation || context.name}
       </span>
       {isDetecting && (
         <div className="h-3 w-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
