@@ -97,86 +97,125 @@ const countryData: Record<string, CountryContext> = {
 const LocalizationProvider = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>('NG');
   const [context, setContext] = useState<CountryContext>(countryData['NG']);
+  const [isDetecting, setIsDetecting] = useState(true);
+  const [detectedLocation, setDetectedLocation] = useState<string>('');
 
   useEffect(() => {
-    // Try to detect user's country
-    const detectCountry = async () => {
+    // Automatically detect user's actual location
+    const detectUserLocation = async () => {
+      setIsDetecting(true);
       try {
-        // Use geolocation API or IP detection (simplified for demo)
-        const storedCountry = localStorage.getItem('userCountry');
-        if (storedCountry && countryData[storedCountry]) {
-          setSelectedCountry(storedCountry);
-          setContext(countryData[storedCountry]);
+        // Try multiple detection methods for accuracy
+        
+        // Method 1: IP-based geolocation API
+        const response = await fetch('https://ipapi.co/json/');
+        const locationData = await response.json();
+        
+        if (locationData.country_code) {
+          const countryCode = locationData.country_code.toUpperCase();
+          const city = locationData.city;
+          const region = locationData.region;
+          
+          // Set detected location string
+          setDetectedLocation(`${city}, ${region}, ${locationData.country_name}`);
+          
+          if (countryData[countryCode]) {
+            setSelectedCountry(countryCode);
+            setContext(countryData[countryCode]);
+            localStorage.setItem('userCountry', countryCode);
+            localStorage.setItem('detectedLocation', `${city}, ${region}`);
+          }
         }
       } catch (error) {
-        console.log('Could not detect country, using default');
+        console.log('IP detection failed, trying browser geolocation');
+        
+        // Method 2: Browser geolocation as fallback
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              try {
+                // Reverse geocoding to get location name
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                
+                // Using a simple reverse geocoding service
+                const geoResponse = await fetch(
+                  `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+                );
+                const geoData = await geoResponse.json();
+                
+                if (geoData.countryCode) {
+                  const countryCode = geoData.countryCode.toUpperCase();
+                  const city = geoData.city || geoData.locality;
+                  const region = geoData.principalSubdivision;
+                  
+                  setDetectedLocation(`${city}, ${region}`);
+                  
+                  if (countryData[countryCode]) {
+                    setSelectedCountry(countryCode);
+                    setContext(countryData[countryCode]);
+                    localStorage.setItem('userCountry', countryCode);
+                    localStorage.setItem('detectedLocation', `${city}, ${region}`);
+                  }
+                }
+              } catch (geoError) {
+                console.log('Reverse geocoding failed');
+                setDetectedLocation('Location detected');
+              }
+            },
+            (error) => {
+              console.log('Geolocation failed:', error);
+              setDetectedLocation('Location unavailable');
+            }
+          );
+        }
+      } finally {
+        setIsDetecting(false);
       }
     };
 
-    detectCountry();
-  }, []);
-
-  const handleCountryChange = (countryCode: string) => {
-    setSelectedCountry(countryCode);
-    setContext(countryData[countryCode]);
-    localStorage.setItem('userCountry', countryCode);
+    // Check if we have a previously detected location
+    const storedCountry = localStorage.getItem('userCountry');
+    const storedLocation = localStorage.getItem('detectedLocation');
     
-    // Dispatch custom event for other components to listen to
-    window.dispatchEvent(new CustomEvent('countryChanged', { 
-      detail: { countryCode, context: countryData[countryCode] } 
-    }));
-  };
+    if (storedCountry && countryData[storedCountry] && storedLocation) {
+      setSelectedCountry(storedCountry);
+      setContext(countryData[storedCountry]);
+      setDetectedLocation(storedLocation);
+      setIsDetecting(false);
+    } else {
+      detectUserLocation();
+    }
+  }, []);
 
   // Provide context globally
   useEffect(() => {
     (window as any).visaContext = context;
   }, [context]);
 
+  // Only show the detected location, no dropdown
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          className={cn(
-            "h-10 px-3 rounded-full transition-all duration-300",
-            "hover:bg-primary/10 hover:scale-105",
-            "focus:scale-95 active:scale-95",
-            "flex items-center space-x-2"
-          )}
-        >
-          <Globe className="h-4 w-4" />
-          <span className="text-xl">{context.flag}</span>
-          <span className="hidden sm:inline text-sm font-medium">{context.name}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
-        className="w-56 bg-white/95 backdrop-blur-lg border border-border/50 shadow-luxury"
-      >
-        {Object.entries(countryData).map(([code, data]) => (
-          <DropdownMenuItem
-            key={code}
-            onClick={() => handleCountryChange(code)}
-            className={cn(
-              "flex items-center justify-between px-3 py-2",
-              "hover:bg-primary/5 cursor-pointer transition-colors",
-              selectedCountry === code && "bg-primary/10"
-            )}
-          >
-            <div className="flex items-center space-x-3">
-              <span className="text-lg">{data.flag}</span>
-              <div>
-                <p className="font-medium text-sm">{data.name}</p>
-                <p className="text-xs text-muted-foreground">{data.visaSuccessRate} success rate</p>
-              </div>
-            </div>
-            {selectedCountry === code && (
-              <Check className="h-4 w-4 text-primary" />
-            )}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className={cn(
+      "flex items-center space-x-2 px-3 py-2 rounded-full",
+      "bg-primary/5 border border-primary/10",
+      "transition-all duration-300"
+    )}>
+      <Globe className="h-4 w-4 text-primary" />
+      <span className="text-xl">{context.flag}</span>
+      <div className="flex flex-col">
+        <span className="text-sm font-medium text-primary">
+          {isDetecting ? 'Detecting...' : detectedLocation || context.name}
+        </span>
+        {!isDetecting && (
+          <span className="text-xs text-muted-foreground">
+            {context.visaSuccessRate} success rate
+          </span>
+        )}
+      </div>
+      {isDetecting && (
+        <div className="h-3 w-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      )}
+    </div>
   );
 };
 
