@@ -201,12 +201,11 @@ const LocalizationProvider = () => {
       "border border-primary/20 shadow-sm",
       "transition-all duration-300 hover:shadow-md"
     )}>
-      <Globe className="h-4 w-4 text-primary/70" />
       <div className={cn(
         "flex items-center justify-center w-8 h-8 rounded-full",
         "bg-white/50 border border-primary/10 shadow-sm"
       )}>
-        <span className="text-lg leading-none filter drop-shadow-sm">
+        <span className="text-2xl leading-none">
           {context.flag}
         </span>
       </div>
