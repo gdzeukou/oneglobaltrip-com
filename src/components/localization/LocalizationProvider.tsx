@@ -202,16 +202,9 @@ const LocalizationProvider = () => {
     )}>
       <Globe className="h-4 w-4 text-primary" />
       <span className="text-xl">{context.flag}</span>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium text-primary">
-          {isDetecting ? 'Detecting...' : detectedLocation || context.name}
-        </span>
-        {!isDetecting && (
-          <span className="text-xs text-muted-foreground">
-            {context.visaSuccessRate} success rate
-          </span>
-        )}
-      </div>
+      <span className="text-sm font-medium text-primary">
+        {isDetecting ? 'Detecting...' : detectedLocation || context.name}
+      </span>
       {isDetecting && (
         <div className="h-3 w-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       )}
