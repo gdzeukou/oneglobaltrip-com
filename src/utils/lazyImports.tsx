@@ -14,24 +14,12 @@ export const LazyAdmin = lazy(() => import('@/pages/Admin'));
 export const LazyAdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
 export const LazyContact = lazy(() => import('@/pages/Contact'));
 
-// Visa country pages
-export const LazySchengenShortStay = lazy(() => import('@/pages/visa-countries/SchengenShortStay'));
+// Essential visa country pages for MVP
 export const LazySchengenShortStayLanding = lazy(() => import('@/pages/visa-countries/SchengenShortStayLanding'));
 export const LazyUKShortStay = lazy(() => import('@/pages/visa-countries/UKShortStay'));
-export const LazyUK5YearShortStay = lazy(() => import('@/pages/visa-countries/UK5YearShortStay'));
-export const LazyCanadaShortStay = lazy(() => import('@/pages/visa-countries/CanadaShortStay'));
-export const LazyBrazilShortStay = lazy(() => import('@/pages/visa-countries/BrazilShortStay'));
-export const LazyNigeriaShortStay = lazy(() => import('@/pages/visa-countries/NigeriaShortStay'));
-export const LazyUAEShortStay = lazy(() => import('@/pages/visa-countries/UAEShortStay'));
-export const LazyIndiaShortStay = lazy(() => import('@/pages/visa-countries/IndiaShortStay'));
-export const LazyPortugalLongStay = lazy(() => import('@/pages/visa-countries/PortugalLongStay'));
-export const LazyNorwayLongStay = lazy(() => import('@/pages/visa-countries/NorwayLongStay'));
-export const LazyDenmarkLongStay = lazy(() => import('@/pages/visa-countries/DenmarkLongStay'));
-export const LazyFinlandLongStay = lazy(() => import('@/pages/visa-countries/FinlandLongStay'));
-export const LazyGermanyLongStay = lazy(() => import('@/pages/visa-countries/GermanyLongStay'));
-export const LazyFranceLongStay = lazy(() => import('@/pages/visa-countries/FranceLongStay'));
-export const LazySwitzerlandLongStay = lazy(() => import('@/pages/visa-countries/SwitzerlandLongStay'));
-export const LazyNigeriaLongStay = lazy(() => import('@/pages/visa-countries/NigeriaLongStay'));
+export const LazyGermanyShortStay = lazy(() => import('@/pages/visa-countries/GermanyShortStay'));
+export const LazyDenmarkShortStay = lazy(() => import('@/pages/visa-countries/DenmarkShortStay'));
+export const LazySwedenShortStay = lazy(() => import('@/pages/visa-countries/SwedenShortStay'));
 
 // Loading component for Suspense fallback
 export const LoadingFallback = ({ message = "Loading..." }: { message?: string }) => (

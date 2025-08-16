@@ -13,11 +13,6 @@ import TestimonialsSection from '@/components/home/TestimonialsSection';
 import CTASection from '@/components/home/CTASection';
 import MainCTASection from '@/components/visa/sections/MainCTASection';
 import WhyChooseSection from '@/components/home/WhyChooseSection';
-// Lazy load heavy components for better performance
-import { lazy, Suspense } from 'react';
-
-const AITripRecommender = lazy(() => import('@/components/conversion/AITripRecommender'));
-const InteractiveWorldMap = lazy(() => import('@/components/conversion/InteractiveWorldMap'));
 import UnifiedCTA from '@/components/common/UnifiedCTA';
 
 const Index = () => {
@@ -26,78 +21,32 @@ const Index = () => {
       <SimplifiedNavigation />
       <ProfileSuggestionBanner />
       <HeroCarousel />
+      {/* Single Primary CTA - Streamlined for MVP */}
       <UnifiedCTA 
         variant="main"
-        title="Travel Smart. Travel Easy."
-        subtitle="Create Your AI Personal Travel Agent, no code, for free! Book from multiple platforms, create customized itineraries, guide you through your entire visa application and immigration, and more."
+        title="Get Your Visa in 3 Simple Steps"
+        subtitle="AI-powered visa assistance with 98% success rate. No paperwork confusion."
         options={[
           {
-            id: 'free_plan',
-            title: 'Free Plan',
-            subtitle: 'AI Travel Agent',
-            description: 'Create your own AI travel agent that works in 180+ countries with smart itineraries and destination tips',
-            price: '$0',
-            image: '/lovable-uploads/0eab89a7-31c2-4a08-9421-fa542434e4ce.png',
-            alt: 'Free AI Travel Agent',
-            badge: 'Get Started',
-            badgeColor: 'bg-emerald-500',
-            route: '/auth',
-            features: [
-              'Create your own AI travel agent',
-              'Plan 3 trips/month',
-              'Smart itineraries, destination tips, activity ideas',
-              'Works in 180+ countries',
-              'No code required'
-            ]
-          },
-          {
             id: 'visa_assistance',
-            title: 'Visa Assistance',
+            title: 'Start Visa Application',
             subtitle: 'AI-Guided Support',
-            description: 'AI-guided form filling with document verification and real-time embassy alerts',
-            price: '$15',
-            priceNote: 'per application',
+            description: 'Get your visa approved with our AI-guided process',
+            price: 'Free Consultation',
             image: '/lovable-uploads/aa2bd5bf-60f3-4560-a840-674f0d86c971.png',
             alt: 'AI Visa Assistance',
             badge: '98% Success Rate',
             badgeColor: 'bg-blue-500',
             route: '/visas',
             features: [
-              'AI-guided form filling',
+              'Instant visa requirements check',
+              'AI-guided application assistance',
               'Document verification',
-              'Real-time embassy alerts',
-              'Powered by a 98% visa approval rate',
-              'Expert review available'
-            ]
-          },
-          {
-            id: 'global_explorer',
-            title: 'Global Explorer',
-            subtitle: 'Premium Access',
-            description: 'Unlimited visa support with real-time alerts and specific AI trip planning for all travel styles',
-            price: '$189/year',
-            priceNote: '',
-            image: '/lovable-uploads/2aa35fa9-6f77-4530-b502-0223423fa205.png',
-            alt: 'Global Explorer Premium',
-            badge: 'Most Popular',
-            badgeColor: 'bg-orange-500',
-            route: '/pricing',
-            features: [
-              'Unlimited visa support',
-              'Real-time flight price alerts',
-              'Specific AI trip planning (foodies, adventure, family trips)',
-              'Offline access for remote travel',
-              'Priority customer support'
+              'Real-time embassy updates'
             ]
           }
         ]}
       />
-      <Suspense fallback={<div className="h-64 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-        <AITripRecommender />
-      </Suspense>
-      <Suspense fallback={<div className="h-64 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-        <InteractiveWorldMap />
-      </Suspense>
       
       <TrustIndicators />
       <WhyChooseSection />
