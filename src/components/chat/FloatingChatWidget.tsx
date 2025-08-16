@@ -2,10 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, X, Send, Bot, User } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, User, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import TypewriterText from '@/components/ui/TypewriterText';
+import { useLocalization } from '@/components/localization/LocalizationProvider';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -26,7 +28,9 @@ const FloatingChatWidget = ({ className }: FloatingChatWidgetProps) => {
   const [userEmail, setUserEmail] = useState('');
   const [showEmailCapture, setShowEmailCapture] = useState(false);
   const [leadCaptureStep, setLeadCaptureStep] = useState(0);
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const context = useLocalization();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -74,7 +78,12 @@ const FloatingChatWidget = ({ className }: FloatingChatWidgetProps) => {
         timestamp: new Date()
       };
 
-      setMessages(prev => [...prev, aiMessage]);
+      // Add typing effect
+      setIsTyping(true);
+      setTimeout(() => {
+        setMessages(prev => [...prev, aiMessage]);
+        setIsTyping(false);
+      }, 800);
 
       // Handle lead capture prompts
       if (data.shouldCaptureEmail && !userEmail) {
@@ -128,14 +137,33 @@ const FloatingChatWidget = ({ className }: FloatingChatWidgetProps) => {
       <div className={cn("fixed bottom-6 right-6 z-50", className)}>
         <Button
           onClick={() => setIsOpen(true)}
-          className="h-14 w-14 rounded-full bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse"
+          className={cn(
+            "h-16 w-16 rounded-full transition-all duration-500",
+            "bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90",
+            "shadow-luxury hover:shadow-luxury-xl",
+            "hover:scale-110 active:scale-95",
+            "animate-float"
+          )}
           size="icon"
         >
-          <MessageCircle className="h-6 w-6" />
+          <div className="relative">
+            <MessageCircle className="h-7 w-7 text-white" />
+            <Sparkles className="h-3 w-3 text-white absolute -top-1 -right-1 animate-pulse" />
+          </div>
         </Button>
-        {/* Tooltip */}
-        <div className="absolute bottom-16 right-0 bg-black text-white text-sm px-3 py-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-          💬 Need visa help? Ask me anything!
+        {/* Enhanced Tooltip */}
+        <div className={cn(
+          "absolute bottom-20 right-0 bg-black/90 text-white text-sm px-4 py-3 rounded-lg",
+          "opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap",
+          "backdrop-blur-sm border border-white/10"
+        )}>
+          <div className="flex items-center space-x-2">
+            <span className="text-green-400">●</span>
+            <span>Need visa help? Chat with our AI assistant!</span>
+          </div>
+          <div className="text-xs text-gray-300 mt-1">
+            Trusted by {context.visaSuccessRate} success rate • {context.name} support
+          </div>
         </div>
       </div>
     );
@@ -143,13 +171,27 @@ const FloatingChatWidget = ({ className }: FloatingChatWidgetProps) => {
 
   return (
     <div className={cn("fixed bottom-6 right-6 z-50", className)}>
-      <Card className="w-80 h-96 flex flex-col shadow-2xl border-2">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 bg-primary text-white rounded-t-lg">
-          <div className="flex items-center space-x-2">
-            <Bot className="h-5 w-5" />
+      <Card className={cn(
+        "w-96 h-[32rem] flex flex-col transition-all duration-500",
+        "shadow-luxury-xl border-0 bg-white/95 backdrop-blur-lg",
+        "animate-scale-in"
+      )}>
+        <CardHeader className={cn(
+          "flex flex-row items-center justify-between space-y-0 pb-4",
+          "bg-gradient-to-r from-primary to-accent text-white rounded-t-lg",
+          "border-b border-white/20"
+        )}>
+          <div className="flex items-center space-x-3">
+            <div className="relative">
+              <Bot className="h-6 w-6" />
+              <div className="absolute -top-1 -right-1 h-3 w-3 bg-green-400 rounded-full animate-pulse" />
+            </div>
             <div>
-              <h4 className="font-semibold">Visa Assistant</h4>
-              <p className="text-xs opacity-90">Ask about visas & travel</p>
+              <h4 className="font-bold text-lg">Visa Assistant</h4>
+              <p className="text-xs opacity-90 flex items-center space-x-1">
+                <span>{context.flag}</span>
+                <span>{context.name} • {context.visaSuccessRate} success</span>
+              </p>
             </div>
           </div>
           <Button
@@ -166,9 +208,15 @@ const FloatingChatWidget = ({ className }: FloatingChatWidgetProps) => {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {messages.length === 0 && (
-              <div className="flex items-center space-x-2 text-muted-foreground">
-                <Bot className="h-4 w-4" />
-                <p className="text-sm">Hi! I'm here to help with your visa and travel questions. What would you like to know?</p>
+              <div className="flex items-start space-x-3 p-4 bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg border border-primary/10">
+                <Bot className="h-5 w-5 text-primary mt-1 animate-float" />
+                <div>
+                  <TypewriterText 
+                    text={`Hi! I'm here to help with visas for ${context.name} travelers. What would you like to know?`}
+                    speed={40}
+                    className="text-sm text-gray-700"
+                  />
+                </div>
               </div>
             )}
             
@@ -199,15 +247,16 @@ const FloatingChatWidget = ({ className }: FloatingChatWidgetProps) => {
               </div>
             ))}
             
-            {isLoading && (
-              <div className="flex items-center space-x-2">
+            {(isLoading || isTyping) && (
+              <div className="flex items-center space-x-3 animate-fade-in-up">
                 <Bot className="h-4 w-4 text-primary" />
-                <div className="bg-muted rounded-lg px-3 py-2 text-sm">
+                <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-lg px-4 py-3 border border-primary/10">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-current rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
+                  <p className="text-xs text-primary/70 mt-1">AI is thinking...</p>
                 </div>
               </div>
             )}

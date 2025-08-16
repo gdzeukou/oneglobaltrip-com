@@ -18,6 +18,9 @@ import SmartVisaChecker from '@/components/visa/SmartVisaChecker';
 import LiveStats from '@/components/social-proof/LiveStats';
 import TrustBadgesEnhanced from '@/components/social-proof/TrustBadgesEnhanced';
 import FloatingChatWidget from '@/components/chat/FloatingChatWidget';
+
+// Phase 3 MVP Components - Premium UX/UI
+import LiveActivityFeed from '@/components/social-proof/LiveActivityFeed';
 import UnifiedCTA from '@/components/common/UnifiedCTA';
 
 const Index = () => {
@@ -56,8 +59,8 @@ const Index = () => {
       {/* Phase 2: Smart Visa Checker - Core Revenue Driver */}
       <SmartVisaChecker />
       
-      {/* Phase 2: Live Social Proof */}
-      <LiveStats />
+      {/* Phase 3: Enhanced Live Activity Feed */}
+      <LiveActivityFeed />
       
       <TrustIndicators />
       

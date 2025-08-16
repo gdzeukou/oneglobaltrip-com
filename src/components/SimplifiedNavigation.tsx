@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAIAgentPreferences } from '@/hooks/useAIAgentPreferences';
 import { getDisplayAgentName } from '@/utils/displayAgentName';
+import DarkModeToggle from '@/components/ui/DarkModeToggle';
+import LocalizationProvider from '@/components/localization/LocalizationProvider';
 
 const SimplifiedNavigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -74,7 +76,12 @@ const SimplifiedNavigation = () => {
               </Link>
             ))}
           </div>
-
+          
+          {/* Phase 3: Enhanced UI Controls */}
+          <div className="flex items-center space-x-2">
+            <LocalizationProvider />
+            <DarkModeToggle />
+          </div>
           {/* Auth Section */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
