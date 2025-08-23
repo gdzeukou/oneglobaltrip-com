@@ -1715,6 +1715,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_form_submission_rate_limit: {
+        Args: {
+          _email: string
+          _ip_address: string
+          _max_submissions?: number
+          _time_window_minutes?: number
+        }
+        Returns: boolean
+      }
       check_otp_rate_limit: {
         Args: {
           _email: string

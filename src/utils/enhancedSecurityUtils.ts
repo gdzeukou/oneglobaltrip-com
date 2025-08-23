@@ -109,53 +109,31 @@ export const sanitizeFormData = (data: any) => {
   return sanitized;
 };
 
-// Server-side rate limiting check (more secure than localStorage)
+// Secure server-side rate limiting check
 export const checkRateLimit = async (email: string, endpoint: string = 'form_submission'): Promise<boolean> => {
   try {
-    // This would ideally be a server-side check, but for now we'll enhance client-side
-    const now = new Date();
-    const key = `rate_limit_${endpoint}_${email}`;
-    const stored = localStorage.getItem(key);
+    // Import supabase client
+    const { supabase } = await import('@/integrations/supabase/client');
     
-    if (!stored) {
-      localStorage.setItem(key, JSON.stringify({
-        count: 1,
-        firstAttempt: now.toISOString(),
-        lastAttempt: now.toISOString()
-      }));
-      return true;
+    // Get IP address (simplified for client-side)
+    const ipAddress = 'client_request';
+    
+    // Use the secure server-side rate limiting function
+    const { data, error } = await supabase.rpc('check_form_submission_rate_limit', {
+      _ip_address: ipAddress,
+      _email: email,
+      _max_submissions: 3,
+      _time_window_minutes: 60
+    });
+    
+    if (error) {
+      console.error('Rate limit check failed:', error);
+      return true; // Allow on error to prevent blocking legitimate users
     }
     
-    const data = JSON.parse(stored);
-    const firstAttempt = new Date(data.firstAttempt);
-    const timeDiff = now.getTime() - firstAttempt.getTime();
-    const oneHour = 60 * 60 * 1000;
-    
-    // Reset if more than an hour has passed
-    if (timeDiff > oneHour) {
-      localStorage.setItem(key, JSON.stringify({
-        count: 1,
-        firstAttempt: now.toISOString(),
-        lastAttempt: now.toISOString()
-      }));
-      return true;
-    }
-    
-    // Check if limit exceeded (stricter limit of 2 per hour)
-    if (data.count >= 2) {
-      return false;
-    }
-    
-    // Increment counter
-    localStorage.setItem(key, JSON.stringify({
-      ...data,
-      count: data.count + 1,
-      lastAttempt: now.toISOString()
-    }));
-    
-    return true;
+    return data === true;
   } catch (error) {
-    console.warn('Rate limit check failed:', error);
+    console.error('Rate limit check failed:', error);
     return true; // Allow on error to prevent blocking legitimate users
   }
 };
