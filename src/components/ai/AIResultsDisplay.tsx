@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import SearchResultsContainer from '@/components/travel/results/SearchResultsContainer';
 import AIResultsLoadingSkeleton from './AIResultsLoadingSkeleton';
+import ExpediaFlightCard from '@/components/travel/cards/ExpediaFlightCard';
 import type { FlightResult } from '@/components/travel/results/FlightResultCard';
 import type { HotelResult } from '@/components/travel/results/HotelResultCard';
 import type { CarRentalResult } from '@/components/travel/results/CarRentalCard';
@@ -395,6 +396,34 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
   // Show loading skeleton when loading
   if (loading) {
     return <AIResultsLoadingSkeleton />;
+  }
+
+  // If no results and not loading, show a message or force sample data
+  const hasAnyResults = flights.length > 0 || hotels.length > 0 || carRentals.length > 0;
+  
+  if (!hasAnyResults && !loading) {
+    // Show sample flights to demonstrate the beautiful cards
+    const sampleFlights = generateSampleFlights();
+    return (
+      <div className="mt-6 space-y-4">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Sample Flight Results</h3>
+          <p className="text-sm text-muted-foreground">
+            No live results found. Here are some sample flights to demonstrate our beautiful interface:
+          </p>
+        </div>
+        <div className="space-y-4">
+          {sampleFlights.map((flight) => (
+            <ExpediaFlightCard
+              key={flight.id}
+              flight={flight}
+              onSelect={onFlightSelect || (() => {})}
+              onCompare={() => {}}
+            />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (

@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import FlightResultCard, { FlightResult } from './FlightResultCard';
+import ExpediaFlightCard from '@/components/travel/cards/ExpediaFlightCard';
+import { FlightResult } from './FlightResultCard';
 import HotelResultCard, { HotelResult } from './HotelResultCard';
 import CarRentalCard, { CarRentalResult } from './CarRentalCard';
 import SearchFilters from './SearchFilters';
@@ -170,9 +171,9 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
     const renderFlights = () => {
       const sortedFlights = handleSort(filteredResults.flights, 'flights');
       return (
-        <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+        <div className="space-y-4">
           {sortedFlights.map((flight) => (
-            <FlightResultCard
+            <ExpediaFlightCard
               key={flight.id}
               flight={flight}
               onSelect={onFlightSelect || (() => {})}
