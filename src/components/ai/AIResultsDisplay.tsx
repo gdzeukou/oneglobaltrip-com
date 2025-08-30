@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import SearchResultsContainer from '@/components/travel/results/SearchResultsContainer';
+import AIResultsLoadingSkeleton from './AIResultsLoadingSkeleton';
 import type { FlightResult } from '@/components/travel/results/FlightResultCard';
 import type { HotelResult } from '@/components/travel/results/HotelResultCard';
 import type { CarRentalResult } from '@/components/travel/results/CarRentalCard';
@@ -259,13 +260,20 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
     return logoMap[provider] || undefined;
   };
 
-  // Don't render if no results
-  if (!flights.length && !hotels.length && !carRentals.length && !loading) {
+  console.log('🎯 Render check - Flights:', flights.length, 'Hotels:', hotels.length, 'Cars:', carRentals.length, 'Loading:', loading);
+
+  // Always render if we have a conversationId - show loading state or results
+  if (!conversationId) {
     return null;
   }
 
+  // Show loading skeleton when loading
+  if (loading) {
+    return <AIResultsLoadingSkeleton />;
+  }
+
   return (
-    <div className="mt-6">
+    <div className="mt-6 space-y-4">
       <SearchResultsContainer
         flights={flights}
         hotels={hotels}

@@ -77,35 +77,35 @@ const FlightResultCard: React.FC<FlightResultCardProps> = ({
   };
 
   return (
-    <Card className={`group hover:shadow-elegant transition-all duration-300 ${
-      isSelected ? 'ring-2 ring-primary shadow-glow' : ''
+    <Card className={`card-luxury group transition-all duration-500 hover:scale-[1.02] ${
+      isSelected ? 'ring-2 ring-primary/50 shadow-luxury-primary' : ''
     }`}>
-      <CardContent className="p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
+      <CardContent className="p-6 relative overflow-hidden">
+        {/* Premium Header with Gradient */}
+        <div className="flex items-center justify-between mb-6 relative">
+          <div className="flex items-center space-x-4">
             {flight.airline.logo ? (
               <img 
                 src={flight.airline.logo} 
                 alt={flight.airline.name}
-                className="w-8 h-8 object-contain"
+                className="w-12 h-12 object-contain rounded-lg p-2 bg-white shadow-sm"
               />
             ) : (
-              <div className="w-8 h-8 bg-muted rounded flex items-center justify-center">
-                <Plane className="w-4 h-4 text-muted-foreground" />
+              <div className="w-12 h-12 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center">
+                <Plane className="w-6 h-6 text-primary" />
               </div>
             )}
             <div>
-              <h3 className="font-semibold text-foreground">{flight.airline.name}</h3>
-              <p className="text-sm text-muted-foreground">{flight.airline.code}</p>
+              <h3 className="font-bold text-lg text-foreground">{flight.airline.name}</h3>
+              <p className="text-sm text-muted-foreground font-medium">{flight.airline.code}</p>
             </div>
           </div>
           
           <div className="text-right">
-            <div className="text-2xl font-bold text-primary">
+            <div className="text-3xl font-black text-primary mb-1">
               {formatPrice(flight.price.amount, flight.price.currency)}
             </div>
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="secondary" className="bg-gradient-to-r from-primary/10 to-accent/10 text-primary font-semibold">
               {flight.class}
             </Badge>
           </div>
@@ -119,34 +119,33 @@ const FlightResultCard: React.FC<FlightResultCardProps> = ({
           duration={flight.duration}
         />
 
-        {/* Flight Details */}
-        <div className="flex items-center justify-between mt-4 mb-4">
-          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-            <div className="flex items-center space-x-1">
-              <Clock className="w-4 h-4" />
-              <span>{flight.duration}</span>
-            </div>
-            
-            <div className="flex items-center space-x-1">
-              <Plane className="w-4 h-4" />
-              <span>{getStopsText(flight.stops)}</span>
-            </div>
-
-            {flight.aircraft && (
-              <div className="flex items-center space-x-1">
-                <Users className="w-4 h-4" />
-                <span>{flight.aircraft}</span>
-              </div>
-            )}
+        {/* Enhanced Flight Details */}
+        <div className="grid grid-cols-3 gap-4 mt-6 mb-6 p-4 bg-gradient-to-r from-muted/50 to-muted/30 rounded-xl">
+          <div className="flex flex-col items-center space-y-1">
+            <Clock className="w-5 h-5 text-primary" />
+            <span className="text-sm font-semibold text-foreground">{flight.duration}</span>
+            <span className="text-xs text-muted-foreground">Duration</span>
+          </div>
+          
+          <div className="flex flex-col items-center space-y-1">
+            <Plane className="w-5 h-5 text-primary" />
+            <span className="text-sm font-semibold text-foreground">{getStopsText(flight.stops)}</span>
+            <span className="text-xs text-muted-foreground">Stops</span>
           </div>
 
-          <div className="text-sm text-muted-foreground">
-            <div className="flex items-center space-x-1">
-              <Calendar className="w-4 h-4" />
-              <span>{flight.availability} seats left</span>
-            </div>
+          <div className="flex flex-col items-center space-y-1">
+            <Calendar className="w-5 h-5 text-primary" />
+            <span className="text-sm font-semibold text-foreground">{flight.availability}</span>
+            <span className="text-xs text-muted-foreground">Seats Left</span>
           </div>
         </div>
+
+        {flight.aircraft && (
+          <div className="flex items-center justify-center space-x-2 mb-4 p-2 bg-accent/10 rounded-lg">
+            <Users className="w-4 h-4 text-accent" />
+            <span className="text-sm font-medium text-accent">{flight.aircraft}</span>
+          </div>
+        )}
 
         {/* Layover Information */}
         {flight.layovers && flight.layovers.length > 0 && (
@@ -162,24 +161,31 @@ const FlightResultCard: React.FC<FlightResultCardProps> = ({
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex space-x-3">
+        {/* Premium Action Buttons */}
+        <div className="flex space-x-3 mt-6">
           <Button 
             onClick={() => onSelect(flight)}
-            className="flex-1"
-            variant={isSelected ? "default" : "outline"}
+            className={`flex-1 font-bold py-3 rounded-xl transition-all duration-300 ${
+              isSelected 
+                ? 'bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg' 
+                : 'bg-gradient-to-r from-primary/10 to-accent/10 text-primary border-2 border-primary/20 hover:bg-gradient-to-r hover:from-primary hover:to-primary/80 hover:text-white'
+            }`}
           >
-            {isSelected ? 'Selected' : 'Select Flight'}
+            {isSelected ? '✓ Flight Selected' : 'Select Flight'}
           </Button>
           
           {onCompare && (
             <Button 
               onClick={() => onCompare(flight)}
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className={isComparing ? 'bg-secondary' : ''}
+              className={`border-2 rounded-xl font-semibold transition-all duration-300 ${
+                isComparing 
+                  ? 'bg-accent/20 border-accent text-accent' 
+                  : 'border-muted-foreground/30 hover:border-accent hover:text-accent'
+              }`}
             >
-              {isComparing ? 'Remove' : 'Compare'}
+              {isComparing ? '✓ Added' : 'Compare'}
             </Button>
           )}
         </div>
