@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import SearchResultsContainer from '@/components/travel/results/SearchResultsContainer';
 import AIResultsLoadingSkeleton from './AIResultsLoadingSkeleton';
@@ -6,6 +6,49 @@ import ExpediaFlightCard from '@/components/travel/cards/ExpediaFlightCard';
 import type { FlightResult } from '@/components/travel/results/FlightResultCard';
 import type { HotelResult } from '@/components/travel/results/HotelResultCard';
 import type { CarRentalResult } from '@/components/travel/results/CarRentalCard';
+
+// Type definitions for API responses
+interface SearchResultMessage {
+  content: string;
+  metadata: {
+    searchResults?: unknown[];
+  };
+  created_at: string;
+}
+
+interface AmadeusFlightData {
+  id?: string;
+  airlineCode?: string;
+  airline?: string;
+  departure?: {
+    airport?: string;
+    code?: string;
+    date?: string;
+    time?: string;
+    terminal?: string;
+  };
+  arrival?: {
+    airport?: string;
+    code?: string;
+    date?: string;
+    time?: string;
+    terminal?: string;
+  };
+  origin?: string;
+  destination?: string;
+  duration?: string;
+  stops?: number;
+  layovers?: Array<{ airport: string; code: string; duration: string }>;
+  price?: number;
+  totalPrice?: number;
+  currency?: string;
+  class?: string;
+  bookingClass?: string;
+  aircraft?: string;
+  airplaneType?: string;
+  flightNumber?: string;
+  availability?: number;
+}
 
 interface AIResultsDisplayProps {
   conversationId: string;
@@ -26,16 +69,12 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'flights' | 'hotels' | 'cars'>('flights');
 
-  useEffect(() => {
-    if (conversationId) {
-      fetchSearchResults();
-    }
-  }, [conversationId]);
-
-  const fetchSearchResults = async () => {
+  const fetchSearchResults = useCallback(async () => {
     setLoading(true);
     try {
-      console.log('🔍 Fetching search results for conversation:', conversationId);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 Fetching search results for conversation:', conversationId);
+      }
       
       // Fetch the latest search results from the conversation
       const { data: messages, error } = await supabase
@@ -52,8 +91,10 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         return;
       }
 
-      console.log('📊 Found search result messages:', messages?.length || 0);
-      console.log('📝 Messages details:', messages);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📊 Found search result messages:', messages?.length || 0);
+        console.log('📝 Messages details:', messages);
+      }
 
       // Reset all results first
       setFlights([]);
@@ -63,32 +104,46 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
       let hasResults = false;
 
       // Process and transform the search results
-      messages?.forEach(message => {
-        console.log('🔍 Processing message:', message.content, message.metadata);
-        const metadata = message.metadata as any;
+      messages?.forEach((message: SearchResultMessage) => {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔍 Processing message:', message.content, message.metadata);
+        }
+        const metadata = message.metadata;
         
         if (message.content === 'FLIGHT_SEARCH_RESULTS' && metadata?.searchResults) {
-          console.log('✈️ Processing flight results:', metadata.searchResults);
-          const transformedFlights = transformFlightsForDisplay(metadata.searchResults);
-          console.log('✅ Transformed flights:', transformedFlights);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✈️ Processing flight results:', metadata.searchResults);
+          }
+          const transformedFlights = transformFlightsForDisplay(metadata.searchResults as AmadeusFlightData[]);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Transformed flights:', transformedFlights);
+          }
           setFlights(transformedFlights);
           setActiveTab('flights');
           hasResults = true;
         }
         
         if (message.content === 'HOTEL_SEARCH_RESULTS' && metadata?.searchResults) {
-          console.log('🏨 Processing hotel results:', metadata.searchResults);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🏨 Processing hotel results:', metadata.searchResults);
+          }
           const transformedHotels = transformHotelsForDisplay(metadata.searchResults);
-          console.log('✅ Transformed hotels:', transformedHotels);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Transformed hotels:', transformedHotels);
+          }
           setHotels(transformedHotels);
           setActiveTab('hotels');
           hasResults = true;
         }
         
         if (message.content === 'CAR_SEARCH_RESULTS' && metadata?.searchResults) {
-          console.log('🚗 Processing car results:', metadata.searchResults);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🚗 Processing car results:', metadata.searchResults);
+          }
           const transformedCars = transformCarsForDisplay(metadata.searchResults);
-          console.log('✅ Transformed cars:', transformedCars);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('✅ Transformed cars:', transformedCars);
+          }
           setCarRentals(transformedCars);
           setActiveTab('cars');
           hasResults = true;
@@ -112,27 +167,40 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         );
 
         if (hasFlightSearchAttempt) {
-          console.log('🎯 No real flights found, showing sample data for demonstration');
-          const sampleFlights = generateSampleFlights();
-          setFlights(sampleFlights);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🎯 No real flights found, showing sample data for demonstration');
+          }
+          setFlights(generateSampleFlights);
           setActiveTab('flights');
         }
       }
 
-      console.log('🎯 Final results - Flights:', flights.length, 'Hotels:', hotels.length, 'Cars:', carRentals.length);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🎯 Final results - Flights:', flights.length, 'Hotels:', hotels.length, 'Cars:', carRentals.length);
+      }
 
     } catch (error) {
       console.error('Error processing search results:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [conversationId]);
 
-  const transformFlightsForDisplay = (flights: any[]): FlightResult[] => {
-    console.log('🔄 Transforming flights for display:', flights);
+  useEffect(() => {
+    if (conversationId) {
+      fetchSearchResults();
+    }
+  }, [conversationId, fetchSearchResults]);
+
+  const transformFlightsForDisplay = useCallback((flights: AmadeusFlightData[]): FlightResult[] => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔄 Transforming flights for display:', flights);
+    }
     
-    return flights.map(flight => {
-      console.log('🔄 Processing flight:', flight);
+    return flights.map((flight, index) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔄 Processing flight:', flight);
+      }
       
       // Handle the date/time format from the database
       const formatDateTime = (date: string, time: string) => {
@@ -148,8 +216,8 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         }
       };
 
-      const transformedFlight = {
-        id: flight.id || Math.random().toString(),
+      const transformedFlight: FlightResult = {
+        id: flight.id || `flight-${index}-${Date.now()}`,
         airline: {
           code: flight.airlineCode || flight.airline?.substring(0, 2).toUpperCase() || 'XX',
           name: flight.airline || 'Unknown Airline',
@@ -179,14 +247,16 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         availability: flight.availability || 9
       };
       
-      console.log('✅ Transformed flight:', transformedFlight);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Transformed flight:', transformedFlight);
+      }
       return transformedFlight;
     });
-  };
+  }, []);
 
-  const transformHotelsForDisplay = (hotels: any[]): HotelResult[] => {
-    return hotels.map(hotel => ({
-      id: hotel.id,
+  const transformHotelsForDisplay = useCallback((hotels: unknown[]): HotelResult[] => {
+    return hotels.map((hotel: any, index) => ({
+      id: hotel.id || `hotel-${index}-${Date.now()}`,
       name: hotel.name || 'Unknown Hotel',
       images: hotel.images || ['/placeholder.svg'],
       rating: hotel.rating || 4,
@@ -211,11 +281,11 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
       checkOut: hotel.checkOut || new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
       nights: hotel.nights || 3
     }));
-  };
+  }, []);
 
-  const transformCarsForDisplay = (cars: any[]): CarRentalResult[] => {
-    return cars.map(car => ({
-      id: car.id,
+  const transformCarsForDisplay = useCallback((cars: unknown[]): CarRentalResult[] => {
+    return cars.map((car: any, index) => ({
+      id: car.id || `car-${index}-${Date.now()}`,
       provider: {
         name: car.provider || car.company || 'Unknown Provider',
         logo: getCarProviderLogo(car.provider || car.company)
@@ -268,9 +338,9 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         limit: car.mileage?.limit
       }
     }));
-  };
+  }, []);
 
-  const getAirlineLogo = (airlineCode: string) => {
+  const getAirlineLogo = useCallback((airlineCode: string) => {
     // Map of airline codes to logos - you can expand this
     const logoMap: { [key: string]: string } = {
       'AA': 'https://logoeps.com/wp-content/uploads/2013/03/american-airlines-vector-logo.png',
@@ -279,19 +349,21 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
       'Southwest': 'https://logoeps.com/wp-content/uploads/2013/03/southwest-airlines-vector-logo.png'
     };
     return logoMap[airlineCode] || undefined;
-  };
+  }, []);
 
-  const getCarProviderLogo = (provider: string) => {
+  const getCarProviderLogo = useCallback((provider: string) => {
     const logoMap: { [key: string]: string } = {
       'Hertz': 'https://logoeps.com/wp-content/uploads/2013/03/hertz-vector-logo.png',
       'Enterprise': 'https://logoeps.com/wp-content/uploads/2013/03/enterprise-vector-logo.png',
       'Avis': 'https://logoeps.com/wp-content/uploads/2013/03/avis-vector-logo.png'
     };
     return logoMap[provider] || undefined;
-  };
+  }, []);
 
-  const generateSampleFlights = (): FlightResult[] => {
-    console.log('🎨 Generating sample flights for demonstration');
+  const generateSampleFlights = useMemo((): FlightResult[] => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎨 Generating sample flights for demonstration');
+    }
     return [
       {
         id: 'sample-1',
@@ -384,9 +456,11 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         availability: 5
       }
     ];
-  };
+  }, []);
 
-  console.log('🎯 Render check - Flights:', flights.length, 'Hotels:', hotels.length, 'Cars:', carRentals.length, 'Loading:', loading);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🎯 Render check - Flights:', flights.length, 'Hotels:', hotels.length, 'Cars:', carRentals.length, 'Loading:', loading);
+  }
 
   // Always render if we have a conversationId - show loading state or results
   if (!conversationId) {
@@ -403,7 +477,6 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
   
   if (!hasAnyResults && !loading) {
     // Show sample flights to demonstrate the beautiful cards
-    const sampleFlights = generateSampleFlights();
     return (
       <div className="mt-6 space-y-4">
         <div className="mb-4">
@@ -413,7 +486,7 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
           </p>
         </div>
         <div className="space-y-4">
-          {sampleFlights.map((flight) => (
+          {generateSampleFlights.map((flight) => (
             <ExpediaFlightCard
               key={flight.id}
               flight={flight}

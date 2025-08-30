@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { Grid, List, Filter, ArrowUpDown, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -40,65 +40,78 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [sortBy, setSortBy] = useState<SortOption>('price-asc');
   const [showFilters, setShowFilters] = useState(false);
-  const [compareItems, setCompareItems] = useState<any[]>([]);
+  const [compareItems, setCompareItems] = useState<(FlightResult | HotelResult | CarRentalResult)[]>([]);
   const [filteredResults, setFilteredResults] = useState({
     flights,
     hotels,
     carRentals
   });
 
-  const handleFilterChange = (filters: any) => {
+  const handleFilterChange = useCallback((filters: Record<string, any>) => {
     // Apply filters to results
-    const applyFilters = (items: any[], type: string) => {
-      return items.filter(item => {
+    const applyFlightsFilters = (items: FlightResult[]) => {
+      return items.filter((item: FlightResult) => {
         // Price range filter
         if (filters.priceRange) {
-          const price = type === 'flights' ? item.price.amount : 
-                       type === 'hotels' ? item.rooms[0].pricePerNight :
-                       item.pricing.totalPrice;
+          const price = item.price.amount;
           if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
             return false;
           }
         }
-
         // Flight specific filters
-        if (type === 'flights') {
-          if (filters.nonStopOnly && item.stops > 0) return false;
-          if (filters.airlines && filters.airlines.length > 0 && !filters.airlines.includes(item.airline.code)) return false;
-        }
-
-        // Hotel specific filters
-        if (type === 'hotels') {
-          if (filters.starRating && item.rating < filters.starRating) return false;
-          if (filters.amenities && filters.amenities.length > 0) {
-            const hasRequiredAmenities = filters.amenities.every((amenity: string) =>
-              item.amenities.some((hotelAmenity: string) =>
-                hotelAmenity.toLowerCase().includes(amenity.toLowerCase())
-              )
-            );
-            if (!hasRequiredAmenities) return false;
-          }
-        }
-
-        // Car rental specific filters
-        if (type === 'cars') {
-          if (filters.transmission && item.vehicle.transmission !== filters.transmission) return false;
-          if (filters.fuelType && item.vehicle.fuelType !== filters.fuelType) return false;
-        }
-
+        if (filters.nonStopOnly && item.stops > 0) return false;
+        if (filters.airlines && filters.airlines.length > 0 && !filters.airlines.includes(item.airline.code)) return false;
         return true;
       });
     };
 
-    setFilteredResults({
-      flights: applyFilters(flights, 'flights'),
-      hotels: applyFilters(hotels, 'hotels'),
-      carRentals: applyFilters(carRentals, 'cars')
-    });
-  };
+    const applyHotelsFilters = (items: HotelResult[]) => {
+      return items.filter((item: HotelResult) => {
+        // Price range filter
+        if (filters.priceRange) {
+          const price = item.rooms[0].pricePerNight;
+          if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
+            return false;
+          }
+        }
+        // Hotel specific filters
+        if (filters.starRating && item.rating < filters.starRating) return false;
+        if (filters.amenities && filters.amenities.length > 0) {
+          const hasRequiredAmenities = filters.amenities.every((amenity: string) =>
+            item.amenities.some((hotelAmenity: string) =>
+              hotelAmenity.toLowerCase().includes(amenity.toLowerCase())
+            )
+          );
+          if (!hasRequiredAmenities) return false;
+        }
+        return true;
+      });
+    };
 
-  const handleSort = (items: any[], type: string) => {
-    return [...items].sort((a, b) => {
+    const applyCarsFilters = (items: CarRentalResult[]) => {
+      return items.filter((item: CarRentalResult) => {
+        // Price range filter
+        if (filters.priceRange) {
+          const price = item.pricing.totalPrice;
+          if (price < filters.priceRange[0] || price > filters.priceRange[1]) {
+            return false;
+          }
+        }
+        // Car rental specific filters
+        if (filters.transmission && item.vehicle.transmission !== filters.transmission) return false;
+        if (filters.fuelType && item.vehicle.fuelType !== filters.fuelType) return false;
+        return true;
+      });
+    };
+    setFilteredResults({
+      flights: applyFlightsFilters(flights),
+      hotels: applyHotelsFilters(hotels), 
+      carRentals: applyCarsFilters(carRentals)
+    });
+  }, [flights, hotels, carRentals]);
+
+  const handleSort = useCallback((items: (FlightResult | HotelResult | CarRentalResult)[], type: string) => {
+    return [...items].sort((a: any, b: any) => {
       switch (sortBy) {
         case 'price-asc':
           const priceA = type === 'flights' ? a.price.amount : 
@@ -130,9 +143,9 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
           return 0;
       }
     });
-  };
+  }, [sortBy]);
 
-  const handleCompare = (item: any) => {
+  const handleCompare = useCallback((item: FlightResult | HotelResult | CarRentalResult) => {
     setCompareItems(prev => {
       const exists = prev.find(p => p.id === item.id);
       if (exists) {
@@ -142,9 +155,9 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
       }
       return prev;
     });
-  };
+  }, []);
 
-  const getResultCount = () => {
+  const getResultCount = useMemo(() => {
     switch (activeTab) {
       case 'flights':
         return filteredResults.flights.length;
@@ -155,7 +168,7 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
       default:
         return 0;
     }
-  };
+  }, [activeTab, filteredResults]);
 
   const renderResults = () => {
     if (loading) {
@@ -169,7 +182,7 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
     }
 
     const renderFlights = () => {
-      const sortedFlights = handleSort(filteredResults.flights, 'flights');
+      const sortedFlights = handleSort(filteredResults.flights, 'flights') as FlightResult[];
       return (
         <div className="space-y-4">
           {sortedFlights.map((flight) => (
@@ -186,7 +199,7 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
     };
 
     const renderHotels = () => {
-      const sortedHotels = handleSort(filteredResults.hotels, 'hotels');
+      const sortedHotels = handleSort(filteredResults.hotels, 'hotels') as HotelResult[];
       return (
         <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
           {sortedHotels.map((hotel) => (
@@ -203,7 +216,7 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
     };
 
     const renderCarRentals = () => {
-      const sortedCars = handleSort(filteredResults.carRentals, 'cars');
+      const sortedCars = handleSort(filteredResults.carRentals, 'cars') as CarRentalResult[];
       return (
         <div className={`grid gap-6 ${viewMode === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
           {sortedCars.map((car) => (
@@ -248,7 +261,7 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
           <h2 className="text-2xl font-bold text-foreground">Search Results</h2>
           {!loading && (
             <Badge variant="secondary">
-              {getResultCount()} results found
+              {getResultCount} results found
             </Badge>
           )}
         </div>
@@ -268,7 +281,7 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
                   <DialogTitle>Compare Options</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {compareItems.map((item) => (
+                  {compareItems.map((item: any) => (
                     <div key={item.id} className="border border-border rounded-lg p-4">
                       {/* Simplified comparison view */}
                       <h3 className="font-medium mb-2">
@@ -344,7 +357,7 @@ const SearchResultsContainer: React.FC<SearchResultsContainerProps> = ({
       {renderResults()}
 
       {/* No Results */}
-      {!loading && getResultCount() === 0 && (
+      {!loading && getResultCount === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">No results found matching your criteria.</p>
           <Button onClick={() => setShowFilters(true)}>
