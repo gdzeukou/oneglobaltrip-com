@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import AIResultsDisplay from './AIResultsDisplay';
 
 interface Message {
   id: string;
@@ -249,30 +250,52 @@ Contact support if this issue persists for more than 5 minutes.`,
             {/* Messages Area - Mobile Optimized */}
             <div className="flex-1 overflow-y-auto px-3 py-4 sm:p-4 space-y-3 sm:space-y-4 overscroll-contain">
               {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`flex items-start space-x-2 max-w-[90%] sm:max-w-[85%] ${
-                    message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''
-                  }`}>
-                    <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 mt-1">
-                      <AvatarFallback className={
-                        message.role === 'user' 
-                          ? 'bg-blue-100 text-blue-600 text-xs sm:text-sm' 
-                          : 'bg-purple-100 text-purple-600 text-xs sm:text-sm'
-                      }>
-                        {message.role === 'user' ? 'U' : 'M'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className={`rounded-lg px-3 py-2 text-sm sm:text-sm leading-relaxed ${
-                      message.role === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-100 text-gray-800'
-                    }`} style={{ wordBreak: 'break-word' }}>
-                      {formatMessage(message.content)}
+                <div key={message.id} className="space-y-4">
+                  <div
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div className={`flex items-start space-x-2 max-w-[90%] sm:max-w-[85%] ${
+                      message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''
+                    }`}>
+                      <Avatar className="h-7 w-7 sm:h-8 sm:w-8 flex-shrink-0 mt-1">
+                        <AvatarFallback className={
+                          message.role === 'user' 
+                            ? 'bg-blue-100 text-blue-600 text-xs sm:text-sm' 
+                            : 'bg-purple-100 text-purple-600 text-xs sm:text-sm'
+                        }>
+                          {message.role === 'user' ? 'U' : 'M'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className={`rounded-lg px-3 py-2 text-sm sm:text-sm leading-relaxed ${
+                        message.role === 'user'
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-100 text-gray-800'
+                      }`} style={{ wordBreak: 'break-word' }}>
+                        {formatMessage(message.content)}
+                      </div>
                     </div>
                   </div>
+                  
+                  {/* Display search results using beautiful cards */}
+                  {message.role === 'assistant' && conversationId && (
+                    <div className="w-full max-w-none">
+                      <AIResultsDisplay 
+                        conversationId={conversationId}
+                        onFlightSelect={(flight) => {
+                          console.log('Flight selected:', flight);
+                          // You can add booking logic here
+                        }}
+                        onHotelSelect={(hotel) => {
+                          console.log('Hotel selected:', hotel);
+                          // You can add booking logic here
+                        }}
+                        onCarSelect={(car) => {
+                          console.log('Car selected:', car);
+                          // You can add booking logic here
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
               
