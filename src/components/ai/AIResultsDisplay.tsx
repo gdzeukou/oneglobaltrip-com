@@ -33,6 +33,8 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
   const fetchSearchResults = async () => {
     setLoading(true);
     try {
+      console.log('🔍 Fetching search results for conversation:', conversationId);
+      
       // Fetch the latest search results from the conversation
       const { data: messages, error } = await supabase
         .from('chat_messages')
@@ -48,28 +50,45 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         return;
       }
 
+      console.log('📊 Found search result messages:', messages?.length || 0);
+      console.log('📝 Messages details:', messages);
+
+      // Reset all results first
+      setFlights([]);
+      setHotels([]);
+      setCarRentals([]);
+
       // Process and transform the search results
       messages?.forEach(message => {
+        console.log('🔍 Processing message:', message.content, message.metadata);
         const metadata = message.metadata as any;
         
         if (message.content === 'FLIGHT_SEARCH_RESULTS' && metadata?.searchResults) {
+          console.log('✈️ Processing flight results:', metadata.searchResults);
           const transformedFlights = transformFlightsForDisplay(metadata.searchResults);
+          console.log('✅ Transformed flights:', transformedFlights);
           setFlights(transformedFlights);
           setActiveTab('flights');
         }
         
         if (message.content === 'HOTEL_SEARCH_RESULTS' && metadata?.searchResults) {
+          console.log('🏨 Processing hotel results:', metadata.searchResults);
           const transformedHotels = transformHotelsForDisplay(metadata.searchResults);
+          console.log('✅ Transformed hotels:', transformedHotels);
           setHotels(transformedHotels);
           setActiveTab('hotels');
         }
         
         if (message.content === 'CAR_SEARCH_RESULTS' && metadata?.searchResults) {
+          console.log('🚗 Processing car results:', metadata.searchResults);
           const transformedCars = transformCarsForDisplay(metadata.searchResults);
+          console.log('✅ Transformed cars:', transformedCars);
           setCarRentals(transformedCars);
           setActiveTab('cars');
         }
       });
+
+      console.log('🎯 Final results - Flights:', flights.length, 'Hotels:', hotels.length, 'Cars:', carRentals.length);
 
     } catch (error) {
       console.error('Error processing search results:', error);
@@ -79,36 +98,59 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
   };
 
   const transformFlightsForDisplay = (flights: any[]): FlightResult[] => {
-    return flights.map(flight => ({
-      id: flight.id,
-      airline: {
-        code: flight.airlineCode || flight.airline || 'XX',
-        name: flight.airline || 'Unknown Airline',
-        logo: getAirlineLogo(flight.airlineCode || flight.airline)
-      },
-      departure: {
-        airport: flight.origin || flight.departure?.airport || 'Unknown',
-        code: flight.origin || flight.departure?.code || 'XXX',
-        time: flight.departure?.time || flight.departureTime || new Date().toISOString(),
-        terminal: flight.departure?.terminal
-      },
-      arrival: {
-        airport: flight.destination || flight.arrival?.airport || 'Unknown',
-        code: flight.destination || flight.arrival?.code || 'XXX',
-        time: flight.arrival?.time || flight.arrivalTime || new Date().toISOString(),
-        terminal: flight.arrival?.terminal
-      },
-      duration: flight.duration || '2h 30m',
-      stops: flight.stops || 0,
-      layovers: flight.layovers || [],
-      price: {
-        amount: flight.price || flight.totalPrice || 0,
-        currency: flight.currency || 'USD'
-      },
-      class: flight.class || flight.bookingClass || 'Economy',
-      aircraft: flight.aircraft || flight.airplaneType,
-      availability: flight.availability || 9
-    }));
+    console.log('🔄 Transforming flights for display:', flights);
+    
+    return flights.map(flight => {
+      console.log('🔄 Processing flight:', flight);
+      
+      // Handle the date/time format from the database
+      const formatDateTime = (date: string, time: string) => {
+        try {
+          if (date && time) {
+            return new Date(`${date}T${time}:00`).toISOString();
+          }
+          // Fallback to current time
+          return new Date().toISOString();
+        } catch (error) {
+          console.warn('Date parsing error:', error, 'date:', date, 'time:', time);
+          return new Date().toISOString();
+        }
+      };
+
+      const transformedFlight = {
+        id: flight.id || Math.random().toString(),
+        airline: {
+          code: flight.airlineCode || flight.airline?.substring(0, 2).toUpperCase() || 'XX',
+          name: flight.airline || 'Unknown Airline',
+          logo: getAirlineLogo(flight.airlineCode || flight.airline)
+        },
+        departure: {
+          airport: flight.departure?.airport || flight.origin || 'Unknown',
+          code: flight.departure?.code || flight.origin || 'XXX',
+          time: formatDateTime(flight.departure?.date, flight.departure?.time),
+          terminal: flight.departure?.terminal
+        },
+        arrival: {
+          airport: flight.arrival?.airport || flight.destination || 'Unknown',
+          code: flight.arrival?.code || flight.destination || 'XXX',
+          time: formatDateTime(flight.arrival?.date, flight.arrival?.time),
+          terminal: flight.arrival?.terminal
+        },
+        duration: flight.duration || '2h 30m',
+        stops: flight.stops || 0,
+        layovers: flight.layovers || [],
+        price: {
+          amount: flight.price || flight.totalPrice || 0,
+          currency: flight.currency || 'USD'
+        },
+        class: flight.class || flight.bookingClass || 'Economy',
+        aircraft: flight.aircraft || flight.airplaneType || flight.flightNumber,
+        availability: flight.availability || 9
+      };
+      
+      console.log('✅ Transformed flight:', transformedFlight);
+      return transformedFlight;
+    });
   };
 
   const transformHotelsForDisplay = (hotels: any[]): HotelResult[] => {
