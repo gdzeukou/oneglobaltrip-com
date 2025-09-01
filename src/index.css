@@ -78,9 +78,12 @@
     --shadow-glow: 0 0 40px hsl(220, 91%, 51%, 0.2);
     --shadow-card-hover: 0 8px 25px -5px hsl(220 13% 69% / 0.2);
     
-    /* Travel card specific shadows */
-    --shadow-travel-card: 0 2px 8px -2px hsl(220 13% 69% / 0.08);
-    --shadow-travel-card-hover: 0 4px 16px -4px hsl(220 13% 69% / 0.15);
+    /* Travel card specific shadows - Enhanced for professional look */
+    --shadow-travel-card: 0 1px 3px 0 hsl(220 13% 69% / 0.1), 0 1px 2px 0 hsl(220 13% 69% / 0.06);
+    --shadow-travel-card-hover: 0 4px 6px -1px hsl(220 13% 69% / 0.1), 0 2px 4px -1px hsl(220 13% 69% / 0.06);
+    --shadow-expedia-card: 0 1px 2px 0 hsl(220 13% 69% / 0.05);
+    --shadow-expedia-card-hover: 0 4px 12px -2px hsl(220 13% 69% / 0.12);
+    --luxury-shadow-primary: 0 4px 14px 0 hsl(220 91% 51% / 0.25);
     
     /* Expedia-style design tokens */
     --expedia-blue: 210 100% 50%;
