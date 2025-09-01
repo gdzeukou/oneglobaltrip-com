@@ -459,8 +459,32 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
     return <AIResultsLoadingSkeleton />;
   }
 
-  // If no results and not loading, show a message or force sample data
+  // Always show results if we have flights, even if not showing in container
   const hasAnyResults = flights.length > 0 || hotels.length > 0 || carRentals.length > 0;
+  
+  // If we have flights, display them directly in cards instead of the container
+  if (flights.length > 0) {
+    return (
+      <div className="mt-6 space-y-4">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-foreground mb-2">Flight Search Results</h3>
+          <p className="text-sm text-muted-foreground">
+            Found {flights.length} flights matching your search criteria
+          </p>
+        </div>
+        <div className="space-y-4">
+          {flights.map((flight) => (
+            <ExpediaFlightCard
+              key={flight.id}
+              flight={flight}
+              onSelect={onFlightSelect || (() => {})}
+              onCompare={() => {}}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
   
   if (!hasAnyResults && !loading) {
     // Show sample flights to demonstrate the beautiful cards
