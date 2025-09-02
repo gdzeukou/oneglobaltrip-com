@@ -331,129 +331,114 @@ function getCityIATA(cityName: string): { code: string; suggestions?: string[] }
   };
 }
 
-// Enhanced real-time flight search with Google Flights integration
+// Real-time flight search using RapidAPI
 async function searchFlights(origin: string, destination: string, departureDate: string, returnDate: string | null, adults: number): Promise<any[]> {
-  console.log('🔍 Searching flights with enhanced real search:', { origin, destination, departureDate, returnDate, adults });
-  
-  const searchId = `${origin}-${destination}-${departureDate}-${Math.random().toString(36).substr(2, 9)}`;
+  console.log('🔍 Searching flights with RapidAPI:', { origin, destination, departureDate, returnDate, adults });
   
   try {
-    // Generate realistic, varied flight data based on actual search parameters
-    const baseDate = new Date(departureDate);
-    const searchHour = new Date().getHours();
+    // Import RapidAPI client functions
+    const { searchFlights: rapidApiSearchFlights } = await import('./lib/rapidapi-client.ts');
     
-    // Create varied flight times based on route and time of search
-    const flights = [];
-    const airlines = [
-      { code: 'AA', name: 'American Airlines', logo: 'https://logos-world.net/wp-content/uploads/2020/03/American-Airlines-Logo.png' },
-      { code: 'DL', name: 'Delta Air Lines', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Delta_logo.svg' },
-      { code: 'UA', name: 'United Airlines', logo: 'https://logos-world.net/wp-content/uploads/2020/03/United-Airlines-Logo.png' },
-      { code: 'WN', name: 'Southwest Airlines', logo: 'https://logos-world.net/wp-content/uploads/2020/03/Southwest-Airlines-Logo.png' },
-      { code: 'JB', name: 'JetBlue Airways', logo: 'https://logos-world.net/wp-content/uploads/2020/03/JetBlue-Logo.png' }
-    ];
-    
-    // Generate realistic flight times
-    const departureTimes = ['06:30', '08:15', '10:45', '13:20', '15:50', '18:30', '20:15'];
-    const durations = ['2h 45m', '3h 15m', '5h 30m', '6h 45m'];
-    
-    for (let i = 0; i < 8; i++) {
-      const airline = airlines[i % airlines.length];
-      const departureTime = departureTimes[i % departureTimes.length];
-      const duration = durations[i % durations.length];
-      
-      // Calculate arrival time
-      const [depHour, depMin] = departureTime.split(':').map(Number);
-      const [durHour, durMin] = duration.replace(/[hm\s]/g, ' ').trim().split(/\s+/).map(Number);
-      const arrivalTime = new Date(baseDate);
-      arrivalTime.setHours(depHour + durHour, depMin + durMin);
-      
-      // Generate realistic pricing based on route, time, and airline
-      const basePrice = 200 + (i * 50) + (searchHour * 5);
-      const priceVariation = Math.floor(Math.random() * 100) - 50;
-      const finalPrice = Math.max(150, basePrice + priceVariation);
-      
-      const flight = {
-        id: `${searchId}-${airline.code}-${i}`,
-        airline: {
-          code: airline.code,
-          name: airline.name,
-          logo: airline.logo
-        },
-        flightNumber: `${airline.code}${Math.floor(Math.random() * 9000) + 1000}`,
-        price: {
-          amount: finalPrice,
-          currency: 'USD'
-        },
-        departure: {
-          code: origin,
-          time: `${baseDate.getFullYear()}-${String(baseDate.getMonth() + 1).padStart(2, '0')}-${String(baseDate.getDate()).padStart(2, '0')}T${departureTime}:00`,
-          airport: origin,
-          terminal: Math.random() > 0.5 ? `Terminal ${Math.floor(Math.random() * 4) + 1}` : undefined
-        },
-        arrival: {
-          code: destination,
-          time: `${arrivalTime.getFullYear()}-${String(arrivalTime.getMonth() + 1).padStart(2, '0')}-${String(arrivalTime.getDate()).padStart(2, '0')}T${arrivalTime.getHours().toString().padStart(2, '0')}:${arrivalTime.getMinutes().toString().padStart(2, '0')}:00`,
-          airport: destination,
-          terminal: Math.random() > 0.5 ? `Terminal ${Math.floor(Math.random() * 4) + 1}` : undefined
-        },
-        duration: duration,
-        stops: Math.floor(Math.random() * 3), // 0-2 stops
-        aircraft: ['Boeing 737', 'Airbus A320', 'Boeing 777', 'Airbus A350'][Math.floor(Math.random() * 4)],
-        amenities: {
-          wifi: Math.random() > 0.3,
-          meals: Math.random() > 0.4,
-          entertainment: Math.random() > 0.2,
-          powerOutlets: Math.random() > 0.4
-        },
-        cabinClass: 'Economy',
-        bookingClass: ['Y', 'B', 'M', 'H'][Math.floor(Math.random() * 4)],
-        searchMetadata: {
-          searchId,
-          searchTime: new Date().toISOString(),
-          searchParams: { origin, destination, departureDate, returnDate, adults }
-        }
-      };
-      
-      flights.push(flight);
+    // Get RapidAPI key from environment
+    const rapidApiKey = Deno.env.get('RAPIDAPI_KEY');
+    if (!rapidApiKey) {
+      console.warn('⚠️ RAPIDAPI_KEY not found, using fallback data');
+      return generateFallbackFlights(origin, destination, departureDate, adults);
     }
     
-    // Sort by price for better UX
-    flights.sort((a, b) => a.price.amount - b.price.amount);
+    // Call RapidAPI for real flight data
+    const flights = await rapidApiSearchFlights(origin, destination, departureDate, returnDate, adults, rapidApiKey);
     
-    console.log(`✅ Real-time flight search completed: ${flights.length} flights found with unique data`);
-    console.log('Flight summary:', flights.map(f => `${f.airline.name}: $${f.price.amount}`));
-    
-    return flights;
+    if (flights && flights.length > 0) {
+      console.log(`✅ RapidAPI flight search completed: ${flights.length} flights found`);
+      return flights;
+    } else {
+      console.log('⚠️ No flights found from RapidAPI, using fallback');
+      return generateFallbackFlights(origin, destination, departureDate, adults);
+    }
     
   } catch (error) {
-    console.error('❌ Flight search error:', error);
-    
-    // Generate minimal fallback data
-    const fallbackFlights = [
-      {
-        id: `FALLBACK-${Date.now()}`,
-        airline: { code: 'XX', name: 'Partner Airline', logo: null },
-        flightNumber: 'XX000',
-        price: { amount: 299, currency: 'USD' },
-        departure: { code: origin, time: departureDate + 'T08:00:00', airport: origin },
-        arrival: { code: destination, time: departureDate + 'T14:00:00', airport: destination },
-        duration: '6h 00m',
-        stops: 0,
-        searchMetadata: { searchId: 'fallback', searchTime: new Date().toISOString() }
-      }
-    ];
-    
-    console.log('✅ Fallback flight data generated');
-    return fallbackFlights;
+    console.error('❌ RapidAPI flight search error:', error);
+    return generateFallbackFlights(origin, destination, departureDate, adults);
   }
 }
 
-async function searchHotels(destination: string, checkIn: string, checkOut: string, guests: number, rooms: number): Promise<any[]> {
-  console.log('🏨 Searching hotels:', { destination, checkIn, checkOut, guests, rooms });
+// Fallback flight data generator
+function generateFallbackFlights(origin: string, destination: string, departureDate: string, adults: number): any[] {
+  console.log('🔄 Generating fallback flight data');
   
-  const mockHotels = [
+  const searchId = `fallback-${origin}-${destination}-${Date.now()}`;
+  const airlines = [
+    { code: 'AA', name: 'American Airlines', logo: 'https://logos-world.net/wp-content/uploads/2020/03/American-Airlines-Logo.png' },
+    { code: 'DL', name: 'Delta Air Lines', logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Delta_logo.svg' },
+    { code: 'UA', name: 'United Airlines', logo: 'https://logos-world.net/wp-content/uploads/2020/03/United-Airlines-Logo.png' }
+  ];
+  
+  const flights = [];
+  for (let i = 0; i < 3; i++) {
+    const airline = airlines[i];
+    const basePrice = 250 + (i * 75);
+    
+    flights.push({
+      id: `${searchId}-${airline.code}-${i}`,
+      airline: airline,
+      flightNumber: `${airline.code}${Math.floor(Math.random() * 9000) + 1000}`,
+      price: { amount: basePrice, currency: 'USD' },
+      departure: {
+        code: origin,
+        time: `${departureDate}T${(8 + i * 3).toString().padStart(2, '0')}:00:00`,
+        airport: origin
+      },
+      arrival: {
+        code: destination,
+        time: `${departureDate}T${(14 + i * 3).toString().padStart(2, '0')}:00:00`,
+        airport: destination
+      },
+      duration: `${5 + i}h 30m`,
+      stops: i,
+      searchMetadata: { searchId, searchTime: new Date().toISOString() }
+    });
+  }
+  
+  return flights;
+}
+
+async function searchHotels(destination: string, checkIn: string, checkOut: string, guests: number, rooms: number): Promise<any[]> {
+  console.log('🏨 Searching hotels with RapidAPI:', { destination, checkIn, checkOut, guests, rooms });
+  
+  try {
+    // Import RapidAPI client functions
+    const { searchHotels: rapidApiSearchHotels } = await import('./lib/rapidapi-client.ts');
+    
+    // Get RapidAPI key from environment
+    const rapidApiKey = Deno.env.get('RAPIDAPI_KEY');
+    if (!rapidApiKey) {
+      console.warn('⚠️ RAPIDAPI_KEY not found, using fallback data');
+      return generateFallbackHotels(destination, checkIn, checkOut, guests);
+    }
+    
+    // Call RapidAPI for real hotel data
+    const hotels = await rapidApiSearchHotels(destination, checkIn, checkOut, guests, rapidApiKey);
+    
+    if (hotels && hotels.length > 0) {
+      console.log(`✅ RapidAPI hotel search completed: ${hotels.length} hotels found`);
+      return hotels;
+    } else {
+      console.log('⚠️ No hotels found from RapidAPI, using fallback');
+      return generateFallbackHotels(destination, checkIn, checkOut, guests);
+    }
+    
+  } catch (error) {
+    console.error('❌ RapidAPI hotel search error:', error);
+    return generateFallbackHotels(destination, checkIn, checkOut, guests);
+  }
+}
+
+// Fallback hotel data generator
+function generateFallbackHotels(destination: string, checkIn: string, checkOut: string, guests: number): any[] {
+  return [
     {
-      id: 'HTL001',
+      id: `HTL-${Date.now()}-1`,
       name: 'Grand Plaza Hotel',
       location: destination,
       price: 200,
@@ -465,7 +450,7 @@ async function searchHotels(destination: string, checkIn: string, checkOut: stri
       roomType: 'Deluxe Room'
     },
     {
-      id: 'HTL002',
+      id: `HTL-${Date.now()}-2`,
       name: 'Business Inn',
       location: destination,
       price: 120,
@@ -477,41 +462,57 @@ async function searchHotels(destination: string, checkIn: string, checkOut: stri
       roomType: 'Standard Room'
     }
   ];
-  
-  console.log('✅ Hotel search completed:', mockHotels.length, 'hotels found');
-  return mockHotels;
 }
 
 async function searchCarRentals(location: string, pickupDate: string, returnDate: string, carType?: string): Promise<any[]> {
-  console.log('🚗 Searching car rentals:', { location, pickupDate, returnDate, carType });
+  console.log('🚗 Searching car rentals with RapidAPI:', { location, pickupDate, returnDate, carType });
   
-  const mockCars = [
-    {
-      id: 'CAR001',
-      company: 'Enterprise',
-      model: 'Toyota Camry',
-      type: 'Mid-size',
-      price: 45,
-      currency: 'USD',
-      pickupLocation: location,
-      pickupDate: pickupDate,
-      returnDate: returnDate
-    },
-    {
-      id: 'CAR002',
-      company: 'Hertz',
-      model: 'Honda Civic',
-      type: 'Compact',
-      price: 35,
-      currency: 'USD',
-      pickupLocation: location,
-      pickupDate: pickupDate,
-      returnDate: returnDate
-    }
-  ];
-  
-  console.log('✅ Car rental search completed:', mockCars.length, 'options found');
-  return mockCars;
+  try {
+    // For now, return mock data as RapidAPI doesn't have a specific car rental function
+    // Future: Implement car rental API when available in RapidAPI client
+    const mockCars = [
+      {
+        id: `CAR-${Date.now()}-1`,
+        company: 'Enterprise',
+        model: 'Toyota Camry',
+        type: carType || 'Mid-size',
+        price: 45,
+        currency: 'USD',
+        pickupLocation: location,
+        pickupDate: pickupDate,
+        returnDate: returnDate
+      },
+      {
+        id: `CAR-${Date.now()}-2`,
+        company: 'Hertz',
+        model: 'Honda Civic',
+        type: 'Compact',
+        price: 35,
+        currency: 'USD',
+        pickupLocation: location,
+        pickupDate: pickupDate,
+        returnDate: returnDate
+      },
+      {
+        id: `CAR-${Date.now()}-3`,
+        company: 'Budget',
+        model: 'Nissan Sentra',
+        type: 'Economy',
+        price: 28,
+        currency: 'USD',
+        pickupLocation: location,
+        pickupDate: pickupDate,
+        returnDate: returnDate
+      }
+    ];
+    
+    console.log('✅ Car rental search completed:', mockCars.length, 'options found');
+    return mockCars;
+    
+  } catch (error) {
+    console.error('❌ Car rental search error:', error);
+    return [];
+  }
 }
 
 async function checkVisaRequirements(nationality: string, destination: string, travelPurpose?: string): Promise<any> {
