@@ -1,6 +1,6 @@
-// Enhanced city to IATA code mappings with fuzzy matching support
+// Enhanced city to IATA code mappings with multi-airport support
 export const CITY_TO_IATA: Record<string, string> = {
-  // Major US cities
+  // Major US cities - Primary airports
   'houston': 'IAH',
   'h-town': 'IAH',
   'space city': 'IAH',
@@ -128,6 +128,50 @@ export const CITY_TO_IATA: Record<string, string> = {
   'perth': 'PER',
   'auckland': 'AKL',
   'wellington': 'WLG'
+};
+
+// Multi-airport city mappings for smart airport selection
+export const CITY_AIRPORTS: Record<string, { primary: string; secondary?: string[]; name: string }> = {
+  'houston': { 
+    primary: 'IAH', 
+    secondary: ['HOU'], 
+    name: 'Houston'
+  },
+  'dallas': { 
+    primary: 'DFW', 
+    secondary: ['DAL'], 
+    name: 'Dallas'
+  },
+  'new york': { 
+    primary: 'JFK', 
+    secondary: ['LGA', 'EWR'], 
+    name: 'New York'
+  },
+  'nyc': { 
+    primary: 'JFK', 
+    secondary: ['LGA', 'EWR'], 
+    name: 'New York'
+  },
+  'chicago': { 
+    primary: 'ORD', 
+    secondary: ['MDW'], 
+    name: 'Chicago'
+  },
+  'washington': { 
+    primary: 'DCA', 
+    secondary: ['IAD', 'BWI'], 
+    name: 'Washington DC'
+  },
+  'los angeles': { 
+    primary: 'LAX', 
+    secondary: ['BUR', 'LGB'], 
+    name: 'Los Angeles'
+  },
+  'london': { 
+    primary: 'LHR', 
+    secondary: ['LGW', 'STN'], 
+    name: 'London'
+  }
 };
 
 export const corsHeaders = {

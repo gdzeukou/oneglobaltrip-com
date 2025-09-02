@@ -1,4 +1,4 @@
-// Enhanced flight results formatting with better error messages
+// Enhanced flight results formatting with better error handling and price display
 export function formatFlightResults(flights: any[], searchedOrigin: string, searchedDestination: string, searchParams?: any): string {
   console.log('Formatting flight results:', flights.length, 'flights found');
   
@@ -32,8 +32,8 @@ export function formatFlightResults(flights: any[], searchedOrigin: string, sear
     : '';
 
   const formattedFlights = flights.slice(0, 5).map((flight, index) => {
-    const price = flight.price?.total || 'N/A';
-    const currency = flight.price?.currency || '';
+    // Enhanced price formatting with proper error handling
+    const priceDisplay = formatPrice(flight.price);
     const segments = flight.itineraries?.[0]?.segments || [];
     const firstSegment = segments[0];
     const lastSegment = segments[segments.length - 1];
@@ -42,51 +42,26 @@ export function formatFlightResults(flights: any[], searchedOrigin: string, sear
       return `❌ **Flight Option ${index + 1}** - Data incomplete`;
     }
 
-    // Format departure and arrival times
-    const departureTime = new Date(firstSegment.departure?.at);
-    const arrivalTime = new Date(lastSegment.arrival?.at);
-    
-    const formatTime = (date: Date) => {
-      if (isNaN(date.getTime())) return 'Time TBD';
-      return date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit', 
-        hour12: true,
-        timeZone: 'UTC'
-      });
-    };
-    
-    const formatDate = (date: Date) => {
-      if (isNaN(date.getTime())) return 'Date TBD';
-      return date.toLocaleDateString('en-US', { 
-        month: 'short', 
-        day: 'numeric',
-        timeZone: 'UTC'
-      });
-    };
+    // Enhanced time formatting
+    const departureTime = formatFlightTime(firstSegment.departure?.at);
+    const arrivalTime = formatFlightTime(lastSegment.arrival?.at);
 
     const stops = segments.length - 1;
     const stopsText = stops === 0 ? 'Nonstop' : `${stops} stop${stops > 1 ? 's' : ''}`;
     
-    // Calculate flight duration
-    const durationMinutes = flight.itineraries?.[0]?.duration 
-      ? parseInt(flight.itineraries[0].duration.replace('PT', '').replace('H', '*60+').replace('M', '').replace('+', '')) 
-      : null;
-    
-    const durationText = durationMinutes 
-      ? `${Math.floor(durationMinutes / 60)}h ${durationMinutes % 60}m`
-      : 'Duration TBD';
+    // Enhanced duration calculation
+    const durationText = formatDuration(flight.itineraries?.[0]?.duration);
 
     return [
       `✈️ **Flight Option ${index + 1}**`,
       `🏢 **Airline:** ${firstSegment.carrierCode || 'TBD'}`,
-      `🛫 **Depart:** ${formatDate(departureTime)} at ${formatTime(departureTime)} from ${firstSegment.departure?.iataCode || searchedOrigin}`,
-      `🛬 **Arrive:** ${formatDate(arrivalTime)} at ${formatTime(arrivalTime)} in ${lastSegment.arrival?.iataCode || searchedDestination}`,
-      `💲 **Price:** $${price} ${currency}`,
+      `🛫 **Depart:** ${departureTime} from ${firstSegment.departure?.iataCode || searchedOrigin}`,
+      `🛬 **Arrive:** ${arrivalTime} in ${lastSegment.arrival?.iataCode || searchedDestination}`,
+      `💲 **Price:** ${priceDisplay}`,
       `🔁 **Stops:** ${stopsText}`,
       `⏱️ **Duration:** ${durationText}`,
-      `📋 **Booking Class:** ${firstSegment.cabin || 'Economy'}`,
-      `🎫 **Flight ID:** ${flight.id || `FLIGHT_${index + 1}`}` // Add unique identifier for booking
+      `📋 **Class:** ${firstSegment.cabin || 'Economy'}`,
+      `🎫 **Flight ID:** ${flight.id || `FLIGHT_${index + 1}`}`
     ].join('\n');
     
   }).join('\n\n');
@@ -102,6 +77,87 @@ export function formatFlightResults(flights: any[], searchedOrigin: string, sear
   ].join('\n');
   
   return `Here are the best flight options I found:${dateNote}\n\n${formattedFlights}${bookingPrompt}`;
+}
+
+// Helper function to format flight times with proper error handling
+function formatFlightTime(timeString: string): string {
+  if (!timeString) return 'Time TBD';
+  
+  try {
+    const date = new Date(timeString);
+    if (isNaN(date.getTime())) return 'Time TBD';
+    
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: 'UTC'
+    });
+  } catch {
+    return timeString;
+  }
+}
+
+// Helper function to format price with comprehensive error handling
+function formatPrice(price: any): string {
+  if (!price) return 'Price not available';
+  
+  try {
+    let amount: number;
+    let currency = 'USD';
+    
+    if (typeof price === 'number') {
+      amount = price;
+    } else if (typeof price === 'object') {
+      amount = price.total || price.amount || price.value || price.raw;
+      currency = price.currency || price.unit || currency;
+      
+      if (amount === undefined || amount === null) {
+        return 'Price not available';
+      }
+    } else {
+      return 'Price not available';
+    }
+    
+    // Ensure amount is a valid number
+    const numAmount = Number(amount);
+    if (isNaN(numAmount)) {
+      return 'Price not available';
+    }
+    
+    return `$${numAmount.toFixed(2)} ${currency}`;
+  } catch (error) {
+    console.error('Error formatting price:', error, price);
+    return 'Price not available';
+  }
+}
+
+// Helper function to format duration
+function formatDuration(duration: string): string {
+  if (!duration) return 'Duration TBD';
+  
+  try {
+    // Handle PT format (e.g., PT2H30M)
+    if (duration.startsWith('PT')) {
+      const hours = duration.match(/(\d+)H/)?.[1] || '0';
+      const minutes = duration.match(/(\d+)M/)?.[1] || '0';
+      return `${hours}h ${minutes}m`;
+    }
+    
+    // Handle minutes format
+    if (typeof duration === 'number' || !isNaN(Number(duration))) {
+      const totalMinutes = Number(duration);
+      const hours = Math.floor(totalMinutes / 60);
+      const mins = totalMinutes % 60;
+      return `${hours}h ${mins}m`;
+    }
+    
+    return duration;
+  } catch {
+    return 'Duration TBD';
+  }
 }
 
 // Transform Amadeus flight data to booking format

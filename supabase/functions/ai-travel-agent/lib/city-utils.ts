@@ -1,11 +1,23 @@
-import { CITY_TO_IATA } from './constants.ts';
+import { CITY_TO_IATA, CITY_AIRPORTS } from './constants.ts';
 
-// Enhanced city IATA code lookup with fuzzy matching
-export function getCityIATA(cityName: string): { code: string; suggestions?: string[] } {
+// Enhanced city IATA code lookup with multi-airport support and fuzzy matching
+export function getCityIATA(cityName: string): { code: string; suggestions?: string[]; multiAirport?: boolean; airports?: string[] } {
   const normalized = cityName.toLowerCase().trim();
   console.log('Looking up city:', normalized);
   
-  // Direct match
+  // Check for multi-airport cities first
+  if (CITY_AIRPORTS[normalized]) {
+    const cityInfo = CITY_AIRPORTS[normalized];
+    const allAirports = [cityInfo.primary, ...(cityInfo.secondary || [])];
+    return { 
+      code: cityInfo.primary,
+      multiAirport: true,
+      airports: allAirports,
+      suggestions: allAirports.map(code => `${cityInfo.name} (${code})`)
+    };
+  }
+  
+  // Direct match in simple mapping
   if (CITY_TO_IATA[normalized]) {
     return { code: CITY_TO_IATA[normalized] };
   }
