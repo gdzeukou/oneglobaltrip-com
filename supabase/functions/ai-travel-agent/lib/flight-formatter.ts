@@ -100,7 +100,7 @@ function formatFlightTime(timeString: string): string {
   }
 }
 
-// Helper function to format price with comprehensive error handling
+// Helper function to format price with comprehensive error handling for multiple API formats
 function formatPrice(price: any): string {
   if (!price) return 'Price not available';
   
@@ -110,9 +110,16 @@ function formatPrice(price: any): string {
     
     if (typeof price === 'number') {
       amount = price;
+    } else if (typeof price === 'string') {
+      // Handle string prices like "199.99" or "$199.99 USD"
+      const cleanPrice = price.replace(/[^0-9.]/g, '');
+      amount = parseFloat(cleanPrice);
+      const currencyMatch = price.match(/[A-Z]{3}/);
+      if (currencyMatch) currency = currencyMatch[0];
     } else if (typeof price === 'object') {
-      amount = price.total || price.amount || price.value || price.raw;
-      currency = price.currency || price.unit || currency;
+      // Handle various object formats from different APIs
+      amount = price.total || price.amount || price.value || price.raw || price.price || price.grandTotal;
+      currency = price.currency || price.unit || price.currencyCode || currency;
       
       if (amount === undefined || amount === null) {
         return 'Price not available';
@@ -127,7 +134,9 @@ function formatPrice(price: any): string {
       return 'Price not available';
     }
     
-    return `$${numAmount.toFixed(2)} ${currency}`;
+    // Format with proper currency symbol
+    const currencySymbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : currency === 'GBP' ? '£' : currency;
+    return `${currencySymbol}${numAmount.toFixed(2)} ${currency}`;
   } catch (error) {
     console.error('Error formatting price:', error, price);
     return 'Price not available';
