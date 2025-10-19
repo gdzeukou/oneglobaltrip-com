@@ -127,6 +127,33 @@ export type Database = {
         }
         Relationships: []
       }
+      blockchain_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_hash: string
+          last_used_at: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_hash: string
+          last_used_at?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_hash?: string
+          last_used_at?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       booking_documents: {
         Row: {
           booking_id: string
@@ -372,15 +399,7 @@ export type Database = {
           trip_id?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "bookings_trip_id_fkey"
-            columns: ["trip_id"]
-            isOneToOne: false
-            referencedRelation: "trips"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       campaign_sends: {
         Row: {
@@ -1224,6 +1243,62 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_activities: {
+        Row: {
+          booking_reference: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          location: string | null
+          notes: string | null
+          order_index: number | null
+          price_amount: number | null
+          price_currency: string | null
+          start_time: string | null
+          title: string
+          trip_day_id: string
+          type: string
+        }
+        Insert: {
+          booking_reference?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          order_index?: number | null
+          price_amount?: number | null
+          price_currency?: string | null
+          start_time?: string | null
+          title: string
+          trip_day_id: string
+          type: string
+        }
+        Update: {
+          booking_reference?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          order_index?: number | null
+          price_amount?: number | null
+          price_currency?: string | null
+          start_time?: string | null
+          title?: string
+          trip_day_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_activities_trip_day_id_fkey"
+            columns: ["trip_day_id"]
+            isOneToOne: false
+            referencedRelation: "trip_days"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trip_contexts: {
         Row: {
           budget_range: string | null
@@ -1266,43 +1341,81 @@ export type Database = {
         }
         Relationships: []
       }
-      trips: {
+      trip_days: {
         Row: {
           created_at: string
-          departure_city: string | null
-          departure_date: string | null
-          destination_country: string
+          date: string
+          day_number: number
           id: string
-          return_date: string | null
+          notes: string | null
+          trip_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          day_number: number
+          id?: string
+          notes?: string | null
+          trip_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          day_number?: number
+          id?: string
+          notes?: string | null
+          trip_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_days_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trips: {
+        Row: {
+          budget_amount: number | null
+          budget_currency: string | null
+          created_at: string
+          destination: string
+          end_date: string
+          id: string
+          notes: string | null
+          start_date: string
           status: string | null
-          total_budget: number | null
-          trip_type: string | null
+          travelers_count: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          budget_amount?: number | null
+          budget_currency?: string | null
           created_at?: string
-          departure_city?: string | null
-          departure_date?: string | null
-          destination_country: string
+          destination: string
+          end_date: string
           id?: string
-          return_date?: string | null
+          notes?: string | null
+          start_date: string
           status?: string | null
-          total_budget?: number | null
-          trip_type?: string | null
+          travelers_count?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          budget_amount?: number | null
+          budget_currency?: string | null
           created_at?: string
-          departure_city?: string | null
-          departure_date?: string | null
-          destination_country?: string
+          destination?: string
+          end_date?: string
           id?: string
-          return_date?: string | null
+          notes?: string | null
+          start_date?: string
           status?: string | null
-          total_budget?: number | null
-          trip_type?: string | null
+          travelers_count?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -1400,39 +1513,56 @@ export type Database = {
       }
       user_documents: {
         Row: {
+          blockchain_key_id: string | null
           document_type: string | null
+          encryption_method: string | null
           file_name: string
           file_path: string
           file_size: number | null
           id: string
+          is_encrypted: boolean | null
           mime_type: string | null
           updated_at: string
           uploaded_at: string
           user_id: string
         }
         Insert: {
+          blockchain_key_id?: string | null
           document_type?: string | null
+          encryption_method?: string | null
           file_name: string
           file_path: string
           file_size?: number | null
           id?: string
+          is_encrypted?: boolean | null
           mime_type?: string | null
           updated_at?: string
           uploaded_at?: string
           user_id: string
         }
         Update: {
+          blockchain_key_id?: string | null
           document_type?: string | null
+          encryption_method?: string | null
           file_name?: string
           file_path?: string
           file_size?: number | null
           id?: string
+          is_encrypted?: boolean | null
           mime_type?: string | null
           updated_at?: string
           uploaded_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_documents_blockchain_key_id_fkey"
+            columns: ["blockchain_key_id"]
+            isOneToOne: false
+            referencedRelation: "blockchain_keys"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_preferences: {
         Row: {
