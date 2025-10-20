@@ -12,6 +12,7 @@ const OGTNavbar = () => {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard' },
     { name: 'Trips', path: '/trips' },
+    { name: 'Discover', path: '/discover' },
     { name: 'Booking', path: '/booking' },
     { name: 'Visa', path: '/visa/wizard' },
     { name: 'Wallet', path: '/wallet' },

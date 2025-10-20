@@ -60,6 +60,8 @@ const Blog = lazy(() => import("./pages/Blog"));
 const Services = lazy(() => import("./pages/Services"));
 const Testimonials = lazy(() => import("./pages/Testimonials"));
 const Settings = lazy(() => import("./pages/Settings"));
+const DiscoverGlobal = lazy(() => import("./pages/discover/DiscoverGlobal"));
+const DiscoverNearby = lazy(() => import("./pages/discover/DiscoverNearby"));
 
 import "./App.css";
 import AgentProtectedRoute from "./components/auth/AgentProtectedRoute";
@@ -161,6 +163,23 @@ function App() {
                       <Route path="/settings" element={
                         <ProtectedRoute requireEmailVerification={false}>
                           <Settings />
+                        </ProtectedRoute>
+                      } />
+                      
+                      {/* Discover/Social Routes */}
+                      <Route path="/discover" element={
+                        <ProtectedRoute requireEmailVerification={false}>
+                          <DiscoverGlobal />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/discover/global" element={
+                        <ProtectedRoute requireEmailVerification={false}>
+                          <DiscoverGlobal />
+                        </ProtectedRoute>
+                      } />
+                      <Route path="/discover/nearby" element={
+                        <ProtectedRoute requireEmailVerification={false}>
+                          <DiscoverNearby />
                         </ProtectedRoute>
                       } />
                       
