@@ -549,6 +549,54 @@ export type Database = {
         }
         Relationships: []
       }
+      discovery_preferences: {
+        Row: {
+          auto_accept_connections: boolean | null
+          created_at: string | null
+          id: string
+          share_current_location: boolean | null
+          share_past_trips: boolean | null
+          share_upcoming_trips: boolean | null
+          show_in_global_directory: boolean | null
+          show_in_nearby: boolean | null
+          updated_at: string | null
+          user_id: string
+          who_can_invite_to_trips: string | null
+          who_can_message: string | null
+          who_can_see_profile: string | null
+        }
+        Insert: {
+          auto_accept_connections?: boolean | null
+          created_at?: string | null
+          id?: string
+          share_current_location?: boolean | null
+          share_past_trips?: boolean | null
+          share_upcoming_trips?: boolean | null
+          show_in_global_directory?: boolean | null
+          show_in_nearby?: boolean | null
+          updated_at?: string | null
+          user_id: string
+          who_can_invite_to_trips?: string | null
+          who_can_message?: string | null
+          who_can_see_profile?: string | null
+        }
+        Update: {
+          auto_accept_connections?: boolean | null
+          created_at?: string | null
+          id?: string
+          share_current_location?: boolean | null
+          share_past_trips?: boolean | null
+          share_upcoming_trips?: boolean | null
+          show_in_global_directory?: boolean | null
+          show_in_nearby?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+          who_can_invite_to_trips?: string | null
+          who_can_message?: string | null
+          who_can_see_profile?: string | null
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           application_id: string | null
@@ -1243,6 +1291,47 @@ export type Database = {
         }
         Relationships: []
       }
+      traveler_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          message_text: string
+          read: boolean | null
+          read_at: string | null
+          receiver_id: string
+          related_trip_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message_text: string
+          read?: boolean | null
+          read_at?: string | null
+          receiver_id: string
+          related_trip_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message_text?: string
+          read?: boolean | null
+          read_at?: string | null
+          receiver_id?: string
+          related_trip_id?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "traveler_messages_related_trip_id_fkey"
+            columns: ["related_trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trip_activities: {
         Row: {
           booking_reference: string | null
@@ -1295,6 +1384,59 @@ export type Database = {
             columns: ["trip_day_id"]
             isOneToOne: false
             referencedRelation: "trip_days"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip_collaborators: {
+        Row: {
+          can_edit: boolean | null
+          can_invite_others: boolean | null
+          created_at: string | null
+          id: string
+          invitation_status:
+            | Database["public"]["Enums"]["invitation_status"]
+            | null
+          invited_by: string | null
+          joined_at: string | null
+          role: Database["public"]["Enums"]["trip_collab_role"] | null
+          trip_id: string
+          user_id: string
+        }
+        Insert: {
+          can_edit?: boolean | null
+          can_invite_others?: boolean | null
+          created_at?: string | null
+          id?: string
+          invitation_status?:
+            | Database["public"]["Enums"]["invitation_status"]
+            | null
+          invited_by?: string | null
+          joined_at?: string | null
+          role?: Database["public"]["Enums"]["trip_collab_role"] | null
+          trip_id: string
+          user_id: string
+        }
+        Update: {
+          can_edit?: boolean | null
+          can_invite_others?: boolean | null
+          created_at?: string | null
+          id?: string
+          invitation_status?:
+            | Database["public"]["Enums"]["invitation_status"]
+            | null
+          invited_by?: string | null
+          joined_at?: string | null
+          role?: Database["public"]["Enums"]["trip_collab_role"] | null
+          trip_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_collaborators_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
             referencedColumns: ["id"]
           },
         ]
@@ -1511,6 +1653,40 @@ export type Database = {
         }
         Relationships: []
       }
+      user_connections: {
+        Row: {
+          addressee_id: string
+          connection_type: Database["public"]["Enums"]["connection_type"] | null
+          created_at: string | null
+          id: string
+          requester_id: string
+          status: Database["public"]["Enums"]["connection_status"]
+          updated_at: string | null
+        }
+        Insert: {
+          addressee_id: string
+          connection_type?:
+            | Database["public"]["Enums"]["connection_type"]
+            | null
+          created_at?: string | null
+          id?: string
+          requester_id: string
+          status?: Database["public"]["Enums"]["connection_status"]
+          updated_at?: string | null
+        }
+        Update: {
+          addressee_id?: string
+          connection_type?:
+            | Database["public"]["Enums"]["connection_type"]
+            | null
+          created_at?: string | null
+          id?: string
+          requester_id?: string
+          status?: Database["public"]["Enums"]["connection_status"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_documents: {
         Row: {
           blockchain_key_id: string | null
@@ -1560,6 +1736,47 @@ export type Database = {
             columns: ["blockchain_key_id"]
             isOneToOne: false
             referencedRelation: "blockchain_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_location_history: {
+        Row: {
+          accuracy_radius_km: number | null
+          expires_at: string | null
+          id: string
+          is_traveling: boolean | null
+          location: Json
+          recorded_at: string | null
+          related_trip_id: string | null
+          user_id: string
+        }
+        Insert: {
+          accuracy_radius_km?: number | null
+          expires_at?: string | null
+          id?: string
+          is_traveling?: boolean | null
+          location: Json
+          recorded_at?: string | null
+          related_trip_id?: string | null
+          user_id: string
+        }
+        Update: {
+          accuracy_radius_km?: number | null
+          expires_at?: string | null
+          id?: string
+          is_traveling?: boolean | null
+          location?: Json
+          recorded_at?: string | null
+          related_trip_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_location_history_related_trip_id_fkey"
+            columns: ["related_trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
             referencedColumns: ["id"]
           },
         ]
@@ -1642,6 +1859,72 @@ export type Database = {
           updated_at?: string
           user_id?: string
           voice_opt_in?: boolean | null
+        }
+        Relationships: []
+      }
+      user_profiles_public: {
+        Row: {
+          age_range: string | null
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          current_location: Json | null
+          display_name: string
+          gender: string | null
+          home_city: string | null
+          home_country: string | null
+          id: string
+          is_discoverable: boolean | null
+          languages_spoken: string[] | null
+          last_active_at: string | null
+          location_sharing_enabled: boolean | null
+          profile_completion_percentage: number | null
+          travel_interests: string[] | null
+          updated_at: string | null
+          user_id: string
+          verified: boolean | null
+        }
+        Insert: {
+          age_range?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          current_location?: Json | null
+          display_name: string
+          gender?: string | null
+          home_city?: string | null
+          home_country?: string | null
+          id?: string
+          is_discoverable?: boolean | null
+          languages_spoken?: string[] | null
+          last_active_at?: string | null
+          location_sharing_enabled?: boolean | null
+          profile_completion_percentage?: number | null
+          travel_interests?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          verified?: boolean | null
+        }
+        Update: {
+          age_range?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          current_location?: Json | null
+          display_name?: string
+          gender?: string | null
+          home_city?: string | null
+          home_country?: string | null
+          id?: string
+          is_discoverable?: boolean | null
+          languages_spoken?: string[] | null
+          last_active_at?: string | null
+          location_sharing_enabled?: boolean | null
+          profile_completion_percentage?: number | null
+          travel_interests?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          verified?: boolean | null
         }
         Relationships: []
       }
@@ -1871,6 +2154,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      cleanup_expired_locations: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_expired_otp_codes: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1891,6 +2178,19 @@ export type Database = {
         Args: { p_base_reference: string; p_traveler_number: number }
         Returns: string
       }
+      get_nearby_travelers: {
+        Args: { radius_km?: number; user_lat: number; user_lng: number }
+        Returns: {
+          avatar_url: string
+          bio: string
+          current_location: Json
+          display_name: string
+          distance_km: number
+          travel_interests: string[]
+          upcoming_trips: Json
+          user_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1909,6 +2209,10 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      connection_status: "pending" | "accepted" | "blocked"
+      connection_type: "friend" | "follow" | "travel_buddy"
+      invitation_status: "pending" | "accepted" | "declined"
+      trip_collab_role: "owner" | "editor" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2037,6 +2341,10 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      connection_status: ["pending", "accepted", "blocked"],
+      connection_type: ["friend", "follow", "travel_buddy"],
+      invitation_status: ["pending", "accepted", "declined"],
+      trip_collab_role: ["owner", "editor", "viewer"],
     },
   },
 } as const
