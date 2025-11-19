@@ -8,6 +8,8 @@ import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { MapPin, Loader2, Navigation } from 'lucide-react';
 import { PublicProfile } from '@/hooks/usePublicProfile';
+import { LocationPermissionPrompt } from '@/components/location/LocationPermissionPrompt';
+import { useGeolocation } from '@/hooks/useGeolocation';
 
 interface NearbyTraveler extends PublicProfile {
   distance_km: number;
@@ -22,6 +24,7 @@ export default function DiscoverNearby() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const { location: geoLocation } = useGeolocation();
 
   const getUserLocation = () => {
     if (!navigator.geolocation) {
@@ -70,6 +73,7 @@ export default function DiscoverNearby() {
   return (
     <div className="min-h-screen bg-background">
       <OGTNavbar />
+      <LocationPermissionPrompt />
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
