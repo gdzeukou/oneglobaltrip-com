@@ -95,7 +95,8 @@ export const useGeolocation = () => {
         throw new Error('User not authenticated');
       }
 
-      const { error: updateError } = await supabase
+      // Save to location history
+      const { error: historyError } = await supabase
         .from('user_location_history')
         .insert({
           user_id: user.id,
@@ -108,12 +109,14 @@ export const useGeolocation = () => {
           expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
         });
 
-      if (updateError) throw updateError;
+      if (historyError) throw historyError;
 
-      // Also update public profile with current location
+      // Update or create public profile with current location using upsert
       const { error: profileError } = await supabase
         .from('user_profiles_public')
-        .update({
+        .upsert({
+          user_id: user.id,
+          display_name: user.email?.split('@')[0] || 'Traveler',
           current_location: {
             latitude: coords.latitude,
             longitude: coords.longitude,
@@ -121,8 +124,10 @@ export const useGeolocation = () => {
             updated_at: new Date().toISOString(),
           },
           location_sharing_enabled: true,
-        })
-        .eq('user_id', user.id);
+          is_discoverable: true,
+        }, {
+          onConflict: 'user_id'
+        });
 
       if (profileError) throw profileError;
 
