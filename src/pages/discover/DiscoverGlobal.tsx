@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card } from '@/components/ui/card';
 import { Search, Filter, Globe } from 'lucide-react';
 import { PublicProfile } from '@/hooks/usePublicProfile';
+import { LocationPermissionPrompt } from '@/components/location/LocationPermissionPrompt';
 
 export default function DiscoverGlobal() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -50,6 +51,7 @@ export default function DiscoverGlobal() {
   return (
     <div className="min-h-screen bg-background">
       <OGTNavbar />
+      <LocationPermissionPrompt />
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
