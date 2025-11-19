@@ -2154,26 +2154,14 @@ export type Database = {
         }
         Returns: boolean
       }
-      cleanup_expired_locations: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      cleanup_expired_otp_codes: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      cleanup_expired_locations: { Args: never; Returns: undefined }
+      cleanup_expired_otp_codes: { Args: never; Returns: undefined }
       generate_application_reference: {
         Args: { p_application_date?: string; p_country_code: string }
         Returns: string
       }
-      generate_booking_reference: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      generate_otp_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      generate_booking_reference: { Args: never; Returns: string }
+      generate_otp_code: { Args: never; Returns: string }
       generate_traveler_reference: {
         Args: { p_base_reference: string; p_traveler_number: number }
         Returns: string
@@ -2198,14 +2186,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      is_passport_club_member: {
-        Args: { user_id: string }
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
+      is_passport_club_member: { Args: { user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
