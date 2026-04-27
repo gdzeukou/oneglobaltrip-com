@@ -135,26 +135,35 @@ const Auth = () => {
   console.log('Rendering auth form, loading:', isLoading);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <Card className="max-w-md w-full">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-gray-900">
+    <div className="relative min-h-screen overflow-hidden bg-background flex items-center justify-center px-4 py-12">
+      {/* Stitch ambient glow */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-32 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-verified-green/5 blur-3xl" />
+      </div>
+
+      <Card className="relative z-10 max-w-md w-full border-card-border shadow-luxury">
+        <CardHeader className="text-center space-y-2">
+          <div className="mx-auto grid h-10 w-10 place-items-center rounded-md bg-primary text-primary-foreground">
+            <LogIn className="h-5 w-5" />
+          </div>
+          <CardTitle className="font-serif text-2xl font-semibold tracking-tight text-foreground">
             Welcome to One Global Trip
           </CardTitle>
-          <p className="text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Sign in to your account or create a new one
           </p>
         </CardHeader>
-        
+
         <CardContent>
           {/* Social Authentication */}
           <div className="space-y-4 mb-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-border" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-muted-foreground">
+              <div className="relative flex justify-center text-xs uppercase tracking-wide">
+                <span className="bg-card px-2 text-muted-foreground">
                   Quick Sign In
                 </span>
               </div>
@@ -233,10 +242,10 @@ const Auth = () => {
             
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-border" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-muted-foreground">
+              <div className="relative flex justify-center text-xs uppercase tracking-wide">
+                <span className="bg-card px-2 text-muted-foreground">
                   Or continue with email
                 </span>
               </div>
@@ -272,10 +281,8 @@ const Auth = () => {
                 </div>
 
                 {error && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertDescription className="text-red-800">
-                      {error}
-                    </AlertDescription>
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
 
@@ -360,10 +367,8 @@ const Auth = () => {
                 </div>
 
                 {error && (
-                  <Alert className="border-red-200 bg-red-50">
-                    <AlertDescription className="text-red-800">
-                      {error}
-                    </AlertDescription>
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
 
