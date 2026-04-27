@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, Globe, Shield, Users, Phone, Clock, TrendingUp, Award, Check } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Building2, Globe, Shield, Users, Phone, Clock, TrendingUp, Award, Check, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -13,391 +13,260 @@ import { BookingPlan } from '@/types/booking';
 
 const Pricing = () => {
   const [isLoading] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
 
   const handlePlanSelect = (plan: BookingPlan) => {
     if (plan.contactSales) {
-      // Open Calendly for enterprise sales
       window.open('https://calendly.com/oneglobaltrip/enterprise-consultation', '_blank');
       return;
     }
-
-    if (plan.id === 'free_ai_agent') {
-      navigate('/trip-planner');
-    } else if (plan.id === 'visa_assist') {
-      navigate('/visa-booking');
-    } else if (plan.id === 'global_explorer') {
-      navigate('/booking', { state: { selectedPlan: plan } });
-    }
+    if (plan.id === 'free_ai_agent') navigate('/trip-planner');
+    else if (plan.id === 'visa_assist') navigate('/visa-booking');
+    else if (plan.id === 'global_explorer') navigate('/booking', { state: { selectedPlan: plan } });
   };
 
   const getPlanIcon = (planId: string) => {
     switch (planId) {
-      case 'free_ai_agent':
-        return Globe;
-      case 'visa_assist':
-        return Shield;
-      case 'global_explorer':
-        return TrendingUp;
-      case 'enterprise_global_mobility':
-        return Building2;
-      default:
-        return Globe;
+      case 'free_ai_agent': return Globe;
+      case 'visa_assist': return Shield;
+      case 'global_explorer': return TrendingUp;
+      case 'enterprise_global_mobility': return Building2;
+      default: return Globe;
     }
   };
 
   const getButtonText = (plan: BookingPlan) => {
-    if (plan.contactSales) return 'Contact Sales →';
-    if (plan.id === 'free_ai_agent') return 'Build My Free AI Agent';
-    if (plan.id === 'visa_assist') return 'Get Visa Help $69';
+    if (plan.contactSales) return 'Contact sales';
+    if (plan.id === 'free_ai_agent') return 'Build my free AI agent';
+    if (plan.id === 'visa_assist') return 'Get visa help — $69';
     return 'Upgrade to Global Explorer';
   };
 
-  if (isLoading) {
-    return <LoadingScreen message="Loading pricing plans..." />;
-  }
+  if (isLoading) return <LoadingScreen message="Loading pricing plans..." />;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
-      
-      {/* Hero Section - Global Exploration Focus */}
-      <section className="pt-32 pb-20 bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-yellow-200/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-        </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-5xl mx-auto">
-            <div className="mb-8 animate-fade-in">
-              <Badge className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 text-lg font-medium mb-6">
-                🌍 Explore the Globe with One Click
-              </Badge>
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent leading-tight mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              Your Personal AI Travel Agent
+      {/* Hero — Stitch flat */}
+      <section className="border-b border-border bg-secondary/30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="secondary" className="mb-5 gap-1 bg-verified-green/10 text-verified-green border-0">
+              <Sparkles className="h-3 w-3" /> Explore the globe with one click
+            </Badge>
+            <h1 className="font-serif text-4xl md:text-6xl font-semibold tracking-tight text-foreground">
+              Your personal AI travel agent
             </h1>
-            
-            <p className="text-xl md:text-3xl text-gray-700 mb-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              Create your own free AI agent that manages everything
+            <p className="mt-5 text-lg md:text-xl text-muted-foreground">
+              Create a free AI agent that manages everything — solo trips, group vacations, business travel, and relocation.
             </p>
-            
-            <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: '0.6s' }}>
-              From solo adventures to group vacations, business trips to permanent relocations — your AI handles thousands of trips, visa applications, and residency programs with just one click.
-            </p>
-            
-            {/* Interactive Feature Grid */}
-            <div className="grid md:grid-cols-3 gap-6 mb-16 animate-scale-in" style={{ animationDelay: '0.8s' }}>
-              <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50 hover:shadow-xl transition-all duration-300 hover-scale">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Globe className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Global Exploration</h3>
-                <p className="text-gray-600">180+ countries at your fingertips. Instant itineraries, local insights, hidden gems.</p>
-              </div>
-              
-              <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50 hover:shadow-xl transition-all duration-300 hover-scale">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Group Management</h3>
-                <p className="text-gray-600">From family trips to corporate travel. Manage thousands of travelers effortlessly.</p>
-              </div>
-              
-              <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/50 hover:shadow-xl transition-all duration-300 hover-scale">
-                <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Visa & Residency</h3>
-                <p className="text-gray-600">Complex visa applications, residency programs, and legal requirements simplified.</p>
-              </div>
-            </div>
-
-            {/* Video/Demo Section Placeholder */}
-            <div className="bg-gradient-to-r from-gray-900 to-blue-900 rounded-3xl p-12 text-white mb-12 animate-fade-in" style={{ animationDelay: '1s' }}>
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                🎥 See Your AI Agent in Action
-              </h2>
-              <p className="text-lg md:text-xl text-gray-200 mb-8">
-                Watch how users go from "I want to travel" to "My trip is booked" in under 60 seconds
-              </p>
-              <div className="aspect-video bg-black/20 rounded-xl border-2 border-dashed border-white/30 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <ArrowRight className="h-10 w-10 text-white" />
-                  </div>
-                  <p className="text-lg font-medium">Interactive Demo Coming Soon</p>
-                  <p className="text-sm text-gray-300 mt-2">60 Seconds from Dream to Itinerary</p>
-                </div>
-              </div>
-            </div>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: '1.2s' }}>
-              <Button 
-                size="lg"
-                onClick={() => navigate('/trip-planner')}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-4 text-xl font-semibold rounded-full hover-scale"
-              >
-                Build My Free AI Agent →
+            <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+              <Button size="lg" onClick={() => navigate('/trip-planner')}>
+                Build my free AI agent <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                onClick={() => window.open('https://calendly.com/oneglobaltrip/enterprise-consultation', '_blank')}
-                className="px-8 py-4 text-lg rounded-full hover-scale border-2"
-              >
-                Enterprise Demo
+              <Button size="lg" variant="outline" onClick={() => window.open('https://calendly.com/oneglobaltrip/enterprise-consultation', '_blank')}>
+                Enterprise demo
               </Button>
             </div>
+          </div>
+
+          {/* Feature row */}
+          <div className="mt-14 grid gap-4 md:grid-cols-3">
+            {[
+              { icon: Globe,  title: 'Global exploration', body: '180+ countries. Instant itineraries, local insights.' },
+              { icon: Users,  title: 'Group management',   body: 'From family trips to corporate travel at scale.' },
+              { icon: Shield, title: 'Visa & residency',   body: 'Complex visas, residency programs — simplified.' },
+            ].map(({ icon: Icon, title, body }) => (
+              <Card key={title} className="border-card-border hover-elevate">
+                <CardContent className="p-6">
+                  <span className="grid h-10 w-10 place-items-center rounded-md bg-primary/10 text-primary">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-4 font-serif text-lg font-semibold text-foreground">{title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Grid - OpenAI Style */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Choose your plan
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              From free AI-powered trip planning to enterprise-grade global mobility solutions
+      {/* Pricing grid */}
+      <section className="py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="font-serif text-3xl md:text-4xl font-semibold tracking-tight text-foreground">Choose your plan</h2>
+            <p className="mt-3 text-base text-muted-foreground max-w-2xl mx-auto">
+              From free AI-powered planning to enterprise-grade global mobility.
             </p>
           </div>
 
-          {/* Main 3 Plans */}
           <div className="grid md:grid-cols-3 gap-6 lg:gap-8 mb-16">
-            {BOOKING_PLANS.filter(plan => !plan.enterprise).map((plan) => {
-              const Icon = getPlanIcon(plan.id);
-              const features = plan.features.map(feature => ({
-                name: feature,
-                included: true
-              }));
-
+            {BOOKING_PLANS.filter(p => !p.enterprise).map((plan) => {
+              const features = plan.features.map(f => ({ name: f, included: true }));
               return (
-                <div key={plan.id}>
-                  <PricingCard
-                    title={plan.name}
-                    subtitle={plan.sla}
-                    price={plan.price}
-                    period={plan.sla.includes('Annual') ? '/year' : ''}
-                    features={features}
-                    badge={plan.badge}
-                    badgeColor={plan.badgeColor}
-                    popular={plan.popular}
-                    enterprise={plan.enterprise}
-                    contactSales={plan.contactSales}
-                    customPrice={plan.customPrice}
-                    onSelect={() => handlePlanSelect(plan)}
-                    buttonText={getButtonText(plan)}
-                  />
-                </div>
+                <PricingCard
+                  key={plan.id}
+                  title={plan.name}
+                  subtitle={plan.sla}
+                  price={plan.price}
+                  period={plan.sla.includes('Annual') ? '/year' : ''}
+                  features={features}
+                  badge={plan.badge}
+                  badgeColor={plan.badgeColor}
+                  popular={plan.popular}
+                  enterprise={plan.enterprise}
+                  contactSales={plan.contactSales}
+                  customPrice={plan.customPrice}
+                  onSelect={() => handlePlanSelect(plan)}
+                  buttonText={getButtonText(plan)}
+                />
               );
             })}
           </div>
 
-          {/* Enterprise Plan - Square Layout */}
-          {BOOKING_PLANS.filter(plan => plan.enterprise).map((plan) => {
-            const Icon = getPlanIcon(plan.id);
-            const features = plan.features.map(feature => ({
-              name: feature,
-              included: true
-            }));
-
+          {/* Enterprise — flat, navy */}
+          {BOOKING_PLANS.filter(p => p.enterprise).map((plan) => {
+            const features = plan.features.map(f => ({ name: f, included: true }));
             return (
-              <div key={plan.id} className="max-w-4xl mx-auto">
-                <div className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 rounded-3xl p-8 md:p-12 text-white shadow-2xl">
-                  <div className="grid md:grid-cols-2 gap-8 items-center">
-                    {/* Left Side - Content */}
-                    <div>
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                          <Building2 className="h-6 w-6 text-white" />
+              <div key={plan.id} className="mx-auto max-w-5xl">
+                <Card className="border-card-border bg-primary text-primary-foreground">
+                  <CardContent className="p-8 md:p-12">
+                    <div className="grid md:grid-cols-2 gap-8 items-start">
+                      <div>
+                        <div className="flex items-center gap-2 mb-4">
+                          <span className="grid h-10 w-10 place-items-center rounded-md bg-primary-foreground/10">
+                            <Building2 className="h-5 w-5" />
+                          </span>
+                          <Badge variant="secondary" className="bg-primary-foreground/10 text-primary-foreground border-0">Enterprise</Badge>
                         </div>
-                        <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
-                          Enterprise
-                        </Badge>
-                      </div>
-                      
-                      <h3 className="text-3xl font-bold text-white mb-2">{plan.name}</h3>
-                      <p className="text-gray-200 mb-6">{plan.sla}</p>
-                      
-                      <div className="text-center mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
-                        <span className="text-4xl font-bold text-white">{plan.customPrice}</span>
-                        <p className="text-sm mt-2 text-gray-300">Custom pricing for your organization</p>
-                      </div>
-                      
-                      <div className="mb-6 p-4 bg-white/10 rounded-lg border border-white/20">
-                        <p className="text-sm text-gray-200 italic">
-                          "We cut corporate travel chaos in half while boosting traveler satisfaction by 3x."
+                        <h3 className="font-serif text-3xl font-semibold tracking-tight">{plan.name}</h3>
+                        <p className="mt-2 text-primary-foreground/70">{plan.sla}</p>
+
+                        <div className="mt-6 rounded-md border border-primary-foreground/15 bg-primary-foreground/5 p-4">
+                          <span className="font-serif text-3xl font-semibold">{plan.customPrice}</span>
+                          <p className="mt-1 text-sm text-primary-foreground/70">Custom pricing for your organization</p>
+                        </div>
+
+                        <p className="mt-6 border-l-2 border-primary-foreground/30 pl-3 text-sm italic text-primary-foreground/80">
+                          "We cut corporate travel chaos in half while boosting traveler satisfaction by 3×."
                         </p>
+
+                        <Button onClick={() => handlePlanSelect(plan)} className="mt-6 w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+                          {getButtonText(plan)}
+                        </Button>
                       </div>
-                      
-                      <Button 
-                        onClick={() => handlePlanSelect(plan)}
-                        className="w-full bg-white text-slate-900 hover:bg-gray-100 font-semibold py-3 text-lg"
-                      >
-                        {getButtonText(plan)}
-                      </Button>
+                      <div>
+                        <h4 className="font-serif text-lg font-semibold">Everything included</h4>
+                        <ul className="mt-4 space-y-3">
+                          {features.map((f, i) => (
+                            <li key={i} className="flex items-start gap-3 text-sm">
+                              <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-verified-green" />
+                              <span>{f.name}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-                    
-                    {/* Right Side - Features */}
-                    <div>
-                      <h4 className="text-xl font-semibold text-white mb-4">Everything included:</h4>
-                      <ul className="space-y-3">
-                        {features.map((feature, index) => (
-                          <li key={index} className="flex items-start">
-                            <Check className="h-5 w-5 mr-3 mt-0.5 flex-shrink-0 text-emerald-400" />
-                            <span className="text-white">{feature.name}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </div>
             );
           })}
         </div>
       </section>
 
-      {/* Industry Partnership Showcase */}
-      <section className="py-20 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              Trusted Industry Partnerships
-            </h3>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              We collaborate with leading industry partners to deliver seamless global mobility solutions
+      {/* Partnerships */}
+      <section className="border-t border-border py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h3 className="font-serif text-2xl md:text-3xl font-semibold tracking-tight text-foreground">Trusted industry partners</h3>
+            <p className="mt-2 text-base text-muted-foreground max-w-2xl mx-auto">
+              We collaborate with leading partners to deliver seamless global mobility.
             </p>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 md:p-12 border border-blue-100">
-            <div className="grid md:grid-cols-3 gap-8 mb-8">
-              {/* IATA Partnership */}
-              <div className="text-center">
-                <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
-                  <Building2 className="h-10 w-10 text-blue-600" />
-                </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">IATA</h4>
-                <p className="text-gray-600">Official airline industry partnership for seamless flight bookings and compliance</p>
-              </div>
+          <div className="grid md:grid-cols-3 gap-4 mb-10">
+            {[
+              { icon: Building2,  title: 'IATA',         body: 'Official airline industry partnership for seamless flight bookings and compliance.' },
+              { icon: Globe,      title: 'Expedia Group',body: 'Global inventory access with competitive rates and instant confirmation.' },
+              { icon: TrendingUp, title: 'SAP Concur',   body: 'Enterprise expense management integration for streamlined reporting.' },
+            ].map(({ icon: Icon, title, body }) => (
+              <Card key={title} className="border-card-border">
+                <CardContent className="p-6">
+                  <span className="grid h-10 w-10 place-items-center rounded-md bg-primary/10 text-primary">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h4 className="mt-4 font-serif text-lg font-semibold text-foreground">{title}</h4>
+                  <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
 
-              {/* Expedia Partnership */}
-              <div className="text-center">
-                <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
-                  <Globe className="h-10 w-10 text-emerald-600" />
-                </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">Expedia Group</h4>
-                <p className="text-gray-600">Global inventory access with competitive rates and instant confirmations</p>
-              </div>
-
-              {/* SAP Concur Partnership */}
-              <div className="text-center">
-                <div className="w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="h-10 w-10 text-purple-600" />
-                </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">SAP Concur</h4>
-                <p className="text-gray-600">Enterprise expense management integration for streamlined reporting</p>
-              </div>
-            </div>
-
-            <div className="text-center border-t border-blue-200 pt-8">
-              <h4 className="text-2xl font-bold text-gray-900 mb-4">
-                Enterprise Global Mobility Suite
-              </h4>
-              <p className="text-lg text-gray-700 mb-6 max-w-3xl mx-auto">
-                Managing thousands of trips a year? Our enterprise platform combines visas, travel bookings, and compliance with industry-leading partnerships.
+          <Card className="border-card-border">
+            <CardContent className="p-8 md:p-10 text-center">
+              <h4 className="font-serif text-2xl font-semibold tracking-tight text-foreground">Enterprise global mobility suite</h4>
+              <p className="mt-3 text-base text-muted-foreground max-w-3xl mx-auto">
+                Managing thousands of trips a year? Our enterprise platform combines visas, travel bookings, and compliance.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <Button 
-                  size="lg" 
-                  onClick={() => window.open('https://calendly.com/oneglobaltrip/enterprise-consultation', '_blank')}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg font-semibold"
-                >
-                  Contact Sales →
+              <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center items-center">
+                <Button size="lg" onClick={() => window.open('https://calendly.com/oneglobaltrip/enterprise-consultation', '_blank')}>
+                  Contact sales <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <div className="flex items-center gap-2 text-gray-500">
+                <div className="flex items-center gap-2 text-muted-foreground">
                   <Clock className="h-4 w-4" />
                   <span className="text-sm">15-minute consultation</span>
                 </div>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      {/* Trust Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Why leading companies choose us
-            </h3>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              See how [Client Company] cut travel admin time by 60% using One Global Trip.
+      {/* Trust */}
+      <section className="border-t border-border bg-secondary/30 py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h3 className="font-serif text-2xl font-semibold tracking-tight text-foreground">Why leading companies choose us</h3>
+            <p className="mt-2 text-base text-muted-foreground max-w-2xl mx-auto">
+              See how leading clients cut travel admin time by 60% using One Global Trip.
             </p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center p-6 border-0 shadow-lg">
-              <CardContent className="pt-6">
-                <Users className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h4 className="text-xl font-semibold mb-2">Fortune 500 Ready</h4>
-                <p className="text-gray-600">More powerful and reliable than competitors like Navan</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-6 border-0 shadow-lg">
-              <CardContent className="pt-6">
-                <Award className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
-                <h4 className="text-xl font-semibold mb-2">98% Success Rate</h4>
-                <p className="text-gray-600">Proven track record with visa applications and travel management</p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center p-6 border-0 shadow-lg">
-              <CardContent className="pt-6">
-                <Phone className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-                <h4 className="text-xl font-semibold mb-2">24/7 Support</h4>
-                <p className="text-gray-600">Global reach with on-the-ground partners in 180+ countries</p>
-              </CardContent>
-            </Card>
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              { icon: Users, title: 'Fortune 500 ready',  body: 'More powerful and reliable than competitors like Navan.' },
+              { icon: Award, title: '98% success rate',   body: 'Proven track record with visas and travel management.' },
+              { icon: Phone, title: '24/7 support',       body: 'Global reach with on-the-ground partners in 180+ countries.' },
+            ].map(({ icon: Icon, title, body }) => (
+              <Card key={title} className="border-card-border">
+                <CardContent className="p-6">
+                  <span className="grid h-10 w-10 place-items-center rounded-md bg-primary/10 text-primary">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h4 className="mt-4 font-serif text-lg font-semibold text-foreground">{title}</h4>
+                  <p className="mt-1 text-sm text-muted-foreground">{body}</p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-3xl font-bold text-gray-900 mb-6">
-            Ready to transform your global mobility?
-          </h3>
-          <p className="text-xl text-gray-600 mb-8">
-            Let's design a global mobility solution that saves you time, money, and stress — at scale.
+      <section className="border-t border-border py-20">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+          <h3 className="font-serif text-3xl font-semibold tracking-tight text-foreground">Ready to transform your global mobility?</h3>
+          <p className="mt-3 text-base text-muted-foreground">
+            Let's design a solution that saves you time, money, and stress — at scale.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg"
-              onClick={() => window.open('https://calendly.com/oneglobaltrip/enterprise-consultation', '_blank')}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg"
-            >
-              Contact Sales →
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            <Button size="lg" onClick={() => window.open('https://calendly.com/oneglobaltrip/enterprise-consultation', '_blank')}>
+              Contact sales <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={() => navigate('/trip-planner')}
-              className="px-8 py-3 text-lg"
-            >
-              Try Free Version
+            <Button size="lg" variant="outline" onClick={() => navigate('/trip-planner')}>
+              Try the free version
             </Button>
           </div>
         </div>
