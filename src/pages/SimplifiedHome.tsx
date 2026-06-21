@@ -1,7 +1,7 @@
 import React from 'react';
 import SimplifiedNavigation from '@/components/SimplifiedNavigation';
 import Footer from '@/components/Footer';
-import HeroCarousel from '@/components/home/HeroCarousel';
+import GlobeHeroSection from '@/components/home/GlobeHeroSection';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, CheckCircle, Globe, Shield, Clock, Heart } from 'lucide-react';
@@ -47,9 +47,9 @@ const SimplifiedHome = () => {
   return (
     <div className="min-h-screen bg-white">
       <SimplifiedNavigation />
-      
-      {/* Hero Carousel */}
-      <HeroCarousel />
+
+      {/* Interactive Globe Hero */}
+      <GlobeHeroSection />
 
       {/* Features Section */}
       <section className="py-16 bg-white">
