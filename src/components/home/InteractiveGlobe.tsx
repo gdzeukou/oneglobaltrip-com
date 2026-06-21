@@ -29,9 +29,18 @@ const InteractiveGlobe: React.FC = () => {
   const [query, setQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [altitude, setAltitude] = useState(DEFAULT_ALTITUDE);
+  const [countries, setCountries] = useState<{ features: any[] }>({ features: [] });
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const rafRef = useRef<number>(0);
+
+  // Fetch country border polygons for precise map-like rendering
+  useEffect(() => {
+    fetch('//unpkg.com/three-globe/example/datasets/ne_110m_admin_0_countries.geojson')
+      .then((r) => r.json())
+      .then((data) => setCountries(data))
+      .catch(() => {});
+  }, []);
 
   // Measure container
   useEffect(() => {
@@ -265,6 +274,12 @@ const InteractiveGlobe: React.FC = () => {
           arcDashAnimateTime={3500}
           arcAltitudeAutoScale={0.3}
           arcStroke={0.3}
+          // Country border polygons (Apple/Google Maps style country outlines)
+          polygonsData={countries.features}
+          polygonCapColor={() => 'rgba(0,0,0,0)'}
+          polygonSideColor={() => 'rgba(0,0,0,0)'}
+          polygonStrokeColor={() => 'rgba(148,163,184,0.35)'}
+          polygonAltitude={0.002}
           onGlobeReady={handleGlobeReady}
         />
       )}
