@@ -3,7 +3,11 @@ import Map, { Marker, NavigationControl, MapRef, MapMouseEvent, Source, Layer } 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { globeDestinations } from '@/data/globeDestinations';
 import DestinationCard, { SelectedDestination } from './DestinationCard';
+import ServiceChat, { ServiceType } from './ServiceChat';
 import { useUserGlobeData } from '@/hooks/useUserGlobeData';
+import { useTrip } from '@/hooks/useTrip';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { useSmartRequirements } from '@/hooks/useSmartRequirements';
 
 const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
 
@@ -19,9 +23,18 @@ const MapboxGlobe = () => {
   const [selected, setSelected] = useState<SelectedDestination | null>(null);
   const [zoom, setZoom] = useState(INITIAL_VIEW.zoom);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [chatService, setChatService] = useState<ServiceType | null>(null);
 
   const { saves, visited, recent, isSaved, isVisited, savePlace, unsavePlace, markVisited, unmarkVisited, trackRecent } =
     useUserGlobeData();
+  const { stops, addStop, isInTrip } = useTrip();
+  const { profile, updateProfile } = useUserProfile();
+
+  const visaReqs = useSmartRequirements(
+    selected?.countrySlug,
+    profile,
+    stops
+  );
 
   // Auto-locate user on mount
   useEffect(() => {
@@ -52,6 +65,7 @@ const MapboxGlobe = () => {
     return () => clearTimeout(t);
   }, []);
 
+  // Country click → fly to country (no card). City click → card.
   const handleMapClick = useCallback(
     (e: MapMouseEvent) => {
       const map = mapRef.current?.getMap();
@@ -62,27 +76,19 @@ const MapboxGlobe = () => {
       });
 
       if (features.length > 0) {
-        const f = features[0];
-        const countryName: string =
-          (f.properties?.name_en as string) ||
-          (f.properties?.name as string) ||
-          '';
-        if (!countryName) return;
-
-        const dest = {
-          type: 'country' as const,
-          name: countryName,
-          countrySlug: toSlug(countryName),
-          lat: e.lngLat.lat,
-          lng: e.lngLat.lng,
-        };
-        setSelected(dest);
-        trackRecent(dest);
+        // Fly into the country — city pins will appear at zoom 4+
+        mapRef.current?.flyTo({
+          center: [e.lngLat.lng, e.lngLat.lat],
+          zoom: Math.max(zoom, 5),
+          duration: 1400,
+          essential: true,
+        });
+        setSelected(null);
       } else {
         setSelected(null);
       }
     },
-    [trackRecent]
+    [zoom]
   );
 
   const handleCityClick = useCallback(
@@ -110,13 +116,23 @@ const MapboxGlobe = () => {
     [zoom, trackRecent]
   );
 
-  // Visited countries GeoJSON filter expression for Mapbox fill layer
   const visitedSlugs = visited.map((v) => v.country_slug);
 
   const visibleCities =
     zoom >= CITY_ZOOM_THRESHOLD
       ? globeDestinations
       : globeDestinations.filter((d) => d.tier === 1);
+
+  // Trip route GeoJSON
+  const tripRouteGeoJSON = stops.length >= 2
+    ? {
+        type: 'Feature' as const,
+        geometry: {
+          type: 'LineString' as const,
+          coordinates: stops.map((s) => [s.lng, s.lat]),
+        },
+      }
+    : null;
 
   if (!TOKEN) {
     return (
@@ -125,20 +141,9 @@ const MapboxGlobe = () => {
         <h2 className="text-xl font-bold">Mapbox Token Required</h2>
         <p className="text-white/60 text-sm max-w-sm">
           Add{' '}
-          <code className="bg-white/10 px-1.5 py-0.5 rounded text-white/80">
-            VITE_MAPBOX_TOKEN
-          </code>{' '}
-          to your{' '}
+          <code className="bg-white/10 px-1.5 py-0.5 rounded text-white/80">VITE_MAPBOX_TOKEN</code>
+          {' '}to your{' '}
           <code className="bg-white/10 px-1.5 py-0.5 rounded text-white/80">.env</code> file.
-          Get a free token at{' '}
-          <a
-            href="https://mapbox.com"
-            target="_blank"
-            rel="noreferrer"
-            className="text-blue-400 underline"
-          >
-            mapbox.com
-          </a>
         </p>
       </div>
     );
@@ -204,12 +209,47 @@ const MapboxGlobe = () => {
           </Source>
         )}
 
+        {/* Trip route polyline */}
+        {mapLoaded && tripRouteGeoJSON && (
+          <Source id="trip-route" type="geojson" data={tripRouteGeoJSON}>
+            <Layer
+              id="trip-route-line"
+              type="line"
+              paint={{
+                'line-color': '#60a5fa',
+                'line-width': 2,
+                'line-dasharray': [2, 2],
+                'line-opacity': 0.85,
+              }}
+            />
+          </Source>
+        )}
+
+        {/* Trip stop numbered markers */}
+        {stops.map((stop, idx) => (
+          <Marker
+            key={`trip-stop-${stop.id}`}
+            longitude={stop.lng}
+            latitude={stop.lat}
+            anchor="center"
+          >
+            <div
+              className="flex items-center justify-center rounded-full bg-blue-500 border-2 border-blue-300 text-white text-[10px] font-bold shadow-lg shadow-blue-500/50 cursor-default"
+              style={{ width: 22, height: 22 }}
+              title={stop.name}
+            >
+              {idx + 1}
+            </div>
+          </Marker>
+        ))}
+
         {/* City markers */}
         {visibleCities.map((dest) => {
           const slug = toSlug(dest.name);
           const cSlug = toSlug(dest.country);
           const saved = isSaved(cSlug, slug);
           const recentlyViewed = recent.some((r) => r.city_slug === slug);
+          const inTrip = isInTrip(slug);
 
           return (
             <Marker
@@ -229,6 +269,7 @@ const MapboxGlobe = () => {
                 selected={selected?.name === dest.name}
                 saved={saved}
                 recent={recentlyViewed}
+                inTrip={inTrip}
               />
             </Marker>
           );
@@ -254,12 +295,13 @@ const MapboxGlobe = () => {
           ))}
       </Map>
 
-      {/* Selected card + save/visited actions */}
+      {/* Destination card */}
       <DestinationCard
         destination={selected}
         onClose={() => setSelected(null)}
         isSaved={selected ? isSaved(selected.countrySlug, selected.citySlug) : false}
         isVisited={selected ? isVisited(selected.countrySlug) : false}
+        isInTrip={selected ? isInTrip(selected.citySlug) : false}
         onSave={async () => {
           if (!selected) return;
           const saved = isSaved(selected.countrySlug, selected.citySlug);
@@ -291,7 +333,34 @@ const MapboxGlobe = () => {
             await markVisited(selected.country ?? selected.name, selected.countrySlug);
           }
         }}
+        onAddToTrip={async () => {
+          if (!selected) return;
+          await addStop({
+            name: selected.name,
+            country: selected.country,
+            country_slug: selected.countrySlug,
+            city_slug: selected.citySlug,
+            lat: selected.lat,
+            lng: selected.lng,
+            emoji: selected.emoji,
+          });
+        }}
+        onStartService={(service) => setChatService(service)}
+        visaReqs={visaReqs}
+        nationality={profile.nationality}
+        onSetNationality={(code) => updateProfile({ nationality: code })}
       />
+
+      {/* AI chat panel */}
+      {chatService && selected && (
+        <ServiceChat
+          service={chatService}
+          destination={selected}
+          userProfile={profile}
+          tripStops={stops}
+          onClose={() => setChatService(null)}
+        />
+      )}
     </div>
   );
 };
@@ -303,6 +372,7 @@ const CityPin = ({
   selected,
   saved,
   recent,
+  inTrip,
 }: {
   name: string;
   tier: 1 | 2 | 3;
@@ -310,11 +380,14 @@ const CityPin = ({
   selected: boolean;
   saved: boolean;
   recent: boolean;
+  inTrip: boolean;
 }) => {
   const showLabel = zoom >= 3 || tier === 1;
   const size = tier === 1 ? 10 : tier === 2 ? 8 : 6;
 
-  const dotColor = saved
+  const dotColor = inTrip
+    ? 'border-blue-300 bg-blue-500 shadow-blue-500/50'
+    : saved
     ? 'border-amber-300 bg-amber-400 shadow-amber-500/50'
     : recent
     ? 'border-blue-300/80 bg-blue-400/50'
@@ -331,7 +404,7 @@ const CityPin = ({
       {showLabel && (
         <span
           className={`mt-1 text-[10px] font-semibold whitespace-nowrap leading-none ${
-            saved ? 'text-amber-300' : selected ? 'text-white' : 'text-white/90'
+            inTrip ? 'text-blue-300' : saved ? 'text-amber-300' : selected ? 'text-white' : 'text-white/90'
           }`}
           style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.7)' }}
         >
