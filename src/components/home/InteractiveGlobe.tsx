@@ -11,9 +11,13 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Search, X, MapPin, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const ZOOM_ALTITUDE = 1.2;
+const ZOOM_ALTITUDE = 0.8;
 const DEFAULT_ALTITUDE = 2.5;
 const FLY_MS = 1400;
+
+// Altitude thresholds for tier visibility (like Apple/Google Maps zoom levels)
+const TIER2_THRESHOLD = 1.8; // below this, show tier 1 + tier 2
+const TIER3_THRESHOLD = 0.9; // below this, show all tiers
 
 const InteractiveGlobe: React.FC = () => {
   const globeRef = useRef<any>(null);
@@ -24,8 +28,10 @@ const InteractiveGlobe: React.FC = () => {
   const [selected, setSelected] = useState<GlobeDestination | null>(null);
   const [query, setQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [altitude, setAltitude] = useState(DEFAULT_ALTITUDE);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const rafRef = useRef<number>(0);
 
   // Measure container
   useEffect(() => {
@@ -53,6 +59,31 @@ const InteractiveGlobe: React.FC = () => {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  // Track altitude from camera changes → triggers tier-aware label updates
+  useEffect(() => {
+    if (!isReady || !globeRef.current) return;
+    const controls = globeRef.current.controls();
+    if (!controls) return;
+
+    const handleChange = () => {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        if (globeRef.current) {
+          const pov = globeRef.current.pointOfView();
+          if (pov?.altitude !== undefined) {
+            setAltitude(pov.altitude);
+          }
+        }
+      });
+    };
+
+    controls.addEventListener('change', handleChange);
+    return () => {
+      controls.removeEventListener('change', handleChange);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [isReady]);
 
   const flyTo = useCallback((dest: GlobeDestination) => {
     if (!globeRef.current) return;
@@ -97,43 +128,64 @@ const InteractiveGlobe: React.FC = () => {
       controls.minDistance = 101;
       controls.maxDistance = 700;
       controls.enablePan = false;
+      controls.zoomSpeed = 1.2;
     }
     globeRef.current.pointOfView({ altitude: DEFAULT_ALTITUDE }, 0);
   }, []);
 
-  // Arcs data — stable reference, computed once
-  const arcsData = useMemo(
-    () =>
-      globeDestinations.slice(0, 8).map((d, i) => ({
-        sLat: d.lat,
-        sLng: d.lng,
-        eLat: globeDestinations[(i + 5) % globeDestinations.length].lat,
-        eLng: globeDestinations[(i + 5) % globeDestinations.length].lng,
-      })),
+  // Tier 1-only destinations for arcs (stable reference)
+  const tier1Destinations = useMemo(
+    () => globeDestinations.filter((d) => d.tier === 1),
     []
   );
 
-  // Build HTML element for each city label (Apple Maps style)
+  // Arcs data using tier-1 cities only
+  const arcsData = useMemo(
+    () =>
+      tier1Destinations.slice(0, 10).map((d, i) => ({
+        sLat: d.lat,
+        sLng: d.lng,
+        eLat: tier1Destinations[(i + 7) % tier1Destinations.length].lat,
+        eLng: tier1Destinations[(i + 7) % tier1Destinations.length].lng,
+      })),
+    [tier1Destinations]
+  );
+
+  // Zoom-aware visible destinations (like Apple/Google Maps revealing detail as you zoom)
+  const visibleDestinations = useMemo(() => {
+    if (altitude >= TIER2_THRESHOLD) return globeDestinations.filter((d) => d.tier === 1);
+    if (altitude >= TIER3_THRESHOLD) return globeDestinations.filter((d) => d.tier <= 2);
+    return globeDestinations;
+  }, [altitude]);
+
+  // Build HTML label element per city — size varies by tier
   const getHtmlElement = useCallback((d: object) => {
     const dest = d as GlobeDestination;
+    const isT1 = dest.tier === 1;
+    const isT2 = dest.tier === 2;
+
+    const dotSize = isT1 ? 9 : isT2 ? 7 : 5;
+    const fontSize = isT1 ? '11.5px' : isT2 ? '10px' : '9px';
+    const fontWeight = isT1 ? '600' : '500';
+    const opacity = isT1 ? '1' : isT2 ? '0.85' : '0.7';
+
     const wrap = document.createElement('div');
-    wrap.style.cssText =
-      'display:flex;align-items:center;gap:5px;cursor:pointer;pointer-events:all;user-select:none;';
+    wrap.style.cssText = `display:flex;align-items:center;gap:${isT1 ? 5 : 3}px;cursor:pointer;pointer-events:all;user-select:none;opacity:${opacity};`;
 
     const dot = document.createElement('div');
     dot.style.cssText = `
-      width:9px;height:9px;border-radius:50%;flex-shrink:0;
+      width:${dotSize}px;height:${dotSize}px;border-radius:50%;flex-shrink:0;
       background:white;
-      box-shadow:0 0 0 2px rgba(255,255,255,0.3), 0 0 10px rgba(255,255,255,0.6);
+      box-shadow:0 0 0 2px rgba(255,255,255,0.3),0 0 ${isT1 ? 10 : 6}px rgba(255,255,255,${isT1 ? 0.6 : 0.3});
       transition:transform 0.15s;
     `;
 
     const label = document.createElement('span');
     label.textContent = dest.name;
     label.style.cssText = `
-      color:white;font-size:11.5px;font-weight:600;
+      color:white;font-size:${fontSize};font-weight:${fontWeight};
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      text-shadow:0 1px 4px rgba(0,0,0,0.9),0 0 12px rgba(0,0,0,0.7);
+      text-shadow:0 1px 4px rgba(0,0,0,0.9),0 0 8px rgba(0,0,0,0.7);
       white-space:nowrap;letter-spacing:0.01em;
     `;
 
@@ -142,28 +194,47 @@ const InteractiveGlobe: React.FC = () => {
 
     wrap.addEventListener('mouseenter', () => {
       dot.style.transform = 'scale(1.5)';
-      dot.style.boxShadow = `0 0 0 3px rgba(255,255,255,0.5), 0 0 18px rgba(255,255,255,0.9)`;
+      dot.style.boxShadow = `0 0 0 3px rgba(255,255,255,0.5),0 0 18px rgba(255,255,255,0.9)`;
+      label.style.color = '#93c5fd';
     });
     wrap.addEventListener('mouseleave', () => {
       dot.style.transform = 'scale(1)';
-      dot.style.boxShadow = `0 0 0 2px rgba(255,255,255,0.3), 0 0 10px rgba(255,255,255,0.6)`;
+      dot.style.boxShadow = `0 0 0 2px rgba(255,255,255,0.3),0 0 ${isT1 ? 10 : 6}px rgba(255,255,255,${isT1 ? 0.6 : 0.3})`;
+      label.style.color = 'white';
     });
     wrap.addEventListener('click', () => onSelectRef.current(dest));
 
     return wrap;
   }, []);
 
-  // Search results
+  // Search results — sorted by tier (most prominent first), then by name match quality
   const searchResults = useMemo(() => {
-    if (!query.trim()) return globeDestinations;
-    const q = query.toLowerCase();
-    return globeDestinations.filter(
-      (d) =>
-        d.name.toLowerCase().includes(q) ||
-        d.country.toLowerCase().includes(q) ||
-        d.region.toLowerCase().includes(q)
-    );
+    const q = query.trim().toLowerCase();
+    if (!q) return globeDestinations.slice().sort((a, b) => a.tier - b.tier);
+
+    return globeDestinations
+      .filter(
+        (d) =>
+          d.name.toLowerCase().includes(q) ||
+          d.country.toLowerCase().includes(q) ||
+          d.region.toLowerCase().includes(q)
+      )
+      .sort((a, b) => {
+        // Exact name match first
+        const aExact = a.name.toLowerCase().startsWith(q) ? 0 : 1;
+        const bExact = b.name.toLowerCase().startsWith(q) ? 0 : 1;
+        if (aExact !== bExact) return aExact - bExact;
+        // Then by tier
+        return a.tier - b.tier;
+      });
   }, [query]);
+
+  const zoomLabel =
+    altitude >= TIER2_THRESHOLD
+      ? 'Zoom in to see more cities'
+      : altitude >= TIER3_THRESHOLD
+      ? 'Zoom in further for all cities'
+      : null;
 
   return (
     <div ref={containerRef} className="relative w-full h-full bg-black overflow-hidden">
@@ -178,11 +249,11 @@ const InteractiveGlobe: React.FC = () => {
           bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
           atmosphereColor="#1a56db"
           atmosphereAltitude={0.2}
-          // City labels (HTML — always visible)
-          htmlElementsData={globeDestinations}
+          // City labels filtered by zoom level (Apple/Google Maps style)
+          htmlElementsData={visibleDestinations}
           htmlElement={getHtmlElement}
           htmlAltitude={0.01}
-          // Animated arcs
+          // Animated arcs between tier-1 cities
           arcsData={arcsData}
           arcStartLat={(d: object) => (d as any).sLat}
           arcStartLng={(d: object) => (d as any).sLng}
@@ -246,7 +317,7 @@ const InteractiveGlobe: React.FC = () => {
             {searchResults.length === 0 ? (
               <p className="text-white/40 text-sm text-center py-6">No destinations found</p>
             ) : (
-              searchResults.map((dest) => (
+              searchResults.slice(0, 40).map((dest) => (
                 <button
                   key={dest.id}
                   onClick={() => selectDest(dest)}
@@ -267,13 +338,22 @@ const InteractiveGlobe: React.FC = () => {
         )}
       </div>
 
+      {/* ── Zoom-level indicator ── */}
+      {isReady && !selected && zoomLabel && (
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+          <div className="bg-black/40 backdrop-blur-sm text-white/50 text-xs px-3 py-1 rounded-full border border-white/10 whitespace-nowrap">
+            {zoomLabel}
+          </div>
+        </div>
+      )}
+
       {/* ── Destination popup card (Apple Maps style bottom sheet) ── */}
       {selected && (
         <div className="absolute bottom-0 left-0 right-0 z-30 flex justify-center pb-6 px-4 pointer-events-none">
           <div
             className="pointer-events-auto w-full max-w-md bg-black/80 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-6 fade-in duration-400"
           >
-            {/* Image placeholder — user will add images later */}
+            {/* Header image area */}
             <div className="relative h-36 bg-gradient-to-br from-slate-800 via-blue-950 to-slate-900 flex items-center justify-center">
               <span className="text-6xl opacity-60 select-none">{selected.emoji}</span>
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -284,7 +364,6 @@ const InteractiveGlobe: React.FC = () => {
               >
                 <X className="h-4 w-4" />
               </button>
-              {/* Region badge */}
               <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-white/70 text-xs px-2.5 py-1 rounded-full border border-white/10">
                 {selected.region}
               </div>
@@ -326,7 +405,7 @@ const InteractiveGlobe: React.FC = () => {
         </div>
       )}
 
-      {/* ── Hint (only shown when globe is ready and nothing selected) ── */}
+      {/* ── Hint (shown when globe is ready and nothing selected) ── */}
       {isReady && !selected && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
           <div className="bg-black/40 backdrop-blur-sm text-white/40 text-xs px-4 py-1.5 rounded-full border border-white/10 whitespace-nowrap">
