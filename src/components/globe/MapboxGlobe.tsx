@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Map, { Marker, NavigationControl, MapRef, MapMouseEvent } from 'react-map-gl/mapbox';
+import Map, { Marker, NavigationControl, MapRef, MapMouseEvent, Source, Layer } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { globeDestinations } from '@/data/globeDestinations';
 import DestinationCard, { SelectedDestination } from './DestinationCard';
+import { useUserGlobeData } from '@/hooks/useUserGlobeData';
 
 const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
 
@@ -17,6 +18,10 @@ const MapboxGlobe = () => {
   const [viewState, setViewState] = useState(INITIAL_VIEW);
   const [selected, setSelected] = useState<SelectedDestination | null>(null);
   const [zoom, setZoom] = useState(INITIAL_VIEW.zoom);
+  const [mapLoaded, setMapLoaded] = useState(false);
+
+  const { saves, visited, recent, isSaved, isVisited, savePlace, unsavePlace, markVisited, unmarkVisited, trackRecent } =
+    useUserGlobeData();
 
   // Auto-locate user on mount
   useEffect(() => {
@@ -33,7 +38,6 @@ const MapboxGlobe = () => {
           });
         }
       } catch {
-        // fallback: navigator
         navigator.geolocation?.getCurrentPosition((pos) => {
           mapRef.current?.flyTo({
             center: [pos.coords.longitude, pos.coords.latitude],
@@ -44,7 +48,6 @@ const MapboxGlobe = () => {
         });
       }
     };
-    // Delay to let the globe render first
     const t = setTimeout(locate, 1200);
     return () => clearTimeout(t);
   }, []);
@@ -54,8 +57,6 @@ const MapboxGlobe = () => {
       const map = mapRef.current?.getMap();
       if (!map) return;
 
-      // Check if click is on a city marker (handled by Marker onClick)
-      // Here we handle country clicks via rendered features
       const features = map.queryRenderedFeatures(e.point, {
         layers: ['country-label'],
       });
@@ -68,42 +69,54 @@ const MapboxGlobe = () => {
           '';
         if (!countryName) return;
 
-        setSelected({
-          type: 'country',
+        const dest = {
+          type: 'country' as const,
           name: countryName,
           countrySlug: toSlug(countryName),
           lat: e.lngLat.lat,
           lng: e.lngLat.lng,
-        });
+        };
+        setSelected(dest);
+        trackRecent(dest);
       } else {
         setSelected(null);
       }
     },
-    []
+    [trackRecent]
   );
 
-  const handleCityClick = useCallback((dest: (typeof globeDestinations)[0]) => {
-    setSelected({
-      type: 'city',
-      name: dest.name,
-      country: dest.country,
-      countrySlug: toSlug(dest.country),
-      citySlug: toSlug(dest.name),
-      emoji: dest.emoji,
-      description: dest.description,
-      lat: dest.lat,
-      lng: dest.lng,
-    });
-    // Fly to city
-    mapRef.current?.flyTo({
-      center: [dest.lng, dest.lat],
-      zoom: Math.max(zoom, 8),
-      duration: 1200,
-      essential: true,
-    });
-  }, [zoom]);
+  const handleCityClick = useCallback(
+    (dest: (typeof globeDestinations)[0]) => {
+      const sel: SelectedDestination = {
+        type: 'city',
+        name: dest.name,
+        country: dest.country,
+        countrySlug: toSlug(dest.country),
+        citySlug: toSlug(dest.name),
+        emoji: dest.emoji,
+        description: dest.description,
+        lat: dest.lat,
+        lng: dest.lng,
+      };
+      setSelected(sel);
+      trackRecent(sel);
+      mapRef.current?.flyTo({
+        center: [dest.lng, dest.lat],
+        zoom: Math.max(zoom, 8),
+        duration: 1200,
+        essential: true,
+      });
+    },
+    [zoom, trackRecent]
+  );
 
-  const visibleCities = zoom >= CITY_ZOOM_THRESHOLD ? globeDestinations : globeDestinations.filter((d) => d.tier === 1);
+  // Visited countries GeoJSON filter expression for Mapbox fill layer
+  const visitedSlugs = visited.map((v) => v.country_slug);
+
+  const visibleCities =
+    zoom >= CITY_ZOOM_THRESHOLD
+      ? globeDestinations
+      : globeDestinations.filter((d) => d.tier === 1);
 
   if (!TOKEN) {
     return (
@@ -111,10 +124,19 @@ const MapboxGlobe = () => {
         <span className="text-4xl">🌍</span>
         <h2 className="text-xl font-bold">Mapbox Token Required</h2>
         <p className="text-white/60 text-sm max-w-sm">
-          Add <code className="bg-white/10 px-1.5 py-0.5 rounded text-white/80">VITE_MAPBOX_TOKEN</code> to your{' '}
-          <code className="bg-white/10 px-1.5 py-0.5 rounded text-white/80">.env</code> file.{' '}
+          Add{' '}
+          <code className="bg-white/10 px-1.5 py-0.5 rounded text-white/80">
+            VITE_MAPBOX_TOKEN
+          </code>{' '}
+          to your{' '}
+          <code className="bg-white/10 px-1.5 py-0.5 rounded text-white/80">.env</code> file.
           Get a free token at{' '}
-          <a href="https://mapbox.com" target="_blank" rel="noreferrer" className="text-blue-400 underline">
+          <a
+            href="https://mapbox.com"
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-400 underline"
+          >
             mapbox.com
           </a>
         </p>
@@ -131,6 +153,7 @@ const MapboxGlobe = () => {
           setViewState(e.viewState);
           setZoom(e.viewState.zoom);
         }}
+        onLoad={() => setMapLoaded(true)}
         mapboxAccessToken={TOKEN}
         mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
         projection={{ name: 'globe' } as any}
@@ -157,64 +180,158 @@ const MapboxGlobe = () => {
           }}
         />
 
-        {/* City markers */}
-        {visibleCities.map((dest) => (
-          <Marker
-            key={dest.id}
-            longitude={dest.lng}
-            latitude={dest.lat}
-            anchor="center"
-            onClick={(e) => {
-              e.originalEvent.stopPropagation();
-              handleCityClick(dest);
-            }}
+        {/* Visited country highlight layer */}
+        {mapLoaded && visitedSlugs.length > 0 && (
+          <Source
+            id="visited-countries"
+            type="vector"
+            url="mapbox://mapbox.country-boundaries-v1"
           >
-            <CityPin
-              emoji={dest.emoji}
-              name={dest.name}
-              tier={dest.tier}
-              zoom={zoom}
-              selected={selected?.name === dest.name}
+            <Layer
+              id="visited-fill"
+              type="fill"
+              source-layer="country_boundaries"
+              paint={{
+                'fill-color': 'rgba(99, 202, 183, 0.25)',
+                'fill-outline-color': 'rgba(99, 202, 183, 0.6)',
+              }}
+              filter={[
+                'in',
+                ['downcase', ['get', 'name_en']],
+                ['literal', visited.map((v) => v.country.toLowerCase())],
+              ]}
             />
-          </Marker>
-        ))}
+          </Source>
+        )}
+
+        {/* City markers */}
+        {visibleCities.map((dest) => {
+          const slug = toSlug(dest.name);
+          const cSlug = toSlug(dest.country);
+          const saved = isSaved(cSlug, slug);
+          const recentlyViewed = recent.some((r) => r.city_slug === slug);
+
+          return (
+            <Marker
+              key={dest.id}
+              longitude={dest.lng}
+              latitude={dest.lat}
+              anchor="center"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                handleCityClick(dest);
+              }}
+            >
+              <CityPin
+                name={dest.name}
+                tier={dest.tier}
+                zoom={zoom}
+                selected={selected?.name === dest.name}
+                saved={saved}
+                recent={recentlyViewed}
+              />
+            </Marker>
+          );
+        })}
+
+        {/* Saved place markers (gold pins for cities not currently in visible list) */}
+        {saves
+          .filter((s) => s.type === 'city' && !visibleCities.find((d) => toSlug(d.name) === s.city_slug))
+          .map((s) => (
+            <Marker key={`save-${s.id}`} longitude={s.lng} latitude={s.lat} anchor="center">
+              <div className="flex flex-col items-center cursor-pointer">
+                <div className="w-3 h-3 rounded-full bg-amber-400 border-2 border-amber-300 shadow-lg shadow-amber-500/50" />
+                {zoom >= 4 && (
+                  <span
+                    className="mt-0.5 text-amber-300 text-[9px] font-semibold whitespace-nowrap"
+                    style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}
+                  >
+                    {s.name}
+                  </span>
+                )}
+              </div>
+            </Marker>
+          ))}
       </Map>
 
-      <DestinationCard destination={selected} onClose={() => setSelected(null)} />
+      {/* Selected card + save/visited actions */}
+      <DestinationCard
+        destination={selected}
+        onClose={() => setSelected(null)}
+        isSaved={selected ? isSaved(selected.countrySlug, selected.citySlug) : false}
+        isVisited={selected ? isVisited(selected.countrySlug) : false}
+        onSave={async () => {
+          if (!selected) return;
+          const saved = isSaved(selected.countrySlug, selected.citySlug);
+          if (saved) {
+            const s = saves.find(
+              (x) => x.country_slug === selected.countrySlug && x.city_slug === (selected.citySlug ?? null)
+            );
+            if (s) unsavePlace(s.id);
+          } else {
+            await savePlace({
+              type: selected.type,
+              name: selected.name,
+              country: selected.country ?? selected.name,
+              country_slug: selected.countrySlug,
+              city_slug: selected.citySlug,
+              lat: selected.lat,
+              lng: selected.lng,
+              emoji: selected.emoji,
+            });
+          }
+        }}
+        onMarkVisited={async () => {
+          if (!selected) return;
+          const alreadyVisited = isVisited(selected.countrySlug);
+          if (alreadyVisited) {
+            const v = visited.find((x) => x.country_slug === selected.countrySlug);
+            if (v) unmarkVisited(v.id);
+          } else {
+            await markVisited(selected.country ?? selected.name, selected.countrySlug);
+          }
+        }}
+      />
     </div>
   );
 };
 
 const CityPin = ({
-  emoji,
   name,
   tier,
   zoom,
   selected,
+  saved,
+  recent,
 }: {
-  emoji: string;
   name: string;
   tier: 1 | 2 | 3;
   zoom: number;
   selected: boolean;
+  saved: boolean;
+  recent: boolean;
 }) => {
   const showLabel = zoom >= 3 || tier === 1;
   const size = tier === 1 ? 10 : tier === 2 ? 8 : 6;
 
+  const dotColor = saved
+    ? 'border-amber-300 bg-amber-400 shadow-amber-500/50'
+    : recent
+    ? 'border-blue-300/80 bg-blue-400/50'
+    : 'border-white/80 bg-white/30 group-hover:bg-white/60';
+
   return (
     <div className="flex flex-col items-center cursor-pointer group" style={{ transform: 'translateY(-50%)' }}>
       <div
-        className={`rounded-full border-2 transition-all duration-150 ${
-          selected
-            ? 'border-white bg-white scale-150'
-            : 'border-white/80 bg-white/30 group-hover:scale-125 group-hover:bg-white/60'
+        className={`rounded-full border-2 transition-all duration-150 shadow-sm ${
+          selected ? 'border-white bg-white scale-150' : `${dotColor} group-hover:scale-125`
         }`}
         style={{ width: size, height: size }}
       />
       {showLabel && (
         <span
-          className={`mt-1 text-white text-[10px] font-semibold drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] whitespace-nowrap leading-none ${
-            selected ? 'text-white' : 'text-white/90'
+          className={`mt-1 text-[10px] font-semibold whitespace-nowrap leading-none ${
+            saved ? 'text-amber-300' : selected ? 'text-white' : 'text-white/90'
           }`}
           style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.7)' }}
         >
