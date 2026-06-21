@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Menu, X, User, Map, FileText, Globe, Settings, LogOut, LogIn, UserPlus } from 'lucide-react';
+import { Menu, X, Map, FileText, Globe, Settings, LogOut, LogIn, UserPlus, Bookmark, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserGlobeData } from '@/hooks/useUserGlobeData';
 
 const FloatingMenu = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { saves, visited, recent } = useUserGlobeData();
 
   const go = (path: string) => {
     setOpen(false);
@@ -74,13 +76,79 @@ const FloatingMenu = () => {
                 </div>
               </div>
 
-              <div className="px-3 space-y-1">
-                <MenuItem icon={<Map size={17} />} label="My Trips" onClick={() => go('/dashboard')} />
-                <MenuItem icon={<Globe size={17} />} label="Countries Visited" onClick={() => go('/dashboard?tab=visited')} />
-                <MenuItem icon={<FileText size={17} />} label="Applications" onClick={() => go('/dashboard?tab=applications')} />
-                <MenuItem icon={<User size={17} />} label="Profile" onClick={() => go('/profile')} />
-                <MenuItem icon={<Settings size={17} />} label="Settings" onClick={() => go('/settings')} />
+              {/* Globe stats strip */}
+              <div className="mx-4 mb-3 grid grid-cols-3 gap-2">
+                <StatChip label="Saved" count={saves.length} color="text-amber-400" />
+                <StatChip label="Visited" count={visited.length} color="text-emerald-400" />
+                <StatChip label="Recent" count={recent.length} color="text-blue-400" />
               </div>
+
+              <div className="px-3 space-y-1">
+                <MenuItem
+                  icon={<Bookmark size={17} />}
+                  label="Saved Places"
+                  badge={saves.length}
+                  onClick={() => go('/dashboard?tab=saved')}
+                />
+                <MenuItem
+                  icon={<Globe size={17} />}
+                  label="Countries Visited"
+                  badge={visited.length}
+                  onClick={() => go('/dashboard?tab=visited')}
+                />
+                <MenuItem
+                  icon={<Clock size={17} />}
+                  label="Recently Viewed"
+                  badge={recent.length}
+                  onClick={() => go('/dashboard?tab=recent')}
+                />
+                <MenuItem
+                  icon={<FileText size={17} />}
+                  label="Applications"
+                  onClick={() => go('/dashboard?tab=applications')}
+                />
+                <MenuItem
+                  icon={<Map size={17} />}
+                  label="My Trips"
+                  onClick={() => go('/dashboard')}
+                />
+                <MenuItem
+                  icon={<Settings size={17} />}
+                  label="Settings"
+                  onClick={() => go('/settings')}
+                />
+              </div>
+
+              {/* Recently viewed quick list */}
+              {recent.length > 0 && (
+                <div className="mx-4 mt-4 pt-4 border-t border-white/10">
+                  <p className="text-white/30 text-xs uppercase tracking-widest mb-2 px-1">Recently Viewed</p>
+                  <div className="space-y-1">
+                    {recent.slice(0, 5).map((r) => (
+                      <button
+                        key={r.id}
+                        onClick={() => {
+                          setOpen(false);
+                          navigate(
+                            r.city_slug
+                              ? `/destination/${r.country_slug}/${r.city_slug}`
+                              : `/destination/${r.country_slug}`
+                          );
+                        }}
+                        className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/8 transition-colors text-left"
+                      >
+                        {r.emoji && <span className="text-base leading-none">{r.emoji}</span>}
+                        <div className="min-w-0">
+                          <p className="text-white/80 text-xs font-medium truncate">{r.name}</p>
+                          {r.type === 'city' && (
+                            <p className="text-white/30 text-[10px] truncate">{r.country}</p>
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="mx-3 mt-4 pt-4 border-t border-white/10">
                 <button
@@ -109,28 +177,38 @@ const FloatingMenu = () => {
                 <UserPlus size={17} />
                 Create Account
               </button>
+              <p className="text-white/25 text-xs text-center pt-3 px-3 leading-relaxed">
+                Sign in to save destinations, track visited countries, and see your travel history on the globe
+              </p>
             </div>
           )}
         </div>
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-white/10">
-          <p className="text-white/20 text-xs text-center">
-            Plan your world · OneGlobalTrip
-          </p>
+          <p className="text-white/20 text-xs text-center">Plan your world · OneGlobalTrip</p>
         </div>
       </div>
     </>
   );
 };
 
+const StatChip = ({ label, count, color }: { label: string; count: number; color: string }) => (
+  <div className="flex flex-col items-center py-2 rounded-xl bg-white/5 border border-white/8">
+    <span className={`text-lg font-bold leading-none ${color}`}>{count}</span>
+    <span className="text-white/40 text-[10px] mt-0.5">{label}</span>
+  </div>
+);
+
 const MenuItem = ({
   icon,
   label,
+  badge,
   onClick,
 }: {
   icon: React.ReactNode;
   label: string;
+  badge?: number;
   onClick: () => void;
 }) => (
   <button
@@ -138,7 +216,12 @@ const MenuItem = ({
     className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors text-sm"
   >
     <span className="text-white/50">{icon}</span>
-    {label}
+    <span className="flex-1 text-left">{label}</span>
+    {badge !== undefined && badge > 0 && (
+      <span className="text-white/40 text-xs bg-white/10 rounded-full px-1.5 py-0.5 min-w-[20px] text-center">
+        {badge}
+      </span>
+    )}
   </button>
 );
 
