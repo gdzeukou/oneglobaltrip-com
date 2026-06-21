@@ -62,6 +62,7 @@ const Testimonials = lazy(() => import("./pages/Testimonials"));
 const Settings = lazy(() => import("./pages/Settings"));
 const DiscoverGlobal = lazy(() => import("./pages/discover/DiscoverGlobal"));
 const DiscoverNearby = lazy(() => import("./pages/discover/DiscoverNearby"));
+const Destination = lazy(() => import("./pages/Destination"));
 
 import "./App.css";
 import AgentProtectedRoute from "./components/auth/AgentProtectedRoute";
@@ -94,6 +95,8 @@ function App() {
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/auth/callback" element={<AuthCallback />} />
                       <Route path="/startmytrip" element={<StartMyTrip />} />
+                      <Route path="/destination/:country" element={<Destination />} />
+                      <Route path="/destination/:country/:city" element={<Destination />} />
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/blog" element={<Blog />} />
