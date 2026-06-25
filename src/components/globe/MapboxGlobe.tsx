@@ -1,21 +1,40 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Map, { Marker, NavigationControl, MapRef, MapMouseEvent, Source, Layer } from 'react-map-gl/mapbox';
+import Map, { Marker, MapRef, MapMouseEvent, Source, Layer } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { globeDestinations } from '@/data/globeDestinations';
 import DestinationCard, { SelectedDestination } from './DestinationCard';
 import ServiceChat, { ServiceType } from './ServiceChat';
+import GlobeBreadcrumb from './GlobeBreadcrumb';
+import GlobeControls from './GlobeControls';
 import { useUserGlobeData } from '@/hooks/useUserGlobeData';
 import { useTrip } from '@/hooks/useTrip';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useSmartRequirements } from '@/hooks/useSmartRequirements';
+import { CONTINENTS, getContinentByCountry, Continent } from '@/data/continents';
+import { COUNTRY_REGIONS } from '@/data/countryRegions';
 
 const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
 
 const INITIAL_VIEW = { longitude: 10, latitude: 20, zoom: 1.8 };
 const CITY_ZOOM_THRESHOLD = 4;
+const REGION_ZOOM_THRESHOLD = 5;
+const CONTINENT_ZOOM_MAX = 3;
 
 const toSlug = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+// Country emoji flags from ISO codes (best-effort lookup)
+const COUNTRY_EMOJIS: Record<string, string> = {
+  france: '🇫🇷', italy: '🇮🇹', spain: '🇪🇸', germany: '🇩🇪', 'united-kingdom': '🇬🇧',
+  japan: '🇯🇵', usa: '🇺🇸', thailand: '🇹🇭', australia: '🇦🇺', brazil: '🇧🇷',
+  canada: '🇨🇦', mexico: '🇲🇽', india: '🇮🇳', china: '🇨🇳', indonesia: '🇮🇩',
+  portugal: '🇵🇹', greece: '🇬🇷', 'south-africa': '🇿🇦', kenya: '🇰🇪', morocco: '🇲🇦',
+  'saudi-arabia': '🇸🇦', egypt: '🇪🇬', colombia: '🇨🇴', singapore: '🇸🇬', vietnam: '🇻🇳',
+  'united-arab-emirates': '🇦🇪', 'south-korea': '🇰🇷', argentina: '🇦🇷', peru: '🇵🇪',
+  chile: '🇨🇱', 'new-zealand': '🇳🇿', switzerland: '🇨🇭', netherlands: '🇳🇱',
+  sweden: '🇸🇪', norway: '🇳🇴', denmark: '🇩🇰', austria: '🇦🇹', belgium: '🇧🇪',
+  turkey: '🇹🇷', israel: '🇮🇱', jordan: '🇯🇴', qatar: '🇶🇦',
+};
 
 const MapboxGlobe = () => {
   const mapRef = useRef<MapRef>(null);
@@ -24,6 +43,14 @@ const MapboxGlobe = () => {
   const [zoom, setZoom] = useState(INITIAL_VIEW.zoom);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [chatService, setChatService] = useState<ServiceType | null>(null);
+  const [locating, setLocating] = useState(false);
+
+  // Breadcrumb state
+  const [activeContinent, setActiveContinent] = useState<Continent | null>(null);
+  const [activeCountryName, setActiveCountryName] = useState<string | null>(null);
+  const [activeCountrySlug, setActiveCountrySlug] = useState<string | null>(null);
+  const [activeRegionName, setActiveRegionName] = useState<string | null>(null);
+  const [activeRegionEmoji, setActiveRegionEmoji] = useState<string | undefined>(undefined);
 
   const { saves, visited, recent, isSaved, isVisited, savePlace, unsavePlace, markVisited, unmarkVisited, trackRecent } =
     useUserGlobeData();
@@ -36,36 +63,54 @@ const MapboxGlobe = () => {
     stops
   );
 
-  // Auto-locate user on mount
-  useEffect(() => {
-    const locate = async () => {
-      try {
-        const res = await fetch('https://ipapi.co/json/');
-        const data = await res.json();
-        if (data.latitude && data.longitude) {
-          mapRef.current?.flyTo({
-            center: [data.longitude, data.latitude],
-            zoom: 3.5,
-            duration: 2500,
-            essential: true,
-          });
-        }
-      } catch {
-        navigator.geolocation?.getCurrentPosition((pos) => {
-          mapRef.current?.flyTo({
-            center: [pos.coords.longitude, pos.coords.latitude],
-            zoom: 3.5,
-            duration: 2000,
-            essential: true,
-          });
-        });
-      }
-    };
-    const t = setTimeout(locate, 1200);
-    return () => clearTimeout(t);
+  const flyTo = useCallback((lng: number, lat: number, z: number, duration = 1400) => {
+    mapRef.current?.flyTo({ center: [lng, lat], zoom: z, duration, essential: true });
   }, []);
 
-  // Country click → fly to country (no card). City click → card.
+  const locateUser = useCallback(() => {
+    setLocating(true);
+    navigator.geolocation?.getCurrentPosition(
+      (pos) => {
+        flyTo(pos.coords.longitude, pos.coords.latitude, 3.5, 2000);
+        setLocating(false);
+      },
+      async () => {
+        // Fall back to IP geolocation if user denies browser GPS
+        try {
+          const res = await fetch('https://ipapi.co/json/');
+          const data = await res.json();
+          if (data.latitude && data.longitude) {
+            flyTo(data.longitude, data.latitude, 3, 2500);
+          }
+        } catch {
+          // silent fail
+        }
+        setLocating(false);
+      },
+      { timeout: 8000 }
+    );
+  }, [flyTo]);
+
+  // Auto-locate on mount: GPS first, IP fallback
+  useEffect(() => {
+    const t = setTimeout(locateUser, 1200);
+    return () => clearTimeout(t);
+  }, [locateUser]);
+
+  // Continent click
+  const handleContinentClick = useCallback(
+    (continent: Continent) => {
+      setActiveContinent(continent);
+      setActiveCountryName(null);
+      setActiveCountrySlug(null);
+      setActiveRegionName(null);
+      setSelected(null);
+      flyTo(continent.center[0], continent.center[1], continent.zoom);
+    },
+    [flyTo]
+  );
+
+  // Country click → fly in, set breadcrumb
   const handleMapClick = useCallback(
     (e: MapMouseEvent) => {
       const map = mapRef.current?.getMap();
@@ -76,28 +121,34 @@ const MapboxGlobe = () => {
       });
 
       if (features.length > 0) {
-        // Fly into the country — city pins will appear at zoom 4+
-        mapRef.current?.flyTo({
-          center: [e.lngLat.lng, e.lngLat.lat],
-          zoom: Math.max(zoom, 5),
-          duration: 1400,
-          essential: true,
-        });
+        const countryName = features[0].properties?.name_en as string | undefined;
+        if (countryName) {
+          const slug = toSlug(countryName);
+          const continent = getContinentByCountry(slug) ?? activeContinent;
+          setActiveContinent(continent ?? null);
+          setActiveCountryName(countryName);
+          setActiveCountrySlug(slug);
+          setActiveRegionName(null);
+          setActiveRegionEmoji(undefined);
+        }
+        flyTo(e.lngLat.lng, e.lngLat.lat, Math.max(zoom, 5));
         setSelected(null);
       } else {
         setSelected(null);
       }
     },
-    [zoom]
+    [zoom, flyTo, activeContinent]
   );
 
+  // City pin click
   const handleCityClick = useCallback(
     (dest: (typeof globeDestinations)[0]) => {
+      const countrySlug = toSlug(dest.country);
       const sel: SelectedDestination = {
         type: 'city',
         name: dest.name,
         country: dest.country,
-        countrySlug: toSlug(dest.country),
+        countrySlug,
         citySlug: toSlug(dest.name),
         emoji: dest.emoji,
         description: dest.description,
@@ -106,15 +157,57 @@ const MapboxGlobe = () => {
       };
       setSelected(sel);
       trackRecent(sel);
-      mapRef.current?.flyTo({
-        center: [dest.lng, dest.lat],
-        zoom: Math.max(zoom, 8),
-        duration: 1200,
-        essential: true,
-      });
+
+      // Update breadcrumb to reflect this city's country
+      if (!activeCountrySlug || activeCountrySlug !== countrySlug) {
+        const continent = getContinentByCountry(countrySlug);
+        setActiveContinent(continent ?? null);
+        setActiveCountryName(dest.country);
+        setActiveCountrySlug(countrySlug);
+      }
+
+      flyTo(dest.lng, dest.lat, Math.max(zoom, 8), 1200);
     },
-    [zoom, trackRecent]
+    [zoom, flyTo, trackRecent, activeCountrySlug]
   );
+
+  // Region marker click
+  const handleRegionClick = useCallback(
+    (regionName: string, regionEmoji: string | undefined, lat: number, lng: number) => {
+      setActiveRegionName(regionName);
+      setActiveRegionEmoji(regionEmoji);
+      setSelected(null);
+      flyTo(lng, lat, Math.max(zoom, 7), 1200);
+    },
+    [zoom, flyTo]
+  );
+
+  // Breadcrumb back navigation
+  const handleBreadcrumbGlobe = useCallback(() => {
+    setActiveContinent(null);
+    setActiveCountryName(null);
+    setActiveCountrySlug(null);
+    setActiveRegionName(null);
+    setSelected(null);
+    flyTo(INITIAL_VIEW.longitude, INITIAL_VIEW.latitude, INITIAL_VIEW.zoom, 1800);
+  }, [flyTo]);
+
+  const handleBreadcrumbContinent = useCallback(() => {
+    if (!activeContinent) return;
+    setActiveCountryName(null);
+    setActiveCountrySlug(null);
+    setActiveRegionName(null);
+    setSelected(null);
+    flyTo(activeContinent.center[0], activeContinent.center[1], activeContinent.zoom);
+  }, [activeContinent, flyTo]);
+
+  const handleBreadcrumbCountry = useCallback(() => {
+    setActiveRegionName(null);
+    setSelected(null);
+    // Find a representative city in the country to fly to
+    const city = globeDestinations.find((d) => toSlug(d.country) === activeCountrySlug);
+    if (city) flyTo(city.lng, city.lat, 5.5);
+  }, [activeCountrySlug, flyTo]);
 
   const visitedSlugs = visited.map((v) => v.country_slug);
 
@@ -122,6 +215,9 @@ const MapboxGlobe = () => {
     zoom >= CITY_ZOOM_THRESHOLD
       ? globeDestinations
       : globeDestinations.filter((d) => d.tier === 1);
+
+  // Sub-regions for the currently active country
+  const activeRegions = activeCountrySlug ? (COUNTRY_REGIONS[activeCountrySlug] ?? []) : [];
 
   // Trip route GeoJSON
   const tripRouteGeoJSON = stops.length >= 2
@@ -160,31 +256,19 @@ const MapboxGlobe = () => {
         }}
         onLoad={() => setMapLoaded(true)}
         mapboxAccessToken={TOKEN}
-        mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
+        mapStyle="mapbox://styles/mapbox/outdoors-v12"
         projection={{ name: 'globe' } as any}
         style={{ width: '100%', height: '100%' }}
         onClick={handleMapClick}
         cursor="crosshair"
         fog={{
-          color: 'rgb(5, 10, 25)',
-          'high-color': 'rgb(10, 20, 50)',
+          color: 'rgb(186, 210, 235)',
+          'high-color': 'rgb(100, 140, 200)',
           'horizon-blend': 0.08,
-          'space-color': 'rgb(3, 5, 15)',
-          'star-intensity': 0.9,
+          'space-color': 'rgb(8, 10, 30)',
+          'star-intensity': 0.5,
         }}
       >
-        <NavigationControl
-          position="bottom-right"
-          style={{
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(16px)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '12px',
-            marginBottom: '24px',
-            marginRight: '16px',
-          }}
-        />
-
         {/* Visited country highlight layer */}
         {mapLoaded && visitedSlugs.length > 0 && (
           <Source
@@ -197,8 +281,8 @@ const MapboxGlobe = () => {
               type="fill"
               source-layer="country_boundaries"
               paint={{
-                'fill-color': 'rgba(99, 202, 183, 0.25)',
-                'fill-outline-color': 'rgba(99, 202, 183, 0.6)',
+                'fill-color': 'rgba(99, 202, 183, 0.28)',
+                'fill-outline-color': 'rgba(99, 202, 183, 0.7)',
               }}
               filter={[
                 'in',
@@ -216,14 +300,43 @@ const MapboxGlobe = () => {
               id="trip-route-line"
               type="line"
               paint={{
-                'line-color': '#60a5fa',
-                'line-width': 2,
+                'line-color': '#3b82f6',
+                'line-width': 2.5,
                 'line-dasharray': [2, 2],
-                'line-opacity': 0.85,
+                'line-opacity': 0.9,
               }}
             />
           </Source>
         )}
+
+        {/* Continent pill markers — only at low zoom */}
+        {zoom < CONTINENT_ZOOM_MAX &&
+          CONTINENTS.map((c) => (
+            <Marker
+              key={c.id}
+              longitude={c.center[0]}
+              latitude={c.center[1]}
+              anchor="center"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                handleContinentClick(c);
+              }}
+            >
+              <button
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-white text-xs font-bold shadow-xl transition-all hover:scale-105 active:scale-95 select-none"
+                style={{
+                  background: `${c.color}cc`,
+                  borderColor: `${c.color}80`,
+                  backdropFilter: 'blur(8px)',
+                  textShadow: '0 1px 3px rgba(0,0,0,0.5)',
+                  boxShadow: `0 4px 20px ${c.color}40`,
+                }}
+              >
+                <span>{c.emoji}</span>
+                <span>{c.name}</span>
+              </button>
+            </Marker>
+          ))}
 
         {/* Trip stop numbered markers */}
         {stops.map((stop, idx) => (
@@ -242,6 +355,31 @@ const MapboxGlobe = () => {
             </div>
           </Marker>
         ))}
+
+        {/* Sub-region markers — visible at zoom ≥ 5 when a country is active */}
+        {zoom >= REGION_ZOOM_THRESHOLD &&
+          activeRegions.map((region) => (
+            <Marker
+              key={`region-${region.slug}`}
+              longitude={region.lng}
+              latitude={region.lat}
+              anchor="center"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                handleRegionClick(region.name, region.emoji, region.lat, region.lng);
+              }}
+            >
+              <div className="flex flex-col items-center cursor-pointer group">
+                <div
+                  className="flex items-center gap-1 px-2 py-1 rounded-lg bg-white/90 border border-white/60 shadow-md group-hover:bg-white transition-all group-hover:scale-105"
+                  style={{ backdropFilter: 'blur(4px)' }}
+                >
+                  {region.emoji && <span className="text-sm leading-none">{region.emoji}</span>}
+                  <span className="text-gray-800 text-[10px] font-semibold whitespace-nowrap">{region.name}</span>
+                </div>
+              </div>
+            </Marker>
+          ))}
 
         {/* City markers */}
         {visibleCities.map((dest) => {
@@ -275,7 +413,7 @@ const MapboxGlobe = () => {
           );
         })}
 
-        {/* Saved place markers (gold pins for cities not currently in visible list) */}
+        {/* Saved place markers for cities not in the visible list */}
         {saves
           .filter((s) => s.type === 'city' && !visibleCities.find((d) => toSlug(d.name) === s.city_slug))
           .map((s) => (
@@ -284,8 +422,8 @@ const MapboxGlobe = () => {
                 <div className="w-3 h-3 rounded-full bg-amber-400 border-2 border-amber-300 shadow-lg shadow-amber-500/50" />
                 {zoom >= 4 && (
                   <span
-                    className="mt-0.5 text-amber-300 text-[9px] font-semibold whitespace-nowrap"
-                    style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9)' }}
+                    className="mt-0.5 text-amber-800 text-[9px] font-semibold whitespace-nowrap"
+                    style={{ textShadow: '0 1px 4px rgba(255,255,255,0.9)' }}
                   >
                     {s.name}
                   </span>
@@ -294,6 +432,26 @@ const MapboxGlobe = () => {
             </Marker>
           ))}
       </Map>
+
+      {/* Breadcrumb navigation */}
+      <GlobeBreadcrumb
+        continent={activeContinent}
+        countryName={activeCountryName}
+        countryEmoji={activeCountrySlug ? COUNTRY_EMOJIS[activeCountrySlug] : undefined}
+        regionName={activeRegionName}
+        regionEmoji={activeRegionEmoji}
+        onClickGlobe={handleBreadcrumbGlobe}
+        onClickContinent={handleBreadcrumbContinent}
+        onClickCountry={handleBreadcrumbCountry}
+      />
+
+      {/* Custom zoom + locate controls */}
+      <GlobeControls
+        onZoomIn={() => mapRef.current?.zoomIn()}
+        onZoomOut={() => mapRef.current?.zoomOut()}
+        onLocate={locateUser}
+        locating={locating}
+      />
 
       {/* Destination card */}
       <DestinationCard
@@ -391,22 +549,28 @@ const CityPin = ({
     ? 'border-amber-300 bg-amber-400 shadow-amber-500/50'
     : recent
     ? 'border-blue-300/80 bg-blue-400/50'
-    : 'border-white/80 bg-white/30 group-hover:bg-white/60';
+    : 'border-gray-800/60 bg-white/80 group-hover:bg-white';
+
+  const labelColor = inTrip
+    ? 'text-blue-700'
+    : saved
+    ? 'text-amber-700'
+    : selected
+    ? 'text-gray-900 font-bold'
+    : 'text-gray-900';
 
   return (
     <div className="flex flex-col items-center cursor-pointer group" style={{ transform: 'translateY(-50%)' }}>
       <div
         className={`rounded-full border-2 transition-all duration-150 shadow-sm ${
-          selected ? 'border-white bg-white scale-150' : `${dotColor} group-hover:scale-125`
+          selected ? 'border-gray-800 bg-gray-900 scale-150' : `${dotColor} group-hover:scale-125`
         }`}
         style={{ width: size, height: size }}
       />
       {showLabel && (
         <span
-          className={`mt-1 text-[10px] font-semibold whitespace-nowrap leading-none ${
-            inTrip ? 'text-blue-300' : saved ? 'text-amber-300' : selected ? 'text-white' : 'text-white/90'
-          }`}
-          style={{ textShadow: '0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.7)' }}
+          className={`mt-1 text-[10px] font-semibold whitespace-nowrap leading-none ${labelColor}`}
+          style={{ textShadow: '0 1px 3px rgba(255,255,255,0.9), 0 0 6px rgba(255,255,255,0.6)' }}
         >
           {name}
         </span>
