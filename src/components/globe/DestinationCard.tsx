@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   X, ChevronDown, Plane, Building2, Car, Camera, FileText, Globe,
   Bookmark, BookmarkCheck, CheckCircle2, PlusCircle, CheckCheck,
-  AlertCircle, MapPin, Calendar,
+  AlertCircle, MapPin, Calendar, Users,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   VISA_STATUS_LABELS, VISA_STATUS_COLORS, NATIONALITY_OPTIONS,
@@ -63,6 +64,7 @@ const DestinationCard = ({
   onSetNationality,
 }: DestinationCardProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('flights');
   const [addingToTrip, setAddingToTrip] = useState(false);
@@ -121,17 +123,19 @@ const DestinationCard = ({
 
           {/* ── COLLAPSED STATE ── */}
           {!expanded && (
-            <div className="px-5 pb-6">
+            <div className="px-5 pb-5">
               {/* Header */}
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    {destination.emoji && <span className="text-xl">{destination.emoji}</span>}
-                    <h2 className="text-white text-xl font-bold truncate">{destination.name}</h2>
+                    {destination.emoji && <span className="text-2xl">{destination.emoji}</span>}
+                    <div className="min-w-0">
+                      <h2 className="text-white text-xl font-bold leading-tight truncate">{destination.name}</h2>
+                      <p className="text-white/45 text-sm">{destination.country}</p>
+                    </div>
                   </div>
-                  <p className="text-white/50 text-sm">{destination.country}</p>
                   {destination.description && (
-                    <p className="text-white/40 text-xs mt-1 leading-relaxed line-clamp-1">
+                    <p className="text-white/40 text-xs mt-1.5 leading-relaxed line-clamp-1">
                       {destination.description}
                     </p>
                   )}
@@ -144,80 +148,126 @@ const DestinationCard = ({
                 </button>
               </div>
 
-              {/* Visa status badge */}
-              {visaReqs && visaReqs.visaStatus !== 'unknown' && (
-                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-medium mb-3 ${VISA_STATUS_COLORS[visaReqs.visaStatus]}`}>
-                  <FileText size={11} />
-                  {VISA_STATUS_LABELS[visaReqs.visaStatus]}
-                  {visaReqs.visaInfo.maxStay && ` · ${visaReqs.visaInfo.maxStay}`}
+              {/* Smart visa context banner */}
+              {nationality && visaReqs && visaReqs.visaStatus !== 'unknown' ? (
+                <div
+                  className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border mb-3 cursor-pointer transition-all hover:opacity-90`}
+                  style={{ background: 'rgba(255,255,255,0.05)' }}
+                  onClick={() => openTab('visa')}
+                >
+                  <span className={`text-sm font-bold ${VISA_STATUS_COLORS[visaReqs.visaStatus].split(' ')[0]}`}>
+                    {visaReqs.visaStatus === 'visa-free' ? '✅' : visaReqs.visaStatus === 'visa-on-arrival' ? '🟡' : '🛂'}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-xs font-semibold ${VISA_STATUS_COLORS[visaReqs.visaStatus].split(' ')[0]}`}>
+                      {VISA_STATUS_LABELS[visaReqs.visaStatus]}
+                      {visaReqs.visaInfo.maxStay ? ` · ${visaReqs.visaInfo.maxStay}` : ''}
+                    </p>
+                    {visaReqs.visaInfo.fee && (
+                      <p className="text-white/35 text-[10px]">Fee: {visaReqs.visaInfo.fee}{visaReqs.visaInfo.processingTime ? ` · ${visaReqs.visaInfo.processingTime}` : ''}</p>
+                    )}
+                  </div>
+                  <span className="text-white/25 text-xs">Tap for details →</span>
                 </div>
-              )}
+              ) : !nationality ? (
+                <button
+                  onClick={() => openTab('visa')}
+                  className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-white/10 bg-white/4 mb-3 text-left hover:bg-white/8 transition-colors"
+                >
+                  <span className="text-base">🛂</span>
+                  <div>
+                    <p className="text-white/70 text-xs font-medium">Check your visa requirements</p>
+                    <p className="text-white/30 text-[10px]">Select your nationality to see entry rules</p>
+                  </div>
+                </button>
+              ) : null}
 
-              {/* Action pills (logged-in) */}
-              {user && (
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <button
-                    onClick={onSave}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                      isSaved
-                        ? 'bg-amber-500/20 border-amber-400/40 text-amber-300'
-                        : 'bg-white/8 border-white/15 text-white/60 hover:text-white'
-                    }`}
-                  >
-                    {isSaved ? <BookmarkCheck size={12} /> : <Bookmark size={12} />}
-                    {isSaved ? 'Saved' : 'Save'}
-                  </button>
+              {/* 3 big action cards */}
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                <ActionCard
+                  icon="✈️"
+                  label="Fly there"
+                  onClick={() => openTab('flights')}
+                />
+                <ActionCard
+                  icon="🏨"
+                  label="Stay there"
+                  onClick={() => openTab('hotels')}
+                />
+                <ActionCard
+                  icon="🛂"
+                  label="Visa"
+                  onClick={() => openTab('visa')}
+                  highlight={visaReqs?.visaStatus === 'required' || visaReqs?.visaStatus === 'e-visa'}
+                />
+              </div>
 
-                  <button
-                    onClick={onMarkVisited}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                      isVisited
-                        ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-300'
-                        : 'bg-white/8 border-white/15 text-white/60 hover:text-white'
-                    }`}
-                  >
-                    <CheckCircle2 size={12} />
-                    {isVisited ? 'Visited' : 'Mark visited'}
-                  </button>
+              {/* Secondary row: trip + save + visited */}
+              <div className="flex gap-2 mb-3">
+                <button
+                  onClick={handleAddToTrip}
+                  disabled={addingToTrip}
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border transition-all ${
+                    isInTrip
+                      ? 'bg-blue-500/20 border-blue-400/40 text-blue-300'
+                      : 'bg-white/6 border-white/12 text-white/60 hover:text-white hover:border-white/20'
+                  }`}
+                >
+                  {isInTrip ? <CheckCheck size={12} /> : <PlusCircle size={12} />}
+                  {isInTrip ? 'In Trip' : '+ Trip'}
+                </button>
+                {user && (
+                  <>
+                    <button
+                      onClick={onSave}
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border transition-all ${
+                        isSaved
+                          ? 'bg-amber-500/20 border-amber-400/40 text-amber-300'
+                          : 'bg-white/6 border-white/12 text-white/60 hover:text-white hover:border-white/20'
+                      }`}
+                    >
+                      {isSaved ? <BookmarkCheck size={12} /> : <Bookmark size={12} />}
+                      {isSaved ? 'Saved' : 'Save'}
+                    </button>
+                    <button
+                      onClick={onMarkVisited}
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium border transition-all ${
+                        isVisited
+                          ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-300'
+                          : 'bg-white/6 border-white/12 text-white/60 hover:text-white hover:border-white/20'
+                      }`}
+                    >
+                      <CheckCircle2 size={12} />
+                      {isVisited ? 'Visited' : 'Visited?'}
+                    </button>
+                  </>
+                )}
+              </div>
 
+              {/* More services row */}
+              <div className="flex gap-1.5 mb-3 overflow-x-auto scrollbar-hide pb-0.5">
+                {[
+                  { id: 'rentals' as Tab, label: '🚗 Rentals' },
+                  { id: 'activities' as Tab, label: '📸 Activities' },
+                  { id: 'immigration' as Tab, label: '📋 Immigration' },
+                ].map((s) => (
                   <button
-                    onClick={handleAddToTrip}
-                    disabled={addingToTrip}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                      isInTrip
-                        ? 'bg-blue-500/20 border-blue-400/40 text-blue-300'
-                        : 'bg-white/8 border-white/15 text-white/60 hover:text-white hover:border-blue-400/30'
-                    }`}
+                    key={s.id}
+                    onClick={() => openTab(s.id)}
+                    className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs text-white/50 bg-white/5 border border-white/10 hover:text-white hover:bg-white/10 transition-all whitespace-nowrap"
                   >
-                    {isInTrip ? <CheckCheck size={12} /> : <PlusCircle size={12} />}
-                    {isInTrip ? 'In Trip' : 'Add to Trip'}
-                  </button>
-                </div>
-              )}
-
-              {/* Service tab row */}
-              <div className="grid grid-cols-6 gap-1.5">
-                {TABS.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => openTab(tab.id)}
-                    className="flex flex-col items-center gap-1 py-2.5 px-1 rounded-xl bg-white/8 border border-white/10 hover:bg-white/15 hover:border-white/20 transition-all group"
-                  >
-                    <span className="text-white/50 group-hover:text-white/80 transition-colors">{tab.icon}</span>
-                    <span className="text-white/50 text-[9px] font-medium group-hover:text-white/80 transition-colors leading-none">
-                      {tab.label}
-                    </span>
+                    {s.label}
                   </button>
                 ))}
               </div>
 
-              {/* Expand CTA */}
+              {/* Agent CTA */}
               <button
-                onClick={() => setExpanded(true)}
-                className="w-full mt-3 py-3 rounded-2xl bg-white text-black text-sm font-semibold hover:bg-white/90 transition-all flex items-center justify-center gap-1.5"
+                onClick={() => navigate(`/concierge?destination=${destination.citySlug}`)}
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-white/20 bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-white text-sm font-semibold hover:from-blue-600/30 hover:to-purple-600/30 transition-all"
               >
-                Explore {destination.name}
-                <ChevronDown size={15} className="rotate-180" />
+                <Users size={15} />
+                Let a dedicated OGT agent handle everything
               </button>
             </div>
           )}
@@ -305,6 +355,30 @@ const DestinationCard = ({
     </>
   );
 };
+
+/* ────────────────────────────────────────────────── */
+/* Action card (collapsed state 3-up grid)            */
+/* ────────────────────────────────────────────────── */
+const ActionCard = ({
+  icon, label, onClick, highlight = false,
+}: {
+  icon: string;
+  label: string;
+  onClick: () => void;
+  highlight?: boolean;
+}) => (
+  <button
+    onClick={onClick}
+    className={`flex flex-col items-center justify-center gap-1.5 py-3.5 rounded-2xl border transition-all ${
+      highlight
+        ? 'bg-amber-500/15 border-amber-400/40 hover:bg-amber-500/25'
+        : 'bg-white/6 border-white/12 hover:bg-white/10 hover:border-white/20'
+    }`}
+  >
+    <span className="text-2xl leading-none">{icon}</span>
+    <span className={`text-[11px] font-medium ${highlight ? 'text-amber-300' : 'text-white/70'}`}>{label}</span>
+  </button>
+);
 
 /* ────────────────────────────────────────────────── */
 /* Per-tab content                                    */

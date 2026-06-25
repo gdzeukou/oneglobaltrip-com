@@ -36,7 +36,11 @@ const COUNTRY_EMOJIS: Record<string, string> = {
   turkey: '🇹🇷', israel: '🇮🇱', jordan: '🇯🇴', qatar: '🇶🇦',
 };
 
-const MapboxGlobe = () => {
+interface MapboxGlobeProps {
+  onRegisterCityTrigger?: (fn: (dest: SelectedDestination) => void) => void;
+}
+
+const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
   const mapRef = useRef<MapRef>(null);
   const [viewState, setViewState] = useState(INITIAL_VIEW);
   const [selected, setSelected] = useState<SelectedDestination | null>(null);
@@ -170,6 +174,25 @@ const MapboxGlobe = () => {
     },
     [zoom, flyTo, trackRecent, activeCountrySlug]
   );
+
+  // External city select (from GlobeSearchBar)
+  const handleExternalSelect = useCallback(
+    (dest: SelectedDestination) => {
+      setSelected(dest);
+      trackRecent(dest);
+      const continent = getContinentByCountry(dest.countrySlug);
+      setActiveContinent(continent ?? null);
+      setActiveCountryName(dest.country);
+      setActiveCountrySlug(dest.countrySlug);
+      setActiveRegionName(null);
+      flyTo(dest.lng, dest.lat, Math.max(zoom, 8), 1200);
+    },
+    [zoom, flyTo, trackRecent]
+  );
+
+  useEffect(() => {
+    onRegisterCityTrigger?.(handleExternalSelect);
+  }, [onRegisterCityTrigger, handleExternalSelect]);
 
   // Region marker click
   const handleRegionClick = useCallback(

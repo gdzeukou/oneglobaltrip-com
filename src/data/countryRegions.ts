@@ -5,6 +5,8 @@ export interface CountryRegion {
   lat: number;
   lng: number;
   description: string;
+  cities?: { name: string; slug: string; lat: number; lng: number; emoji?: string }[];
+  schengenConsulate?: string;
 }
 
 export const COUNTRY_REGIONS: Record<string, CountryRegion[]> = {
@@ -40,6 +42,175 @@ export const COUNTRY_REGIONS: Record<string, CountryRegion[]> = {
     { name: 'Northern Ireland', slug: 'northern-ireland', emoji: '🤝', lat: 54.61, lng: -6.69, description: 'Giants Causeway & history' },
     { name: 'Lake District', slug: 'lake-district', emoji: '🌊', lat: 54.46, lng: -3.09, description: 'Lakes, fells & villages' },
   ],
+  germany: [
+    { name: 'Berlin', slug: 'berlin', emoji: '🐻', lat: 52.52, lng: 13.40, description: 'Art, history & nightlife capital',
+      cities: [{ name: 'Berlin', slug: 'berlin-city', lat: 52.52, lng: 13.40, emoji: '🐻' }, { name: 'Potsdam', slug: 'potsdam', lat: 52.39, lng: 13.07, emoji: '🏰' }] },
+    { name: 'Bavaria & Munich', slug: 'bavaria', emoji: '🍺', lat: 48.14, lng: 11.58, description: 'Oktoberfest, Alps & castles',
+      cities: [
+        { name: 'Munich', slug: 'munich', lat: 48.14, lng: 11.58, emoji: '🍺' },
+        { name: 'Nuremberg', slug: 'nuremberg', lat: 49.45, lng: 11.08, emoji: '🏰' },
+        { name: 'Rothenburg', slug: 'rothenburg', lat: 49.38, lng: 10.18, emoji: '🏘️' },
+        { name: 'Füssen', slug: 'fussen', lat: 47.57, lng: 10.70, emoji: '🏰' },
+      ] },
+    { name: 'Hamburg & North', slug: 'hamburg', emoji: '⚓', lat: 53.55, lng: 9.99, description: 'Port city, Reeperbahn & culture',
+      cities: [
+        { name: 'Hamburg', slug: 'hamburg-city', lat: 53.55, lng: 9.99, emoji: '⚓' },
+        { name: 'Bremen', slug: 'bremen', lat: 53.08, lng: 8.80, emoji: '🎷' },
+        { name: 'Lübeck', slug: 'lubeck', lat: 53.87, lng: 10.69, emoji: '🏙️' },
+      ] },
+    { name: 'Rhine Valley & Frankfurt', slug: 'rhine-valley', emoji: '🍇', lat: 50.11, lng: 8.68, description: 'Finance hub, wine & castles',
+      cities: [
+        { name: 'Frankfurt', slug: 'frankfurt', lat: 50.11, lng: 8.68, emoji: '🏦' },
+        { name: 'Cologne', slug: 'cologne', lat: 50.94, lng: 6.96, emoji: '⛪' },
+        { name: 'Düsseldorf', slug: 'dusseldorf', lat: 51.22, lng: 6.78, emoji: '🎨' },
+        { name: 'Heidelberg', slug: 'heidelberg', lat: 49.40, lng: 8.68, emoji: '🏰' },
+      ] },
+    { name: 'Black Forest & Southwest', slug: 'black-forest', emoji: '🌲', lat: 48.26, lng: 8.19, description: 'Cuckoo clocks, spas & trails',
+      cities: [
+        { name: 'Stuttgart', slug: 'stuttgart', lat: 48.78, lng: 9.18, emoji: '🚗' },
+        { name: 'Freiburg', slug: 'freiburg', lat: 47.99, lng: 7.85, emoji: '🌲' },
+        { name: 'Baden-Baden', slug: 'baden-baden', lat: 48.76, lng: 8.24, emoji: '♨️' },
+      ] },
+  ],
+  netherlands: [
+    { name: 'Amsterdam', slug: 'amsterdam', emoji: '🌷', lat: 52.37, lng: 4.90, description: 'Canals, museums & cycle culture',
+      cities: [{ name: 'Amsterdam', slug: 'amsterdam-city', lat: 52.37, lng: 4.90, emoji: '🌷' }, { name: 'Haarlem', slug: 'haarlem', lat: 52.38, lng: 4.64, emoji: '🌸' }] },
+    { name: 'Rotterdam & The Hague', slug: 'rotterdam', emoji: '🏗️', lat: 51.92, lng: 4.48, description: 'Modern architecture & port',
+      cities: [
+        { name: 'Rotterdam', slug: 'rotterdam-city', lat: 51.92, lng: 4.48, emoji: '🏗️' },
+        { name: 'The Hague', slug: 'the-hague', lat: 52.08, lng: 4.31, emoji: '⚖️' },
+        { name: 'Delft', slug: 'delft', lat: 52.01, lng: 4.36, emoji: '🏺' },
+      ] },
+    { name: 'Utrecht & Eindhoven', slug: 'utrecht', emoji: '🚲', lat: 52.09, lng: 5.12, description: 'Student city & tech design hub',
+      cities: [{ name: 'Utrecht', slug: 'utrecht-city', lat: 52.09, lng: 5.12, emoji: '🚲' }, { name: 'Eindhoven', slug: 'eindhoven', lat: 51.44, lng: 5.48, emoji: '💡' }] },
+    { name: 'Keukenhof & Tulip Fields', slug: 'keukenhof', emoji: '🌷', lat: 52.27, lng: 4.55, description: 'Bulb fields & spring bloom' },
+  ],
+  austria: [
+    { name: 'Vienna', slug: 'vienna', emoji: '🎻', lat: 48.21, lng: 16.37, description: 'Imperial palaces & coffee houses',
+      cities: [{ name: 'Vienna', slug: 'vienna-city', lat: 48.21, lng: 16.37, emoji: '🎻' }, { name: 'Klosterneuburg', slug: 'klosterneuburg', lat: 48.31, lng: 16.33, emoji: '⛪' }] },
+    { name: 'Salzburg', slug: 'salzburg', emoji: '🎶', lat: 47.80, lng: 13.04, description: 'Mozart, Sound of Music & Baroque',
+      cities: [{ name: 'Salzburg', slug: 'salzburg-city', lat: 47.80, lng: 13.04, emoji: '🎶' }, { name: 'Hallstatt', slug: 'hallstatt', lat: 47.56, lng: 13.65, emoji: '🏔️' }] },
+    { name: 'Innsbruck & Tyrol', slug: 'innsbruck', emoji: '⛷️', lat: 47.27, lng: 11.39, description: 'Alpine skiing & Olympic city',
+      cities: [
+        { name: 'Innsbruck', slug: 'innsbruck-city', lat: 47.27, lng: 11.39, emoji: '⛷️' },
+        { name: 'Kitzbühel', slug: 'kitzbuehel', lat: 47.45, lng: 12.39, emoji: '🏔️' },
+        { name: 'St. Anton', slug: 'st-anton', lat: 47.13, lng: 10.27, emoji: '⛰️' },
+      ] },
+    { name: 'Graz & Styria', slug: 'graz', emoji: '🍺', lat: 47.07, lng: 15.44, description: 'Baroque city & wine routes',
+      cities: [{ name: 'Graz', slug: 'graz-city', lat: 47.07, lng: 15.44, emoji: '🍺' }] },
+  ],
+  belgium: [
+    { name: 'Brussels', slug: 'brussels', emoji: '🍫', lat: 50.85, lng: 4.35, description: 'EU capital, waffles & Art Nouveau',
+      cities: [{ name: 'Brussels', slug: 'brussels-city', lat: 50.85, lng: 4.35, emoji: '🍫' }, { name: 'Leuven', slug: 'leuven', lat: 50.88, lng: 4.70, emoji: '🍺' }] },
+    { name: 'Bruges & West Flanders', slug: 'bruges', emoji: '🛶', lat: 51.21, lng: 3.22, description: 'Medieval canals & chocolate',
+      cities: [{ name: 'Bruges', slug: 'bruges-city', lat: 51.21, lng: 3.22, emoji: '🛶' }, { name: 'Ghent', slug: 'ghent', lat: 51.05, lng: 3.72, emoji: '🏰' }] },
+    { name: 'Antwerp', slug: 'antwerp', emoji: '💎', lat: 51.22, lng: 4.40, description: 'Diamond trade & fashion capital',
+      cities: [{ name: 'Antwerp', slug: 'antwerp-city', lat: 51.22, lng: 4.40, emoji: '💎' }] },
+    { name: 'Ardennes', slug: 'ardennes', emoji: '🌲', lat: 50.14, lng: 5.57, description: 'Forest, castles & WWII history' },
+  ],
+  switzerland: [
+    { name: 'Geneva & Lake Geneva', slug: 'geneva', emoji: '⌚', lat: 46.21, lng: 6.14, description: 'UN HQ, luxury & fondue',
+      cities: [{ name: 'Geneva', slug: 'geneva-city', lat: 46.21, lng: 6.14, emoji: '⌚' }, { name: 'Lausanne', slug: 'lausanne', lat: 46.52, lng: 6.63, emoji: '🏅' }] },
+    { name: 'Zurich', slug: 'zurich', emoji: '🏦', lat: 47.38, lng: 8.54, description: 'Finance hub & art scene',
+      cities: [{ name: 'Zurich', slug: 'zurich-city', lat: 47.38, lng: 8.54, emoji: '🏦' }] },
+    { name: 'Bern', slug: 'bern', emoji: '🐻', lat: 46.95, lng: 7.45, description: 'Swiss capital & old town',
+      cities: [{ name: 'Bern', slug: 'bern-city', lat: 46.95, lng: 7.45, emoji: '🐻' }] },
+    { name: 'Interlaken & Bernese Alps', slug: 'interlaken', emoji: '🏔️', lat: 46.69, lng: 7.86, description: 'Adventure sports & Eiger views',
+      cities: [
+        { name: 'Interlaken', slug: 'interlaken-city', lat: 46.69, lng: 7.86, emoji: '🏔️' },
+        { name: 'Grindelwald', slug: 'grindelwald', lat: 46.62, lng: 8.04, emoji: '⛷️' },
+        { name: 'Lucerne', slug: 'lucerne', lat: 47.05, lng: 8.31, emoji: '🌉' },
+      ] },
+    { name: 'Zermatt & Valais', slug: 'zermatt', emoji: '⛰️', lat: 46.02, lng: 7.75, description: 'Matterhorn & glacier skiing',
+      cities: [{ name: 'Zermatt', slug: 'zermatt-city', lat: 46.02, lng: 7.75, emoji: '⛰️' }, { name: 'Verbier', slug: 'verbier', lat: 46.10, lng: 7.23, emoji: '⛷️' }] },
+  ],
+  sweden: [
+    { name: 'Stockholm', slug: 'stockholm', emoji: '🏰', lat: 59.33, lng: 18.07, description: 'Scandinavia\'s elegant capital',
+      cities: [{ name: 'Stockholm', slug: 'stockholm-city', lat: 59.33, lng: 18.07, emoji: '🏰' }, { name: 'Uppsala', slug: 'uppsala', lat: 59.86, lng: 17.64, emoji: '🎓' }] },
+    { name: 'Gothenburg & West', slug: 'gothenburg', emoji: '🐟', lat: 57.71, lng: 11.97, description: 'Seafood, design & archipelago',
+      cities: [{ name: 'Gothenburg', slug: 'gothenburg-city', lat: 57.71, lng: 11.97, emoji: '🐟' }] },
+    { name: 'Malmö & South', slug: 'malmo', emoji: '🌉', lat: 55.60, lng: 13.00, description: 'Øresund Bridge & food scene',
+      cities: [{ name: 'Malmö', slug: 'malmo-city', lat: 55.60, lng: 13.00, emoji: '🌉' }] },
+    { name: 'Swedish Lapland', slug: 'lapland-sweden', emoji: '🌌', lat: 67.86, lng: 20.23, description: 'Northern Lights & Ice Hotel',
+      cities: [{ name: 'Kiruna', slug: 'kiruna', lat: 67.86, lng: 20.23, emoji: '🛷' }, { name: 'Abisko', slug: 'abisko', lat: 68.35, lng: 18.83, emoji: '🌌' }] },
+    { name: 'Gotland', slug: 'gotland', emoji: '🏝️', lat: 57.47, lng: 18.49, description: 'Medieval island & summer festivals' },
+  ],
+  norway: [
+    { name: 'Oslo', slug: 'oslo', emoji: '🎿', lat: 59.91, lng: 10.75, description: 'Viking capital & fjord gateway',
+      cities: [{ name: 'Oslo', slug: 'oslo-city', lat: 59.91, lng: 10.75, emoji: '🎿' }] },
+    { name: 'Bergen & Fjords', slug: 'bergen', emoji: '🛳️', lat: 60.39, lng: 5.32, description: 'Gateway to the fjords',
+      cities: [
+        { name: 'Bergen', slug: 'bergen-city', lat: 60.39, lng: 5.32, emoji: '🛳️' },
+        { name: 'Flåm', slug: 'flam', lat: 60.86, lng: 7.12, emoji: '🚂' },
+        { name: 'Geiranger', slug: 'geiranger', lat: 62.10, lng: 7.21, emoji: '🏔️' },
+      ] },
+    { name: 'Tromsø & Arctic', slug: 'tromso', emoji: '🌌', lat: 69.65, lng: 18.96, description: 'Northern Lights & midnight sun',
+      cities: [{ name: 'Tromsø', slug: 'tromso-city', lat: 69.65, lng: 18.96, emoji: '🌌' }] },
+    { name: 'Stavanger', slug: 'stavanger', emoji: '🛢️', lat: 58.97, lng: 5.73, description: 'Oil capital & Preikestolen hike',
+      cities: [{ name: 'Stavanger', slug: 'stavanger-city', lat: 58.97, lng: 5.73, emoji: '🛢️' }] },
+    { name: 'Trondheim', slug: 'trondheim', emoji: '⛪', lat: 63.43, lng: 10.40, description: 'Historic medieval cathedral city',
+      cities: [{ name: 'Trondheim', slug: 'trondheim-city', lat: 63.43, lng: 10.40, emoji: '⛪' }] },
+  ],
+  denmark: [
+    { name: 'Copenhagen', slug: 'copenhagen', emoji: '🧜', lat: 55.68, lng: 12.57, description: 'Design, hygge & Nyhavn canals',
+      cities: [{ name: 'Copenhagen', slug: 'copenhagen-city', lat: 55.68, lng: 12.57, emoji: '🧜' }, { name: 'Roskilde', slug: 'roskilde', lat: 55.64, lng: 12.09, emoji: '⛪' }] },
+    { name: 'Aarhus', slug: 'aarhus', emoji: '🎨', lat: 56.16, lng: 10.21, description: 'Denmark\'s second city & culture',
+      cities: [{ name: 'Aarhus', slug: 'aarhus-city', lat: 56.16, lng: 10.21, emoji: '🎨' }] },
+    { name: 'Odense', slug: 'odense', emoji: '📖', lat: 55.40, lng: 10.38, description: 'Hans Christian Andersen\'s birthplace',
+      cities: [{ name: 'Odense', slug: 'odense-city', lat: 55.40, lng: 10.38, emoji: '📖' }] },
+    { name: 'Bornholm', slug: 'bornholm', emoji: '🌞', lat: 55.12, lng: 14.91, description: 'Sunshine island & smokehouse' },
+  ],
+  finland: [
+    { name: 'Helsinki', slug: 'helsinki', emoji: '🧖', lat: 60.17, lng: 24.94, description: 'Design, sauna & sea fortress',
+      cities: [{ name: 'Helsinki', slug: 'helsinki-city', lat: 60.17, lng: 24.94, emoji: '🧖' }, { name: 'Espoo', slug: 'espoo', lat: 60.20, lng: 24.66, emoji: '🏙️' }] },
+    { name: 'Finnish Lapland', slug: 'lapland-finland', emoji: '🎅', lat: 66.50, lng: 25.73, description: 'Santa Claus, reindeer & aurora',
+      cities: [{ name: 'Rovaniemi', slug: 'rovaniemi', lat: 66.50, lng: 25.73, emoji: '🎅' }, { name: 'Saariselkä', slug: 'saariselka', lat: 68.42, lng: 27.42, emoji: '🌌' }] },
+    { name: 'Tampere', slug: 'tampere', emoji: '🏭', lat: 61.50, lng: 23.79, description: 'Lake city & industrial heritage',
+      cities: [{ name: 'Tampere', slug: 'tampere-city', lat: 61.50, lng: 23.79, emoji: '🏭' }] },
+    { name: 'Turku & Archipelago', slug: 'turku', emoji: '⛵', lat: 60.45, lng: 22.27, description: 'Former capital & island trails',
+      cities: [{ name: 'Turku', slug: 'turku-city', lat: 60.45, lng: 22.27, emoji: '⛵' }] },
+  ],
+  poland: [
+    { name: 'Warsaw', slug: 'warsaw', emoji: '🦅', lat: 52.23, lng: 21.01, description: 'Rebuilt old town & WWII history',
+      cities: [{ name: 'Warsaw', slug: 'warsaw-city', lat: 52.23, lng: 21.01, emoji: '🦅' }] },
+    { name: 'Kraków & South', slug: 'krakow', emoji: '🏰', lat: 50.06, lng: 19.94, description: 'Royal capital & Auschwitz',
+      cities: [
+        { name: 'Kraków', slug: 'krakow-city', lat: 50.06, lng: 19.94, emoji: '🏰' },
+        { name: 'Zakopane', slug: 'zakopane', lat: 49.30, lng: 19.95, emoji: '⛷️' },
+        { name: 'Wieliczka', slug: 'wieliczka', lat: 49.99, lng: 20.06, emoji: '⛏️' },
+      ] },
+    { name: 'Gdańsk & Baltic Coast', slug: 'gdansk', emoji: '⚓', lat: 54.35, lng: 18.65, description: 'Hanseatic port & amber coast',
+      cities: [{ name: 'Gdańsk', slug: 'gdansk-city', lat: 54.35, lng: 18.65, emoji: '⚓' }, { name: 'Sopot', slug: 'sopot', lat: 54.44, lng: 18.55, emoji: '🏖️' }] },
+    { name: 'Wrocław', slug: 'wroclaw', emoji: '🌉', lat: 51.11, lng: 17.04, description: 'City of bridges & gnomes',
+      cities: [{ name: 'Wrocław', slug: 'wroclaw-city', lat: 51.11, lng: 17.04, emoji: '🌉' }] },
+  ],
+  'czech-republic': [
+    { name: 'Prague', slug: 'prague', emoji: '🕰️', lat: 50.08, lng: 14.44, description: 'Astronomical clock & medieval magic',
+      cities: [{ name: 'Prague', slug: 'prague-city', lat: 50.08, lng: 14.44, emoji: '🕰️' }] },
+    { name: 'Brno', slug: 'brno', emoji: '🎓', lat: 49.19, lng: 16.61, description: 'Student city & underground ossuary',
+      cities: [{ name: 'Brno', slug: 'brno-city', lat: 49.19, lng: 16.61, emoji: '🎓' }] },
+    { name: 'Český Krumlov', slug: 'cesky-krumlov', emoji: '🏰', lat: 48.81, lng: 14.32, description: 'Fairytale castle town on the Vltava' },
+    { name: 'Karlovy Vary', slug: 'karlovy-vary', emoji: '♨️', lat: 50.23, lng: 12.87, description: 'Spa town & film festival' },
+  ],
+  hungary: [
+    { name: 'Budapest', slug: 'budapest', emoji: '🌉', lat: 47.50, lng: 19.04, description: 'Baths, ruin bars & bridges',
+      cities: [{ name: 'Budapest', slug: 'budapest-city', lat: 47.50, lng: 19.04, emoji: '🌉' }] },
+    { name: 'Lake Balaton', slug: 'lake-balaton', emoji: '🏖️', lat: 46.83, lng: 17.73, description: 'Central Europe\'s largest lake' },
+    { name: 'Pécs', slug: 'pecs', emoji: '🌡️', lat: 46.07, lng: 18.23, description: 'Mediterranean feel & Roman ruins',
+      cities: [{ name: 'Pécs', slug: 'pecs-city', lat: 46.07, lng: 18.23, emoji: '🌡️' }] },
+    { name: 'Eger & Wine Country', slug: 'eger', emoji: '🍷', lat: 47.90, lng: 20.37, description: 'Bull\'s Blood wine & baroque town' },
+  ],
+  croatia: [
+    { name: 'Dubrovnik', slug: 'dubrovnik', emoji: '🏰', lat: 42.65, lng: 18.09, description: 'Game of Thrones & Adriatic walls',
+      cities: [{ name: 'Dubrovnik', slug: 'dubrovnik-city', lat: 42.65, lng: 18.09, emoji: '🏰' }] },
+    { name: 'Split & Dalmatia', slug: 'split', emoji: '☀️', lat: 43.51, lng: 16.44, description: 'Diocletian\'s Palace & islands',
+      cities: [{ name: 'Split', slug: 'split-city', lat: 43.51, lng: 16.44, emoji: '☀️' }, { name: 'Hvar', slug: 'hvar', lat: 43.17, lng: 16.44, emoji: '🌴' }] },
+    { name: 'Zagreb', slug: 'zagreb', emoji: '🏙️', lat: 45.81, lng: 15.98, description: 'Café culture & museum capital',
+      cities: [{ name: 'Zagreb', slug: 'zagreb-city', lat: 45.81, lng: 15.98, emoji: '🏙️' }] },
+    { name: 'Istria', slug: 'istria', emoji: '🫒', lat: 45.23, lng: 13.93, description: 'Truffles, wine & Rovinj old town',
+      cities: [{ name: 'Rovinj', slug: 'rovinj', lat: 45.08, lng: 13.64, emoji: '🌊' }, { name: 'Pula', slug: 'pula', lat: 44.87, lng: 13.85, emoji: '🏛️' }] },
+    { name: 'Plitvice Lakes', slug: 'plitvice', emoji: '🌊', lat: 44.88, lng: 15.62, description: 'UNESCO cascading turquoise lakes' },
+  ],
   japan: [
     { name: 'Tokyo & Kanto', slug: 'tokyo', emoji: '🌸', lat: 35.68, lng: 139.69, description: 'Mega city, anime, tech' },
     { name: 'Kyoto & Kansai', slug: 'kyoto', emoji: '⛩️', lat: 35.01, lng: 135.76, description: 'Temples, geisha & tradition' },
@@ -49,12 +220,634 @@ export const COUNTRY_REGIONS: Record<string, CountryRegion[]> = {
     { name: 'Japanese Alps', slug: 'japan-alps', emoji: '⛰️', lat: 36.25, lng: 137.97, description: 'Matsumoto, Takayama, Hakuba' },
   ],
   usa: [
-    { name: 'New York', slug: 'new-york', emoji: '🗽', lat: 40.71, lng: -74.01, description: 'The city that never sleeps' },
-    { name: 'California', slug: 'california', emoji: '🌴', lat: 36.78, lng: -119.42, description: 'LA, SF, beaches & national parks' },
-    { name: 'Florida', slug: 'florida', emoji: '🐊', lat: 27.99, lng: -81.76, description: 'Theme parks, beaches & Keys' },
-    { name: 'Hawaii', slug: 'hawaii', emoji: '🌺', lat: 20.80, lng: -156.33, description: 'Volcanic islands & surf' },
-    { name: 'Southwest', slug: 'usa-southwest', emoji: '🌵', lat: 36.10, lng: -111.84, description: 'Grand Canyon, Vegas, Utah' },
-    { name: 'New England', slug: 'new-england', emoji: '🍂', lat: 43.20, lng: -71.55, description: 'Fall foliage & colonial history' },
+    {
+      name: 'Alabama', slug: 'alabama', emoji: '🌲', lat: 32.80, lng: -86.79, description: 'Civil rights history & Southern culture',
+      schengenConsulate: 'French Consulate Atlanta / German Consulate Atlanta',
+      cities: [
+        { name: 'Birmingham', slug: 'birmingham-al', lat: 33.52, lng: -86.80, emoji: '🏙️' },
+        { name: 'Montgomery', slug: 'montgomery-al', lat: 32.37, lng: -86.30, emoji: '🏛️' },
+        { name: 'Mobile', slug: 'mobile-al', lat: 30.69, lng: -88.04, emoji: '⚓' },
+        { name: 'Huntsville', slug: 'huntsville-al', lat: 34.73, lng: -86.59, emoji: '🚀' },
+      ],
+    },
+    {
+      name: 'Alaska', slug: 'alaska', emoji: '🐻', lat: 64.20, lng: -153.37, description: 'Last frontier, glaciers & midnight sun',
+      schengenConsulate: 'Norwegian Consulate Seattle / German Consulate Seattle',
+      cities: [
+        { name: 'Anchorage', slug: 'anchorage', lat: 61.22, lng: -149.90, emoji: '🏔️' },
+        { name: 'Fairbanks', slug: 'fairbanks', lat: 64.84, lng: -147.72, emoji: '🌌' },
+        { name: 'Juneau', slug: 'juneau', lat: 58.30, lng: -134.42, emoji: '🦅' },
+        { name: 'Sitka', slug: 'sitka', lat: 57.05, lng: -135.33, emoji: '⛵' },
+      ],
+    },
+    {
+      name: 'Arizona', slug: 'arizona', emoji: '🌵', lat: 34.05, lng: -111.09, description: 'Grand Canyon, red rocks & desert sun',
+      schengenConsulate: 'German Consulate Los Angeles / French Consulate Los Angeles',
+      cities: [
+        { name: 'Phoenix', slug: 'phoenix', lat: 33.45, lng: -112.07, emoji: '☀️' },
+        { name: 'Tucson', slug: 'tucson', lat: 32.25, lng: -110.93, emoji: '🌵' },
+        { name: 'Scottsdale', slug: 'scottsdale', lat: 33.49, lng: -111.93, emoji: '🏌️' },
+        { name: 'Sedona', slug: 'sedona', lat: 34.87, lng: -111.79, emoji: '🔴' },
+        { name: 'Flagstaff', slug: 'flagstaff', lat: 35.20, lng: -111.65, emoji: '🌲' },
+      ],
+    },
+    {
+      name: 'Arkansas', slug: 'arkansas', emoji: '🏞️', lat: 34.97, lng: -92.37, description: 'Ozark Mountains & natural bridges',
+      schengenConsulate: 'French Consulate Atlanta / German Consulate Atlanta',
+      cities: [
+        { name: 'Little Rock', slug: 'little-rock', lat: 34.75, lng: -92.29, emoji: '🏙️' },
+        { name: 'Fayetteville', slug: 'fayetteville-ar', lat: 36.07, lng: -94.16, emoji: '🎓' },
+        { name: 'Hot Springs', slug: 'hot-springs-ar', lat: 34.50, lng: -93.05, emoji: '♨️' },
+        { name: 'Bentonville', slug: 'bentonville', lat: 36.37, lng: -94.21, emoji: '🎨' },
+      ],
+    },
+    {
+      name: 'California', slug: 'california', emoji: '🌴', lat: 36.78, lng: -119.42, description: 'Tech, beaches & national parks',
+      schengenConsulate: 'French Consulate LA / German Consulate San Francisco',
+      cities: [
+        { name: 'Los Angeles', slug: 'los-angeles', lat: 34.05, lng: -118.24, emoji: '🎬' },
+        { name: 'San Francisco', slug: 'san-francisco', lat: 37.77, lng: -122.42, emoji: '🌉' },
+        { name: 'San Diego', slug: 'san-diego', lat: 32.72, lng: -117.15, emoji: '⛵' },
+        { name: 'Sacramento', slug: 'sacramento', lat: 38.58, lng: -121.49, emoji: '🏛️' },
+        { name: 'Palm Springs', slug: 'palm-springs', lat: 33.83, lng: -116.54, emoji: '🌴' },
+      ],
+    },
+    {
+      name: 'Colorado', slug: 'colorado', emoji: '🏔️', lat: 39.55, lng: -105.78, description: 'Rocky Mountains, skiing & craft beer',
+      schengenConsulate: 'German Consulate Denver / Netherlands Consulate Denver',
+      cities: [
+        { name: 'Denver', slug: 'denver', lat: 39.74, lng: -104.99, emoji: '🏔️' },
+        { name: 'Boulder', slug: 'boulder', lat: 40.01, lng: -105.27, emoji: '🧗' },
+        { name: 'Aspen', slug: 'aspen', lat: 39.19, lng: -106.82, emoji: '⛷️' },
+        { name: 'Colorado Springs', slug: 'colorado-springs', lat: 38.83, lng: -104.82, emoji: '🦅' },
+        { name: 'Vail', slug: 'vail', lat: 39.64, lng: -106.37, emoji: '🎿' },
+      ],
+    },
+    {
+      name: 'Connecticut', slug: 'connecticut', emoji: '🍂', lat: 41.60, lng: -72.69, description: 'Ivy League, colonial towns & coastline',
+      schengenConsulate: 'French Consulate Boston / German Consulate New York',
+      cities: [
+        { name: 'Hartford', slug: 'hartford', lat: 41.76, lng: -72.68, emoji: '🏛️' },
+        { name: 'New Haven', slug: 'new-haven', lat: 41.31, lng: -72.92, emoji: '🎓' },
+        { name: 'Stamford', slug: 'stamford', lat: 41.05, lng: -73.54, emoji: '🏙️' },
+        { name: 'Mystic', slug: 'mystic', lat: 41.35, lng: -71.96, emoji: '⛵' },
+      ],
+    },
+    {
+      name: 'Delaware', slug: 'delaware', emoji: '🦅', lat: 38.91, lng: -75.53, description: 'Tax-free shopping & beachside town',
+      schengenConsulate: 'German Consulate Philadelphia / French Consulate Philadelphia',
+      cities: [
+        { name: 'Wilmington', slug: 'wilmington-de', lat: 39.74, lng: -75.55, emoji: '🏙️' },
+        { name: 'Dover', slug: 'dover-de', lat: 39.16, lng: -75.52, emoji: '🏛️' },
+        { name: 'Rehoboth Beach', slug: 'rehoboth-beach', lat: 38.72, lng: -75.08, emoji: '🏖️' },
+      ],
+    },
+    {
+      name: 'Florida', slug: 'florida', emoji: '🐊', lat: 27.99, lng: -81.76, description: 'Theme parks, Art Deco & crystal beaches',
+      schengenConsulate: 'German Consulate Miami / French Consulate Miami',
+      cities: [
+        { name: 'Miami', slug: 'miami', lat: 25.77, lng: -80.19, emoji: '🌴' },
+        { name: 'Orlando', slug: 'orlando', lat: 28.54, lng: -81.38, emoji: '🏰' },
+        { name: 'Tampa', slug: 'tampa', lat: 27.95, lng: -82.46, emoji: '⛵' },
+        { name: 'Key West', slug: 'key-west', lat: 24.55, lng: -81.78, emoji: '🌅' },
+        { name: 'Jacksonville', slug: 'jacksonville', lat: 30.33, lng: -81.66, emoji: '🏙️' },
+      ],
+    },
+    {
+      name: 'Georgia', slug: 'georgia-us', emoji: '🍑', lat: 32.17, lng: -82.90, description: 'Atlanta hub, Savannah charm & Blue Ridge',
+      schengenConsulate: 'German Consulate Atlanta / French Consulate Atlanta',
+      cities: [
+        { name: 'Atlanta', slug: 'atlanta', lat: 33.75, lng: -84.39, emoji: '✈️' },
+        { name: 'Savannah', slug: 'savannah-ga', lat: 32.08, lng: -81.10, emoji: '🌳' },
+        { name: 'Augusta', slug: 'augusta-ga', lat: 33.47, lng: -82.01, emoji: '⛳' },
+        { name: 'Athens', slug: 'athens-ga', lat: 33.96, lng: -83.38, emoji: '🎸' },
+      ],
+    },
+    {
+      name: 'Hawaii', slug: 'hawaii', emoji: '🌺', lat: 20.80, lng: -156.33, description: 'Volcanic islands, surf & aloha spirit',
+      schengenConsulate: 'German Consulate Los Angeles / French Consulate Los Angeles',
+      cities: [
+        { name: 'Honolulu', slug: 'honolulu', lat: 21.31, lng: -157.86, emoji: '🌺' },
+        { name: 'Maui', slug: 'maui', lat: 20.80, lng: -156.33, emoji: '🏄' },
+        { name: 'Kauai', slug: 'kauai', lat: 22.10, lng: -159.53, emoji: '🌿' },
+        { name: 'Big Island (Hilo)', slug: 'hilo', lat: 19.73, lng: -155.09, emoji: '🌋' },
+      ],
+    },
+    {
+      name: 'Idaho', slug: 'idaho', emoji: '🥔', lat: 44.07, lng: -114.74, description: 'Snake River, Sawtooth mountains & hot springs',
+      schengenConsulate: 'German Consulate San Francisco / French Consulate San Francisco',
+      cities: [
+        { name: 'Boise', slug: 'boise', lat: 43.62, lng: -116.20, emoji: '🏙️' },
+        { name: 'Sun Valley', slug: 'sun-valley', lat: 43.70, lng: -114.35, emoji: '⛷️' },
+        { name: "Coeur d'Alene", slug: 'coeur-dalene', lat: 47.68, lng: -116.78, emoji: '🏞️' },
+        { name: 'Idaho Falls', slug: 'idaho-falls', lat: 43.49, lng: -112.03, emoji: '💧' },
+      ],
+    },
+    {
+      name: 'Illinois', slug: 'illinois', emoji: '🌆', lat: 40.63, lng: -89.40, description: 'Chicago skyline, deep dish & Route 66',
+      schengenConsulate: 'German Consulate Chicago / French Consulate Chicago',
+      cities: [
+        { name: 'Chicago', slug: 'chicago', lat: 41.88, lng: -87.63, emoji: '🌆' },
+        { name: 'Springfield', slug: 'springfield-il', lat: 39.80, lng: -89.65, emoji: '🏛️' },
+        { name: 'Galena', slug: 'galena', lat: 42.42, lng: -90.43, emoji: '🏘️' },
+        { name: 'Champaign', slug: 'champaign', lat: 40.11, lng: -88.24, emoji: '🎓' },
+      ],
+    },
+    {
+      name: 'Indiana', slug: 'indiana', emoji: '🏎️', lat: 40.27, lng: -86.13, description: 'Indy 500, Amish country & dunes',
+      schengenConsulate: 'German Consulate Chicago / French Consulate Chicago',
+      cities: [
+        { name: 'Indianapolis', slug: 'indianapolis', lat: 39.77, lng: -86.16, emoji: '🏎️' },
+        { name: 'Bloomington', slug: 'bloomington-in', lat: 39.17, lng: -86.53, emoji: '🎓' },
+        { name: 'Fort Wayne', slug: 'fort-wayne', lat: 41.08, lng: -85.14, emoji: '🏙️' },
+        { name: 'South Bend', slug: 'south-bend', lat: 41.68, lng: -86.25, emoji: '🏈' },
+      ],
+    },
+    {
+      name: 'Iowa', slug: 'iowa', emoji: '🌽', lat: 41.88, lng: -93.10, description: 'Heartland farming & Field of Dreams',
+      schengenConsulate: 'German Consulate Chicago / French Consulate Chicago',
+      cities: [
+        { name: 'Des Moines', slug: 'des-moines', lat: 41.60, lng: -93.61, emoji: '🏙️' },
+        { name: 'Iowa City', slug: 'iowa-city', lat: 41.66, lng: -91.53, emoji: '🎓' },
+        { name: 'Cedar Rapids', slug: 'cedar-rapids', lat: 41.98, lng: -91.67, emoji: '🏗️' },
+        { name: 'Dubuque', slug: 'dubuque', lat: 42.50, lng: -90.66, emoji: '⛵' },
+      ],
+    },
+    {
+      name: 'Kansas', slug: 'kansas', emoji: '🌾', lat: 38.53, lng: -96.73, description: 'Great Plains, Wizard of Oz & BBQ',
+      schengenConsulate: 'German Consulate Houston / French Consulate Houston',
+      cities: [
+        { name: 'Wichita', slug: 'wichita', lat: 37.69, lng: -97.34, emoji: '✈️' },
+        { name: 'Kansas City', slug: 'kansas-city-ks', lat: 39.11, lng: -94.63, emoji: '🍖' },
+        { name: 'Lawrence', slug: 'lawrence-ks', lat: 38.97, lng: -95.24, emoji: '🎓' },
+        { name: 'Topeka', slug: 'topeka', lat: 39.05, lng: -95.69, emoji: '🏛️' },
+      ],
+    },
+    {
+      name: 'Kentucky', slug: 'kentucky', emoji: '🐴', lat: 37.67, lng: -84.67, description: 'Bourbon, bluegrass & horse racing',
+      schengenConsulate: 'German Consulate Atlanta / French Consulate Atlanta',
+      cities: [
+        { name: 'Louisville', slug: 'louisville', lat: 38.25, lng: -85.76, emoji: '🥃' },
+        { name: 'Lexington', slug: 'lexington-ky', lat: 38.04, lng: -84.50, emoji: '🐴' },
+        { name: 'Bowling Green', slug: 'bowling-green-ky', lat: 36.99, lng: -86.44, emoji: '🚗' },
+        { name: 'Covington', slug: 'covington-ky', lat: 39.08, lng: -84.51, emoji: '🌉' },
+      ],
+    },
+    {
+      name: 'Louisiana', slug: 'louisiana', emoji: '🎷', lat: 31.17, lng: -91.87, description: 'Jazz, Mardi Gras & Cajun cuisine',
+      schengenConsulate: 'French Consulate Houston / German Consulate Houston',
+      cities: [
+        { name: 'New Orleans', slug: 'new-orleans', lat: 29.95, lng: -90.07, emoji: '🎷' },
+        { name: 'Baton Rouge', slug: 'baton-rouge', lat: 30.45, lng: -91.19, emoji: '🏛️' },
+        { name: 'Lafayette', slug: 'lafayette-la', lat: 30.22, lng: -92.02, emoji: '🦞' },
+        { name: 'Shreveport', slug: 'shreveport', lat: 32.53, lng: -93.75, emoji: '🎸' },
+      ],
+    },
+    {
+      name: 'Maine', slug: 'maine', emoji: '🦞', lat: 44.69, lng: -69.38, description: 'Lobster shacks, lighthouses & Acadia',
+      schengenConsulate: 'French Consulate Boston / German Consulate Boston',
+      cities: [
+        { name: 'Portland', slug: 'portland-me', lat: 43.66, lng: -70.26, emoji: '⚓' },
+        { name: 'Bar Harbor', slug: 'bar-harbor', lat: 44.39, lng: -68.20, emoji: '🏔️' },
+        { name: 'Augusta', slug: 'augusta-me', lat: 44.32, lng: -69.77, emoji: '🏛️' },
+        { name: 'Kennebunkport', slug: 'kennebunkport', lat: 43.36, lng: -70.47, emoji: '⛵' },
+      ],
+    },
+    {
+      name: 'Maryland', slug: 'maryland', emoji: '🦀', lat: 39.04, lng: -76.64, description: 'Chesapeake Bay crabs, Annapolis & DC suburbs',
+      schengenConsulate: 'German Consulate Washington DC / French Consulate Washington DC',
+      cities: [
+        { name: 'Baltimore', slug: 'baltimore', lat: 39.29, lng: -76.61, emoji: '🦀' },
+        { name: 'Annapolis', slug: 'annapolis', lat: 38.98, lng: -76.49, emoji: '⛵' },
+        { name: 'Ocean City', slug: 'ocean-city-md', lat: 38.34, lng: -75.09, emoji: '🏖️' },
+        { name: 'Frederick', slug: 'frederick-md', lat: 39.41, lng: -77.41, emoji: '🏘️' },
+      ],
+    },
+    {
+      name: 'Massachusetts', slug: 'massachusetts', emoji: '🦞', lat: 42.41, lng: -71.38, description: 'Harvard, Freedom Trail & Cape Cod',
+      schengenConsulate: 'French Consulate Boston / German Consulate Boston',
+      cities: [
+        { name: 'Boston', slug: 'boston', lat: 42.36, lng: -71.06, emoji: '🏛️' },
+        { name: 'Cambridge', slug: 'cambridge-ma', lat: 42.37, lng: -71.11, emoji: '🎓' },
+        { name: 'Salem', slug: 'salem-ma', lat: 42.52, lng: -70.90, emoji: '🧙' },
+        { name: 'Cape Cod', slug: 'cape-cod', lat: 41.67, lng: -70.30, emoji: '🏖️' },
+        { name: 'Nantucket', slug: 'nantucket', lat: 41.28, lng: -70.10, emoji: '⛵' },
+      ],
+    },
+    {
+      name: 'Michigan', slug: 'michigan', emoji: '🚗', lat: 44.31, lng: -85.60, description: 'Motor City, Great Lakes & Sleeping Bear Dunes',
+      schengenConsulate: 'German Consulate Chicago / French Consulate Chicago',
+      cities: [
+        { name: 'Detroit', slug: 'detroit', lat: 42.33, lng: -83.05, emoji: '🚗' },
+        { name: 'Grand Rapids', slug: 'grand-rapids', lat: 42.97, lng: -85.67, emoji: '🎨' },
+        { name: 'Ann Arbor', slug: 'ann-arbor', lat: 42.28, lng: -83.74, emoji: '🎓' },
+        { name: 'Traverse City', slug: 'traverse-city', lat: 44.76, lng: -85.62, emoji: '🍒' },
+      ],
+    },
+    {
+      name: 'Minnesota', slug: 'minnesota', emoji: '🏒', lat: 46.73, lng: -94.68, description: '10,000 lakes, Boundary Waters & Mall of America',
+      schengenConsulate: 'Swedish Consulate Minneapolis / German Consulate Chicago',
+      cities: [
+        { name: 'Minneapolis', slug: 'minneapolis', lat: 44.98, lng: -93.27, emoji: '🌆' },
+        { name: 'St. Paul', slug: 'st-paul', lat: 44.95, lng: -93.09, emoji: '🏛️' },
+        { name: 'Duluth', slug: 'duluth', lat: 46.79, lng: -92.10, emoji: '⚓' },
+        { name: 'Rochester', slug: 'rochester-mn', lat: 44.02, lng: -92.46, emoji: '🏥' },
+      ],
+    },
+    {
+      name: 'Mississippi', slug: 'mississippi', emoji: '🎸', lat: 32.74, lng: -89.68, description: 'Blues music, Delta & antebellum history',
+      schengenConsulate: 'French Consulate Atlanta / German Consulate Atlanta',
+      cities: [
+        { name: 'Jackson', slug: 'jackson-ms', lat: 32.30, lng: -90.18, emoji: '🏙️' },
+        { name: 'Biloxi', slug: 'biloxi', lat: 30.40, lng: -88.88, emoji: '🎰' },
+        { name: 'Oxford', slug: 'oxford-ms', lat: 34.36, lng: -89.52, emoji: '🎓' },
+        { name: 'Natchez', slug: 'natchez', lat: 31.56, lng: -91.40, emoji: '🏛️' },
+      ],
+    },
+    {
+      name: 'Missouri', slug: 'missouri', emoji: '🏙️', lat: 38.46, lng: -92.29, description: 'Gateway Arch, BBQ & Branson shows',
+      schengenConsulate: 'German Consulate Chicago / French Consulate Chicago',
+      cities: [
+        { name: 'St. Louis', slug: 'st-louis', lat: 38.63, lng: -90.20, emoji: '🏛️' },
+        { name: 'Kansas City', slug: 'kansas-city-mo', lat: 39.10, lng: -94.58, emoji: '🍖' },
+        { name: 'Columbia', slug: 'columbia-mo', lat: 38.95, lng: -92.33, emoji: '🎓' },
+        { name: 'Branson', slug: 'branson', lat: 36.64, lng: -93.22, emoji: '🎭' },
+      ],
+    },
+    {
+      name: 'Montana', slug: 'montana', emoji: '🦌', lat: 46.88, lng: -110.36, description: 'Big Sky, Glacier NP & wild frontier',
+      schengenConsulate: 'German Consulate Seattle / French Consulate San Francisco',
+      cities: [
+        { name: 'Missoula', slug: 'missoula', lat: 46.87, lng: -114.01, emoji: '🌲' },
+        { name: 'Billings', slug: 'billings', lat: 45.78, lng: -108.50, emoji: '🏙️' },
+        { name: 'Bozeman', slug: 'bozeman', lat: 45.68, lng: -111.04, emoji: '🏔️' },
+        { name: 'Whitefish', slug: 'whitefish', lat: 48.41, lng: -114.34, emoji: '❄️' },
+      ],
+    },
+    {
+      name: 'Nebraska', slug: 'nebraska', emoji: '🌽', lat: 41.49, lng: -99.90, description: 'Sandhills, Chimney Rock & Husker football',
+      schengenConsulate: 'German Consulate Chicago / Dutch Consulate Chicago',
+      cities: [
+        { name: 'Omaha', slug: 'omaha', lat: 41.26, lng: -95.94, emoji: '🥩' },
+        { name: 'Lincoln', slug: 'lincoln-ne', lat: 40.81, lng: -96.70, emoji: '🏛️' },
+        { name: 'Scottsbluff', slug: 'scottsbluff', lat: 41.87, lng: -103.67, emoji: '🏞️' },
+      ],
+    },
+    {
+      name: 'Nevada', slug: 'nevada', emoji: '🎰', lat: 38.50, lng: -117.02, description: 'Vegas glitter, desert & Red Rock Canyon',
+      schengenConsulate: 'German Consulate Los Angeles / French Consulate Los Angeles',
+      cities: [
+        { name: 'Las Vegas', slug: 'las-vegas', lat: 36.17, lng: -115.14, emoji: '🎰' },
+        { name: 'Reno', slug: 'reno', lat: 39.53, lng: -119.81, emoji: '🎲' },
+        { name: 'Lake Tahoe', slug: 'lake-tahoe', lat: 39.10, lng: -120.00, emoji: '🏔️' },
+        { name: 'Henderson', slug: 'henderson', lat: 36.04, lng: -114.98, emoji: '🏙️' },
+      ],
+    },
+    {
+      name: 'New Hampshire', slug: 'new-hampshire', emoji: '🍂', lat: 43.45, lng: -71.56, description: 'White Mountains, fall foliage & tax-free shopping',
+      schengenConsulate: 'French Consulate Boston / German Consulate Boston',
+      cities: [
+        { name: 'Manchester', slug: 'manchester-nh', lat: 42.99, lng: -71.46, emoji: '🏙️' },
+        { name: 'Portsmouth', slug: 'portsmouth-nh', lat: 43.07, lng: -70.76, emoji: '⚓' },
+        { name: 'Concord', slug: 'concord-nh', lat: 43.21, lng: -71.54, emoji: '🏛️' },
+        { name: 'North Conway', slug: 'north-conway', lat: 44.05, lng: -71.13, emoji: '🏔️' },
+      ],
+    },
+    {
+      name: 'New Jersey', slug: 'new-jersey', emoji: '🎡', lat: 40.06, lng: -74.41, description: 'Jersey Shore, Princeton & NYC gateway',
+      schengenConsulate: 'German Consulate New York / French Consulate New York',
+      cities: [
+        { name: 'Atlantic City', slug: 'atlantic-city', lat: 39.36, lng: -74.42, emoji: '🎰' },
+        { name: 'Newark', slug: 'newark', lat: 40.73, lng: -74.17, emoji: '✈️' },
+        { name: 'Princeton', slug: 'princeton', lat: 40.36, lng: -74.66, emoji: '🎓' },
+        { name: 'Cape May', slug: 'cape-may', lat: 38.93, lng: -74.92, emoji: '🏖️' },
+      ],
+    },
+    {
+      name: 'New Mexico', slug: 'new-mexico', emoji: '🌶️', lat: 34.52, lng: -105.87, description: 'Santa Fe art, turquoise sky & alien lore',
+      schengenConsulate: 'German Consulate Houston / French Consulate Houston',
+      cities: [
+        { name: 'Santa Fe', slug: 'santa-fe', lat: 35.69, lng: -105.94, emoji: '🎨' },
+        { name: 'Albuquerque', slug: 'albuquerque', lat: 35.08, lng: -106.65, emoji: '🎈' },
+        { name: 'Taos', slug: 'taos', lat: 36.41, lng: -105.57, emoji: '🏔️' },
+        { name: 'Las Cruces', slug: 'las-cruces', lat: 32.32, lng: -106.77, emoji: '🌵' },
+      ],
+    },
+    {
+      name: 'New York', slug: 'new-york', emoji: '🗽', lat: 40.71, lng: -74.01, description: 'NYC skyline, Niagara Falls & Hudson Valley',
+      schengenConsulate: 'German Consulate NY / French Consulate NY / Italian Consulate NY',
+      cities: [
+        { name: 'New York City', slug: 'new-york-city', lat: 40.71, lng: -74.01, emoji: '🗽' },
+        { name: 'Buffalo', slug: 'buffalo', lat: 42.89, lng: -78.87, emoji: '🏒' },
+        { name: 'Albany', slug: 'albany', lat: 42.65, lng: -73.76, emoji: '🏛️' },
+        { name: 'Niagara Falls', slug: 'niagara-falls', lat: 43.10, lng: -79.07, emoji: '💦' },
+        { name: 'Saratoga Springs', slug: 'saratoga-springs', lat: 43.08, lng: -73.79, emoji: '🐎' },
+      ],
+    },
+    {
+      name: 'North Carolina', slug: 'north-carolina', emoji: '🐷', lat: 35.63, lng: -79.81, description: 'Research Triangle, Outer Banks & Blue Ridge',
+      schengenConsulate: 'German Consulate Atlanta / French Consulate Atlanta',
+      cities: [
+        { name: 'Charlotte', slug: 'charlotte', lat: 35.23, lng: -80.84, emoji: '🏙️' },
+        { name: 'Raleigh', slug: 'raleigh', lat: 35.78, lng: -78.64, emoji: '🎓' },
+        { name: 'Asheville', slug: 'asheville', lat: 35.57, lng: -82.55, emoji: '🎸' },
+        { name: 'Wilmington', slug: 'wilmington-nc', lat: 34.23, lng: -77.95, emoji: '🏖️' },
+        { name: 'Chapel Hill', slug: 'chapel-hill', lat: 35.91, lng: -79.06, emoji: '🎓' },
+      ],
+    },
+    {
+      name: 'North Dakota', slug: 'north-dakota', emoji: '🌾', lat: 47.53, lng: -101.00, description: 'Theodore Roosevelt NP & Badlands',
+      schengenConsulate: 'Norwegian Consulate Minneapolis / German Consulate Chicago',
+      cities: [
+        { name: 'Fargo', slug: 'fargo', lat: 46.88, lng: -96.79, emoji: '🏙️' },
+        { name: 'Bismarck', slug: 'bismarck', lat: 46.81, lng: -100.78, emoji: '🏛️' },
+        { name: 'Grand Forks', slug: 'grand-forks', lat: 47.93, lng: -97.03, emoji: '🎓' },
+        { name: 'Minot', slug: 'minot', lat: 48.23, lng: -101.30, emoji: '🌾' },
+      ],
+    },
+    {
+      name: 'Ohio', slug: 'ohio', emoji: '🏙️', lat: 40.42, lng: -82.91, description: 'Rock & Roll Hall of Fame, Cedar Point & Amish country',
+      schengenConsulate: 'German Consulate Chicago / French Consulate Chicago',
+      cities: [
+        { name: 'Columbus', slug: 'columbus-oh', lat: 39.96, lng: -82.99, emoji: '🌆' },
+        { name: 'Cleveland', slug: 'cleveland', lat: 41.50, lng: -81.69, emoji: '🎸' },
+        { name: 'Cincinnati', slug: 'cincinnati', lat: 39.10, lng: -84.51, emoji: '🌉' },
+        { name: 'Akron', slug: 'akron', lat: 41.08, lng: -81.52, emoji: '🎓' },
+      ],
+    },
+    {
+      name: 'Oklahoma', slug: 'oklahoma', emoji: '🌪️', lat: 35.56, lng: -96.93, description: 'Route 66, Native American heritage & oil country',
+      schengenConsulate: 'German Consulate Houston / French Consulate Houston',
+      cities: [
+        { name: 'Oklahoma City', slug: 'oklahoma-city', lat: 35.47, lng: -97.52, emoji: '🌆' },
+        { name: 'Tulsa', slug: 'tulsa', lat: 36.15, lng: -95.99, emoji: '🛢️' },
+        { name: 'Norman', slug: 'norman', lat: 35.22, lng: -97.44, emoji: '🎓' },
+        { name: 'Stillwater', slug: 'stillwater', lat: 36.12, lng: -97.06, emoji: '🏈' },
+      ],
+    },
+    {
+      name: 'Oregon', slug: 'oregon', emoji: '🌲', lat: 43.80, lng: -120.55, description: 'Portland hipster scene, Crater Lake & coast',
+      schengenConsulate: 'German Consulate Seattle / French Consulate San Francisco',
+      cities: [
+        { name: 'Portland', slug: 'portland-or', lat: 45.52, lng: -122.68, emoji: '🌹' },
+        { name: 'Eugene', slug: 'eugene', lat: 44.05, lng: -123.09, emoji: '🎓' },
+        { name: 'Bend', slug: 'bend', lat: 44.06, lng: -121.31, emoji: '🏔️' },
+        { name: 'Ashland', slug: 'ashland-or', lat: 42.19, lng: -122.71, emoji: '🎭' },
+        { name: 'Crater Lake', slug: 'crater-lake', lat: 42.95, lng: -122.10, emoji: '💧' },
+      ],
+    },
+    {
+      name: 'Pennsylvania', slug: 'pennsylvania', emoji: '🔔', lat: 41.20, lng: -77.19, description: 'Philly cheesesteak, Amish country & Gettysburg',
+      schengenConsulate: 'German Consulate Philadelphia / French Consulate Philadelphia',
+      cities: [
+        { name: 'Philadelphia', slug: 'philadelphia', lat: 39.95, lng: -75.17, emoji: '🔔' },
+        { name: 'Pittsburgh', slug: 'pittsburgh', lat: 40.44, lng: -80.00, emoji: '🌉' },
+        { name: 'Hershey', slug: 'hershey', lat: 40.29, lng: -76.65, emoji: '🍫' },
+        { name: 'Lancaster', slug: 'lancaster-pa', lat: 40.04, lng: -76.31, emoji: '🌾' },
+        { name: 'Gettysburg', slug: 'gettysburg', lat: 39.83, lng: -77.23, emoji: '🎖️' },
+      ],
+    },
+    {
+      name: 'Rhode Island', slug: 'rhode-island', emoji: '⚓', lat: 41.68, lng: -71.51, description: 'Newport mansions, sailing & Del\'s lemonade',
+      schengenConsulate: 'French Consulate Boston / German Consulate Boston',
+      cities: [
+        { name: 'Providence', slug: 'providence', lat: 41.82, lng: -71.42, emoji: '🎨' },
+        { name: 'Newport', slug: 'newport-ri', lat: 41.49, lng: -71.31, emoji: '⛵' },
+        { name: 'Narragansett', slug: 'narragansett', lat: 41.43, lng: -71.45, emoji: '🏖️' },
+      ],
+    },
+    {
+      name: 'South Carolina', slug: 'south-carolina', emoji: '🌴', lat: 33.84, lng: -80.94, description: 'Charleston antebellum charm & Myrtle Beach',
+      schengenConsulate: 'German Consulate Atlanta / French Consulate Atlanta',
+      cities: [
+        { name: 'Charleston', slug: 'charleston-sc', lat: 32.78, lng: -79.94, emoji: '🌹' },
+        { name: 'Myrtle Beach', slug: 'myrtle-beach', lat: 33.69, lng: -78.89, emoji: '🏖️' },
+        { name: 'Greenville', slug: 'greenville-sc', lat: 34.85, lng: -82.40, emoji: '🏙️' },
+        { name: 'Columbia', slug: 'columbia-sc', lat: 34.00, lng: -81.04, emoji: '🏛️' },
+      ],
+    },
+    {
+      name: 'South Dakota', slug: 'south-dakota', emoji: '🏔️', lat: 43.97, lng: -99.90, description: 'Mount Rushmore, Badlands & Sturgis rally',
+      schengenConsulate: 'German Consulate Chicago / Norwegian Consulate Minneapolis',
+      cities: [
+        { name: 'Rapid City', slug: 'rapid-city', lat: 44.08, lng: -103.23, emoji: '🏔️' },
+        { name: 'Sioux Falls', slug: 'sioux-falls', lat: 43.55, lng: -96.73, emoji: '🌊' },
+        { name: 'Keystone', slug: 'keystone-sd', lat: 43.90, lng: -103.43, emoji: '🗿' },
+        { name: 'Deadwood', slug: 'deadwood', lat: 44.38, lng: -103.73, emoji: '🤠' },
+      ],
+    },
+    {
+      name: 'Tennessee', slug: 'tennessee', emoji: '🎸', lat: 35.52, lng: -86.58, description: 'Nashville country music & Memphis blues',
+      schengenConsulate: 'German Consulate Atlanta / French Consulate Atlanta',
+      cities: [
+        { name: 'Nashville', slug: 'nashville', lat: 36.17, lng: -86.78, emoji: '🎸' },
+        { name: 'Memphis', slug: 'memphis', lat: 35.15, lng: -90.05, emoji: '🎵' },
+        { name: 'Knoxville', slug: 'knoxville', lat: 35.96, lng: -83.92, emoji: '🎓' },
+        { name: 'Chattanooga', slug: 'chattanooga', lat: 35.05, lng: -85.31, emoji: '🌉' },
+        { name: 'Gatlinburg', slug: 'gatlinburg', lat: 35.71, lng: -83.51, emoji: '🌲' },
+      ],
+    },
+    {
+      name: 'Texas', slug: 'texas', emoji: '🤠', lat: 31.97, lng: -99.90, description: 'Lone Star State: BBQ, tech, space & border culture',
+      schengenConsulate: 'German Consulate Houston / French Consulate Houston',
+      cities: [
+        { name: 'Austin', slug: 'austin', lat: 30.27, lng: -97.74, emoji: '🎵' },
+        { name: 'Houston', slug: 'houston', lat: 29.76, lng: -95.37, emoji: '🚀' },
+        { name: 'Dallas', slug: 'dallas', lat: 32.78, lng: -96.80, emoji: '🏙️' },
+        { name: 'San Antonio', slug: 'san-antonio', lat: 29.42, lng: -98.49, emoji: '🌹' },
+        { name: 'El Paso', slug: 'el-paso', lat: 31.76, lng: -106.49, emoji: '🌵' },
+      ],
+    },
+    {
+      name: 'Utah', slug: 'utah', emoji: '🏜️', lat: 39.32, lng: -111.09, description: 'Mighty Five national parks & skiing',
+      schengenConsulate: 'German Consulate Los Angeles / French Consulate Los Angeles',
+      cities: [
+        { name: 'Salt Lake City', slug: 'salt-lake-city', lat: 40.76, lng: -111.89, emoji: '🏔️' },
+        { name: 'Park City', slug: 'park-city', lat: 40.65, lng: -111.50, emoji: '⛷️' },
+        { name: 'Moab', slug: 'moab', lat: 38.57, lng: -109.55, emoji: '🔴' },
+        { name: 'St. George', slug: 'st-george', lat: 37.10, lng: -113.58, emoji: '🌵' },
+        { name: 'Provo', slug: 'provo', lat: 40.23, lng: -111.66, emoji: '🎓' },
+      ],
+    },
+    {
+      name: 'Vermont', slug: 'vermont', emoji: '🍁', lat: 44.56, lng: -72.58, description: 'Fall foliage, maple syrup & Ben & Jerry\'s',
+      schengenConsulate: 'French Consulate Boston / German Consulate Boston',
+      cities: [
+        { name: 'Burlington', slug: 'burlington-vt', lat: 44.48, lng: -73.21, emoji: '🍺' },
+        { name: 'Montpelier', slug: 'montpelier', lat: 44.26, lng: -72.58, emoji: '🏛️' },
+        { name: 'Stowe', slug: 'stowe', lat: 44.47, lng: -72.69, emoji: '⛷️' },
+        { name: 'Manchester', slug: 'manchester-vt', lat: 43.16, lng: -73.07, emoji: '🛍️' },
+      ],
+    },
+    {
+      name: 'Virginia', slug: 'virginia', emoji: '🎖️', lat: 37.77, lng: -78.17, description: 'DC suburbs, Colonial Williamsburg & Shenandoah',
+      schengenConsulate: 'German Consulate Washington DC / French Consulate Washington DC',
+      cities: [
+        { name: 'Richmond', slug: 'richmond-va', lat: 37.54, lng: -77.44, emoji: '🏛️' },
+        { name: 'Virginia Beach', slug: 'virginia-beach', lat: 36.85, lng: -75.98, emoji: '🏖️' },
+        { name: 'Charlottesville', slug: 'charlottesville', lat: 38.03, lng: -78.48, emoji: '🎓' },
+        { name: 'Alexandria', slug: 'alexandria-va', lat: 38.80, lng: -77.05, emoji: '⛵' },
+        { name: 'Williamsburg', slug: 'williamsburg-va', lat: 37.27, lng: -76.71, emoji: '🏘️' },
+      ],
+    },
+    {
+      name: 'Washington', slug: 'washington-state', emoji: '🌲', lat: 47.38, lng: -120.45, description: 'Seattle tech, Mount Rainier & wine country',
+      schengenConsulate: 'German Consulate Seattle / Swedish Consulate Seattle',
+      cities: [
+        { name: 'Seattle', slug: 'seattle', lat: 47.61, lng: -122.33, emoji: '☕' },
+        { name: 'Spokane', slug: 'spokane', lat: 47.66, lng: -117.43, emoji: '🌿' },
+        { name: 'Tacoma', slug: 'tacoma', lat: 47.25, lng: -122.44, emoji: '🏔️' },
+        { name: 'Olympia', slug: 'olympia-wa', lat: 47.04, lng: -122.90, emoji: '🏛️' },
+        { name: 'Bellingham', slug: 'bellingham', lat: 48.74, lng: -122.48, emoji: '⛵' },
+      ],
+    },
+    {
+      name: 'West Virginia', slug: 'west-virginia', emoji: '⛏️', lat: 38.49, lng: -80.95, description: 'Whitewater rafting, Appalachian trails & coal country',
+      schengenConsulate: 'German Consulate Washington DC / French Consulate Washington DC',
+      cities: [
+        { name: 'Charleston', slug: 'charleston-wv', lat: 38.35, lng: -81.63, emoji: '🏙️' },
+        { name: 'Morgantown', slug: 'morgantown-wv', lat: 39.63, lng: -79.96, emoji: '🎓' },
+        { name: "Harpers Ferry", slug: 'harpers-ferry', lat: 39.32, lng: -77.74, emoji: '🏛️' },
+      ],
+    },
+    {
+      name: 'Wisconsin', slug: 'wisconsin', emoji: '🧀', lat: 44.27, lng: -89.62, description: 'Cheese country, Great Lakes & Lambeau Field',
+      schengenConsulate: 'German Consulate Chicago / Norwegian Consulate Chicago',
+      cities: [
+        { name: 'Milwaukee', slug: 'milwaukee', lat: 43.04, lng: -87.91, emoji: '🍺' },
+        { name: 'Madison', slug: 'madison', lat: 43.07, lng: -89.40, emoji: '🎓' },
+        { name: 'Green Bay', slug: 'green-bay', lat: 44.52, lng: -88.02, emoji: '🏈' },
+        { name: 'Door County', slug: 'door-county', lat: 44.94, lng: -87.35, emoji: '🍒' },
+      ],
+    },
+    {
+      name: 'Wyoming', slug: 'wyoming', emoji: '🦬', lat: 43.08, lng: -107.29, description: 'Yellowstone, Grand Teton & cowboy culture',
+      schengenConsulate: 'German Consulate Los Angeles / French Consulate San Francisco',
+      cities: [
+        { name: 'Jackson Hole', slug: 'jackson-hole', lat: 43.48, lng: -110.76, emoji: '⛷️' },
+        { name: 'Cheyenne', slug: 'cheyenne', lat: 41.14, lng: -104.82, emoji: '🤠' },
+        { name: 'Cody', slug: 'cody-wy', lat: 44.52, lng: -109.06, emoji: '🐃' },
+        { name: 'Laramie', slug: 'laramie', lat: 41.31, lng: -105.58, emoji: '🎓' },
+      ],
+    },
+  ],
+  canada: [
+    {
+      name: 'Ontario', slug: 'ontario', emoji: '🏒', lat: 51.25, lng: -85.32, description: 'Toronto, Niagara Falls & Ottawa',
+      cities: [
+        { name: 'Toronto', slug: 'toronto', lat: 43.65, lng: -79.38, emoji: '🏙️' },
+        { name: 'Ottawa', slug: 'ottawa', lat: 45.42, lng: -75.70, emoji: '🏛️' },
+        { name: 'Niagara Falls', slug: 'niagara-falls-ca', lat: 43.10, lng: -79.07, emoji: '💦' },
+        { name: 'Kingston', slug: 'kingston-ca', lat: 44.23, lng: -76.49, emoji: '🏰' },
+      ],
+    },
+    {
+      name: 'British Columbia', slug: 'british-columbia', emoji: '🏔️', lat: 53.73, lng: -127.65, description: 'Vancouver, Whistler & Pacific Rim',
+      cities: [
+        { name: 'Vancouver', slug: 'vancouver', lat: 49.28, lng: -123.12, emoji: '🌉' },
+        { name: 'Victoria', slug: 'victoria-bc', lat: 48.43, lng: -123.37, emoji: '🌸' },
+        { name: 'Whistler', slug: 'whistler', lat: 50.12, lng: -122.95, emoji: '⛷️' },
+        { name: 'Kelowna', slug: 'kelowna', lat: 49.89, lng: -119.50, emoji: '🍇' },
+      ],
+    },
+    {
+      name: 'Quebec', slug: 'quebec', emoji: '🥐', lat: 52.94, lng: -73.55, description: 'French culture, Montreal & Old Quebec City',
+      cities: [
+        { name: 'Montreal', slug: 'montreal', lat: 45.50, lng: -73.57, emoji: '🥯' },
+        { name: 'Quebec City', slug: 'quebec-city', lat: 46.81, lng: -71.21, emoji: '🏰' },
+        { name: 'Sherbrooke', slug: 'sherbrooke', lat: 45.40, lng: -71.90, emoji: '🎓' },
+        { name: 'Trois-Rivières', slug: 'trois-rivieres', lat: 46.35, lng: -72.55, emoji: '⚓' },
+      ],
+    },
+    {
+      name: 'Alberta', slug: 'alberta', emoji: '🦌', lat: 53.93, lng: -116.58, description: 'Banff, Calgary Stampede & northern lights',
+      cities: [
+        { name: 'Calgary', slug: 'calgary', lat: 51.05, lng: -114.07, emoji: '🤠' },
+        { name: 'Edmonton', slug: 'edmonton', lat: 53.55, lng: -113.47, emoji: '🛢️' },
+        { name: 'Banff', slug: 'banff', lat: 51.18, lng: -115.57, emoji: '🦌' },
+        { name: 'Jasper', slug: 'jasper', lat: 52.88, lng: -118.08, emoji: '🏔️' },
+        { name: 'Lethbridge', slug: 'lethbridge', lat: 49.70, lng: -112.84, emoji: '🌾' },
+      ],
+    },
+    {
+      name: 'Manitoba', slug: 'manitoba', emoji: '🐻‍❄️', lat: 53.76, lng: -98.81, description: 'Polar bears, Churchill & Winnipeg arts',
+      cities: [
+        { name: 'Winnipeg', slug: 'winnipeg', lat: 49.90, lng: -97.14, emoji: '🏙️' },
+        { name: 'Churchill', slug: 'churchill-mb', lat: 58.77, lng: -94.17, emoji: '🐻‍❄️' },
+        { name: 'Brandon', slug: 'brandon-mb', lat: 49.85, lng: -99.95, emoji: '🌾' },
+      ],
+    },
+    {
+      name: 'Saskatchewan', slug: 'saskatchewan', emoji: '🌾', lat: 52.94, lng: -106.45, description: 'Prairie skies & potash country',
+      cities: [
+        { name: 'Saskatoon', slug: 'saskatoon', lat: 52.13, lng: -106.67, emoji: '🌆' },
+        { name: 'Regina', slug: 'regina', lat: 50.45, lng: -104.62, emoji: '🏛️' },
+        { name: 'Prince Albert', slug: 'prince-albert', lat: 53.20, lng: -105.75, emoji: '🌲' },
+      ],
+    },
+    {
+      name: 'Nova Scotia', slug: 'nova-scotia', emoji: '🦞', lat: 44.68, lng: -63.74, description: 'Celtic heritage, Peggy\'s Cove & seafood',
+      cities: [
+        { name: 'Halifax', slug: 'halifax', lat: 44.65, lng: -63.58, emoji: '⚓' },
+        { name: "Cape Breton", slug: 'cape-breton', lat: 46.15, lng: -60.57, emoji: '🎵' },
+        { name: 'Lunenburg', slug: 'lunenburg', lat: 44.38, lng: -64.30, emoji: '⛵' },
+      ],
+    },
+    {
+      name: 'New Brunswick', slug: 'new-brunswick', emoji: '🦞', lat: 46.56, lng: -66.46, description: 'Bay of Fundy tides & Acadian culture',
+      cities: [
+        { name: 'Moncton', slug: 'moncton', lat: 46.09, lng: -64.80, emoji: '🌊' },
+        { name: 'Fredericton', slug: 'fredericton', lat: 45.96, lng: -66.64, emoji: '🏛️' },
+        { name: 'Saint John', slug: 'saint-john-nb', lat: 45.27, lng: -66.07, emoji: '⚓' },
+      ],
+    },
+    {
+      name: 'Newfoundland & Labrador', slug: 'newfoundland', emoji: '🐋', lat: 53.14, lng: -57.66, description: 'Viking history, icebergs & screech rum',
+      cities: [
+        { name: "St. John's", slug: 'st-johns-nl', lat: 47.56, lng: -52.71, emoji: '🌊' },
+        { name: 'Gander', slug: 'gander', lat: 48.96, lng: -54.61, emoji: '✈️' },
+        { name: "L'Anse aux Meadows", slug: 'lanse-aux-meadows', lat: 51.60, lng: -55.53, emoji: '⚔️' },
+      ],
+    },
+    {
+      name: 'Prince Edward Island', slug: 'prince-edward-island', emoji: '🥧', lat: 46.51, lng: -63.42, description: 'Red sandy shores & Anne of Green Gables',
+      cities: [
+        { name: 'Charlottetown', slug: 'charlottetown', lat: 46.24, lng: -63.13, emoji: '🏙️' },
+        { name: 'Summerside', slug: 'summerside', lat: 46.39, lng: -63.79, emoji: '🏖️' },
+      ],
+    },
+    {
+      name: 'Northwest Territories', slug: 'northwest-territories', emoji: '🌌', lat: 64.82, lng: -124.85, description: 'Northern Lights & Nahanni River',
+      cities: [
+        { name: 'Yellowknife', slug: 'yellowknife', lat: 62.45, lng: -114.38, emoji: '🌌' },
+        { name: 'Inuvik', slug: 'inuvik', lat: 68.36, lng: -133.73, emoji: '❄️' },
+      ],
+    },
+    {
+      name: 'Yukon', slug: 'yukon', emoji: '🦅', lat: 63.95, lng: -135.26, description: 'Klondike gold rush & aurora borealis',
+      cities: [
+        { name: 'Whitehorse', slug: 'whitehorse', lat: 60.72, lng: -135.05, emoji: '🐺' },
+        { name: 'Dawson City', slug: 'dawson-city', lat: 64.06, lng: -139.43, emoji: '🥇' },
+      ],
+    },
+    {
+      name: 'Nunavut', slug: 'nunavut', emoji: '🏔️', lat: 70.30, lng: -83.11, description: 'Arctic wilderness & Inuit culture',
+      cities: [
+        { name: 'Iqaluit', slug: 'iqaluit', lat: 63.75, lng: -68.52, emoji: '🐧' },
+        { name: 'Rankin Inlet', slug: 'rankin-inlet', lat: 62.81, lng: -92.08, emoji: '🦭' },
+      ],
+    },
+  ],
+  'united-arab-emirates': [
+    { name: 'Dubai', slug: 'dubai', emoji: '🏙️', lat: 25.20, lng: 55.27, description: 'Skyscrapers, malls & desert safaris',
+      cities: [{ name: 'Dubai', slug: 'dubai-city', lat: 25.20, lng: 55.27, emoji: '🏙️' }, { name: 'Palm Jumeirah', slug: 'palm-jumeirah', lat: 25.11, lng: 55.14, emoji: '🌴' }] },
+    { name: 'Abu Dhabi', slug: 'abu-dhabi', emoji: '🕌', lat: 24.47, lng: 54.37, description: 'Grand Mosque, F1 & cultural riches',
+      cities: [{ name: 'Abu Dhabi', slug: 'abu-dhabi-city', lat: 24.47, lng: 54.37, emoji: '🕌' }, { name: 'Al Ain', slug: 'al-ain', lat: 24.21, lng: 55.74, emoji: '🌴' }] },
+    { name: 'Sharjah', slug: 'sharjah', emoji: '🎨', lat: 25.33, lng: 55.41, description: 'Culture capital of UAE & heritage districts' },
+    { name: 'Ajman', slug: 'ajman', emoji: '🏖️', lat: 25.41, lng: 55.44, description: 'Quiet emirate with white sand beaches' },
+    { name: 'Ras Al Khaimah', slug: 'ras-al-khaimah', emoji: '🏔️', lat: 25.79, lng: 55.94, description: 'Mountains, mangroves & budget resorts' },
+    { name: 'Fujairah', slug: 'fujairah', emoji: '🤿', lat: 25.13, lng: 56.33, description: 'East coast diving & Hajar mountains' },
+    { name: 'Umm Al Quwain', slug: 'umm-al-quwain', emoji: '🦜', lat: 25.56, lng: 55.55, description: 'Flamingo reserve & traditional markets' },
   ],
   thailand: [
     { name: 'Bangkok', slug: 'bangkok', emoji: '🛺', lat: 13.76, lng: 100.50, description: 'Street food & temples' },
@@ -69,11 +862,6 @@ export const COUNTRY_REGIONS: Record<string, CountryRegion[]> = {
     { name: 'Queensland', slug: 'queensland', emoji: '🐠', lat: -20.92, lng: 142.70, description: 'Great Barrier Reef & Whitsundays' },
     { name: 'Western Australia', slug: 'western-australia', emoji: '🌅', lat: -25.05, lng: 121.63, description: 'Outback, Margaret River' },
     { name: 'Tasmania', slug: 'tasmania', emoji: '🌿', lat: -42.00, lng: 146.32, description: 'Wild nature & clean air' },
-  ],
-  'united-arab-emirates': [
-    { name: 'Dubai', slug: 'dubai', emoji: '🏙️', lat: 25.20, lng: 55.27, description: 'Skyscrapers, malls & desert' },
-    { name: 'Abu Dhabi', slug: 'abu-dhabi', emoji: '🕌', lat: 24.47, lng: 54.37, description: 'Grand Mosque & Formula 1' },
-    { name: 'Sharjah', slug: 'sharjah', emoji: '🎨', lat: 25.33, lng: 55.41, description: 'Culture & arts capital of UAE' },
   ],
   indonesia: [
     { name: 'Bali', slug: 'bali', emoji: '🌺', lat: -8.34, lng: 115.09, description: 'Temple culture & surf' },
@@ -109,13 +897,6 @@ export const COUNTRY_REGIONS: Record<string, CountryRegion[]> = {
     { name: 'Amazon', slug: 'amazon', emoji: '🌿', lat: -3.10, lng: -60.02, description: 'World\'s greatest rainforest' },
     { name: 'Florianópolis', slug: 'florianopolis', emoji: '🏄', lat: -27.60, lng: -48.55, description: 'Island beaches & surf' },
     { name: 'Pantanal', slug: 'pantanal', emoji: '🐆', lat: -17.98, lng: -57.65, description: 'World\'s largest tropical wetland' },
-  ],
-  canada: [
-    { name: 'Toronto & Ontario', slug: 'toronto', emoji: '🏒', lat: 43.65, lng: -79.38, description: 'Multicultural world city' },
-    { name: 'Vancouver & BC', slug: 'vancouver', emoji: '🏔️', lat: 49.28, lng: -123.12, description: 'Mountains meet Pacific coast' },
-    { name: 'Quebec', slug: 'quebec', emoji: '🥐', lat: 46.81, lng: -71.21, description: 'French culture & winter carnival' },
-    { name: 'Banff & Rockies', slug: 'banff', emoji: '🦌', lat: 51.18, lng: -115.57, description: 'Turquoise lakes & glaciers' },
-    { name: 'Maritimes', slug: 'maritimes', emoji: '🦞', lat: 45.95, lng: -64.82, description: 'Lobster, tides & fishing villages' },
   ],
   india: [
     { name: 'Delhi & North', slug: 'delhi', emoji: '🕌', lat: 28.61, lng: 77.21, description: 'Red Fort, Taj Mahal nearby' },
