@@ -12,6 +12,8 @@ import { useUserProfile } from '@/hooks/useUserProfile';
 import { useSmartRequirements } from '@/hooks/useSmartRequirements';
 import { CONTINENTS, getContinentByCountry, Continent } from '@/data/continents';
 import { COUNTRY_REGIONS } from '@/data/countryRegions';
+import type { CountryRegion } from '@/data/countryRegions';
+import RegionCard, { SelectedRegion } from './RegionCard';
 
 const TOKEN = import.meta.env.VITE_MAPBOX_TOKEN as string;
 
@@ -44,6 +46,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
   const mapRef = useRef<MapRef>(null);
   const [viewState, setViewState] = useState(INITIAL_VIEW);
   const [selected, setSelected] = useState<SelectedDestination | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<SelectedRegion | null>(null);
   const [zoom, setZoom] = useState(INITIAL_VIEW.zoom);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [chatService, setChatService] = useState<ServiceType | null>(null);
@@ -109,6 +112,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
       setActiveCountrySlug(null);
       setActiveRegionName(null);
       setSelected(null);
+      setSelectedRegion(null);
       flyTo(continent.center[0], continent.center[1], continent.zoom);
     },
     [flyTo]
@@ -119,6 +123,34 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
     (e: MapMouseEvent) => {
       const map = mapRef.current?.getMap();
       if (!map) return;
+
+      // Admin-1 detection for US/Canada states at zoom >= 5
+      if (zoom >= REGION_ZOOM_THRESHOLD && (activeCountrySlug === 'usa' || activeCountrySlug === 'canada')) {
+        const admin1 = map.queryRenderedFeatures(e.point, { layers: ['admin-1-label'] });
+        if (admin1.length > 0) {
+          const stateName = admin1[0].properties?.name_en as string | undefined;
+          const stateEntry = stateName
+            ? (COUNTRY_REGIONS[activeCountrySlug] ?? []).find(
+                (r) => r.name.toLowerCase() === stateName.toLowerCase()
+              )
+            : undefined;
+          if (stateEntry?.cities?.length) {
+            setSelectedRegion({
+              name: stateEntry.name,
+              emoji: stateEntry.emoji,
+              description: stateEntry.description,
+              countrySlug: activeCountrySlug,
+              countryName: activeCountrySlug === 'usa' ? 'United States' : 'Canada',
+              items: stateEntry.cities!,
+              mode: 'cities',
+              schengenConsulate: stateEntry.schengenConsulate,
+            });
+            setSelected(null);
+            flyTo(stateEntry.lng, stateEntry.lat, Math.max(zoom, 7), 1200);
+            return;
+          }
+        }
+      }
 
       const features = map.queryRenderedFeatures(e.point, {
         layers: ['country-label'],
@@ -134,14 +166,33 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
           setActiveCountrySlug(slug);
           setActiveRegionName(null);
           setActiveRegionEmoji(undefined);
+
+          // Show region card for countries with regions (not USA/Canada — too many states)
+          const regions = COUNTRY_REGIONS[slug] ?? [];
+          if (regions.length > 0 && slug !== 'usa' && slug !== 'canada') {
+            setSelectedRegion({
+              name: countryName,
+              emoji: COUNTRY_EMOJIS[slug],
+              countrySlug: slug,
+              countryName,
+              items: regions,
+              mode: 'regions',
+            });
+            setSelected(null);
+          } else {
+            setSelectedRegion(null);
+            setSelected(null);
+          }
+        } else {
+          setSelected(null);
         }
         flyTo(e.lngLat.lng, e.lngLat.lat, Math.max(zoom, 5));
-        setSelected(null);
       } else {
         setSelected(null);
+        setSelectedRegion(null);
       }
     },
-    [zoom, flyTo, activeContinent]
+    [zoom, flyTo, activeContinent, activeCountrySlug]
   );
 
   // City pin click
@@ -160,6 +211,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
         lng: dest.lng,
       };
       setSelected(sel);
+      setSelectedRegion(null);
       trackRecent(sel);
 
       // Update breadcrumb to reflect this city's country
@@ -179,6 +231,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
   const handleExternalSelect = useCallback(
     (dest: SelectedDestination) => {
       setSelected(dest);
+      setSelectedRegion(null);
       trackRecent(dest);
       const continent = getContinentByCountry(dest.countrySlug);
       setActiveContinent(continent ?? null);
@@ -196,13 +249,25 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
 
   // Region marker click
   const handleRegionClick = useCallback(
-    (regionName: string, regionEmoji: string | undefined, lat: number, lng: number) => {
-      setActiveRegionName(regionName);
-      setActiveRegionEmoji(regionEmoji);
+    (region: CountryRegion) => {
+      setActiveRegionName(region.name);
+      setActiveRegionEmoji(region.emoji);
       setSelected(null);
-      flyTo(lng, lat, Math.max(zoom, 7), 1200);
+      flyTo(region.lng, region.lat, Math.max(zoom, 7), 1200);
+      if (region.cities?.length) {
+        setSelectedRegion({
+          name: region.name,
+          emoji: region.emoji,
+          description: region.description,
+          countrySlug: activeCountrySlug ?? '',
+          countryName: activeCountryName ?? '',
+          items: region.cities!,
+          mode: 'cities',
+          schengenConsulate: region.schengenConsulate,
+        });
+      }
     },
-    [zoom, flyTo]
+    [zoom, flyTo, activeCountrySlug, activeCountryName]
   );
 
   // Breadcrumb back navigation
@@ -212,6 +277,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
     setActiveCountrySlug(null);
     setActiveRegionName(null);
     setSelected(null);
+    setSelectedRegion(null);
     flyTo(INITIAL_VIEW.longitude, INITIAL_VIEW.latitude, INITIAL_VIEW.zoom, 1800);
   }, [flyTo]);
 
@@ -221,12 +287,14 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
     setActiveCountrySlug(null);
     setActiveRegionName(null);
     setSelected(null);
+    setSelectedRegion(null);
     flyTo(activeContinent.center[0], activeContinent.center[1], activeContinent.zoom);
   }, [activeContinent, flyTo]);
 
   const handleBreadcrumbCountry = useCallback(() => {
     setActiveRegionName(null);
     setSelected(null);
+    setSelectedRegion(null);
     // Find a representative city in the country to fly to
     const city = globeDestinations.find((d) => toSlug(d.country) === activeCountrySlug);
     if (city) flyTo(city.lng, city.lat, 5.5);
@@ -389,7 +457,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
               anchor="center"
               onClick={(e) => {
                 e.originalEvent.stopPropagation();
-                handleRegionClick(region.name, region.emoji, region.lat, region.lng);
+                handleRegionClick(region);
               }}
             >
               <div className="flex flex-col items-center cursor-pointer group">
@@ -474,6 +542,38 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
         onZoomOut={() => mapRef.current?.zoomOut()}
         onLocate={locateUser}
         locating={locating}
+      />
+
+      {/* Region / state card */}
+      <RegionCard
+        region={selectedRegion}
+        onClose={() => setSelectedRegion(null)}
+        onSelectCity={(dest) => {
+          setSelected(dest);
+          setSelectedRegion(null);
+          trackRecent(dest);
+          flyTo(dest.lng, dest.lat, Math.max(zoom, 8), 1200);
+        }}
+        onDrillDown={(item) => {
+          flyTo(item.lng, item.lat, Math.max(zoom, 7), 1200);
+          if (item.cities?.length) {
+            setSelectedRegion((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    items: item.cities!,
+                    mode: 'cities',
+                    name: item.name,
+                    emoji: item.emoji,
+                    description: item.description,
+                    schengenConsulate: item.schengenConsulate,
+                  }
+                : null
+            );
+          } else {
+            setSelectedRegion(null);
+          }
+        }}
       />
 
       {/* Destination card */}
