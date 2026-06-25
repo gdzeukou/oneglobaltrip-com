@@ -73,14 +73,14 @@ const Destination = () => {
           ref={mapRef}
           initialViewState={{ ...center, zoom: initialZoom }}
           mapboxAccessToken={TOKEN}
-          mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
+          mapStyle="mapbox://styles/mapbox/outdoors-v12"
           style={{ width: '100%', height: '100%' }}
           fog={{
-            color: 'rgb(5, 10, 25)',
-            'high-color': 'rgb(10, 20, 50)',
-            'horizon-blend': 0.05,
-            'space-color': 'rgb(3, 5, 15)',
-            'star-intensity': 0.8,
+            color: 'rgb(186, 210, 235)',
+            'high-color': 'rgb(100, 140, 200)',
+            'horizon-blend': 0.08,
+            'space-color': 'rgb(8, 10, 30)',
+            'star-intensity': 0.5,
           }}
         >
           <NavigationControl
