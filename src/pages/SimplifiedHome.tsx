@@ -107,12 +107,12 @@ const HomeApp = () => {
       <main className="max-w-6xl mx-auto px-4 pb-20">
         <section className="pt-10 md:pt-16 grid lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-7">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase text-zinc-500">One Global Trip — Visa + travel, one desk</p>
+            <p className="text-xs font-semibold tracking-[0.18em] uppercase text-zinc-500">One Global Trip — The full travel app</p>
             <h1 className="mt-4 font-display font-black leading-[0.92] tracking-tight text-[#001a41] text-5xl md:text-7xl">
               Where to next?<br />We handle the <span className="bg-amber-200 px-2 -mx-1">visa.</span><br />You pack.
             </h1>
             <p className="mt-5 max-w-lg text-zinc-600 text-lg leading-relaxed">
-              Pick a destination. Get a straight answer on the visa, the appointment, and what to do first. No globe to decode. No guessing.
+              Flights, stays, cars, cruises, activities and packages, in one trip. Visas are one module inside it, not the whole company.
             </p>
             <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm border-t border-zinc-200 pt-5">
               <span><b className="text-[#001a41]">27</b> Schengen countries</span>
@@ -234,6 +234,29 @@ const HomeApp = () => {
                 <div className="ogt-board inline-flex gap-8 text-xs font-semibold tracking-widest text-white/60">
                   {[...BOARD, ...BOARD].map((b, i) => <span key={i}>{b} · CHECKING</span>)}
                 </div>
+              </div>
+            </section>
+
+            <section className="mt-16">
+              <h2 className="text-3xl font-display font-black text-[#001a41]">Everything, in one app.</h2>
+              <p className="mt-1 text-zinc-600 max-w-2xl">ScoutPass is the visa appointment niche. OGT is bigger: build the whole trip here, then check the visa inside the same trip.</p>
+              <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  ['Flights', '/flights', 'Houston to the world, added to your trip.'],
+                  ['Stays: hotels and BnBs', '/stays', 'Hotels for short stays, apartments for longer ones.'],
+                  ['Rental cars', '/cars', 'Pick up where you land.'],
+                  ['Cruises', '/cruises', 'Mediterranean, Caribbean, Nile, Alaska.'],
+                  ['Activities', '/activities', 'Tours and experiences for the city you pick.'],
+                  ['Packages', '/packages', 'Curated trips with real prices from the site.'],
+                  ['Visas — ScoutPass inside OGT', '/visas', 'The visa niche: file check plus appointment hunting at VFS, TLScontact and BLS, from $67.'],
+                  ['My trip', '/trips', 'Everything you added, one checklist, one total.'],
+                ].map(([label, path, desc]) => (
+                  <button key={path + label} onClick={() => navigate(path)} className="text-left border border-zinc-200 rounded-2xl p-5 hover:shadow-md transition bg-white">
+                    <span className="font-bold text-lg text-[#001a41]">{label}</span>
+                    <span className="block mt-1 text-sm text-zinc-600 leading-relaxed">{desc}</span>
+                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold">Open <ArrowRight size={14} /></span>
+                  </button>
+                ))}
               </div>
             </section>
 
