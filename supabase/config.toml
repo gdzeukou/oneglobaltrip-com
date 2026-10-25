@@ -116,3 +116,15 @@ verify_jwt = false
 
 [functions.ai-chat]
 verify_jwt = false
+
+[functions.agent-search-flights]
+verify_jwt = false
+
+[functions.agent-list-airports]
+verify_jwt = false
+
+[functions.ogt-hotel-search]
+verify_jwt = false
+
+[functions.ogt-activities-search]
+verify_jwt = false
