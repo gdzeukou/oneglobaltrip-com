@@ -54,6 +54,8 @@ const UKShortStay = lazy(() => import("./pages/visa-countries/UKShortStay"));
 // Lazy load remaining pages
 const ParisExplorePackage = lazy(() => import("./pages/packages/ParisExplorePackage"));
 const VisaPricingPage = lazy(() => import("./pages/visas/VisaPricingPage"));
+const TravelModule = lazy(() => import("./pages/ogt/TravelModule"));
+const MyTrip = lazy(() => import("./pages/ogt/MyTrip"));
 // Removed AIAgentCreatorGate and AgentCreator - simplified for MVP
 const About = lazy(() => import("./pages/About"));
 const Blog = lazy(() => import("./pages/Blog"));
@@ -109,6 +111,14 @@ function App() {
                       <Route path="/packages" element={<Packages />} />
                       <Route path="/packages/:id" element={<PackageDetails />} />
                       <Route path="/packages/paris-explore" element={<ParisExplorePackage />} />
+                      
+                      {/* OGT super-app modules — visas stay on their existing routes, ScoutPass is a module inside OGT */}
+                      <Route path="/flights" element={<TravelModule kind="flights" />} />
+                      <Route path="/stays" element={<TravelModule kind="stays" />} />
+                      <Route path="/cars" element={<TravelModule kind="cars" />} />
+                      <Route path="/cruises" element={<TravelModule kind="cruises" />} />
+                      <Route path="/activities" element={<TravelModule kind="activities" />} />
+                      <Route path="/trips" element={<MyTrip />} />
                       
                       {/* Visa Category Pages */}
                       <Route path="/visas/short-stay" element={<ShortStayVisas />} />
