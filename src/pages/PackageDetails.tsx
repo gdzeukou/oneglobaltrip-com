@@ -1,115 +1,32 @@
-
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { ArrowRight, Star } from 'lucide-react';
+import { OgtPage } from '@/components/ogt/OgtShell';
 import { packages } from '@/data/packages';
-import { useIsMobile } from '@/hooks/use-mobile';
-import PackageDetailsHero from '@/components/packages/PackageDetailsHero';
-import PackageDetailsItinerary from '@/components/packages/PackageDetailsItinerary';
-import PackageDetailsInclusions from '@/components/packages/PackageDetailsInclusions';
-import PackageDetailsHighlights from '@/components/packages/PackageDetailsHighlights';
-import PackageDetailsPracticalInfo from '@/components/packages/PackageDetailsPracticalInfo';
-import PackageDetailsBooking from '@/components/packages/PackageDetailsBooking';
-import PackageDetailsCTA from '@/components/packages/PackageDetailsCTA';
+import { addToTrip } from '@/data/travelCatalog';
 
-const PackageDetails = () => {
+export default function PackageDetails() {
   const { id } = useParams();
-  const isMobile = useIsMobile();
-  const packageData = packages.find(pkg => pkg.id === id);
-
-  if (!packageData) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navigation />
-        <div className="pt-20 pb-12">
-          <div className="max-w-4xl mx-auto px-4 text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Package Not Found</h1>
-            <p className="text-gray-600 mb-8">The package you're looking for doesn't exist.</p>
-            <Button asChild>
-              <Link to="/packages">View All Packages</Link>
-            </Button>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
+  const p = packages.find((x) => x.id === id) || packages[0];
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation />
-      
-      <div className="pt-20 pb-12">
-        <div className="max-w-6xl mx-auto px-4">
-          {/* Back Button */}
-          <Button variant="ghost" asChild className="mb-6">
-            <Link to="/packages" className="flex items-center space-x-2">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Packages</span>
-            </Link>
-          </Button>
-
-          {/* Hero Section */}
-          <PackageDetailsHero packageData={packageData} />
-
-          {/* Detailed Information Tabs - Mobile Optimized */}
-          <Tabs defaultValue="itinerary" className="mb-8">
-            <TabsList className={`grid w-full ${isMobile ? 'grid-cols-2 h-auto' : 'grid-cols-5'} mb-6`}>
-              <TabsTrigger value="itinerary" className={isMobile ? 'text-xs px-2 py-3' : ''}>
-                {isMobile ? 'Itinerary' : 'Day by Day'}
-              </TabsTrigger>
-              <TabsTrigger value="inclusions" className={isMobile ? 'text-xs px-2 py-3' : ''}>
-                {isMobile ? 'Included' : 'What\'s Included'}
-              </TabsTrigger>
-              {!isMobile && <TabsTrigger value="highlights">Highlights</TabsTrigger>}
-              <TabsTrigger value="practical" className={isMobile ? 'text-xs px-2 py-3' : ''}>
-                {isMobile ? 'Info' : 'Practical Info'}
-              </TabsTrigger>
-              <TabsTrigger value="booking" className={isMobile ? 'text-xs px-2 py-3' : ''}>
-                {isMobile ? 'Booking' : 'Booking Details'}
-              </TabsTrigger>
-            </TabsList>
-
-            {isMobile && (
-              <TabsList className="grid w-full grid-cols-1 mb-6">
-                <TabsTrigger value="highlights" className="text-xs px-2 py-3">
-                  Highlights
-                </TabsTrigger>
-              </TabsList>
-            )}
-
-            <TabsContent value="itinerary">
-              <PackageDetailsItinerary />
-            </TabsContent>
-
-            <TabsContent value="inclusions">
-              <PackageDetailsInclusions />
-            </TabsContent>
-
-            <TabsContent value="highlights">
-              <PackageDetailsHighlights packageData={packageData} />
-            </TabsContent>
-
-            <TabsContent value="practical">
-              <PackageDetailsPracticalInfo packageData={packageData} />
-            </TabsContent>
-
-            <TabsContent value="booking">
-              <PackageDetailsBooking packageData={packageData} />
-            </TabsContent>
-          </Tabs>
-
-          {/* Call to Action */}
-          <PackageDetailsCTA packageId={packageData.id} />
+    <OgtPage>
+      <section className="pt-10 max-w-3xl">
+        <p className="text-xs font-semibold tracking-[0.18em] uppercase text-zinc-500">{p.location} · {p.duration} · {p.category}</p>
+        <h1 className="mt-3 font-display font-black text-4xl md:text-5xl text-[#001a41]">{p.title}</h1>
+        {p.image && <img src={p.image} alt={p.title} className="mt-6 w-full h-72 object-cover rounded-2xl" />}
+        <p className="mt-5 text-zinc-600 text-lg leading-relaxed">{p.description}</p>
+        <p className="mt-3 text-sm text-zinc-500 flex items-center gap-1"><Star size={14} className="text-amber-500" /> {p.rating} · {p.reviews} reviews</p>
+        <div className="mt-6 grid sm:grid-cols-2 gap-4 text-sm">
+          <div className="border border-zinc-200 rounded-2xl p-5"><p className="font-bold">Highlights</p><ul className="mt-2 space-y-1 text-zinc-600">{p.highlights.map((h) => <li key={h}>· {h}</li>)}</ul></div>
+          <div className="border border-zinc-200 rounded-2xl p-5"><p className="font-bold">Included</p><ul className="mt-2 space-y-1 text-zinc-600">{p.included.map((h) => <li key={h}>· {h}</li>)}</ul></div>
         </div>
-      </div>
-
-      <Footer />
-    </div>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <p className="font-black text-2xl">${p.price.toLocaleString()}</p>
+          <button onClick={() => addToTrip({ id: `pkg-${p.id}`, kind: 'Package', title: p.title, detail: p.location, price: p.price })} className="bg-zinc-900 text-white font-semibold px-5 py-2.5 rounded-md text-sm">Add to My Trip</button>
+          <Link to="/trips" className="border border-zinc-300 font-semibold px-5 py-2.5 rounded-md text-sm flex items-center gap-1">Review My Trip <ArrowRight size={14} /></Link>
+        </div>
+        <p className="mt-3 text-xs text-zinc-500">Final live price and inclusions are confirmed before payment.</p>
+      </section>
+    </OgtPage>
   );
-};
-
-export default PackageDetails;
+}
