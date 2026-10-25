@@ -14,6 +14,7 @@ import {
   Users,
 } from 'lucide-react';
 import { globeDestinations } from '@/data/globeDestinations';
+import AiPlanner from '@/components/ogt/AiPlanner';
 
 const MapboxGlobe = lazy(() => import('@/components/globe/MapboxGlobe'));
 
@@ -95,10 +96,11 @@ const HomeApp = () => {
             One Global Trip
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-600">
-            <Link to="/visas" className="hover:text-zinc-900">Visas</Link>
+            <Link to="/flights" className="hover:text-zinc-900">Flights</Link>
+            <Link to="/stays" className="hover:text-zinc-900">Stays</Link>
             <Link to="/packages" className="hover:text-zinc-900">Packages</Link>
-            <Link to="/pricing" className="hover:text-zinc-900">Pricing</Link>
-            <button onClick={() => setView('globe')} className="hover:text-zinc-900">Globe</button>
+            <Link to="/trips" className="hover:text-zinc-900">My Trip</Link>
+            <Link to="/visas" className="hover:text-zinc-900">Visa check</Link>
           </nav>
           <Link to="/startmytrip" className="bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-zinc-800">Start my trip</Link>
         </div>
@@ -107,12 +109,12 @@ const HomeApp = () => {
       <main className="max-w-6xl mx-auto px-4 pb-20">
         <section className="pt-10 md:pt-16 grid lg:grid-cols-12 gap-10 items-start">
           <div className="lg:col-span-7">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase text-zinc-500">One Global Trip — The full travel app</p>
+            <p className="text-xs font-semibold tracking-[0.18em] uppercase text-zinc-500">One Global Trip — Flights, stays, cars, cruises, activities, packages</p>
             <h1 className="mt-4 font-display font-black leading-[0.92] tracking-tight text-[#001a41] text-5xl md:text-7xl">
               Where to next?<br />We handle the <span className="bg-amber-200 px-2 -mx-1">visa.</span><br />You pack.
             </h1>
             <p className="mt-5 max-w-lg text-zinc-600 text-lg leading-relaxed">
-              Flights, stays, cars, cruises, activities and packages, in one trip. Visas are one module inside it, not the whole company.
+              Book the trip like Expedia, plan it in words like ChatGPT and Claude, stay like Airbnb. Visa is only a checkbox, if your trip needs one.
             </p>
             <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm border-t border-zinc-200 pt-5">
               <span><b className="text-[#001a41]">27</b> Schengen countries</span>
@@ -151,6 +153,10 @@ const HomeApp = () => {
             </div>
             <p className="mt-3 text-xs text-zinc-500">Rules change. Always double-check with the official consulate. This is guidance, not a guarantee.</p>
           </div>
+        </section>
+
+        <section className="mt-10">
+          <AiPlanner />
         </section>
 
         {view === 'globe' ? (
@@ -221,7 +227,7 @@ const HomeApp = () => {
               <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6">
                 <div className="flex-1">
                   <p className="text-xs font-semibold tracking-widest uppercase text-amber-300 flex items-center gap-2"><Stamp size={14} /> Slot hunter</p>
-                  <h3 className="mt-2 text-2xl md:text-3xl font-display font-black leading-tight">No appointment? We hunt it for you.</h3>
+                  <h3 className="mt-2 text-2xl md:text-3xl font-display font-black leading-tight">Need a visa? ScoutPass hunts the appointment, only then.</h3>
                   <p className="mt-2 text-white/70 leading-relaxed">We watch VFS Global, TLScontact and BLS across the US appointment cities, and we alert you the moment a slot opens. If no appointment can be secured, you get refunded.</p>
                 </div>
                 <div className="shrink-0 md:text-right">
