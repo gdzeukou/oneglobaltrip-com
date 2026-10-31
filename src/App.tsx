@@ -3,7 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+
+/** Old long-stay country links land on the long-stay page with the country picked. */
+const LongStayCountryRedirect = () => {
+  const { country = "" } = useParams();
+  return <Navigate replace to={`/visas/long-stay?country=${encodeURIComponent(country)}`} />;
+};
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
@@ -123,6 +129,7 @@ function App() {
                       {/* Visa Category Pages */}
                       <Route path="/visas/short-stay" element={<ShortStayVisas />} />
                       <Route path="/visas/long-stay" element={<LongStayVisas />} />
+                      <Route path="/visas/long-stay/:country" element={<LongStayCountryRedirect />} />
                       <Route path="/visas/pricing" element={<VisaPricingPage />} />
                       
                        {/* Essential Visa Pages for MVP */}

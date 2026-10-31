@@ -1,346 +1,625 @@
-import React, { lazy, Suspense, useMemo, useState } from 'react';
+/**
+ * OGT homepage: the Earth fills the screen, everything else floats over it.
+ *
+ *   - top: AI search bar (ogt-travel-agent), account button
+ *   - tabs: vertical rail on large screens, bottom bar on phones
+ *   - panels: side panel on large screens, bottom sheet on phones
+ *
+ * Picking a destination (search, tap on a gold dot, Explore list) flies an
+ * arc from the traveler's origin and opens the Trip panel.
+ */
+
+import React, { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
-  ArrowUpRight,
-  Calendar,
-  Check,
-  Clock,
+  ArrowUp,
+  Compass,
+  Hand,
+  Loader2,
   MapPin,
+  Minus,
   Plane,
-  Search,
+  Plus,
   ShieldCheck,
+  Sparkles,
   Stamp,
-  Users,
+  User,
+  WifiOff,
 } from 'lucide-react';
-import { globeDestinations } from '@/data/globeDestinations';
-import AiPlanner from '@/components/ogt/AiPlanner';
+import { globeDestinations, type GlobeDestination } from '@/data/globeDestinations';
+import type { GlobeDot, LatLng, RGB } from '@/components/earth/globe';
+import type { GlobeApi } from '@/components/earth/WorldGlobe';
+import GlobePanel from '@/components/ogt/GlobePanel';
+import { useTravelAgent, type AgentTurn, type OfferCard } from '@/hooks/useTravelAgent';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  ORIGINS,
+  PASSPORTS,
+  type Passport,
+  arcDeg,
+  detectPassport,
+  findDestination,
+  visaLink,
+  visaVerdict,
+} from '@/lib/travelResolve';
 
-const MapboxGlobe = lazy(() => import('@/components/globe/MapboxGlobe'));
+const WorldGlobe = lazy(() => import('@/components/earth/WorldGlobe'));
 
-const SCHENGEN = new Set([
-  'France', 'Germany', 'Italy', 'Spain', 'Netherlands', 'Belgium', 'Austria',
-  'Switzerland', 'Portugal', 'Greece', 'Czech Republic', 'Poland', 'Denmark',
-  'Sweden', 'Norway', 'Finland', 'Hungary', 'Croatia', 'Slovenia', 'Slovakia',
-  'Luxembourg', 'Malta', 'Estonia', 'Latvia', 'Lithuania', 'Iceland',
-]);
+type PanelId = 'ask' | 'trip' | 'explore' | 'visa' | 'account';
 
-const PASSPORTS = ['United States', 'Cameroon', 'France', 'Canada', 'Other'];
-const MONTHS = ['Nov 2026', 'Dec 2026', 'Jan 2027', 'Feb 2027', 'Mar 2027', 'Flexible'];
+const MONTHS = ['Flexible', 'Nov 2026', 'Dec 2026', 'Jan 2027', 'Feb 2027', 'Mar 2027', 'Apr 2027'];
 const BOARD = ['PARIS — VFS GLOBAL', 'LONDON — TLSCONTACT', 'MADRID — BLS', 'ROME — VFS GLOBAL', 'BERLIN — TLSCONTACT', 'AMSTERDAM — VFS GLOBAL', 'LISBON — VFS GLOBAL', 'ATHENS — VFS GLOBAL'];
+const EXAMPLES = [
+  '5 days in Lisbon in March',
+  'Do I need a visa for Paris with a Cameroonian passport?',
+  'Beach trip in December under $2,000',
+];
 
-function visaVerdict(country: string, passport: string) {
-  if (SCHENGEN.has(country)) {
-    if (passport === 'France') return { badge: 'No visa needed', detail: 'EU passport. Schengen travel is open to you, no appointment needed for a short stay.', hunt: false };
-    if (passport === 'United States' || passport === 'Canada') return { badge: 'No visa for under 90 days', detail: 'US and Canadian passports are normally visa-free for a short Schengen stay. We still check your file so nothing blocks you at the border.', hunt: false };
-    return { badge: 'Schengen visa likely needed', detail: 'Most non-EU passports need a Schengen short-stay visa, with an appointment at VFS Global, TLScontact or BLS. That appointment is the hard part. We hunt it for you.', hunt: true };
+// Linear-light dot colours: big hubs bright gold, smaller places a soft warm white.
+const HUB_DOT: RGB = [1.0, 0.7, 0.24];
+const TOWN_DOT: RGB = [0.5, 0.42, 0.3];
+
+/** Where an offer card leads. We route by card type, not by the URL the model wrote. */
+function cardHref(card: OfferCard, dest: GlobeDestination | null): string {
+  switch (card.type) {
+    case 'flight': return '/flights';
+    case 'hotel': return '/stays';
+    case 'visa_consultation': return dest ? visaLink(dest.country) : '/visas';
+    case 'trip_bundle': return '/packages';
+    case 'insurance': return '/services';
+    case 'connect': return '/discover';
+    case 'elite': return '/pricing';
+    default: return dest ? dest.ctaLink : '/startmytrip';
   }
-  if (country === 'United Kingdom') {
-    if (passport === 'France') return { badge: 'No visa needed', detail: 'EU passport. Short UK visits are normally straightforward.', hunt: false };
-    if (passport === 'United States' || passport === 'Canada') return { badge: 'ETA to check', detail: 'US and Canadian travelers usually do not need a visitor visa, but an ETA may apply. We confirm it before you book anything.', hunt: false };
-    return { badge: 'UK visitor visa likely needed', detail: 'Most other passports need a UK visitor visa first. We review your file and walk you through the appointment.', hunt: true };
-  }
-  if (country === 'UAE') {
-    if (passport === 'United States' || passport === 'Canada' || passport === 'France') return { badge: 'Visa on arrival in most cases', detail: 'US, Canadian and EU passports normally get a visa on arrival in the UAE. We confirm the exact rule for your trip dates.', hunt: false };
-    return { badge: 'Visa to check', detail: 'UAE rules depend on your passport. We check them for you before you pay for anything.', hunt: false };
-  }
-  return { badge: 'We check it for you', detail: 'Visa rules depend on your passport and your trip. Tell us where you are going and we give you the exact next step, no guessing.', hunt: false };
 }
 
-function visaLink(country: string) {
-  if (SCHENGEN.has(country)) return '/schengen-visa';
-  if (country === 'United Kingdom') return '/visas/short-stay/uk';
-  return '/visas';
+const TABS: { id: PanelId; label: string; icon: React.ElementType }[] = [
+  { id: 'explore', label: 'Explore', icon: Compass },
+  { id: 'trip', label: 'Trip', icon: Plane },
+  { id: 'ask', label: 'Ask AI', icon: Sparkles },
+  { id: 'visa', label: 'Visa', icon: Stamp },
+  { id: 'account', label: 'Account', icon: User },
+];
+
+const PANEL_TITLES: Record<PanelId, string> = {
+  ask: 'Ask One Global Trip',
+  trip: 'Your trip',
+  explore: 'Explore',
+  visa: 'Visa help',
+  account: 'Your account',
+};
+
+function AskBar({ onAsk, busy }: { onAsk: (q: string) => void; busy: boolean }) {
+  const [q, setQ] = useState('');
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const text = q.trim();
+        if (!text || busy) return;
+        onAsk(text);
+        setQ('');
+      }}
+      className="relative w-full"
+      role="search"
+    >
+      <Sparkles size={18} className="absolute z-10 left-4 top-1/2 -translate-y-1/2 text-amber-300 pointer-events-none" />
+      <input
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        aria-label="Ask anything about your trip"
+        placeholder="Ask anything: where, when, visa, budget…"
+        maxLength={500}
+        className="w-full h-14 pl-11 pr-14 rounded-full bg-[#0b1224]/75 backdrop-blur-xl border border-white/15 text-white placeholder:text-white/45 text-[15px] outline-none shadow-[0_12px_40px_rgba(0,0,0,0.45)] focus:border-amber-300/70 transition"
+      />
+      <button
+        type="submit"
+        disabled={busy || !q.trim()}
+        aria-label="Ask"
+        className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-amber-300 text-[#030712] grid place-items-center disabled:opacity-40 hover:bg-amber-200 transition"
+      >
+        {busy ? <Loader2 size={18} className="animate-spin" /> : <ArrowUp size={18} />}
+      </button>
+    </form>
+  );
+}
+
+function Turn({
+  turn,
+  dest,
+  passport,
+  onAsk,
+  onOpenTrip,
+}: {
+  turn: AgentTurn;
+  dest: GlobeDestination | null;
+  passport: Passport;
+  onAsk: (q: string) => void;
+  onOpenTrip: () => void;
+}) {
+  const navigate = useNavigate();
+  const verdict = dest ? visaVerdict(dest.country, passport) : null;
+  return (
+    <div className="space-y-3">
+      <p className="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-amber-300 text-[#030712] px-3.5 py-2 text-sm font-medium">{turn.question}</p>
+      {turn.status === 'loading' ? (
+        <div className="flex items-center gap-2 text-sm text-white/60">
+          <Loader2 size={16} className="animate-spin" /> Thinking about your trip…
+        </div>
+      ) : turn.offline ? (
+        <div className="rounded-2xl bg-white/5 border border-white/10 p-4 space-y-3">
+          <p className="flex items-center gap-2 text-xs text-white/50"><WifiOff size={14} /> The AI agent didn't answer. Here's what we know.</p>
+          {dest && verdict ? (
+            <>
+              <p className="text-sm leading-relaxed"><b>{dest.emoji} {dest.name}, {dest.country}.</b> {verdict.badge}. {verdict.detail}</p>
+              <button onClick={onOpenTrip} className="w-full bg-white text-[#030712] font-bold py-2.5 rounded-lg text-sm flex items-center justify-center gap-2">
+                Open the trip <ArrowRight size={16} />
+              </button>
+            </>
+          ) : (
+            <p className="text-sm text-white/80">Try a city or a country name, or open Explore and tap a place.</p>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <p className="text-[15px] leading-relaxed text-white/90 whitespace-pre-line">{turn.message}</p>
+          {turn.cards.length > 0 && (
+            <div className="grid gap-2">
+              {turn.cards.map((c, i) => (
+                <button
+                  key={i}
+                  onClick={() => navigate(cardHref(c, dest))}
+                  className="text-left rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 p-3.5 transition group"
+                >
+                  <span className="flex items-start justify-between gap-3">
+                    <span className="font-semibold text-sm">{c.title}</span>
+                    {c.badge && <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-amber-300 bg-amber-300/10 rounded-full px-2 py-0.5">{c.badge}</span>}
+                  </span>
+                  {c.subtitle && <span className="block mt-1 text-xs text-white/60 leading-relaxed">{c.subtitle}</span>}
+                  <span className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-amber-300 group-hover:underline">
+                    {c.cta_label || 'Open'} <ArrowRight size={13} />
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+          {turn.followUp && (
+            <button onClick={() => onAsk(turn.followUp!)} className="text-left text-sm rounded-xl border border-dashed border-white/20 px-3.5 py-2.5 text-white/75 hover:bg-white/5 w-full">
+              {turn.followUp}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 const HomeApp = () => {
   const navigate = useNavigate();
-  const [view, setView] = useState<'planner' | 'globe'>('planner');
-  const [query, setQuery] = useState('');
-  const [destId, setDestId] = useState('paris');
-  const [passport, setPassport] = useState('United States');
+  const { user, signOut } = useAuth();
+  const { turns, ask } = useTravelAgent(user?.id ?? null);
+  const globeApi = useRef<GlobeApi | null>(null);
+
+  const [panel, setPanel] = useState<PanelId | null>(null);
+  const [destId, setDestId] = useState<string | null>(null);
+  const [passport, setPassport] = useState<Passport>('United States');
   const [month, setMonth] = useState('Flexible');
   const [travelers, setTravelers] = useState(2);
   const [region, setRegion] = useState('All');
 
-  const dest = globeDestinations.find((d) => d.id === destId) || globeDestinations[0];
-  const verdict = visaVerdict(dest.country, passport);
+  const dest = destId ? globeDestinations.find((d) => d.id === destId) ?? null : null;
+  const verdict = dest ? visaVerdict(dest.country, passport) : null;
+  const origin = ORIGINS[passport];
+  const busy = turns.some((t) => t.status === 'loading');
 
-  const quickPicks = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const tier1 = globeDestinations.filter((d) => d.tier === 1);
-    if (!q) return tier1.slice(0, 12);
-    return tier1.filter((d) => d.name.toLowerCase().includes(q) || d.country.toLowerCase().includes(q)).slice(0, 12);
-  }, [query]);
+  const pickable = useMemo(() => globeDestinations.filter((d) => d.tier <= 2), []);
+  const dots: GlobeDot[] = useMemo(
+    () => pickable.map((d) => ({ lat: d.lat, lng: d.lng, color: d.tier === 1 ? HUB_DOT : TOWN_DOT })),
+    [pickable],
+  );
+  const globeDest = useMemo(
+    () => (dest ? { lat: dest.lat, lng: dest.lng, label: `${dest.emoji} ${dest.name}` } : null),
+    [dest],
+  );
 
   const regions = useMemo(() => {
     const set = new Set<string>();
     globeDestinations.filter((d) => d.tier === 1).forEach((d) => set.add(d.region.split('/')[0].trim()));
     return ['All', ...Array.from(set)];
   }, []);
-
-  const grid = useMemo(() => {
+  const explore = useMemo(() => {
     const tier1 = globeDestinations.filter((d) => d.tier === 1);
-    if (region === 'All') return tier1;
-    return tier1.filter((d) => d.region.split('/')[0].trim() === region);
+    return region === 'All' ? tier1 : tier1.filter((d) => d.region.split('/')[0].trim() === region);
   }, [region]);
 
+  const goTo = useCallback((d: GlobeDestination) => {
+    setDestId(d.id);
+    setPanel('trip');
+  }, []);
+
+  const pickNearest = useCallback(
+    (at: LatLng) => {
+      let best: GlobeDestination | null = null;
+      let bestDeg = 7;
+      for (const d of pickable) {
+        const deg = arcDeg(at, d);
+        if (deg < bestDeg) {
+          best = d;
+          bestDeg = deg;
+        }
+      }
+      if (best) goTo(best);
+    },
+    [pickable, goTo],
+  );
+
+  const onAsk = useCallback(
+    async (question: string) => {
+      setPanel('ask');
+      const p = detectPassport(question);
+      if (p) setPassport(p);
+      const asked = findDestination(question);
+      if (asked) setDestId(asked.id);
+      const turn = await ask(question);
+      if (!asked && !turn.offline) {
+        const text = `${turn.message} ${turn.cards.map((c) => `${c.title} ${c.subtitle ?? ''}`).join(' ')}`;
+        const found = findDestination(text);
+        // Skip the traveler's own city, which replies often mention as the origin.
+        if (found && found.name !== ORIGINS[p ?? passport].label) setDestId(found.id);
+      }
+    },
+    [ask, passport],
+  );
+
+  const toggle = (id: PanelId) => setPanel((cur) => (cur === id ? null : id));
+  const closePanel = useCallback(() => setPanel(null), []);
+
+  const startTrip = () => {
+    if (!dest) return;
+    const join = dest.ctaLink.includes('?') ? '&' : '?';
+    navigate(`${dest.ctaLink}${join}travelers=${travelers}&month=${encodeURIComponent(month)}&passport=${encodeURIComponent(passport)}`);
+  };
+
   return (
-    <div className="min-h-screen bg-white text-zinc-900 font-sans antialiased">
-      <style>{`@keyframes ogt-board { from { transform: translateX(0); } to { transform: translateX(-50%); } } .ogt-board { animation: ogt-board 28s linear infinite; } .ogt-ticket { background-image: radial-gradient(circle at 0 50%, #fff 10px, transparent 11px), radial-gradient(circle at 100% 50%, #fff 10px, transparent 11px); }`}</style>
+    <div className="ogt-app fixed inset-0 overflow-hidden bg-[#030712] text-white text-left font-sans antialiased">
+      <style>{`@keyframes ogt-board { from { transform: translateX(0); } to { transform: translateX(-50%); } } .ogt-board { animation: ogt-board 28s linear infinite; } @media (prefers-reduced-motion: reduce) { .ogt-board { animation: none; } }`}</style>
+      <h1 className="sr-only">One Global Trip: plan your trip on the globe, we handle the visa</h1>
 
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-zinc-200">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2 font-black tracking-tight text-lg text-[#001a41]">
-            <span className="w-8 h-8 rounded-md bg-[#001a41] text-white grid place-items-center"><Plane size={16} /></span>
-            One Global Trip
+      {/* Sky and Earth */}
+      <div aria-hidden="true" className="ogt-stars absolute inset-0" />
+      <div aria-hidden="true" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[140vmax] h-[140vmax] rounded-full bg-[radial-gradient(circle,rgba(56,130,246,0.16),transparent_45%)]" />
+      <div
+        className={`absolute top-[53%] lg:top-1/2 -translate-x-1/2 -translate-y-1/2 transition-[left] duration-700 ease-out ${panel ? 'left-1/2 lg:left-[calc(50%-150px)]' : 'left-1/2'}`}
+        style={{ width: 'min(max(100vw, 70svh), 115svh)' }}
+      >
+        <Suspense fallback={<div className="aspect-square w-full" />}>
+          <WorldGlobe
+            origin={origin}
+            destination={globeDest}
+            tone={verdict?.hunt ? 'visa' : 'clear'}
+            dots={dots}
+            onPick={pickNearest}
+            apiRef={globeApi}
+            chrome={false}
+          />
+        </Suspense>
+      </div>
+
+      {/* Top bar: logo, AI search, account */}
+      <div className="absolute top-0 inset-x-0 z-40 px-3 pt-3 lg:px-6 lg:pt-5">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-3">
+          <Link to="/" className="order-1 flex items-center gap-2 font-black tracking-tight text-lg shrink-0">
+            <span className="w-9 h-9 rounded-xl bg-amber-300 text-[#030712] grid place-items-center"><Plane size={17} /></span>
+            <span className="hidden sm:inline">One Global Trip</span>
+            <span className="sm:hidden">OGT</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-600">
-            <Link to="/flights" className="hover:text-zinc-900">Flights</Link>
-            <Link to="/stays" className="hover:text-zinc-900">Stays</Link>
-            <Link to="/packages" className="hover:text-zinc-900">Packages</Link>
-            <Link to="/trips" className="hover:text-zinc-900">My Trip</Link>
-            <Link to="/visas" className="hover:text-zinc-900">Visa check</Link>
-          </nav>
-          <Link to="/startmytrip" className="bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:bg-zinc-800">Start my trip</Link>
+          <div className="order-3 lg:order-2 w-full lg:w-auto lg:flex-1 lg:max-w-2xl lg:mx-auto">
+            <AskBar onAsk={onAsk} busy={busy} />
+          </div>
+          <button
+            onClick={() => toggle('account')}
+            className="order-2 lg:order-3 ml-auto lg:ml-0 h-10 pl-2 pr-3.5 rounded-full bg-[#0b1224]/75 backdrop-blur-xl border border-white/15 flex items-center gap-2 text-sm font-semibold hover:bg-white/10"
+            aria-pressed={panel === 'account'}
+          >
+            <span className="w-7 h-7 rounded-full bg-white/15 grid place-items-center text-xs font-bold">
+              {user?.email ? user.email[0].toUpperCase() : <User size={14} />}
+            </span>
+            {user ? 'Account' : 'Sign in'}
+          </button>
         </div>
-      </header>
-
-      <main className="max-w-6xl mx-auto px-4 pb-20">
-        <section className="pt-10 md:pt-16 grid lg:grid-cols-12 gap-10 items-start">
-          <div className="lg:col-span-7">
-            <p className="text-xs font-semibold tracking-[0.18em] uppercase text-zinc-500">One Global Trip — Flights, stays, cars, cruises, activities, packages</p>
-            <h1 className="mt-4 font-display font-black leading-[0.92] tracking-tight text-[#001a41] text-5xl md:text-7xl">
-              Where to next?<br />We handle the <span className="bg-amber-200 px-2 -mx-1">visa.</span><br />You pack.
-            </h1>
-            <p className="mt-5 max-w-lg text-zinc-600 text-lg leading-relaxed">
-              Book the trip like Expedia, plan it in words like ChatGPT and Claude, stay like Airbnb. Visa is only a checkbox, if your trip needs one.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm border-t border-zinc-200 pt-5">
-              <span><b className="text-[#001a41]">27</b> Schengen countries</span>
-              <span><b className="text-[#001a41]">UK · US · Canada</b> covered too</span>
-              <span><b className="text-[#001a41]">$67</b> to start a slot hunt</span>
-            </div>
-            <div className="mt-6 flex gap-2">
-              <button onClick={() => setView('planner')} className={view === 'planner' ? 'px-4 py-2 rounded-md bg-zinc-900 text-white text-sm font-semibold' : 'px-4 py-2 rounded-md border border-zinc-300 text-sm font-semibold'}>Trip planner</button>
-              <button onClick={() => setView('globe')} className={view === 'globe' ? 'px-4 py-2 rounded-md bg-zinc-900 text-white text-sm font-semibold' : 'px-4 py-2 rounded-md border border-zinc-300 text-sm font-semibold'}>Explore the globe</button>
-            </div>
-          </div>
-
-          <div className="lg:col-span-5">
-            <div className="ogt-ticket bg-[#001a41] text-white rounded-2xl p-6 shadow-xl relative overflow-hidden">
-              <div className="absolute -right-6 -top-6 w-28 h-28 rounded-full border-2 border-dashed border-amber-300/60 grid place-items-center rotate-12">
-                <span className="text-amber-300 text-[10px] font-black tracking-widest text-center leading-tight">SLOT<br />HUNTER</span>
-              </div>
-              <p className="text-xs tracking-widest uppercase text-white/60">Boarding pass — your trip</p>
-              <div className="mt-4 flex items-center gap-3">
-                <span className="text-2xl font-black">USA</span>
-                <span className="flex-1 border-t border-dashed border-white/40 relative"><Plane size={16} className="absolute -top-2 left-1/2 text-amber-300" /></span>
-                <span className="text-2xl font-black">{dest.name.toUpperCase()}</span>
-              </div>
-              <p className="mt-1 text-white/60 text-sm">{dest.country} · {passport} · {travelers} traveler{travelers > 1 ? 's' : ''} · {month}</p>
-              <div className="my-5 border-t border-dashed border-white/30" />
-              <p className="flex items-center gap-2 font-semibold"><ShieldCheck size={18} className="text-amber-300" /> {verdict.badge}</p>
-              <p className="mt-2 text-sm text-white/70 leading-relaxed">{verdict.detail}</p>
-              <div className="mt-5 flex gap-1.5" aria-hidden="true">
-                {[3, 1, 2, 1, 4, 2, 1, 3, 2, 1, 2, 4, 1, 2].map((w, i) => (
-                  <span key={i} className="bg-white/80 inline-block h-8" style={{ width: w * 3 }} />
-                ))}
-              </div>
-              <button onClick={() => navigate(dest.ctaLink)} className="mt-4 w-full bg-amber-300 text-[#001a41] font-bold py-3 rounded-md flex items-center justify-center gap-2 hover:bg-amber-200">
-                Start this trip <ArrowRight size={18} />
+        {!panel && turns.length === 0 && (
+          <div className="mt-3 lg:max-w-2xl lg:mx-auto -mx-3 px-3 flex gap-2 overflow-x-auto no-scrollbar lg:flex-wrap lg:justify-center">
+            {EXAMPLES.map((e) => (
+              <button
+                key={e}
+                onClick={() => onAsk(e)}
+                className="shrink-0 px-3.5 py-2 rounded-full bg-[#0b1224]/60 backdrop-blur border border-white/10 text-xs text-white/80 hover:bg-white/10"
+              >
+                {e}
               </button>
-            </div>
-            <p className="mt-3 text-xs text-zinc-500">Rules change. Always double-check with the official consulate. This is guidance, not a guarantee.</p>
+            ))}
           </div>
-        </section>
+        )}
+      </div>
 
-        <section className="mt-10">
-          <AiPlanner />
-        </section>
+      {/* Tabs: vertical rail on large screens */}
+      <nav aria-label="Panels" className="hidden lg:flex fixed z-40 left-6 top-1/2 -translate-y-1/2 flex-col gap-1 p-1.5 rounded-2xl bg-[#0b1224]/75 backdrop-blur-xl border border-white/10">
+        {TABS.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            onClick={() => toggle(id)}
+            aria-pressed={panel === id}
+            className={`w-16 py-2.5 rounded-xl flex flex-col items-center gap-1 text-[10px] font-semibold transition ${panel === id ? 'bg-amber-300 text-[#030712]' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
+          >
+            <Icon size={19} />
+            {label}
+          </button>
+        ))}
+      </nav>
 
-        {view === 'globe' ? (
-          <section className="mt-12">
-            <div className="relative h-[72vh] rounded-2xl overflow-hidden bg-black border border-zinc-200">
-              <Suspense fallback={<div className="absolute inset-0 grid place-items-center text-white/60 text-sm">Loading globe...</div>}>
-                <MapboxGlobe />
-              </Suspense>
+      {/* Tabs: bottom bar on phones */}
+      <nav aria-label="Panels" className="lg:hidden fixed z-40 bottom-0 inset-x-0 h-[4.25rem] pb-[env(safe-area-inset-bottom)] bg-[#030712]/90 backdrop-blur-xl border-t border-white/10 grid grid-cols-5">
+        {TABS.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            onClick={() => toggle(id)}
+            aria-pressed={panel === id}
+            className={`flex flex-col items-center justify-center gap-1 text-[10px] font-semibold ${panel === id ? 'text-amber-300' : 'text-white/60'}`}
+          >
+            <Icon size={20} />
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      {/* Zoom, hint and credit */}
+      <div className={`fixed z-30 right-3 lg:right-6 flex-col gap-1.5 bottom-24 lg:bottom-8 ${panel ? 'hidden lg:flex lg:right-[460px]' : 'flex'}`}>
+        <button type="button" onClick={() => globeApi.current?.zoomBy(1.25)} className="ogt-globe-btn" aria-label="Zoom in on the globe"><Plus size={16} /></button>
+        <button type="button" onClick={() => globeApi.current?.zoomBy(0.8)} className="ogt-globe-btn" aria-label="Zoom out of the globe"><Minus size={16} /></button>
+      </div>
+      {!panel && (
+        <p className="fixed z-20 left-1/2 -translate-x-1/2 bottom-[5.5rem] lg:bottom-8 text-xs text-white/50 flex items-center gap-1.5 whitespace-nowrap pointer-events-none">
+          <Hand size={13} /> Drag to spin. Tap a gold dot to fly there.
+        </p>
+      )}
+      <a
+        href="https://www.solarsystemscope.com/textures/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed z-20 left-3 bottom-[4.6rem] lg:left-6 lg:bottom-3 text-[9px] text-white/30 hover:text-white/60"
+      >
+        Imagery: Solar System Scope / NASA, CC BY 4.0
+      </a>
+
+      {/* Panels */}
+      {panel && (
+        <GlobePanel title={PANEL_TITLES[panel]} onClose={closePanel}>
+          {panel === 'ask' && (
+            <div className="space-y-6" aria-live="polite">
+              {turns.length === 0 ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-white/70">Ask in your own words. Where you want to go, when, your passport, your budget. The globe follows along.</p>
+                  {EXAMPLES.map((e) => (
+                    <button key={e} onClick={() => onAsk(e)} className="w-full text-left text-sm rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5 hover:bg-white/10">{e}</button>
+                  ))}
+                </div>
+              ) : (
+                turns.map((t) => (
+                  <Turn key={t.id} turn={t} dest={dest} passport={passport} onAsk={onAsk} onOpenTrip={() => setPanel('trip')} />
+                ))
+              )}
+              {!user && turns.length > 0 && (
+                <p className="text-xs text-white/50">
+                  <button onClick={() => setPanel('account')} className="underline font-semibold text-white/70">Create a free account</button> and the agent remembers your passport and home airport next time.
+                </p>
+              )}
             </div>
-            <p className="mt-3 text-sm text-zinc-500">Tap a country, then a city. The globe is still here, it just stopped being the whole homepage.</p>
-            <button onClick={() => setView('planner')} className="mt-3 text-sm font-semibold text-blue-700 underline">Back to the planner</button>
-          </section>
-        ) : (
-          <>
-            <section className="mt-12 border border-zinc-200 rounded-2xl shadow-sm">
-              <div className="px-5 md:px-7 pt-6 pb-2 flex items-center justify-between">
-                <h2 className="font-bold text-lg text-[#001a41]">Build your trip</h2>
-                <span className="text-xs font-semibold bg-zinc-100 px-2.5 py-1 rounded-full">3 steps, 30 seconds</span>
-              </div>
-              <div className="px-5 md:px-7 py-6 grid md:grid-cols-3 gap-6">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">01 — Destination</p>
-                  <div className="mt-3 relative">
-                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
-                    <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search Paris, Tokyo, Dubai..." className="w-full pl-9 pr-3 py-2.5 rounded-md border border-zinc-300 outline-none focus:ring-2 focus:ring-zinc-900 text-sm" />
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {quickPicks.map((d) => (
-                      <button key={d.id} onClick={() => setDestId(d.id)} className={d.id === destId ? 'px-2.5 py-1.5 rounded-md bg-zinc-900 text-white text-xs font-semibold' : 'px-2.5 py-1.5 rounded-md bg-zinc-100 text-xs font-medium hover:bg-zinc-200'}>
-                        {d.emoji} {d.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">02 — Passport</p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {PASSPORTS.map((p) => (
-                      <button key={p} onClick={() => setPassport(p)} className={p === passport ? 'px-2.5 py-1.5 rounded-md bg-amber-300 text-zinc-900 text-xs font-bold' : 'px-2.5 py-1.5 rounded-md bg-zinc-100 text-xs font-medium hover:bg-zinc-200'}>{p}</button>
-                    ))}
-                  </div>
-                  <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-zinc-500"><Users size={12} className="inline mr-1" /> Travelers</p>
-                  <div className="mt-2 flex gap-1.5">
-                    {[1, 2, 3, 4].map((n) => (
-                      <button key={n} onClick={() => setTravelers(n)} className={n === travelers ? 'w-9 h-9 rounded-md bg-zinc-900 text-white text-sm font-bold' : 'w-9 h-9 rounded-md bg-zinc-100 text-sm font-medium'}>{n}{n === 4 ? '+' : ''}</button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">03 — When <Calendar size={12} className="inline" /></p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {MONTHS.map((m) => (
-                      <button key={m} onClick={() => setMonth(m)} className={m === month ? 'px-2.5 py-1.5 rounded-md bg-zinc-900 text-white text-xs font-semibold' : 'px-2.5 py-1.5 rounded-md bg-zinc-100 text-xs font-medium'}>{m}</button>
-                    ))}
-                  </div>
-                  <div className="mt-5 space-y-2 text-sm">
-                    <p className="flex gap-2"><Check size={16} className="text-emerald-600 shrink-0" /> {dest.name}, {dest.country}</p>
-                    <p className="flex gap-2"><Check size={16} className="text-emerald-600 shrink-0" /> {verdict.hunt ? 'Next: start the appointment hunt' : 'Next: build the itinerary'}</p>
-                  </div>
-                  <button onClick={() => navigate(visaLink(dest.country))} className="mt-4 w-full border border-zinc-300 font-semibold py-2.5 rounded-md text-sm hover:bg-zinc-50">
-                    See {dest.country} visa details
-                  </button>
-                </div>
-              </div>
-            </section>
+          )}
 
-            <section className="mt-6 bg-[#001a41] text-white rounded-2xl overflow-hidden">
-              <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-6">
-                <div className="flex-1">
-                  <p className="text-xs font-semibold tracking-widest uppercase text-amber-300 flex items-center gap-2"><Stamp size={14} /> Slot hunter</p>
-                  <h3 className="mt-2 text-2xl md:text-3xl font-display font-black leading-tight">Need a visa? ScoutPass hunts the appointment, only then.</h3>
-                  <p className="mt-2 text-white/70 leading-relaxed">We watch VFS Global, TLScontact and BLS across the US appointment cities, and we alert you the moment a slot opens. If no appointment can be secured, you get refunded.</p>
-                </div>
-                <div className="shrink-0 md:text-right">
-                  <p className="text-4xl font-black text-amber-300">$67</p>
-                  <p className="text-sm text-white/60">per applicant, to start the hunt</p>
-                  <Link to="/pricing" className="inline-block mt-3 bg-white text-zinc-900 font-semibold px-5 py-2.5 rounded-md text-sm">See pricing</Link>
-                </div>
-              </div>
-              <div className="border-t border-white/15 py-3 overflow-hidden whitespace-nowrap">
-                <div className="ogt-board inline-flex gap-8 text-xs font-semibold tracking-widest text-white/60">
-                  {[...BOARD, ...BOARD].map((b, i) => <span key={i}>{b} · CHECKING</span>)}
-                </div>
-              </div>
-            </section>
-
-            <section className="mt-16">
-              <h2 className="text-3xl font-display font-black text-[#001a41]">Everything, in one app.</h2>
-              <p className="mt-1 text-zinc-600 max-w-2xl">ScoutPass is the visa appointment niche. OGT is bigger: build the whole trip here, then check the visa inside the same trip.</p>
-              <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  ['Flights', '/flights', 'Houston to the world, added to your trip.'],
-                  ['Stays: hotels and BnBs', '/stays', 'Hotels for short stays, apartments for longer ones.'],
-                  ['Rental cars', '/cars', 'Pick up where you land.'],
-                  ['Cruises', '/cruises', 'Mediterranean, Caribbean, Nile, Alaska.'],
-                  ['Activities', '/activities', 'Tours and experiences for the city you pick.'],
-                  ['Packages', '/packages', 'Curated trips with real prices from the site.'],
-                  ['Visas — ScoutPass inside OGT', '/visas', 'The visa niche: file check plus appointment hunting at VFS, TLScontact and BLS, from $67.'],
-                  ['My trip', '/trips', 'Everything you added, one checklist, one total.'],
-                ].map(([label, path, desc]) => (
-                  <button key={path + label} onClick={() => navigate(path)} className="text-left border border-zinc-200 rounded-2xl p-5 hover:shadow-md transition bg-white">
-                    <span className="font-bold text-lg text-[#001a41]">{label}</span>
-                    <span className="block mt-1 text-sm text-zinc-600 leading-relaxed">{desc}</span>
-                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold">Open <ArrowRight size={14} /></span>
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            <section className="mt-16">
-              <div className="flex flex-wrap items-end justify-between gap-4 border-b border-zinc-200 pb-4">
-                <div>
-                  <h2 className="text-3xl font-display font-black text-[#001a41]">Pick a place. Go.</h2>
-                  <p className="mt-1 text-zinc-600">Real destinations from the site, not stock filler. Tap one and your planner updates.</p>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {regions.map((r) => (
-                    <button key={r} onClick={() => setRegion(r)} className={r === region ? 'px-3 py-1.5 rounded-md bg-zinc-900 text-white text-sm font-semibold' : 'px-3 py-1.5 rounded-md border border-zinc-300 text-sm font-medium'}>{r}</button>
+          {panel === 'trip' && (
+            <div className="space-y-5">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-white/45">Your passport</p>
+                <div className="mt-2 flex flex-wrap gap-1.5" role="radiogroup" aria-label="Your passport">
+                  {PASSPORTS.map((p) => (
+                    <button
+                      key={p}
+                      role="radio"
+                      aria-checked={p === passport}
+                      onClick={() => setPassport(p)}
+                      className={p === passport ? 'px-3 py-1.5 rounded-md bg-white text-[#030712] text-xs font-bold' : 'px-3 py-1.5 rounded-md border border-white/20 text-white/80 text-xs font-medium hover:bg-white/10'}
+                    >
+                      {p}
+                    </button>
                   ))}
                 </div>
               </div>
-              <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {grid.map((d, i) => (
-                  <button key={d.id} onClick={() => { setDestId(d.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className={`text-left border border-zinc-200 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition bg-white ${i === 0 ? 'sm:col-span-2' : ''}`}>
-                    <span className="block h-1.5 w-12 rounded-full" style={{ background: d.color }} />
-                    <div className="mt-4 flex items-start justify-between gap-3">
-                      <h3 className="font-display font-black text-2xl text-[#001a41] leading-none">{d.name}</h3>
-                      <ArrowUpRight size={18} className="text-zinc-400 shrink-0" />
+              {dest && verdict ? (
+                <div className="rounded-2xl bg-white text-zinc-900 overflow-hidden">
+                  <div className="p-5">
+                    <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-zinc-500">
+                      <span>Boarding pass</span>
+                      <span>{passport} passport</span>
                     </div>
-                    <p className="mt-2 text-sm text-zinc-500 flex items-center gap-1"><MapPin size={13} /> {d.country} · {d.region}</p>
-                    <p className="mt-2 text-sm text-zinc-600 leading-relaxed">{d.description}</p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-zinc-900">Start this trip <ArrowRight size={14} /></span>
-                  </button>
+                    <div className="mt-3 flex items-center gap-3">
+                      <span className="text-xl font-black text-[#001a41] truncate">{origin.label.toUpperCase()}</span>
+                      <span className="flex-1 min-w-6 border-t border-dashed border-zinc-300 relative"><Plane size={15} className="absolute -top-2 left-1/2 -translate-x-1/2 text-amber-500" /></span>
+                      <span className="text-xl font-black text-[#001a41] truncate">{dest.name.toUpperCase()}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-zinc-500">{dest.emoji} {dest.country} · {dest.description}</p>
+                    <div className={`mt-4 rounded-xl p-3 border ${verdict.hunt ? 'bg-orange-50 border-orange-200' : 'bg-amber-50 border-amber-200'}`}>
+                      <p className="flex items-center gap-2 font-semibold text-sm"><ShieldCheck size={17} className={verdict.hunt ? 'text-orange-600' : 'text-amber-600'} /> {verdict.badge}</p>
+                      <p className="mt-1 text-sm text-zinc-600 leading-relaxed">{verdict.detail}</p>
+                    </div>
+                    <div className="mt-4 grid grid-cols-2 gap-3">
+                      <label className="text-xs font-semibold text-zinc-500">
+                        Travelers
+                        <select value={travelers} onChange={(e) => setTravelers(Number(e.target.value))} className="mt-1 block w-full h-10 rounded-md border border-zinc-300 bg-white px-2 text-sm text-zinc-900 font-medium">
+                          {[1, 2, 3, 4, 5, 6].map((n) => <option key={n} value={n}>{n} traveler{n > 1 ? 's' : ''}</option>)}
+                        </select>
+                      </label>
+                      <label className="text-xs font-semibold text-zinc-500">
+                        When
+                        <select value={month} onChange={(e) => setMonth(e.target.value)} className="mt-1 block w-full h-10 rounded-md border border-zinc-300 bg-white px-2 text-sm text-zinc-900 font-medium">
+                          {MONTHS.map((m) => <option key={m} value={m}>{m}</option>)}
+                        </select>
+                      </label>
+                    </div>
+                  </div>
+                  <div className="border-t border-dashed border-zinc-200 p-5 pt-4 flex gap-2">
+                    <button onClick={startTrip} className="flex-1 bg-[#001a41] text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[#0a2a5c]">
+                      Start this trip <ArrowRight size={17} />
+                    </button>
+                    <button onClick={() => navigate(visaLink(dest.country))} className="px-4 py-3 rounded-lg border border-zinc-300 font-semibold text-sm hover:bg-zinc-50">
+                      Visa
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-white/20 p-5 text-sm text-white/70 space-y-3">
+                  <p>No destination yet. Ask the search bar, tap a gold dot on the globe, or pick one from Explore.</p>
+                  <button onClick={() => setPanel('explore')} className="inline-flex items-center gap-1.5 font-semibold text-amber-300"><Compass size={15} /> Open Explore</button>
+                </div>
+              )}
+              <p className="text-xs text-white/40">Rules change. Always double-check with the official consulate. This is guidance, not a guarantee.</p>
+            </div>
+          )}
+
+          {panel === 'explore' && (
+            <div className="space-y-5">
+              <div className="flex flex-wrap gap-1.5">
+                {regions.map((r) => (
+                  <button key={r} onClick={() => setRegion(r)} aria-pressed={r === region} className={r === region ? 'px-3 py-1.5 rounded-full bg-amber-300 text-[#030712] text-xs font-bold' : 'px-3 py-1.5 rounded-full bg-white/10 text-white/80 text-xs font-medium hover:bg-white/20'}>{r}</button>
                 ))}
               </div>
-            </section>
-
-            <section className="mt-16 grid md:grid-cols-3 gap-px bg-zinc-200 border border-zinc-200 rounded-2xl overflow-hidden">
-              {[
-                { n: '01', title: 'Tell us where', text: 'Destination, passport, dates. Thirty seconds, no account needed to see your first answer.' },
-                { n: '02', title: 'We handle the hard part', text: 'Visa check, file review, and appointment hunting at VFS, TLScontact or BLS.' },
-                { n: '03', title: 'You travel', text: 'Packages, itinerary and support in one place, from first check to departure.' },
-              ].map((s) => (
-                <div key={s.n} className="bg-white p-6">
-                  <p className="font-display font-black text-4xl text-zinc-200">{s.n}</p>
-                  <h3 className="mt-3 font-bold text-lg">{s.title}</h3>
-                  <p className="mt-1 text-sm text-zinc-600 leading-relaxed">{s.text}</p>
+              <ul className="divide-y divide-white/10 -mx-1">
+                {explore.map((d) => (
+                  <li key={d.id}>
+                    <button onClick={() => goTo(d)} className="w-full text-left px-1 py-3 flex items-center gap-3 hover:bg-white/5 rounded-lg">
+                      <span className="w-10 h-10 rounded-xl grid place-items-center text-lg shrink-0" style={{ background: `${d.color}26` }} aria-hidden="true">{d.emoji}</span>
+                      <span className="flex-1 min-w-0">
+                        <span className="block font-semibold text-sm">{d.name}</span>
+                        <span className="block text-xs text-white/50 truncate"><MapPin size={11} className="inline -mt-0.5" /> {d.country} · {d.description}</span>
+                      </span>
+                      <ArrowRight size={15} className="text-white/40 shrink-0" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-white/45">Everything for the trip</p>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  {[
+                    ['Flights', '/flights'],
+                    ['Stays', '/stays'],
+                    ['Rental cars', '/cars'],
+                    ['Cruises', '/cruises'],
+                    ['Activities', '/activities'],
+                    ['Packages', '/packages'],
+                  ].map(([label, path]) => (
+                    <Link key={path} to={path} className="rounded-xl bg-white/5 border border-white/10 px-3 py-2.5 text-sm font-semibold hover:bg-white/10 flex items-center justify-between">
+                      {label} <ArrowRight size={14} className="text-white/40" />
+                    </Link>
+                  ))}
                 </div>
-              ))}
-            </section>
+              </div>
+            </div>
+          )}
 
-            <section className="mt-16">
-              <h2 className="text-2xl font-display font-black text-[#001a41]">Questions people actually ask</h2>
-              <div className="mt-5 divide-y divide-zinc-200 border-y border-zinc-200">
+          {panel === 'visa' && (
+            <div className="space-y-5">
+              <div className="rounded-2xl bg-gradient-to-br from-[#001a41] to-[#0b1224] border border-white/10 overflow-hidden">
+                <div className="p-5">
+                  <p className="text-xs font-semibold tracking-widest uppercase text-amber-300 flex items-center gap-2"><Stamp size={14} /> Slot hunter</p>
+                  <p className="mt-2 text-xl font-black leading-tight">ScoutPass hunts the visa appointment for you.</p>
+                  <p className="mt-2 text-sm text-white/70 leading-relaxed">We watch VFS Global, TLScontact and BLS across the US appointment cities and alert you the moment a slot opens. If no appointment can be secured, you get refunded.</p>
+                  <div className="mt-4 flex items-end justify-between gap-3">
+                    <p><span className="text-3xl font-black text-amber-300">$67</span> <span className="text-xs text-white/60">per applicant</span></p>
+                    <Link to="/pricing" className="bg-white text-[#030712] font-semibold px-4 py-2 rounded-lg text-sm">See pricing</Link>
+                  </div>
+                </div>
+                <div className="border-t border-white/10 py-2.5 overflow-hidden whitespace-nowrap" aria-hidden="true">
+                  <div className="ogt-board inline-flex gap-8 text-[11px] font-semibold tracking-widest text-white/50">
+                    {[...BOARD, ...BOARD].map((b, i) => <span key={i}>{b} · CHECKING</span>)}
+                  </div>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                {[
+                  ['Schengen short-stay visa', '/schengen-visa'],
+                  ['UK visitor visa', '/visas/short-stay/uk'],
+                  ['Long-stay and residency visas', '/visas/long-stay'],
+                  ['Do I need a visa?', '/visas'],
+                ].map(([label, path]) => (
+                  <Link key={path} to={path} className="rounded-xl bg-white/5 border border-white/10 px-3.5 py-3 text-sm font-semibold hover:bg-white/10 flex items-center justify-between">
+                    {label} <ArrowRight size={14} className="text-white/40" />
+                  </Link>
+                ))}
+              </div>
+              <div className="divide-y divide-white/10 border-y border-white/10">
                 {[
                   ['Do you guarantee a visa?', 'No agency can guarantee a consulate decision. We guarantee the work: a clean file, the right appointment hunt, and a refund if no appointment can be secured.'],
                   ['What does the $67 cover?', 'The appointment hunt, per applicant. Visa fees charged by the consulate or center are separate.'],
                   ['Which countries do you cover?', 'All 27 Schengen countries, plus the UK, US and Canada, with appointments across US cities.'],
-                  ['Can I just explore first?', 'Yes. Use the planner and the globe for free. You only start a paid step when you are ready.'],
                 ].map(([q, a]) => (
-                  <details key={q} className="py-4 group">
-                    <summary className="font-semibold cursor-pointer list-none flex justify-between gap-4">{q}<span className="text-zinc-400">+</span></summary>
-                    <p className="mt-2 text-sm text-zinc-600 leading-relaxed max-w-2xl">{a}</p>
+                  <details key={q} className="py-3 group">
+                    <summary className="text-sm font-semibold cursor-pointer list-none flex justify-between gap-4">{q}<span className="text-white/40 group-open:rotate-45 transition">+</span></summary>
+                    <p className="mt-2 text-sm text-white/65 leading-relaxed">{a}</p>
                   </details>
                 ))}
               </div>
-              <p className="mt-4 text-xs text-zinc-500 flex items-center gap-1"><Clock size={12} /> Still stuck? <Link to="/contact" className="underline font-semibold">Talk to a human</Link></p>
-            </section>
-          </>
-        )}
-      </main>
+            </div>
+          )}
 
-      <footer className="border-t border-zinc-200 bg-zinc-50">
-        <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col md:flex-row justify-between gap-4 text-sm text-zinc-500">
-          <p className="font-bold text-[#001a41]">One Global Trip</p>
-          <div className="flex flex-wrap gap-5">
-            <Link to="/visas">Visas</Link>
-            <Link to="/packages">Packages</Link>
-            <Link to="/pricing">Pricing</Link>
-            <Link to="/about">About</Link>
-            <Link to="/contact">Contact</Link>
-          </div>
-        </div>
-      </footer>
+          {panel === 'account' && (
+            <div className="space-y-5">
+              {user ? (
+                <>
+                  <p className="text-sm text-white/70">Signed in as <b className="text-white">{user.email}</b></p>
+                  <div className="grid gap-2">
+                    {[
+                      ['My trip', '/trips'],
+                      ['Dashboard', '/dashboard'],
+                      ['Profile and passport', '/profile'],
+                    ].map(([label, path]) => (
+                      <Link key={path} to={path} className="rounded-xl bg-white/5 border border-white/10 px-3.5 py-3 text-sm font-semibold hover:bg-white/10 flex items-center justify-between">
+                        {label} <ArrowRight size={14} className="text-white/40" />
+                      </Link>
+                    ))}
+                  </div>
+                  <button onClick={() => void signOut()} className="text-sm text-white/60 underline">Sign out</button>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <p className="text-lg font-black">Free to use. Better with an account.</p>
+                    <ul className="mt-3 space-y-2 text-sm text-white/75">
+                      <li className="flex gap-2"><ShieldCheck size={16} className="text-amber-300 shrink-0 mt-0.5" /> The AI agent remembers your passport, home airport and travel style.</li>
+                      <li className="flex gap-2"><ShieldCheck size={16} className="text-amber-300 shrink-0 mt-0.5" /> Save trips and pick up where you left off on any device.</li>
+                      <li className="flex gap-2"><ShieldCheck size={16} className="text-amber-300 shrink-0 mt-0.5" /> Track your visa file and appointment hunt in one place.</li>
+                    </ul>
+                  </div>
+                  <div className="grid gap-2">
+                    <Link to="/auth" className="bg-amber-300 text-[#030712] font-bold py-3 rounded-lg text-center hover:bg-amber-200">Create a free account</Link>
+                    <Link to="/auth" className="border border-white/20 font-semibold py-3 rounded-lg text-center hover:bg-white/10">Sign in</Link>
+                  </div>
+                </>
+              )}
+              <div className="rounded-xl border border-dashed border-white/20 p-4">
+                <p className="text-sm font-semibold flex items-center gap-2"><Sparkles size={15} className="text-amber-300" /> Premium is coming</p>
+                <p className="mt-1 text-xs text-white/60 leading-relaxed">More for frequent travelers. The free plan stays free.</p>
+              </div>
+              <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-white/45 pt-2 border-t border-white/10">
+                <Link to="/about" className="hover:text-white">About</Link>
+                <Link to="/contact" className="hover:text-white">Contact</Link>
+                <Link to="/privacy-policy" className="hover:text-white">Privacy</Link>
+                <Link to="/terms-conditions" className="hover:text-white">Terms</Link>
+              </div>
+            </div>
+          )}
+        </GlobePanel>
+      )}
     </div>
   );
 };
