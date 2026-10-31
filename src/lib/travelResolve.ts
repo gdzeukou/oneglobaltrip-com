@@ -1,50 +1,131 @@
 /**
- * Small, deterministic helpers shared by the homepage globe app:
- * which destination a sentence is about, which passport the traveler holds,
- * and a first-pass visa verdict. The AI agent gives the real answer; these
- * steer the globe and cover for it when it is unreachable.
+ * Small, deterministic helpers shared by the homepage globe app: which
+ * destination a sentence is about, which passport the traveler holds, and a
+ * first-pass read on whether that pairing needs a visa.
+ *
+ * Every country OGT has a destination in can be a passport here — the list is
+ * derived from the destination data, not hand-picked. The AI agent gives the
+ * real per-case answer; these keep the globe and the boarding pass honest
+ * while it thinks, and when it cannot be reached.
+ *
+ * On visas this deliberately says less than it could. Claiming "no visa
+ * needed" wrongly costs someone a trip, so it only says so where free
+ * movement or a long-standing waiver makes it certain, and otherwise says we
+ * check it.
  */
 
 import { globeDestinations, type GlobeDestination } from '@/data/globeDestinations';
 import type { LatLng } from '@/components/earth/globe';
 
 export const SCHENGEN = new Set([
-  'France', 'Germany', 'Italy', 'Spain', 'Netherlands', 'Belgium', 'Austria',
-  'Switzerland', 'Portugal', 'Greece', 'Czech Republic', 'Poland', 'Denmark',
-  'Sweden', 'Norway', 'Finland', 'Hungary', 'Croatia', 'Slovenia', 'Slovakia',
-  'Luxembourg', 'Malta', 'Estonia', 'Latvia', 'Lithuania', 'Iceland',
+  'Austria', 'Belgium', 'Bulgaria', 'Croatia', 'Czech Republic', 'Denmark', 'Estonia',
+  'Finland', 'France', 'Germany', 'Greece', 'Hungary', 'Iceland', 'Italy', 'Latvia',
+  'Liechtenstein', 'Lithuania', 'Luxembourg', 'Malta', 'Netherlands', 'Norway', 'Poland',
+  'Portugal', 'Romania', 'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland',
 ]);
 
-export const PASSPORTS = ['United States', 'Cameroon', 'France', 'Canada', 'Other'] as const;
-export type Passport = (typeof PASSPORTS)[number];
+/** Free movement: a Schengen passport plus the rest of the EU and the EEA. */
+const FREE_MOVEMENT = new Set([...SCHENGEN, 'Ireland', 'Cyprus']);
 
-/** Where the flight path starts, by passport. "Other" flies from Houston, our base. */
-export const ORIGINS: Record<Passport, LatLng & { label: string }> = {
-  'United States': { lat: 29.7604, lng: -95.3698, label: 'Houston' },
-  Cameroon: { lat: 4.0511, lng: 9.7679, label: 'Douala' },
-  France: { lat: 48.8566, lng: 2.3522, label: 'Paris' },
-  Canada: { lat: 43.6532, lng: -79.3832, label: 'Toronto' },
-  Other: { lat: 29.7604, lng: -95.3698, label: 'Houston' },
+/**
+ * Passports with long-standing 90-day visa-free access to the Schengen area.
+ * Kept deliberately short: a country only belongs here if the waiver has been
+ * stable for years. Everyone else gets "we check it", not a guess.
+ */
+const SCHENGEN_WAIVER = new Set([
+  'United States', 'Canada', 'United Kingdom', 'Japan', 'South Korea', 'Singapore',
+  'Australia', 'New Zealand', 'Israel', 'Brazil', 'Mexico', 'Chile', 'Argentina',
+  'Uruguay', 'Costa Rica', 'Panama', 'Malaysia', 'Taiwan', 'UAE',
+]);
+
+/** Passports that do not need a UK visitor visa (an ETA may still apply). */
+const UK_WAIVER = new Set([
+  ...FREE_MOVEMENT, 'United States', 'Canada', 'Japan', 'South Korea', 'Singapore',
+  'Australia', 'New Zealand', 'Israel', 'Brazil', 'Mexico', 'Chile', 'Argentina',
+  'Malaysia', 'Taiwan', 'UAE', 'Hong Kong',
+]);
+
+export type Passport = string;
+export type Origin = LatLng & { label: string; country: string };
+
+/** Every country OGT knows a destination in, alphabetically. */
+export const PASSPORT_COUNTRIES: string[] = Array.from(
+  new Set(globeDestinations.map((d) => d.country)),
+)
+  .filter((c) => !c.includes('/'))
+  .sort((a, b) => a.localeCompare(b));
+
+export const DEFAULT_PASSPORT = 'United States';
+
+/** The best-known city in a country, used as the departure point. */
+const ORIGIN_BY_COUNTRY = new Map<string, GlobeDestination>();
+for (const d of globeDestinations) {
+  const held = ORIGIN_BY_COUNTRY.get(d.country);
+  if (!held || d.tier < held.tier) ORIGIN_BY_COUNTRY.set(d.country, d);
+}
+
+export function originFor(passport: Passport): Origin {
+  const city = ORIGIN_BY_COUNTRY.get(passport);
+  if (city) return { lat: city.lat, lng: city.lng, label: city.name, country: passport };
+  // Houston: where One Global Trip is.
+  return { lat: 29.7604, lng: -95.3698, label: 'Houston', country: 'United States' };
+}
+
+export type Verdict = {
+  badge: string;
+  detail: string;
+  /** A visa is likely needed, so the appointment hunt is the next step. */
+  hunt: boolean;
 };
 
-export type Verdict = { badge: string; detail: string; hunt: boolean };
-
-export function visaVerdict(country: string, passport: Passport): Verdict {
-  if (SCHENGEN.has(country)) {
-    if (passport === 'France') return { badge: 'No visa needed', detail: 'EU passport. Schengen travel is open to you, no appointment needed for a short stay.', hunt: false };
-    if (passport === 'United States' || passport === 'Canada') return { badge: 'No visa for under 90 days', detail: 'US and Canadian passports are normally visa-free for a short Schengen stay. We still check your file so nothing blocks you at the border.', hunt: false };
-    return { badge: 'Schengen visa likely needed', detail: 'Most non-EU passports need a Schengen short-stay visa, with an appointment at VFS Global, TLScontact or BLS. That appointment is the hard part. We hunt it for you.', hunt: true };
+export function visaVerdict(destCountry: string, passport: Passport): Verdict {
+  if (destCountry === passport) {
+    return {
+      badge: 'Home turf',
+      detail: 'Same country as your passport, so there is no border to clear. We can still book the whole trip.',
+      hunt: false,
+    };
   }
-  if (country === 'United Kingdom') {
-    if (passport === 'France') return { badge: 'No visa needed', detail: 'EU passport. Short UK visits are normally straightforward.', hunt: false };
-    if (passport === 'United States' || passport === 'Canada') return { badge: 'ETA to check', detail: 'US and Canadian travelers usually do not need a visitor visa, but an ETA may apply. We confirm it before you book anything.', hunt: false };
-    return { badge: 'UK visitor visa likely needed', detail: 'Most other passports need a UK visitor visa first. We review your file and walk you through the appointment.', hunt: true };
+  if (FREE_MOVEMENT.has(destCountry) && FREE_MOVEMENT.has(passport)) {
+    return {
+      badge: 'No visa needed',
+      detail: 'Free movement inside the EU and the EEA. Bring the passport, book the trip.',
+      hunt: false,
+    };
   }
-  if (country === 'UAE') {
-    if (passport === 'United States' || passport === 'Canada' || passport === 'France') return { badge: 'Visa on arrival in most cases', detail: 'US, Canadian and EU passports normally get a visa on arrival in the UAE. We confirm the exact rule for your trip dates.', hunt: false };
-    return { badge: 'Visa to check', detail: 'UAE rules depend on your passport. We check them for you before you pay for anything.', hunt: false };
+  if (SCHENGEN.has(destCountry)) {
+    if (SCHENGEN_WAIVER.has(passport)) {
+      return {
+        badge: 'No visa for stays under 90 days',
+        detail: `A ${passport} passport is normally visa-free in the Schengen area for a short stay. We still check your file so nothing stops you at the border.`,
+        hunt: false,
+      };
+    }
+    return {
+      badge: 'Schengen visa likely needed',
+      detail: 'Most passports need a Schengen short-stay visa, and the appointment at VFS Global, TLScontact or BLS is the hard part. We hunt it for you.',
+      hunt: true,
+    };
   }
-  return { badge: 'We check it for you', detail: 'Visa rules depend on your passport and your trip. Tell us where you are going and we give you the exact next step, no guessing.', hunt: false };
+  if (destCountry === 'United Kingdom') {
+    if (UK_WAIVER.has(passport)) {
+      return {
+        badge: 'ETA to check, no visa',
+        detail: 'Short UK visits are normally straightforward on your passport, though an ETA may apply. We confirm it before you book anything.',
+        hunt: false,
+      };
+    }
+    return {
+      badge: 'UK visitor visa likely needed',
+      detail: 'Most passports need a UK visitor visa first. We review your file and walk you through the appointment.',
+      hunt: true,
+    };
+  }
+  return {
+    badge: 'We check it for you',
+    detail: `Entry rules for ${destCountry} depend on your passport and how long you stay. We confirm the exact rule for your dates before you pay for anything.`,
+    hunt: false,
+  };
 }
 
 export function visaLink(country: string): string {
@@ -60,8 +141,12 @@ const BY_NAME = [...globeDestinations].sort((a, b) => b.name.length - a.name.len
 const COUNTRY_ALIASES: Record<string, string> = {
   usa: 'United States', 'united states': 'United States', america: 'United States',
   uk: 'United Kingdom', england: 'United Kingdom', britain: 'United Kingdom',
-  emirates: 'UAE', 'united arab emirates': 'UAE',
+  emirates: 'UAE', 'united arab emirates': 'UAE', holland: 'Netherlands',
 };
+
+function cityIn(country: string): GlobeDestination | null {
+  return ORIGIN_BY_COUNTRY.get(country) ?? null;
+}
 
 /** The destination a sentence is about: a city name first, then a country. */
 export function findDestination(text: string): GlobeDestination | null {
@@ -69,25 +154,47 @@ export function findDestination(text: string): GlobeDestination | null {
   for (const d of BY_NAME) {
     if (new RegExp(`[^a-z]${escape(d.name.toLowerCase())}[^a-z]`).test(t)) return d;
   }
-  const countryOf = (name: string) =>
-    globeDestinations.filter((d) => d.country === name).sort((a, b) => a.tier - b.tier)[0] ?? null;
   for (const [alias, country] of Object.entries(COUNTRY_ALIASES)) {
-    if (new RegExp(`[^a-z]${escape(alias)}[^a-z]`).test(t)) return countryOf(country);
+    if (new RegExp(`[^a-z]${escape(alias)}[^a-z]`).test(t)) return cityIn(country);
   }
-  const countries = Array.from(new Set(globeDestinations.map((d) => d.country))).sort((a, b) => b.length - a.length);
+  const countries = PASSPORT_COUNTRIES.slice().sort((a, b) => b.length - a.length);
   for (const c of countries) {
-    if (new RegExp(`[^a-z]${escape(c.toLowerCase())}[^a-z]`).test(t)) return countryOf(c);
+    if (new RegExp(`[^a-z]${escape(c.toLowerCase())}[^a-z]`).test(t)) return cityIn(c);
   }
   return null;
 }
 
-/** "I have a Cameroonian passport" → Cameroon. Only explicit nationality words count. */
+/**
+ * "I have a Brazilian passport" → Brazil. Built from the country list, with
+ * the handful of demonyms that are not just the country name plus a suffix.
+ */
+const DEMONYMS: Record<string, string> = {
+  american: 'United States', british: 'United Kingdom', english: 'United Kingdom',
+  scottish: 'United Kingdom', welsh: 'United Kingdom', irish: 'Ireland', dutch: 'Netherlands',
+  french: 'France', german: 'Germany', spanish: 'Spain', portuguese: 'Portugal',
+  swiss: 'Switzerland', greek: 'Greece', polish: 'Poland', danish: 'Denmark',
+  swedish: 'Sweden', finnish: 'Finland', norwegian: 'Norway', icelandic: 'Iceland',
+  turkish: 'Turkey', japanese: 'Japan', chinese: 'China', thai: 'Thailand',
+  vietnamese: 'Vietnam', filipino: 'Philippines', emirati: 'UAE', saudi: 'Saudi Arabia',
+  moroccan: 'Morocco', egyptian: 'Egypt', ivorian: 'Ivory Coast', congolese: 'DR Congo',
+  'south african': 'South Africa', 'new zealander': 'New Zealand', kiwi: 'New Zealand',
+  'south korean': 'South Korea', korean: 'South Korea', czech: 'Czech Republic',
+};
+
 export function detectPassport(text: string): Passport | null {
-  const t = text.toLowerCase();
-  if (/\bcameroon(ian)?\b|\bcamerounais/.test(t)) return 'Cameroon';
-  if (/\bcanadian\b|\bcanada passport\b/.test(t)) return 'Canada';
-  if (/\bfrench\b|\bfrançais|\bfrancais|\bfrance passport\b/.test(t)) return 'France';
-  if (/\bamerican\b|\bus passport\b|\bu\.s\. passport\b|\busa passport\b/.test(t)) return 'United States';
+  const t = ` ${text.toLowerCase()} `;
+  for (const [word, country] of Object.entries(DEMONYMS)) {
+    if (new RegExp(`[^a-z]${escape(word)}[^a-z]`).test(t)) return country;
+  }
+  // "<Country> passport", and the regular -ian / -ese / -ish demonyms.
+  for (const c of PASSPORT_COUNTRIES) {
+    const base = c.toLowerCase();
+    const stem = base.replace(/a$|e$|y$/, '');
+    const forms = [`${base} passport`, `${stem}ian`, `${stem}ean`, `${base}n`, `${stem}ese`, `${stem}ish`];
+    for (const f of forms) {
+      if (new RegExp(`[^a-z]${escape(f)}[^a-z]`).test(t)) return c;
+    }
+  }
   return null;
 }
 

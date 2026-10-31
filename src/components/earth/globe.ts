@@ -26,6 +26,8 @@ import {
   SPRITE_FS,
   SPRITE_VS,
 } from "./shaders";
+import { TileStreamer, mercRadius, type DetailView } from "./tiles";
+import { drawMercator, ensureBorders, peekBorders, rasterEquirect } from "./borders";
 
 export type LatLng = { lat: number; lng: number };
 /** "clear": no visa or visa on arrival. "visa": a visa is needed first. */
@@ -43,6 +45,18 @@ export interface GlobeTextureUrls {
   water: string;
 }
 
+/** What the camera is looking at, for the UI to label. */
+export interface GlobeView {
+  lat: number;
+  lng: number;
+  /** Web Mercator zoom of the imagery on screen, 1 (planet) to 19 (street). */
+  zoom: number;
+  /** Width of the patch in view, in kilometres. */
+  spanKm: number;
+  /** 0 = Blue Marble, 1 = streamed satellite imagery. */
+  detail: number;
+}
+
 export interface GlobeOptions {
   canvas: HTMLCanvasElement;
   /** Element that receives drag input; usually the canvas's parent. */
@@ -51,12 +65,28 @@ export interface GlobeOptions {
   home: LatLng;
   dots: GlobeDot[];
   reduced: boolean;
+  /**
+   * How much of the canvas the planet fills at rest. The canvas covers the
+   * viewport so streamed imagery can too, which is larger than the framing
+   * the globe wants from space, so the page sets this from its own size.
+   */
+  idleScale?: number;
   labels: { home: () => HTMLElement | null; dest: () => HTMLElement | null };
   onReady?: () => void;
   onFail?: () => void;
   onUserDrag?: () => void;
   /** A tap or click on the planet (not a drag), with the point under it. */
   onPick?: (at: LatLng) => void;
+  /** Camera moved: where it is now, and how close. Throttled to ~6/s. */
+  onView?: (view: GlobeView) => void;
+  /** Stream satellite tiles as the camera drops. On by default. */
+  streaming?: boolean;
+  /**
+   * The places worth flying down to. Streamed imagery, and the deep end of
+   * the zoom, only switch on near one of these: a city is what someone is
+   * deciding about, and the rest of the planet is not worth the bandwidth.
+   */
+  anchors?: LatLng[];
 }
 
 type Vec3 = [number, number, number];
@@ -65,8 +95,36 @@ const DEG = Math.PI / 180;
 const CAM_DIST = 4.2;
 const IDLE_LAT = 22;
 const IDLE_SCALE = 0.8;
-const SCALE_MIN = 0.62;
-const SCALE_MAX = 2.4;
+const SCALE_MIN = 0.3;
+/** Street level: about 400 m across the viewport. */
+const SCALE_MAX = 14000;
+const EARTH_RADIUS_KM = 6371;
+/**
+ * Half-width of the ground in view, in radians. For a small field of view the
+ * ray at the edge of the viewport lands (uDist - 1) times its own angle away
+ * from the point under the camera.
+ */
+function angularHalfWidth(scale: number, aspect: number): number {
+  const ty = Math.tan(Math.asin(1 / CAM_DIST)) / scale;
+  return (CAM_DIST - 1) * ty * Math.max(1, aspect);
+}
+/** Streamed imagery starts fading in here and is alone by the time it ends. */
+const DETAIL_FROM = 0.32; // radians, about 2000 km
+const DETAIL_TO = 0.12; // about 760 km
+/**
+ * Away from any city the camera stops at about 4500 km across, which is
+ * roughly where the built-in world map runs out of pixels.
+ */
+const SCALE_NO_ANCHOR = 2.2;
+
+/** Angle between two points on the sphere, in radians. */
+function angleBetween(a: LatLng, b: LatLng): number {
+  const r = DEG;
+  const h =
+    Math.sin(((b.lat - a.lat) * r) / 2) ** 2 +
+    Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(((b.lng - a.lng) * r) / 2) ** 2;
+  return 2 * Math.asin(Math.min(1, Math.sqrt(h)));
+}
 const LAT_MIN = -28;
 // High enough that routes over the pole (US → India) cross the face
 // of the disc instead of running along its edge.
@@ -209,7 +267,7 @@ interface GL {
   dots: { p: WebGLProgram; u: Uniforms; vao: WebGLVertexArrayObject; buf: WebGLBuffer; count: number };
   arc: { p: WebGLProgram; u: Uniforms; vao: WebGLVertexArrayObject; verts: number };
   sprite: { p: WebGLProgram; u: Uniforms; vao: WebGLVertexArrayObject };
-  tex: Partial<Record<"day" | "lights" | "clouds" | "relief" | "water", WebGLTexture>>;
+  tex: Partial<Record<"day" | "lights" | "clouds" | "relief" | "water" | "detail" | "borders", WebGLTexture>>;
   aniso: number;
   anisoExt: EXT_texture_filter_anisotropic | null;
 }
@@ -227,6 +285,7 @@ export class EarthGlobe {
   // Camera, in degrees. lng/lat are the point at the centre of the disc.
   private lng: number;
   private lat = IDLE_LAT;
+  private idle = IDLE_SCALE;
   private scale = IDLE_SCALE;
   private targetLng: number | null = null;
   private targetLat = IDLE_LAT;
@@ -234,6 +293,7 @@ export class EarthGlobe {
   private velocity = 0; // deg/s, after a flick
 
   // Destination and arc.
+  private settle = false;
   private dest: LatLng | null = null;
   private tone: DestinationTone | null = null;
   private arcStart = -1e9;
@@ -259,6 +319,17 @@ export class EarthGlobe {
     vel: number;
   } | null = null;
 
+  // Streamed imagery and outlines.
+  private streamer: TileStreamer | null = null;
+  private detailView: DetailView | null = null;
+  private detailDirty = false;
+  private detailUploadedAt = 0;
+  private detailMix = 0;
+  private bordersPending = false;
+  private borders50Pending = false;
+  private lastViewEmit = 0;
+  private anchors: LatLng[] = [];
+
   // Sizing and adaptive quality.
   private cssW = 1;
   private cssH = 1;
@@ -272,6 +343,10 @@ export class EarthGlobe {
 
   constructor(o: GlobeOptions) {
     this.o = o;
+    this.anchors = o.anchors ?? [];
+    this.idle = o.idleScale ?? IDLE_SCALE;
+    this.scale = this.idle;
+    this.targetScale = this.idle;
     this.lng = o.home.lng + 40;
     this.init();
     this.bindInput();
@@ -280,6 +355,51 @@ export class EarthGlobe {
     c.addEventListener("webglcontextrestored", this.onContextRestored);
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(c);
+    if (o.streaming !== false) this.startStreaming();
+    void this.loadBorderRaster();
+  }
+
+  // ------------------------------------------------- imagery and outlines
+
+  private startStreaming() {
+    this.streamer = new TileStreamer((view) => {
+      this.detailView = view;
+      this.detailDirty = true;
+      if (!this.running) this.uploadDetail();
+    });
+    // Outlines are inked over each streamed window, where a baked world map
+    // would be far too coarse to follow a border between two fields.
+    this.streamer.overlay = (ctx, view) => {
+      const lines = peekBorders(view.z >= 5 ? 50 : 110) ?? peekBorders(110);
+      if (lines) drawMercator(ctx, lines, view.rect, view.z);
+      else void this.ensureDetailBorders(view.z);
+    };
+  }
+
+  private async ensureDetailBorders(z: number) {
+    const want = z >= 5 ? 50 : 110;
+    if (want === 50 ? this.borders50Pending : this.bordersPending) return;
+    if (want === 50) this.borders50Pending = true;
+    else this.bordersPending = true;
+    try {
+      await ensureBorders(want);
+      if (!this.disposed) this.streamer?.refreshOverlay();
+    } catch {
+      /* no outlines is survivable; the imagery still reads */
+    }
+  }
+
+  /** Bake the whole-world outline map the far view samples. */
+  private async loadBorderRaster() {
+    try {
+      const lines = await ensureBorders(110);
+      if (this.disposed) return;
+      const canvas = rasterEquirect(lines, 4096);
+      this.upload("borders", canvas, false);
+      if (this.running) this.draw();
+    } catch {
+      /* ditto */
+    }
   }
 
   // ---------------------------------------------------------------- public
@@ -304,13 +424,25 @@ export class EarthGlobe {
       this.targetLat = Math.max(LAT_MIN, Math.min(LAT_MAX, c.lat - below));
       this.arcHeight = 0.05 + 0.27 * (this.arcOmega / Math.PI);
       // Lean in for short hops, pull back for the long ones.
-      this.targetScale = IDLE_SCALE + 0.12 * (1 - smoothstep(18 * DEG, 75 * DEG, this.arcOmega));
+      this.targetScale = this.idle * (1 + 0.15 * (1 - smoothstep(18 * DEG, 75 * DEG, this.arcOmega)));
       this.arcStart = this.o.reduced ? -1e9 : this.time;
+      this.settle = true;
       if (this.o.reduced) this.snapCamera();
     } else {
       this.targetLng = null;
       this.targetLat = IDLE_LAT;
-      this.targetScale = IDLE_SCALE;
+      this.targetScale = this.idle;
+    }
+  }
+
+  /** Reframe the planet after the page resizes. Ignored once zoomed in. */
+  setIdleScale(idle: number) {
+    const next = Math.max(0.2, Math.min(1.4, idle));
+    const resting = Math.abs(this.targetScale - this.idle) < 1e-3;
+    this.idle = next;
+    if (resting) {
+      this.targetScale = next;
+      if (this.o.reduced) this.scale = next;
     }
   }
 
@@ -328,6 +460,39 @@ export class EarthGlobe {
     this.setDestination(dest, tone);
   }
 
+  /** The cities the deep zoom is allowed to visit. */
+  setAnchors(anchors: LatLng[]) {
+    this.anchors = anchors;
+  }
+
+  /** How far the nearest of those cities is from the middle of the view. */
+  private anchorDistance(): number {
+    let best = Infinity;
+    const here = { lat: this.lat, lng: this.lng };
+    for (const a of this.anchors) {
+      const d = angleBetween(here, a);
+      if (d < best) best = d;
+    }
+    return best;
+  }
+
+  /**
+   * How close the camera may get right here. Over a city, all the way down.
+   * Over open ocean or empty desert there is nothing to see and no imagery
+   * worth fetching, so it stops where the built-in map still holds up.
+   */
+  private scaleCeiling(): number {
+    if (!this.anchors.length) return SCALE_MAX;
+    const aspect = this.cssW / Math.max(1, this.cssH);
+    const angular = angularHalfWidth(this.scale, aspect);
+    // Generous while far out, tight once the city should be filling the view.
+    const reach = Math.max(angular * 2.5, 0.025);
+    if (this.anchorDistance() < reach) return SCALE_MAX;
+    // Hold, never haul back: being over empty ocean should stop you going
+    // deeper, not yank the camera out of where you already are.
+    return Math.max(this.scale, SCALE_NO_ANCHOR);
+  }
+
   /** Replace the destination dots. */
   setDots(dots: GlobeDot[]) {
     this.o.dots = dots;
@@ -340,8 +505,31 @@ export class EarthGlobe {
 
   /** Zoom in (> 1) or out (< 1), within limits. */
   zoomBy(factor: number) {
-    this.targetScale = Math.max(SCALE_MIN, Math.min(SCALE_MAX, this.targetScale * factor));
+    this.targetScale = Math.max(SCALE_MIN, Math.min(this.scaleCeiling(), this.targetScale * factor));
     if (this.o.reduced) this.scale = this.targetScale;
+  }
+
+  /** Put a point under the middle of the view at a given span, in km. */
+  flyTo(at: LatLng, spanKm = 40) {
+    const angular = spanKm / 2 / EARTH_RADIUS_KM;
+    const ty = angular / (CAM_DIST - 1) / Math.max(1, this.cssW / this.cssH);
+    this.dest = null;
+    this.tone = null;
+    this.velocity = 0;
+    this.targetLng = at.lng;
+    this.targetLat = at.lat;
+    this.targetScale = Math.max(
+      SCALE_MIN,
+      Math.min(SCALE_MAX, Math.tan(Math.asin(1 / CAM_DIST)) / ty),
+    );
+    this.settle = false;
+    if (this.o.reduced) this.snapCamera();
+  }
+
+  /** How far the camera can swing north and south: the whole globe, once in. */
+  private latLimit(): [number, number] {
+    const t = smoothstep(1.1, 3.0, this.scale);
+    return [LAT_MIN + t * (-84 - LAT_MIN), LAT_MAX + t * (84 - LAT_MAX)];
   }
 
   start() {
@@ -361,6 +549,9 @@ export class EarthGlobe {
     this.disposed = true;
     this.stop();
     this.loadToken++;
+    this.streamer?.destroy();
+    this.streamer = null;
+    this.detailView = null;
     this.resizeObserver?.disconnect();
     this.unbindInput();
     const c = this.o.canvas;
@@ -425,8 +616,10 @@ export class EarthGlobe {
     buffer(new Float32Array([-1, -1, 3, -1, -1, 3]));
     attrib(ep, "aPos", 2);
     const eu = uniforms(gl, ep, [
-      "uDay", "uLights", "uClouds", "uRelief", "uWater", "uRot", "uDist", "uTan", "uSun",
-      "uCloudU", "uTime", "uReliefTexel", "uMarkA", "uMarkB", "uColA", "uColB", "uMarkBOn",
+      "uDay", "uLights", "uClouds", "uRelief", "uWater", "uDetail", "uBorders",
+      "uRot", "uDist", "uTan", "uSun", "uCloudU", "uTime", "uReliefTexel",
+      "uMarkA", "uMarkB", "uColA", "uColB", "uMarkBOn",
+      "uDetailRect", "uDetailMix", "uBorderMix",
     ]);
 
     // Destination dots.
@@ -484,7 +677,7 @@ export class EarthGlobe {
     };
   }
 
-  private upload(name: keyof GL["tex"], src: TexImageSource, srgb: boolean) {
+  private upload(name: keyof GL["tex"], src: TexImageSource, srgb: boolean, clamp = false) {
     const g = this.g;
     if (!g || g.gl.isContextLost()) return;
     const { gl } = g;
@@ -503,7 +696,7 @@ export class EarthGlobe {
     gl.generateMipmap(gl.TEXTURE_2D);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, clamp ? gl.CLAMP_TO_EDGE : gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     if (g.anisoExt && g.aniso > 1 && name !== "relief" && name !== "water") {
       gl.texParameterf(gl.TEXTURE_2D, g.anisoExt.TEXTURE_MAX_ANISOTROPY_EXT, g.aniso);
@@ -579,6 +772,8 @@ export class EarthGlobe {
     }
     this.resize();
     void this.loadTextures();
+    void this.loadBorderRaster();
+    this.detailDirty = true;
     this.start();
   };
 
@@ -623,6 +818,7 @@ export class EarthGlobe {
     el.addEventListener("pointermove", this.onMove);
     el.addEventListener("pointerup", this.onUp);
     el.addEventListener("pointercancel", this.onUp);
+    el.addEventListener("wheel", this.onWheel, { passive: false });
   }
 
   private unbindInput() {
@@ -631,14 +827,67 @@ export class EarthGlobe {
     el.removeEventListener("pointermove", this.onMove);
     el.removeEventListener("pointerup", this.onUp);
     el.removeEventListener("pointercancel", this.onUp);
+    el.removeEventListener("wheel", this.onWheel);
+  }
+
+  /**
+   * Zoom about a point on the canvas: take the ground under it, change the
+   * scale, then turn the globe so that same ground is back under it.
+   */
+  private zoomAt(factor: number, clientX: number, clientY: number) {
+    const rect = this.o.canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const before = this.pick(x, y);
+    const next = Math.max(SCALE_MIN, Math.min(this.scaleCeiling(), this.scale * factor));
+    if (next === this.scale) return;
+    this.scale = next;
+    this.targetScale = next;
+    this.velocity = 0;
+    const after = before ? this.pick(x, y) : null;
+    if (before && after) {
+      const [latMin, latMax] = this.latLimit();
+      this.lng = wrapDeg(this.lng + wrapDeg(before.lng - after.lng));
+      this.lat = Math.max(latMin, Math.min(latMax, this.lat + (before.lat - after.lat)));
+      this.targetLng = null;
+      this.targetLat = this.lat;
+    }
+    this.onUserMoved();
+  }
+
+  private onWheel = (e: WheelEvent) => {
+    e.preventDefault();
+    // Trackpad pinch arrives as ctrl+wheel, and lines/pages need scaling up.
+    const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1;
+    const delta = e.deltaY * unit * (e.ctrlKey ? 2.2 : 1);
+    this.zoomAt(Math.exp(-delta * 0.0022), e.clientX, e.clientY);
+  };
+
+  /** Called whenever the visitor takes the camera off its scripted path. */
+  private onUserMoved() {
+    this.settle = false;
+    this.o.onUserDrag?.();
   }
 
   private degPerPx() {
     return 57.3 / Math.max(40, this.cssW * 0.5 * this.scale);
   }
 
+  private pointers = new Map<number, { x: number; y: number }>();
+  private pinch: { dist: number; x: number; y: number } | null = null;
+
   private onDown = (e: PointerEvent) => {
     if (e.button !== 0) return;
+    this.settle = false;
+    this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (this.pointers.size === 2) {
+      const [a, b] = [...this.pointers.values()];
+      this.pinch = { dist: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      this.pointer = null;
+      this.velocity = 0;
+      return;
+    }
+    if (this.pointers.size > 2) return;
     this.pointer = {
       id: e.pointerId,
       x: e.clientX,
@@ -655,6 +904,20 @@ export class EarthGlobe {
   };
 
   private onMove = (e: PointerEvent) => {
+    if (this.pointers.has(e.pointerId)) {
+      this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    }
+    if (this.pinch && this.pointers.size >= 2) {
+      const [a, b] = [...this.pointers.values()];
+      const dist = Math.hypot(a.x - b.x, a.y - b.y);
+      const mx = (a.x + b.x) / 2;
+      const my = (a.y + b.y) / 2;
+      if (this.pinch.dist > 8 && dist > 8) {
+        this.zoomAt(dist / this.pinch.dist, this.pinch.x, this.pinch.y);
+      }
+      this.pinch = { dist, x: mx, y: my };
+      return;
+    }
     const p = this.pointer;
     if (!p || p.id !== e.pointerId) return;
     const dx = e.clientX - p.x;
@@ -663,7 +926,9 @@ export class EarthGlobe {
       // Touch keeps vertical page scroll (touch-action: pan-y): only a
       // sideways move counts as a drag. Mouse can tilt too.
       const sideways = Math.abs(dx) >= 4;
-      const tilt = p.mouse && Math.abs(dy) >= 4;
+      // Close in there is nowhere to scroll to, so a finger can pan north
+      // and south the way a map does.
+      const tilt = (p.mouse || this.scale > 1.3) && Math.abs(dy) >= 4;
       if (!sideways && !tilt) return;
       p.dragging = true;
       this.targetLng = null;
@@ -676,8 +941,9 @@ export class EarthGlobe {
     }
     const k = this.degPerPx();
     this.lng = p.lng - dx * k;
-    if (p.mouse) {
-      this.lat = Math.max(LAT_MIN, Math.min(LAT_MAX, p.lat + dy * k));
+    if (p.mouse || this.scale > 1.3) {
+      const [latMin, latMax] = this.latLimit();
+      this.lat = Math.max(latMin, Math.min(latMax, p.lat + dy * k));
       this.targetLat = this.lat;
     }
     const now = performance.now();
@@ -689,6 +955,8 @@ export class EarthGlobe {
   };
 
   private onUp = (e: PointerEvent) => {
+    this.pointers.delete(e.pointerId);
+    if (this.pointers.size < 2) this.pinch = null;
     const p = this.pointer;
     if (!p || p.id !== e.pointerId) return;
     if (p.dragging && performance.now() - p.lastT < 80) {
@@ -752,6 +1020,18 @@ export class EarthGlobe {
       this.time += dt;
       this.cloudU += dt * 0.0011;
     }
+    // The arc frames both ends while it draws. Once it has landed, close in
+    // on the destination: that is the place, and it is what a scroll should
+    // dive into.
+    if (this.settle && this.dest && this.arcProgress() >= 1) {
+      this.settle = false;
+      const [latMin, latMax] = this.latLimit();
+      this.targetLng = this.dest.lng;
+      this.targetLat = Math.max(latMin, Math.min(latMax, this.dest.lat));
+      this.targetScale = Math.min(SCALE_MAX, this.idle * 2.6);
+      if (reduced) this.snapCamera();
+    }
+
     const dragging = !!this.pointer?.dragging;
     if (!dragging) {
       if (Math.abs(this.velocity) > 0.5) {
@@ -760,7 +1040,9 @@ export class EarthGlobe {
       } else if (this.targetLng !== null) {
         const d = wrapDeg(this.targetLng - this.lng);
         this.lng += reduced ? d : d * (1 - Math.exp(-dt * 3.2));
-      } else if (!reduced && !this.dest) {
+      } else if (!reduced && !this.dest && this.scale < 1.15) {
+        // The drifting planet is for the view from space. Once you are over
+        // a country, the ground holds still.
         this.lng -= SPIN_DEG_PER_S * dt;
       }
       const kl = reduced ? 1 : 1 - Math.exp(-dt * 3.2);
@@ -769,6 +1051,52 @@ export class EarthGlobe {
     const ks = reduced ? 1 : 1 - Math.exp(-dt * 2.4);
     this.scale += (this.targetScale - this.scale) * ks;
     this.lng = wrapDeg(this.lng);
+    this.syncDetail(dt);
+  }
+
+  // --------------------------------------------------------- streamed view
+
+  /** Ask the tile layer for the ground in view, and ease the crossfade. */
+  private syncDetail(dt: number) {
+    const aspect = this.cssW / Math.max(1, this.cssH);
+    const angular = angularHalfWidth(this.scale, aspect);
+    let want = 1 - smoothstep(DETAIL_TO, DETAIL_FROM, angular);
+    if (this.anchors.length && this.anchorDistance() > Math.max(angular * 3, 0.03)) want = 0;
+    const k = this.o.reduced ? 1 : 1 - Math.exp(-dt * 2.2);
+    this.detailMix += (want - this.detailMix) * k;
+
+    // Tiles are only worth fetching over somewhere a traveler might go.
+    const nearCity = !this.anchors.length || this.anchorDistance() < Math.max(angular * 3, 0.03);
+    if (this.streamer && want > 0.001 && nearCity) {
+      this.streamer.request(this.lat, this.lng, angular, this.cssW);
+    }
+
+    const now = this.time;
+    if (this.o.onView && now - this.lastViewEmit > 0.16) {
+      this.lastViewEmit = now;
+      const view = this.detailView;
+      this.o.onView({
+        lat: this.lat,
+        lng: wrapDeg(this.lng),
+        zoom: view && this.detailMix > 0.02
+          ? view.z
+          : Math.max(1, Math.log2(Math.PI / Math.max(1e-6, angular))),
+        spanKm: 2 * angular * EARTH_RADIUS_KM,
+        detail: this.detailMix,
+      });
+    }
+  }
+
+  /** Push the composited window to the GPU, at most a few times a second. */
+  private uploadDetail() {
+    const view = this.detailView;
+    const g = this.g;
+    if (!view || !g || g.gl.isContextLost()) return;
+    const now = performance.now();
+    if (view.coverage < 1 && now - this.detailUploadedAt < 90) return;
+    this.detailUploadedAt = now;
+    this.detailDirty = false;
+    this.upload("detail", view.canvas, true, true);
   }
 
   private arcProgress(): number {
@@ -802,6 +1130,7 @@ export class EarthGlobe {
   private draw() {
     const g = this.g;
     if (!g || !g.tex.day || g.gl.isContextLost()) return;
+    if (this.detailDirty) this.uploadDetail();
     const { gl } = g;
     const c = this.o.canvas;
     const W = c.width;
@@ -829,12 +1158,27 @@ export class EarthGlobe {
       ["clouds", "uClouds"],
       ["relief", "uRelief"],
       ["water", "uWater"],
+      ["detail", "uDetail"],
+      ["borders", "uBorders"],
     ];
     units.forEach(([name, uni], i) => {
       gl.activeTexture(gl.TEXTURE0 + i);
-      gl.bindTexture(gl.TEXTURE_2D, g.tex[name] ?? null);
+      // Stand the day map in for one that hasn't loaded: its mix is 0 either
+      // way, and an unbound sampler is undefined behaviour on some drivers.
+      gl.bindTexture(gl.TEXTURE_2D, g.tex[name] ?? g.tex.day ?? null);
       gl.uniform1i(e.u[uni], i);
     });
+    const detail = this.detailView;
+    const detailMix = detail && g.tex.detail ? this.detailMix : 0;
+    gl.uniform4f(
+      e.u.uDetailRect,
+      detail ? detail.rect[0] : 0,
+      detail ? detail.rect[1] : 0,
+      detail ? detail.rect[2] : 1,
+      detail ? detail.rect[3] : 1,
+    );
+    gl.uniform1f(e.u.uDetailMix, detailMix);
+    gl.uniform1f(e.u.uBorderMix, g.tex.borders ? 0.9 : 0);
     gl.uniformMatrix3fv(e.u.uRot, false, rot);
     gl.uniform1f(e.u.uDist, CAM_DIST);
     gl.uniform2f(e.u.uTan, tan[0], tan[1]);
@@ -979,7 +1323,9 @@ export class EarthGlobe {
     ) => {
       if (!el) return;
       let css = "opacity:0";
-      if (p && show > 0) {
+      const onScreen =
+        !!p && p.x > -40 && p.x < this.cssW + 40 && p.y > -40 && p.y < this.cssH + 40;
+      if (p && show > 0 && onScreen) {
         const { x, y } = p;
         const vis = p.vis * show;
         // Keep the pill inside the frame.
