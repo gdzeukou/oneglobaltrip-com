@@ -509,6 +509,16 @@ export class EarthGlobe {
     if (this.o.reduced) this.scale = this.targetScale;
   }
 
+  /** Turn to face a point, keeping the current distance. */
+  lookAt(at: LatLng) {
+    const [latMin, latMax] = this.latLimit();
+    this.velocity = 0;
+    this.settle = false;
+    this.targetLng = at.lng;
+    this.targetLat = Math.max(latMin, Math.min(latMax, at.lat));
+    if (this.o.reduced) this.snapCamera();
+  }
+
   /** Put a point under the middle of the view at a given span, in km. */
   flyTo(at: LatLng, spanKm = 40) {
     const angular = spanKm / 2 / EARTH_RADIUS_KM;

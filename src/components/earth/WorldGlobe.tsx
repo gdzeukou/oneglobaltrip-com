@@ -36,6 +36,8 @@ export type GlobeApi = {
   zoomBy: (factor: number) => void;
   /** Centre a point and set how much ground is in view, in kilometres. */
   flyTo: (at: LatLng, spanKm?: number) => void;
+  /** Turn to face a point without changing how close the camera is. */
+  lookAt: (at: LatLng) => void;
 };
 
 function webgl2Available(): boolean {
@@ -122,6 +124,7 @@ export default function WorldGlobe({
     apiRef.current = {
       zoomBy: (f) => globeRef.current?.zoomBy(f),
       flyTo: (at, spanKm) => globeRef.current?.flyTo(at, spanKm),
+      lookAt: (at) => globeRef.current?.lookAt(at),
     };
     return () => {
       apiRef.current = null;

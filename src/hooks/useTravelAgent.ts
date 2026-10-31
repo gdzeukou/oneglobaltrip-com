@@ -18,15 +18,35 @@ export type OfferCard = {
   badge?: string;
 };
 
+/** Why an answer did not arrive, when the function told us. */
+export type FailReason = 'missing_api_key' | 'upstream' | 'network' | 'empty_reply' | 'unknown';
+
 export type AgentTurn = {
   id: number;
   question: string;
   status: 'loading' | 'done';
   offline: boolean;
+  reason: FailReason;
   message: string;
   cards: OfferCard[];
   followUp: string | null;
 };
+
+/**
+ * supabase-js hands back the raw Response on a non-2xx, and our function puts
+ * the cause in its body. Read it so the page can say something true.
+ */
+async function reasonFrom(error: unknown): Promise<FailReason> {
+  const context = (error as { context?: Response } | null)?.context;
+  if (!context || typeof context.json !== 'function') return 'unknown';
+  try {
+    const body = (await context.json()) as { reason?: string };
+    const known: FailReason[] = ['missing_api_key', 'upstream', 'network', 'empty_reply'];
+    return known.includes(body?.reason as FailReason) ? (body.reason as FailReason) : 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
 
 const TOKEN_KEY = 'ogt:agent-session';
 const TIMEOUT_MS = 25_000;
@@ -54,10 +74,11 @@ export function useTravelAgent(userId: string | null) {
   const ask = useCallback(
     async (question: string): Promise<AgentTurn> => {
       const id = nextId.current++;
-      const pending: AgentTurn = { id, question, status: 'loading', offline: false, message: '', cards: [], followUp: null };
+      const pending: AgentTurn = { id, question, status: 'loading', offline: false, reason: 'unknown', message: '', cards: [], followUp: null };
       setTurns((t) => [...t, pending]);
 
       let done: AgentTurn;
+      let reason: FailReason = 'unknown';
       try {
         const call = supabase.functions.invoke('ogt-travel-agent', {
           body: { message: question, session_token: readToken(), user_id: userId, current_page: '/' },
@@ -65,6 +86,7 @@ export function useTravelAgent(userId: string | null) {
         const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), TIMEOUT_MS));
         const { data, error } = await Promise.race([call, timeout]);
         if (error || !data || typeof data.message !== 'string' || !data.message.trim()) {
+          if (error) reason = await reasonFrom(error);
           throw error ?? new Error('empty reply');
         }
         if (typeof data.session_token === 'string') saveToken(data.session_token);
@@ -81,7 +103,7 @@ export function useTravelAgent(userId: string | null) {
           followUp: typeof data.follow_up_question === 'string' && data.follow_up_question.trim() ? data.follow_up_question.trim() : null,
         };
       } catch {
-        done = { ...pending, status: 'done', offline: true };
+        done = { ...pending, status: 'done', offline: true, reason };
       }
       setTurns((t) => t.map((x) => (x.id === id ? done : x)));
       return done;
