@@ -17,6 +17,7 @@ import {
   Compass,
   Hand,
   Loader2,
+  LocateFixed,
   MapPin,
   Minus,
   Navigation,
@@ -34,14 +35,17 @@ import type { GlobeApi } from '@/components/earth/WorldGlobe';
 import GlobePanel from '@/components/ogt/GlobePanel';
 import SightCards from '@/components/ogt/SightCards';
 import { useTravelAgent, type AgentTurn, type OfferCard } from '@/hooks/useTravelAgent';
+import { alreadyGranted, coarseFix, preciseFix } from '@/lib/geolocate';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   DEFAULT_PASSPORT,
   PASSPORT_COUNTRIES,
+  type Origin,
   type Passport,
   arcDeg,
   detectPassport,
   findDestination,
+  nearestCity,
   originFor,
   visaLink,
   visaVerdict,
@@ -171,7 +175,15 @@ function Turn({
         </div>
       ) : turn.offline ? (
         <div className="rounded-2xl bg-white/5 border border-white/10 p-4 space-y-3">
-          <p className="flex items-center gap-2 text-xs text-white/50"><WifiOff size={14} /> The AI agent didn't answer. Here's what we know.</p>
+          <p className="flex items-center gap-2 text-xs text-white/50">
+            <WifiOff size={14} />
+            {turn.reason === 'missing_api_key'
+              ? 'The travel agent is not connected yet.'
+              : turn.reason === 'upstream'
+                ? 'The travel agent is having trouble right now.'
+                : "The travel agent didn't answer."}{' '}
+            Here's what we know.
+          </p>
           {dest && verdict ? (
             <>
               <p className="text-sm leading-relaxed"><b>{dest.emoji} {dest.name}, {dest.country}.</b> {verdict.badge}. {verdict.detail}</p>
@@ -226,6 +238,9 @@ const HomeApp = () => {
   const [panel, setPanel] = useState<PanelId | null>(null);
   const [destId, setDestId] = useState<string | null>(null);
   const [passport, setPassport] = useState<Passport>(DEFAULT_PASSPORT);
+  const [located, setLocated] = useState<Origin | null>(null);
+  const [locating, setLocating] = useState(false);
+  const touchedPassport = useRef(false);
   const [month, setMonth] = useState('Flexible');
   const [travelers, setTravelers] = useState(2);
   const [region, setRegion] = useState('All');
@@ -246,9 +261,56 @@ const HomeApp = () => {
     return () => window.removeEventListener('resize', fit);
   }, []);
 
+  const applyFix = useCallback(
+    (fix: { lat: number; lng: number; city: string | null }) => {
+      const city = nearestCity(fix);
+      if (!city) return;
+      setLocated({
+        lat: fix.lat,
+        lng: fix.lng,
+        label: fix.city ?? city.name,
+        country: city.country,
+      });
+      // Most people are in the country they are standing in, but it is only a
+      // guess, so it never overrides a passport they picked themselves.
+      if (!touchedPassport.current && PASSPORT_COUNTRIES.includes(city.country)) {
+        setPassport(city.country);
+      }
+      if (!destId) globeApi.current?.lookAt(fix);
+    },
+    [destId],
+  );
+
+  // Quiet by default: the edge reads a coarse location off the request, and
+  // the browser is only asked if the visitor already said yes once.
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const fix = await coarseFix();
+      if (!cancelled && fix) applyFix(fix);
+      if (await alreadyGranted()) {
+        const precise = await preciseFix();
+        if (!cancelled && precise.ok) applyFix(precise.fix);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const useMyLocation = useCallback(async () => {
+    setLocating(true);
+    const outcome = await preciseFix();
+    setLocating(false);
+    if (outcome.ok) applyFix(outcome.fix);
+  }, [applyFix]);
+
   const dest = destId ? globeDestinations.find((d) => d.id === destId) ?? null : null;
   const verdict = dest ? visaVerdict(dest.country, passport) : null;
-  const origin = useMemo(() => originFor(passport), [passport]);
+  // Where you are and which passport you hold are different questions. Until
+  // we know where you are, the passport's best-known city stands in.
+  const origin = located ?? originFor(passport);
   const busy = turns.some((t) => t.status === 'loading');
   // Past this the view is a map of somewhere, not a planet.
   const close = (view?.detail ?? 0) > 0.25;
@@ -331,10 +393,10 @@ const HomeApp = () => {
         const text = `${turn.message} ${turn.cards.map((c) => `${c.title} ${c.subtitle ?? ''}`).join(' ')}`;
         const found = findDestination(text);
         // Skip the traveler's own city, which replies often mention as the origin.
-        if (found && found.name !== originFor(p ?? passport).label) setDestId(found.id);
+        if (found && found.name !== origin.label) setDestId(found.id);
       }
     },
-    [ask, passport],
+    [ask, origin.label],
   );
 
   const toggle = (id: PanelId) => setPanel((cur) => (cur === id ? null : id));
@@ -501,15 +563,32 @@ const HomeApp = () => {
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-white/45">Your passport</span>
                 <select
                   value={passport}
-                  onChange={(e) => setPassport(e.target.value)}
+                  onChange={(e) => {
+                    touchedPassport.current = true;
+                    setPassport(e.target.value);
+                  }}
                   className="mt-2 block w-full h-11 rounded-lg bg-white/10 border border-white/20 px-3 text-sm font-semibold text-white outline-none focus:border-amber-300"
                 >
                   {PASSPORT_COUNTRIES.map((c) => (
                     <option key={c} value={c} className="bg-[#0b1224] text-white">{c}</option>
                   ))}
                 </select>
-                <span className="mt-1.5 block text-xs text-white/45">Flying from {origin.label}</span>
               </label>
+              <div className="flex items-center justify-between gap-3 text-xs">
+                <span className="text-white/45">
+                  Flying from <b className="text-white/75">{origin.label}</b>
+                  {located ? '' : ' · guessed from your passport'}
+                </span>
+                <button
+                  type="button"
+                  onClick={useMyLocation}
+                  disabled={locating}
+                  className="shrink-0 inline-flex items-center gap-1.5 font-semibold text-amber-300 hover:underline disabled:opacity-50"
+                >
+                  {locating ? <Loader2 size={13} className="animate-spin" /> : <LocateFixed size={13} />}
+                  Use my location
+                </button>
+              </div>
               {dest && verdict ? (
                 <div className="rounded-2xl bg-white text-zinc-900 overflow-hidden">
                   <div className="p-5">

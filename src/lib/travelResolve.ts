@@ -64,6 +64,22 @@ for (const d of globeDestinations) {
   if (!held || d.tier < held.tier) ORIGIN_BY_COUNTRY.set(d.country, d);
 }
 
+/** The best-known city nearest a point, for turning a GPS fix into a place. */
+export function nearestCity(at: LatLng): GlobeDestination | null {
+  let best: GlobeDestination | null = null;
+  let bestDeg = Infinity;
+  for (const d of globeDestinations) {
+    const deg = arcDeg(at, d);
+    // A big city a little further out beats a hamlet next door.
+    const weighted = deg * (1 + 0.12 * (d.tier - 1));
+    if (weighted < bestDeg) {
+      best = d;
+      bestDeg = weighted;
+    }
+  }
+  return best;
+}
+
 export function originFor(passport: Passport): Origin {
   const city = ORIGIN_BY_COUNTRY.get(passport);
   if (city) return { lat: city.lat, lng: city.lng, label: city.name, country: passport };
