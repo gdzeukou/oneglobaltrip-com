@@ -506,3 +506,113 @@ a:focus-visible {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
 }
+
+/* ---------------------------------------------------------------------------
+   World globe (src/components/earth/WorldGlobe.tsx)
+   ------------------------------------------------------------------------- */
+.ogt-globe {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 1.2s ease, transform 1.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.ogt-globe[data-ready] {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ogt-globe { transition: opacity 0.4s ease; transform: none; }
+}
+
+.ogt-globe-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: rgb(3 7 18 / 0.62);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+  will-change: transform, opacity;
+}
+.ogt-globe-label--home { color: #bfe3ff; border-color: rgb(125 196 255 / 0.5); }
+.ogt-globe-label--clear { color: #fde68a; border-color: rgb(252 211 77 / 0.55); }
+.ogt-globe-label--visa { color: #fed7aa; border-color: rgb(251 146 60 / 0.6); }
+
+.ogt-globe-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  color: #fff;
+  background: rgb(255 255 255 / 0.08);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.2s ease;
+}
+.ogt-globe-btn:hover { background: rgb(255 255 255 / 0.16); }
+.ogt-globe-btn:focus-visible { outline: 2px solid #fcd34d; outline-offset: 2px; }
+
+.ogt-globe-credit {
+  position: absolute;
+  right: 4%;
+  bottom: 2%;
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: rgb(255 255 255 / 0.3);
+  text-decoration: none;
+}
+.ogt-globe-credit:hover,
+.ogt-globe-credit:focus-visible { color: rgb(255 255 255 / 0.65); text-decoration: underline; }
+
+.ogt-globe-fallback-disc {
+  background:
+    radial-gradient(circle at 35% 30%, rgb(125 196 255 / 0.35), transparent 55%),
+    radial-gradient(circle at 50% 50%, #0b2a5b, #030712 72%);
+  box-shadow: 0 0 80px rgb(96 165 250 / 0.25), inset -30px -40px 80px rgb(0 0 0 / 0.6);
+}
+
+/* Night sky behind the hero globe: three layers of stars, no images. */
+.ogt-stars {
+  background-image:
+    radial-gradient(1px 1px at 12% 18%, rgb(255 255 255 / 0.8), transparent 60%),
+    radial-gradient(1px 1px at 72% 12%, rgb(255 255 255 / 0.7), transparent 60%),
+    radial-gradient(1.5px 1.5px at 38% 64%, rgb(255 255 255 / 0.6), transparent 60%),
+    radial-gradient(1px 1px at 86% 58%, rgb(255 255 255 / 0.75), transparent 60%),
+    radial-gradient(1px 1px at 22% 86%, rgb(255 255 255 / 0.55), transparent 60%),
+    radial-gradient(1.5px 1.5px at 58% 34%, rgb(191 227 255 / 0.7), transparent 60%),
+    radial-gradient(1px 1px at 93% 88%, rgb(255 255 255 / 0.6), transparent 60%),
+    radial-gradient(1px 1px at 5% 48%, rgb(255 255 255 / 0.5), transparent 60%);
+  background-size: 340px 340px, 420px 420px, 520px 520px, 380px 380px, 460px 460px, 610px 610px, 290px 290px, 530px 530px;
+  opacity: 0.85;
+}
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* The globe app sets its own type on a dark canvas: undo the site-wide
+   heading colours and muted body text inside it. In the base layer so
+   Tailwind utilities still win. */
+@layer base {
+  .ogt-app :where(h1, h2, h3, h4, h5, h6) {
+    color: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+  }
+  .ogt-app :where(p, li, span) {
+    color: inherit;
+    line-height: inherit;
+  }
+}
