@@ -9,7 +9,7 @@
  * arc from the traveler's origin and opens the Trip panel.
  */
 
-import React, { lazy, Suspense, useCallback, useMemo, useRef, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
@@ -19,6 +19,7 @@ import {
   Loader2,
   MapPin,
   Minus,
+  Navigation,
   Plane,
   Plus,
   ShieldCheck,
@@ -28,18 +29,20 @@ import {
   WifiOff,
 } from 'lucide-react';
 import { globeDestinations, type GlobeDestination } from '@/data/globeDestinations';
-import type { GlobeDot, LatLng, RGB } from '@/components/earth/globe';
+import type { GlobeDot, GlobeView, LatLng, RGB } from '@/components/earth/globe';
 import type { GlobeApi } from '@/components/earth/WorldGlobe';
 import GlobePanel from '@/components/ogt/GlobePanel';
+import SightCards from '@/components/ogt/SightCards';
 import { useTravelAgent, type AgentTurn, type OfferCard } from '@/hooks/useTravelAgent';
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  ORIGINS,
-  PASSPORTS,
+  DEFAULT_PASSPORT,
+  PASSPORT_COUNTRIES,
   type Passport,
   arcDeg,
   detectPassport,
   findDestination,
+  originFor,
   visaLink,
   visaVerdict,
 } from '@/lib/travelResolve';
@@ -60,6 +63,18 @@ const EXAMPLES = [
 const HUB_DOT: RGB = [1.0, 0.7, 0.24];
 const TOWN_DOT: RGB = [0.5, 0.42, 0.3];
 
+function formatLatLng(at: LatLng): string {
+  const ns = at.lat >= 0 ? 'N' : 'S';
+  const ew = at.lng >= 0 ? 'E' : 'W';
+  return `${Math.abs(at.lat).toFixed(3)}°${ns} ${Math.abs(at.lng).toFixed(3)}°${ew}`;
+}
+
+function formatSpan(km: number): string {
+  if (km < 1) return `${Math.round(km * 1000)} m`;
+  if (km < 10) return `${km.toFixed(1)} km`;
+  return `${Math.round(km).toLocaleString()} km`;
+}
+
 /** Where an offer card leads. We route by card type, not by the URL the model wrote. */
 function cardHref(card: OfferCard, dest: GlobeDestination | null): string {
   switch (card.type) {
@@ -72,6 +87,13 @@ function cardHref(card: OfferCard, dest: GlobeDestination | null): string {
     case 'elite': return '/pricing';
     default: return dest ? dest.ctaLink : '/startmytrip';
   }
+}
+
+/** The best-known city in each country, so no country is unreachable. */
+const byCountry = new Map<string, GlobeDestination>();
+for (const d of globeDestinations) {
+  const held = byCountry.get(d.country);
+  if (!held || d.tier < held.tier) byCountry.set(d.country, d);
 }
 
 const TABS: { id: PanelId; label: string; icon: React.ElementType }[] = [
@@ -203,21 +225,52 @@ const HomeApp = () => {
 
   const [panel, setPanel] = useState<PanelId | null>(null);
   const [destId, setDestId] = useState<string | null>(null);
-  const [passport, setPassport] = useState<Passport>('United States');
+  const [passport, setPassport] = useState<Passport>(DEFAULT_PASSPORT);
   const [month, setMonth] = useState('Flexible');
   const [travelers, setTravelers] = useState(2);
   const [region, setRegion] = useState('All');
+  const [view, setView] = useState<GlobeView | null>(null);
+  const [idleScale, setIdleScale] = useState(0.55);
+
+  // The canvas covers the viewport so streamed imagery can fill it too, which
+  // is wider than the framing the planet wants from space.
+  useEffect(() => {
+    const fit = () => {
+      const short = Math.min(window.innerWidth, window.innerHeight);
+      const long = Math.max(window.innerWidth, window.innerHeight);
+      const portrait = window.innerHeight > window.innerWidth;
+      setIdleScale(((portrait ? 1.04 : 0.92) * short) / long);
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, []);
 
   const dest = destId ? globeDestinations.find((d) => d.id === destId) ?? null : null;
   const verdict = dest ? visaVerdict(dest.country, passport) : null;
-  const origin = ORIGINS[passport];
+  const origin = useMemo(() => originFor(passport), [passport]);
   const busy = turns.some((t) => t.status === 'loading');
+  // Past this the view is a map of somewhere, not a planet.
+  const close = (view?.detail ?? 0) > 0.25;
 
   const pickable = useMemo(() => globeDestinations.filter((d) => d.tier <= 2), []);
   const dots: GlobeDot[] = useMemo(
     () => pickable.map((d) => ({ lat: d.lat, lng: d.lng, color: d.tier === 1 ? HUB_DOT : TOWN_DOT })),
     [pickable],
   );
+  // The deep zoom is for cities worth a trip, not for every field on Earth —
+  // but every country gets at least one, so nowhere is a dead end.
+  const anchors = useMemo(() => {
+    const picked = new Map<string, GlobeDestination>();
+    for (const d of globeDestinations) {
+      if (d.tier <= 2) picked.set(d.id, d);
+      else {
+        const held = byCountry.get(d.country);
+        if (held && held.id === d.id) picked.set(d.id, d);
+      }
+    }
+    return [...picked.values()].map((d) => ({ lat: d.lat, lng: d.lng }));
+  }, []);
   const globeDest = useMemo(
     () => (dest ? { lat: dest.lat, lng: dest.lng, label: `${dest.emoji} ${dest.name}` } : null),
     [dest],
@@ -238,10 +291,10 @@ const HomeApp = () => {
     setPanel('trip');
   }, []);
 
-  const pickNearest = useCallback(
+  const nearest = useCallback(
     (at: LatLng) => {
       let best: GlobeDestination | null = null;
-      let bestDeg = 7;
+      let bestDeg = Infinity;
       for (const d of pickable) {
         const deg = arcDeg(at, d);
         if (deg < bestDeg) {
@@ -249,9 +302,21 @@ const HomeApp = () => {
           bestDeg = deg;
         }
       }
-      if (best) goTo(best);
+      return { place: best, deg: bestDeg };
     },
-    [pickable, goTo],
+    [pickable],
+  );
+
+  const pickNearest = useCallback(
+    (at: LatLng) => {
+      // From space a tap means "that country". Over a city it means that
+      // street corner, so what counts as a hit shrinks with the view.
+      const spanDeg = (view?.spanKm ?? 9000) / 111;
+      const reach = Math.max(0.05, Math.min(7, spanDeg / 4));
+      const { place, deg } = nearest(at);
+      if (place && deg < reach) goTo(place);
+    },
+    [nearest, goTo, view],
   );
 
   const onAsk = useCallback(
@@ -266,7 +331,7 @@ const HomeApp = () => {
         const text = `${turn.message} ${turn.cards.map((c) => `${c.title} ${c.subtitle ?? ''}`).join(' ')}`;
         const found = findDestination(text);
         // Skip the traveler's own city, which replies often mention as the origin.
-        if (found && found.name !== ORIGINS[p ?? passport].label) setDestId(found.id);
+        if (found && found.name !== originFor(p ?? passport).label) setDestId(found.id);
       }
     },
     [ask, passport],
@@ -291,7 +356,7 @@ const HomeApp = () => {
       <div aria-hidden="true" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[140vmax] h-[140vmax] rounded-full bg-[radial-gradient(circle,rgba(56,130,246,0.16),transparent_45%)]" />
       <div
         className={`absolute top-[53%] lg:top-1/2 -translate-x-1/2 -translate-y-1/2 transition-[left] duration-700 ease-out ${panel ? 'left-1/2 lg:left-[calc(50%-150px)]' : 'left-1/2'}`}
-        style={{ width: 'min(max(100vw, 70svh), 115svh)' }}
+        style={{ width: 'max(100vw, 100svh)' }}
       >
         <Suspense fallback={<div className="aspect-square w-full" />}>
           <WorldGlobe
@@ -299,7 +364,10 @@ const HomeApp = () => {
             destination={globeDest}
             tone={verdict?.hunt ? 'visa' : 'clear'}
             dots={dots}
+            anchors={anchors}
             onPick={pickNearest}
+            onView={setView}
+            idleScale={idleScale}
             apiRef={globeApi}
             chrome={false}
           />
@@ -379,9 +447,19 @@ const HomeApp = () => {
         <button type="button" onClick={() => globeApi.current?.zoomBy(0.8)} className="ogt-globe-btn" aria-label="Zoom out of the globe"><Minus size={16} /></button>
       </div>
       {!panel && (
-        <p className="fixed z-20 left-1/2 -translate-x-1/2 bottom-[5.5rem] lg:bottom-8 text-xs text-white/50 flex items-center gap-1.5 whitespace-nowrap pointer-events-none">
-          <Hand size={13} /> Drag to spin. Tap a gold dot to fly there.
-        </p>
+        <div className="fixed z-20 left-1/2 -translate-x-1/2 bottom-[5.5rem] lg:bottom-8 flex flex-col items-center gap-1.5 pointer-events-none">
+          <p className="text-xs text-white/50 flex items-center gap-1.5 whitespace-nowrap">
+            <Hand size={13} />
+            {close
+              ? 'Drag to pan. Scroll or pinch to go closer. Tap a city to open it.'
+              : 'Drag to spin. Scroll to dive into a city. Tap a gold dot to fly there.'}
+          </p>
+          {close && view && (
+            <p className="text-[11px] font-mono text-amber-300/70 whitespace-nowrap">
+              {formatLatLng(view)} · {formatSpan(view.spanKm)} across
+            </p>
+          )}
+        </div>
       )}
       <a
         href="https://www.solarsystemscope.com/textures/"
@@ -419,22 +497,19 @@ const HomeApp = () => {
 
           {panel === 'trip' && (
             <div className="space-y-5">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-white/45">Your passport</p>
-                <div className="mt-2 flex flex-wrap gap-1.5" role="radiogroup" aria-label="Your passport">
-                  {PASSPORTS.map((p) => (
-                    <button
-                      key={p}
-                      role="radio"
-                      aria-checked={p === passport}
-                      onClick={() => setPassport(p)}
-                      className={p === passport ? 'px-3 py-1.5 rounded-md bg-white text-[#030712] text-xs font-bold' : 'px-3 py-1.5 rounded-md border border-white/20 text-white/80 text-xs font-medium hover:bg-white/10'}
-                    >
-                      {p}
-                    </button>
+              <label className="block">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-white/45">Your passport</span>
+                <select
+                  value={passport}
+                  onChange={(e) => setPassport(e.target.value)}
+                  className="mt-2 block w-full h-11 rounded-lg bg-white/10 border border-white/20 px-3 text-sm font-semibold text-white outline-none focus:border-amber-300"
+                >
+                  {PASSPORT_COUNTRIES.map((c) => (
+                    <option key={c} value={c} className="bg-[#0b1224] text-white">{c}</option>
                   ))}
-                </div>
-              </div>
+                </select>
+                <span className="mt-1.5 block text-xs text-white/45">Flying from {origin.label}</span>
+              </label>
               {dest && verdict ? (
                 <div className="rounded-2xl bg-white text-zinc-900 overflow-hidden">
                   <div className="p-5">
@@ -474,13 +549,28 @@ const HomeApp = () => {
                     <button onClick={() => navigate(visaLink(dest.country))} className="px-4 py-3 rounded-lg border border-zinc-300 font-semibold text-sm hover:bg-zinc-50">
                       Visa
                     </button>
+                    <button
+                      onClick={() => globeApi.current?.flyTo({ lat: dest.lat, lng: dest.lng }, 6)}
+                      className="px-4 py-3 rounded-lg border border-zinc-300 font-semibold text-sm hover:bg-zinc-50"
+                      aria-label={`Fly down over ${dest.name}`}
+                      title="Fly down over the city"
+                    >
+                      <Navigation size={16} />
+                    </button>
                   </div>
                 </div>
               ) : (
                 <div className="rounded-2xl border border-dashed border-white/20 p-5 text-sm text-white/70 space-y-3">
-                  <p>No destination yet. Ask the search bar, tap a gold dot on the globe, or pick one from Explore.</p>
+                  <p>No destination yet. Ask the search bar, tap a gold dot on the globe, or zoom in and tap any spot on Earth.</p>
                   <button onClick={() => setPanel('explore')} className="inline-flex items-center gap-1.5 font-semibold text-amber-300"><Compass size={15} /> Open Explore</button>
                 </div>
+              )}
+              {dest && (
+                <SightCards
+                  dest={dest}
+                  onAsk={onAsk}
+                  onFlyTo={(at) => globeApi.current?.flyTo(at, 2.5)}
+                />
               )}
               <p className="text-xs text-white/40">Rules change. Always double-check with the official consulate. This is guidance, not a guarantee.</p>
             </div>

@@ -6,6 +6,11 @@
  * clouds, sun glint and an atmosphere. One dot per destination; picking a
  * destination flies an arc from the traveler's origin to it.
  *
+ * Drag to spin, wheel or pinch to zoom. Past about 2000 km across, the baked
+ * Blue Marble textures run out of pixels and the view crossfades to live
+ * satellite tiles, down to street level, with country outlines inked from
+ * vector data so they stay one pixel wide the whole way.
+ *
  *   - engine and textures load when the globe nears the viewport
  *   - the frame loop only runs while the globe is on screen
  *   - prefers-reduced-motion: no idle spin, no drift, instant turns
@@ -17,7 +22,8 @@
 
 import { useEffect, useRef, useState, type MutableRefObject } from 'react';
 import { Minus, Plus } from 'lucide-react';
-import type { DestinationTone, EarthGlobe, GlobeDot, LatLng } from './globe';
+import type { DestinationTone, EarthGlobe, GlobeDot, GlobeView, LatLng } from './globe';
+import { TILE_SOURCE } from './tiles';
 import dayUrl from '@/assets/earth/day-2k.webp';
 import day4kUrl from '@/assets/earth/day-4k.webp';
 import lightsUrl from '@/assets/earth/lights-2k.webp';
@@ -26,7 +32,11 @@ import reliefUrl from '@/assets/earth/relief-2k.webp';
 import waterUrl from '@/assets/earth/water-1k.webp';
 
 export type GlobePlace = LatLng & { label: string };
-export type GlobeApi = { zoomBy: (factor: number) => void };
+export type GlobeApi = {
+  zoomBy: (factor: number) => void;
+  /** Centre a point and set how much ground is in view, in kilometres. */
+  flyTo: (at: LatLng, spanKm?: number) => void;
+};
 
 function webgl2Available(): boolean {
   try {
@@ -44,7 +54,10 @@ export default function WorldGlobe({
   destination,
   tone,
   dots,
+  anchors,
   onPick,
+  onView,
+  idleScale,
   apiRef,
   chrome = true,
   className = '',
@@ -53,8 +66,14 @@ export default function WorldGlobe({
   destination: GlobePlace | null;
   tone: DestinationTone;
   dots: GlobeDot[];
+  /** Cities the deep zoom may visit; elsewhere the camera stays high. */
+  anchors?: LatLng[];
   /** Tap or click on the planet, with the point under the finger. */
   onPick?: (at: LatLng) => void;
+  /** Where the camera is and how close, throttled. */
+  onView?: (view: GlobeView) => void;
+  /** Fraction of the canvas the planet fills at rest. */
+  idleScale?: number;
   /** Imperative handle, for zoom buttons rendered outside the globe. */
   apiRef?: MutableRefObject<GlobeApi | null>;
   /**
@@ -75,8 +94,8 @@ export default function WorldGlobe({
   const [ready, setReady] = useState(false);
 
   // Latest props for the async create() and the engine callbacks.
-  const latest = useRef({ origin, destination, tone, dots, onPick });
-  latest.current = { origin, destination, tone, dots, onPick };
+  const latest = useRef({ origin, destination, tone, dots, anchors, onPick, onView, idleScale });
+  latest.current = { origin, destination, tone, dots, anchors, onPick, onView, idleScale };
 
   useEffect(() => {
     globeRef.current?.setHome(origin);
@@ -91,8 +110,19 @@ export default function WorldGlobe({
   }, [dots]);
 
   useEffect(() => {
+    if (idleScale) globeRef.current?.setIdleScale(idleScale);
+  }, [idleScale]);
+
+  useEffect(() => {
+    if (anchors) globeRef.current?.setAnchors(anchors);
+  }, [anchors]);
+
+  useEffect(() => {
     if (!apiRef) return;
-    apiRef.current = { zoomBy: (f) => globeRef.current?.zoomBy(f) };
+    apiRef.current = {
+      zoomBy: (f) => globeRef.current?.zoomBy(f),
+      flyTo: (at, spanKm) => globeRef.current?.flyTo(at, spanKm),
+    };
     return () => {
       apiRef.current = null;
     };
@@ -135,13 +165,18 @@ export default function WorldGlobe({
         },
         home: { lat: now.origin.lat, lng: now.origin.lng },
         dots: now.dots,
+        anchors: now.anchors,
         reduced: media.matches,
+        idleScale: now.idleScale,
         labels: { home: () => homeLabelRef.current, dest: () => destLabelRef.current },
         onReady: () => setReady(true),
         onFail: () => setSupported(false),
         onPick: (at) => latest.current.onPick?.(at),
+        onView: (v) => latest.current.onView?.(v),
       });
       globeRef.current = globe;
+      // Handy when driving the globe from a test or the console.
+      if (import.meta.env.DEV) (window as unknown as { ogtGlobe?: EarthGlobe }).ogtGlobe = globe;
       globe.setDestination(now.destination, now.destination ? now.tone : null);
       if (visible) globe.start();
     };
@@ -229,7 +264,7 @@ export default function WorldGlobe({
         rel="noopener noreferrer"
         className="ogt-globe-credit"
       >
-        Imagery: Solar System Scope / NASA, CC BY 4.0
+        Imagery: Solar System Scope / NASA, CC BY 4.0 · {TILE_SOURCE.attribution}
       </a>
       </>
       )}

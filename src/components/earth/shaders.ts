@@ -34,6 +34,8 @@ uniform sampler2D uLights;  // city lights, linear grey
 uniform sampler2D uClouds;  // cloud cover, linear grey
 uniform sampler2D uRelief;  // elevation, linear grey
 uniform sampler2D uWater;   // 1 = open water
+uniform sampler2D uDetail;  // streamed satellite imagery, sRGB
+uniform sampler2D uBorders; // country outlines, linear coverage
 
 uniform mat3 uRot;
 uniform float uDist;
@@ -47,6 +49,9 @@ uniform vec3 uMarkB;        // destination
 uniform vec3 uColA;
 uniform vec3 uColB;
 uniform float uMarkBOn;
+uniform vec4 uDetailRect;   // streamed window in Mercator units: x0, y0, x1, y1
+uniform float uDetailMix;   // 0 = Blue Marble only, 1 = streamed imagery
+uniform float uBorderMix;
 
 const float PI = 3.141592653589793;
 const float TAU = 6.283185307179586;
@@ -105,6 +110,23 @@ void main() {
     gy.x = gyb;
   }
 
+  // Streamed imagery lives in a Mercator window. Mercator is conformal, so
+  // the window is an axis-aligned rectangle however deep the camera goes.
+  // Both detail gradients come from the seam-safe equirectangular ones, by
+  // the chain rule, so the seam and the poles stay well behaved.
+  float cosLat = sqrt(max(1.0 - po.y * po.y, 1e-6));
+  float latR = asin(clamp(po.y, -1.0, 1.0));
+  float mercY = 0.5 - log(tan(PI * 0.25 + clamp(latR, -1.4844, 1.4844) * 0.5)) / TAU;
+  float rectCx = (uDetailRect.x + uDetailRect.z) * 0.5;
+  float mercX = uv.x + (uv.x < rectCx - 0.5 ? 1.0 : (uv.x > rectCx + 0.5 ? -1.0 : 0.0));
+  vec2 rectSize = max(uDetailRect.zw - uDetailRect.xy, vec2(1e-7));
+  vec2 duv = (vec2(mercX, mercY) - uDetailRect.xy) / rectSize;
+  float dydv = 1.0 / (2.0 * cosLat);
+  vec2 dgx = vec2(gx.x, gx.y * dydv) / rectSize;
+  vec2 dgy = vec2(gy.x, gy.y * dydv) / rectSize;
+  vec2 edge = min(duv, 1.0 - duv);
+  float detail = smoothstep(0.0, 0.025, min(edge.x, edge.y)) * uDetailMix;
+
   float dA = length(po - uMarkA);
   float dB = length(po - uMarkB);
   float wA = max(0.0032, fwidth(dA) * 1.15);
@@ -123,8 +145,11 @@ void main() {
   vec3 earth = vec3(0.0);
   if (cov > 0.0) {
     vec3 day = textureGrad(uDay, uv, gx, gy).rgb;
-    float water = textureGrad(uWater, uv, gx, gy).r;
-    float lights = textureGrad(uLights, uv, gx, gy).r;
+    day = mix(day, textureGrad(uDetail, duv, dgx, dgy).rgb, detail);
+    // The small maps are for the view from space: a 2K water mask and city
+    // lights are nonsense over a street, so they leave as the ground sharpens.
+    float water = textureGrad(uWater, uv, gx, gy).r * (1.0 - detail);
+    float lights = textureGrad(uLights, uv, gx, gy).r * (1.0 - detail);
 
     // Relief: bend the normal along the elevation gradient.
     vec2 du = vec2(uReliefTexel.x, 0.0);
@@ -135,7 +160,7 @@ void main() {
     float lng = atan(po.x, po.z);
     vec3 east = vec3(cos(lng), 0.0, -sin(lng));
     vec3 north = vec3(-sin(lat) * sin(lng), cos(lat), -sin(lat) * cos(lng));
-    vec3 nObj = normalize(po - 2.6 * (hE / max(cos(lat), 0.2) * east + hN * north) * (1.0 - water));
+    vec3 nObj = normalize(po - 2.6 * (1.0 - detail) * (hE / max(cos(lat), 0.2) * east + hN * north) * (1.0 - water));
     vec3 n = uRot * nObj;
     float ndl = dot(n, uSun);
     float lit = smoothstep(-0.05, 0.12, ndlS);
@@ -145,15 +170,17 @@ void main() {
     float tc = -b - sqrt(max(CLOUD_R * CLOUD_R - h2, 0.0));
     vec3 pc = (ro + rd * tc) / CLOUD_R;
     vec2 cuv = lonLatUv(pc * uRot) + vec2(uCloudU, 0.0);
-    float cloud = smoothstep(0.20, 0.92, textureGrad(uClouds, cuv, gx, gy).r);
+    float cloud = smoothstep(0.20, 0.92, textureGrad(uClouds, cuv, gx, gy).r) * (1.0 - detail);
 
     // Cloud shadow: the cloud between this ground point and the sun.
     vec3 sunObj = uSun * uRot;
     vec2 suv = lonLatUv(normalize(po + sunObj * 0.014)) + vec2(uCloudU, 0.0);
     float shade = smoothstep(0.20, 0.92, textureGrad(uClouds, suv, gx, gy).r);
 
-    float dif = clamp(ndl, 0.0, 1.0) * lit;
-    vec3 ground = day * sunCol * dif * 1.75;
+    // Zoomed in, the point is to see the place. Ease the terminator out so a
+    // city that happens to be in local night is still legible on the ground.
+    float dif = mix(clamp(ndl, 0.0, 1.0) * lit, 0.62, detail);
+    vec3 ground = day * mix(sunCol, vec3(1.0), detail) * dif * 1.75;
     ground *= 1.0 - shade * 0.5 * lit;
 
     // Ocean: Fresnel sky reflection plus a tight sun glint and broad sheen.
@@ -174,6 +201,11 @@ void main() {
     vec3 cloudCol = sunCol * cLit * 1.3 + vec3(0.010, 0.013, 0.024) * (1.0 - lit);
     earth = mix(ground + nightBase, cloudCol, cloud * 0.94);
     earth += city * night * (1.0 - cloud * 0.82);
+
+    // Country outlines. The baked world map is only sharp from a distance;
+    // close in, the streamed window carries its own freshly inked lines.
+    float line = textureGrad(uBorders, uv, gx, gy).r * uBorderMix * (1.0 - detail);
+    earth = mix(earth, vec3(1.0, 0.90, 0.66) * (0.45 + 0.9 * lit), clamp(line * 0.85, 0.0, 1.0));
 
     // Atmosphere in front of the surface: extinction plus in-scatter,
     // with the column density thickening toward the limb.
