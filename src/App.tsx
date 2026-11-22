@@ -37,7 +37,7 @@ import Contact from "./pages/Contact";
 // Lazy load other components to improve initial load time
 import { lazy, Suspense } from 'react';
 
-const SimplifiedDashboard = lazy(() => import("./pages/SimplifiedDashboard"));
+const Account = lazy(() => import("./pages/site/Account"));
 const Profile = lazy(() => import("./pages/Profile"));
 const TestEmailDelivery = lazy(() => import("./pages/TestEmailDelivery"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -144,7 +144,7 @@ function App() {
                       {/* Protected routes */}
                       <Route path="/dashboard" element={
                         <ProtectedRoute requireEmailVerification={false}>
-                          <SimplifiedDashboard />
+                          <Account />
                         </ProtectedRoute>
                       } />
                       <Route path="/profile" element={
