@@ -11,7 +11,6 @@ export const LazyDashboard = lazy(() => import('@/pages/Dashboard'));
 export const LazyBooking = lazy(() => import('@/pages/Booking'));
 export const LazyConcierge = lazy(() => import('@/pages/Concierge'));
 export const LazyAdmin = lazy(() => import('@/pages/Admin'));
-export const LazyAdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
 export const LazyContact = lazy(() => import('@/pages/Contact'));
 
 // Essential visa country pages for MVP
@@ -89,7 +88,6 @@ const routeComponentMap: Record<string, () => Promise<any>> = {
   '/contact': () => import('@/pages/Contact'),
   '/concierge': () => import('@/pages/Concierge'),
   '/admin': () => import('@/pages/Admin'),
-  '/admin/dashboard': () => import('@/pages/AdminDashboard'),
 };
 
 const preloadRouteComponent = (route: string) => {
