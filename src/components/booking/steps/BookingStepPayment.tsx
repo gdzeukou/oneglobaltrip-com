@@ -1,60 +1,50 @@
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { CreditCard, Shield, Lock } from 'lucide-react';
+import { Lock, AlertCircle } from 'lucide-react';
 import { BookingFormData } from '@/types/booking';
+import SquarePaymentForm from '@/components/payments/SquarePaymentForm';
+
+export interface PendingOrder {
+  id: string;
+  orderReference: string;
+}
 
 interface BookingStepPaymentProps {
   formData: BookingFormData;
   totalAmount: number;
-  onComplete: (paymentData: any) => void;
+  /** Creates (or returns the already created) unpaid order for the current cart. */
+  ensureOrder: () => Promise<PendingOrder>;
+  /** Called only after the payment function confirms a completed charge. */
+  onPaid: (order: PendingOrder) => void;
   onBack: () => void;
 }
 
-const BookingStepPayment = ({ formData, totalAmount, onComplete, onBack }: BookingStepPaymentProps) => {
+const BookingStepPayment = ({ formData, totalAmount, ensureOrder, onPaid, onBack }: BookingStepPaymentProps) => {
+  const [order, setOrder] = useState<PendingOrder | null>(null);
+  const [orderError, setOrderError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handlePayment = async () => {
-    setIsProcessing(true);
-    
-    try {
-      // In production, integrate with Square payment processing
-      // For now, we'll add validation before processing
-      
-      if (totalAmount <= 0) {
-        throw new Error('Invalid payment amount');
-      }
-
-      if (!formData.selectedPlan?.name) {
-        throw new Error('No plan selected for payment');
-      }
-      
-      // Simulate payment processing with realistic delay
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      // Generate more realistic payment data
-      const paymentData = {
-        paymentId: `pay_${Date.now()}_${Math.random().toString(36).substring(7)}`,
-        orderId: `order_${Date.now()}`,
-        amount: totalAmount,
-        currency: 'USD',
-        status: 'completed',
-        paymentMethod: 'square',
-        timestamp: new Date().toISOString(),
-        planName: formData.selectedPlan.name
-      };
-      
-      console.log('Payment processed successfully:', paymentData);
-      onComplete(paymentData);
-    } catch (error) {
-      console.error('Payment failed:', error);
-      alert(`Payment failed: ${error.message}. Please try again or contact support.`);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  // The order row has to exist before the card form: the payment function
+  // prices and charges an order id, never an amount sent by the browser.
+  useEffect(() => {
+    let cancelled = false;
+    setOrderError(null);
+    ensureOrder()
+      .then((created) => {
+        if (!cancelled) setOrder(created);
+      })
+      .catch((error) => {
+        console.error('Could not create order:', error);
+        if (!cancelled) setOrderError('We could not start your order. You have not been charged.');
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attempt]);
 
   return (
     <div className="max-w-2xl mx-auto p-6">
@@ -99,30 +89,30 @@ const BookingStepPayment = ({ formData, totalAmount, onComplete, onBack }: Booki
         </CardContent>
       </Card>
 
-      {/* Payment Method */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5" />
-            Payment Method
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-muted/50 rounded-lg p-6 text-center">
-            <div className="text-muted-foreground mb-4">
-              <Shield className="h-12 w-12 mx-auto mb-2" />
-              <p className="text-sm">
-                Secure payment processing powered by Square
-              </p>
+      {/* Payment */}
+      <div className="mb-6">
+        {order ? (
+          <SquarePaymentForm
+            amount={totalAmount}
+            currency="USD"
+            bookingId={order.id}
+            onPaymentSuccess={() => onPaid(order)}
+            onProcessingChange={setIsProcessing}
+          />
+        ) : orderError ? (
+          <div role="alert" className="flex items-center justify-between gap-4 rounded-lg border border-destructive/30 p-4">
+            <div className="flex items-start gap-2 text-destructive">
+              <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+              <span className="text-sm">{orderError}</span>
             </div>
-            
-            <div className="text-sm text-muted-foreground">
-              Note: In the demo, payment is simulated for testing purposes.
-              In production, this would integrate with Square payment processing.
-            </div>
+            <Button type="button" variant="outline" size="sm" onClick={() => setAttempt((n) => n + 1)}>
+              Try again
+            </Button>
           </div>
-        </CardContent>
-      </Card>
+        ) : (
+          <div className="rounded-lg border p-6 text-center text-sm text-muted-foreground">Preparing your order...</div>
+        )}
+      </div>
 
       {/* Security Notice */}
       <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
@@ -135,18 +125,9 @@ const BookingStepPayment = ({ formData, totalAmount, onComplete, onBack }: Booki
         </div>
       </div>
 
-      <div className="flex gap-4">
-        <Button type="button" variant="outline" onClick={onBack} disabled={isProcessing}>
-          Back
-        </Button>
-        <Button 
-          onClick={handlePayment} 
-          className="flex-1"
-          disabled={isProcessing}
-        >
-          {isProcessing ? 'Processing...' : `Complete Payment - $${totalAmount}`}
-        </Button>
-      </div>
+      <Button type="button" variant="outline" onClick={onBack} disabled={isProcessing}>
+        Back
+      </Button>
     </div>
   );
 };

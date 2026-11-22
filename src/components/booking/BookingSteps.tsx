@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { BookingPlan, BookingFormData, TripDetails, BookingAddOn } from '@/types/booking';
-import { BOOKING_ADDONS, getRelevantAddons } from '@/data/bookingPlans';
+import { useRef, useState } from 'react';
+import { BookingPlan, BookingFormData } from '@/types/booking';
 import { useAuth } from '@/contexts/AuthContext';
 import { BookingProvider, useBooking } from './BookingContext';
 import BookingStepAuth from './steps/BookingStepAuth';
@@ -8,7 +7,7 @@ import BookingStepContact from './steps/BookingStepContact';
 import BookingStepTrip from './steps/BookingStepTrip';
 import BookingStepPlan from './steps/BookingStepPlan';
 import BookingStepAddOns from './steps/BookingStepAddOns';
-import BookingStepPayment from './steps/BookingStepPayment';
+import BookingStepPayment, { PendingOrder } from './steps/BookingStepPayment';
 import BookingStepConfirmation from './steps/BookingStepConfirmation';
 import BookingProgress from './BookingProgress';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,7 +21,10 @@ const BookingStepsContent = ({ selectedPlan, onClose }: BookingStepsProps) => {
   const { user } = useAuth();
   const { formData, updateFormData, validateStep, errors } = useBooking();
   const [currentStep, setCurrentStep] = useState(user ? 1 : 0);
-  const [orderId, setOrderId] = useState<string | null>(null);
+  const [paidOrder, setPaidOrder] = useState<PendingOrder | null>(null);
+  // One unpaid order per cart. Going back and changing the cart makes a new
+  // one; coming back unchanged reuses it (and survives StrictMode re-mounts).
+  const pendingOrder = useRef<{ key: string; promise: Promise<PendingOrder> } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // Initialize form data with selected plan
@@ -73,50 +75,39 @@ const BookingStepsContent = ({ selectedPlan, onClose }: BookingStepsProps) => {
     return planPrice + addonsTotal;
   };
 
-  const createOrder = async (paymentData: any) => {
-    try {
-      const orderData = {
-        user_id: user?.id || null,
-        plan_type: formData.selectedPlan?.id,
-        plan_price: formData.selectedPlan?.price,
-        trip_meta: formData.trip,
-        addons: formData.selectedAddOns?.map(item => ({
-          id: item.addOn.id,
-          name: item.addOn.name,
-          price: item.addOn.price,
-          quantity: item.quantity
-        })) || [],
-        addons_total: formData.addonsTotal || 0,
-        total_amount: calculateTotal(),
-        currency: 'USD',
-        square_payment_id: paymentData.paymentId,
-        square_order_id: paymentData.orderId,
-        payment_status: 'completed',
-        order_status: 'confirmed'
-      };
+  // Creates the order as unpaid. The row only says what is being bought;
+  // payment_status, order_status and the amounts are set by the
+  // square-create-payment function after Square has charged the server price.
+  // The database ignores those columns from the browser anyway.
+  const ensurePendingOrder = (): Promise<PendingOrder> => {
+    if (!user) return Promise.reject(new Error('Sign in to complete your booking'));
+    if (!formData.selectedPlan) return Promise.reject(new Error('No plan selected'));
 
+    const order = {
+      user_id: user.id,
+      plan_type: formData.selectedPlan.id,
+      addons: (formData.selectedAddOns || []).map(item => ({ id: item.addOn.id, quantity: item.quantity })),
+      trip_meta: { ...formData.trip, contact: formData.contact },
+    };
+    const key = JSON.stringify(order);
+    if (pendingOrder.current?.key === key) return pendingOrder.current.promise;
+
+    const promise = (async () => {
       const { data, error } = await supabase
         .from('ogt_orders')
-        .insert(orderData)
-        .select()
+        // The amounts are required by the column types but are placeholders:
+        // the database zeroes them and the payment function writes the real ones.
+        .insert({ ...order, plan_price: 0, total_amount: 0 })
+        .select('id, order_reference')
         .single();
-
       if (error) throw error;
-
-      setOrderId(data.id);
-      
-      // Trigger webhook for future automation
-      await fetch('/api/webhook/order-created', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ order_id: data.id, ...orderData })
-      }).catch(err => console.log('Webhook trigger failed:', err));
-
-      return data;
-    } catch (error) {
-      console.error('Error creating order:', error);
-      throw error;
-    }
+      return { id: data.id, orderReference: data.order_reference };
+    })();
+    promise.catch(() => {
+      if (pendingOrder.current?.promise === promise) pendingOrder.current = null;
+    });
+    pendingOrder.current = { key, promise };
+    return promise;
   };
 
   const renderStep = () => {
@@ -164,9 +155,11 @@ const BookingStepsContent = ({ selectedPlan, onClose }: BookingStepsProps) => {
           <BookingStepPayment
             formData={formData as BookingFormData}
             totalAmount={calculateTotal()}
-            onComplete={async (paymentData) => {
-              const order = await createOrder(paymentData);
-              handleStepComplete({ order });
+            ensureOrder={ensurePendingOrder}
+            onPaid={(order) => {
+              pendingOrder.current = null;
+              setPaidOrder(order);
+              setCurrentStep(6);
             }}
             onBack={handleBack}
           />
@@ -174,7 +167,7 @@ const BookingStepsContent = ({ selectedPlan, onClose }: BookingStepsProps) => {
       case 6:
         return (
           <BookingStepConfirmation
-            orderId={orderId}
+            orderReference={paidOrder?.orderReference ?? null}
             formData={formData as BookingFormData}
             onClose={onClose}
           />

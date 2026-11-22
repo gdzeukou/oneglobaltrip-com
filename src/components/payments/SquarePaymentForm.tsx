@@ -1,17 +1,19 @@
-
-import React, { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CreditCard, Shield, AlertCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { squareConfig, SquareConfig } from '@/lib/squareConfig';
 
 interface SquarePaymentFormProps {
+  /** What the customer is shown. The server charges its own price and refuses if this differs. */
   amount: number;
   currency: string;
+  /** Id of the pending ogt_orders row (or flight booking) being paid for. */
   bookingId: string;
   onPaymentSuccess: (paymentResult: any) => void;
-  onPaymentError: (error: string) => void;
+  onPaymentError?: (error: string) => void;
+  onProcessingChange?: (processing: boolean) => void;
 }
 
 declare global {
@@ -20,124 +22,158 @@ declare global {
   }
 }
 
+let sdkPromise: Promise<void> | null = null;
+
+function loadSquareSdk(config: SquareConfig): Promise<void> {
+  if (window.Square) return Promise.resolve();
+  if (!sdkPromise) {
+    sdkPromise = new Promise<void>((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = config.sdkUrl;
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => {
+        sdkPromise = null;
+        script.remove();
+        reject(new Error('Could not load the payment form'));
+      };
+      document.head.appendChild(script);
+    });
+  }
+  return sdkPromise;
+}
+
+/** supabase-js hides the function's JSON error body behind a generic message. */
+async function functionErrorMessage(error: any): Promise<string> {
+  try {
+    const body = await error?.context?.json?.();
+    if (body?.error && typeof body.error === 'string') return body.error;
+  } catch {
+    // fall through to the generic message
+  }
+  return error?.message || 'Payment processing failed';
+}
+
 const SquarePaymentForm = ({
   amount,
   currency,
   bookingId,
   onPaymentSuccess,
-  onPaymentError
+  onPaymentError,
+  onProcessingChange,
 }: SquarePaymentFormProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<any>(null);
+  const [ready, setReady] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [squarePayments, setSquarePayments] = useState<any>(null);
-  const [card, setCard] = useState<any>(null);
-  const { toast } = useToast();
+  const [error, setError] = useState<string | null>(null);
+
+  const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);
 
   useEffect(() => {
-    const initializeSquare = async () => {
+    if (!squareConfig) return;
+    let cancelled = false;
+
+    (async () => {
       try {
-        if (!window.Square) {
-          // Load Square Web Payments SDK
-          const script = document.createElement('script');
-          script.src = 'https://sandbox.web.squarecdn.com/v1/square.js'; // Use production URL for live
-          script.async = true;
-          script.onload = async () => {
-            await setupSquarePayments();
-          };
-          document.head.appendChild(script);
-        } else {
-          await setupSquarePayments();
+        await loadSquareSdk(squareConfig);
+        if (cancelled || !containerRef.current) return;
+        const payments = window.Square.payments(squareConfig.applicationId, squareConfig.locationId);
+        const card = await payments.card();
+        if (cancelled || !containerRef.current) {
+          card.destroy();
+          return;
         }
-      } catch (error) {
-        console.error('Failed to initialize Square:', error);
-        onPaymentError('Failed to load payment system');
+        await card.attach(containerRef.current);
+        if (cancelled) {
+          card.destroy();
+          return;
+        }
+        cardRef.current = card;
+        setReady(true);
+      } catch (err) {
+        console.error('Failed to set up Square payments:', err);
+        if (!cancelled) setError('The payment form could not be loaded. Refresh the page and try again.');
       }
-    };
-
-    const setupSquarePayments = async () => {
-      try {
-        const payments = window.Square.payments(
-          process.env.NODE_ENV === 'production' 
-            ? 'sq0idp-wGVapF8sNt9PLLIaVFCuUA' // Use environment variable in production
-            : 'sandbox-sq0idb-wGVapF8sNt9PLLIaVFCuUA' // Sandbox app ID
-        );
-        
-        setSquarePayments(payments);
-
-        const cardPayment = await payments.card();
-        await cardPayment.attach('#card-container');
-        setCard(cardPayment);
-      } catch (error) {
-        console.error('Failed to setup Square payments:', error);
-        onPaymentError('Failed to setup payment form');
-      }
-    };
-
-    initializeSquare();
+    })();
 
     return () => {
-      if (card) {
-        card.destroy();
-      }
+      cancelled = true;
+      cardRef.current?.destroy();
+      cardRef.current = null;
     };
   }, []);
 
+  const fail = (message: string) => {
+    setError(message);
+    onPaymentError?.(message);
+  };
+
   const handlePayment = async () => {
-    if (!card || !squarePayments) {
-      onPaymentError('Payment system not ready');
-      return;
-    }
+    const card = cardRef.current;
+    if (!card || !squareConfig || isLoading) return;
 
     setIsLoading(true);
+    onProcessingChange?.(true);
+    setError(null);
 
     try {
       const result = await card.tokenize();
-      
-      if (result.status === 'OK') {
-        const token = result.token;
-        
-        // Call our edge function to process payment
-        const { data, error } = await supabase.functions.invoke('square-create-payment', {
-          body: {
-            sourceId: token,
-            amount: amount,
-            currency: currency,
-            bookingId: bookingId,
-            idempotencyKey: `${bookingId}_${Date.now()}`,
-          },
-        });
-
-        if (error) {
-          throw error;
-        }
-
-        if (data.success) {
-          toast({
-            title: "Payment Successful!",
-            description: "Your booking has been confirmed.",
-          });
-          onPaymentSuccess(data);
-        } else {
-          throw new Error(data.error || 'Payment failed');
-        }
-      } else {
-        throw new Error(result.errors?.[0]?.detail || 'Card tokenization failed');
+      if (result.status !== 'OK') {
+        throw new Error(result.errors?.[0]?.message || 'Check your card details and try again.');
       }
-    } catch (error) {
-      console.error('Payment error:', error);
-      const errorMessage = error.message || 'Payment processing failed';
-      toast({
-        title: "Payment Failed",
-        description: errorMessage,
-        variant: "destructive",
+
+      const { data, error: invokeError } = await supabase.functions.invoke('square-create-payment', {
+        body: {
+          sourceId: result.token,
+          amount,
+          currency,
+          bookingId,
+          environment: squareConfig.environment,
+          // One key per card token: a declined card can be retried with a new
+          // key, and the server refuses a second charge on a paid order.
+          idempotencyKey: crypto.randomUUID(),
+        },
       });
-      onPaymentError(errorMessage);
+
+      if (invokeError) throw new Error(await functionErrorMessage(invokeError));
+      if (!data?.success) throw new Error(data?.error || 'Payment failed');
+
+      // The order is only marked paid when Square reports COMPLETED.
+      if (data.payment?.status !== 'COMPLETED') {
+        throw new Error(
+          'Your payment was received but is not confirmed yet. Do not pay again. We will email you once it clears, or contact support with your order reference.',
+        );
+      }
+
+      onPaymentSuccess(data);
+    } catch (err: any) {
+      console.error('Payment error:', err);
+      fail(err?.message || 'Payment processing failed');
     } finally {
       setIsLoading(false);
+      onProcessingChange?.(false);
     }
   };
 
+  if (!squareConfig) {
+    return (
+      <Card className="w-full">
+        <CardContent className="pt-6">
+          <div className="flex items-start gap-2 text-amber-700">
+            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <span className="text-sm">
+              Online payment is not available right now. You have not been charged. Please contact
+              support@oneglobaltrip.com to complete your booking.
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
@@ -145,54 +181,30 @@ const SquarePaymentForm = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Shield className="h-4 w-4 text-blue-600" />
-            <span className="text-sm font-medium text-blue-900">Secure Payment</span>
+        <div ref={containerRef} className="min-h-[100px] border rounded-lg p-4 bg-white" />
+
+        {!ready && !error && (
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <AlertCircle className="h-4 w-4" />
+            <span className="text-sm">Loading payment form...</span>
           </div>
-          <p className="text-sm text-blue-700">
-            Your payment is processed securely through Square
-          </p>
-        </div>
+        )}
 
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="font-medium">Total Amount:</span>
-            <span className="text-lg font-bold">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: currency,
-              }).format(amount)}
-            </span>
+        {error && (
+          <div role="alert" className="flex items-start gap-2 text-destructive">
+            <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+            <span className="text-sm">{error}</span>
           </div>
-        </div>
+        )}
 
-        <div className="space-y-4">
-          <div id="card-container" className="min-h-[100px] border rounded-lg p-4 bg-white">
-            {/* Square Web Payments SDK will render the card form here */}
-          </div>
+        <Button onClick={handlePayment} disabled={isLoading || !ready} className="w-full">
+          {isLoading ? 'Processing...' : `Pay ${formattedAmount}`}
+        </Button>
 
-          {!squarePayments && (
-            <div className="flex items-center gap-2 text-amber-600">
-              <AlertCircle className="h-4 w-4" />
-              <span className="text-sm">Loading payment form...</span>
-            </div>
-          )}
-
-          <Button
-            onClick={handlePayment}
-            disabled={isLoading || !squarePayments || !card}
-            className="w-full"
-          >
-            {isLoading ? 'Processing...' : `Pay ${new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: currency,
-            }).format(amount)}`}
-          </Button>
-        </div>
-
-        <div className="text-xs text-gray-500 text-center">
-          Powered by Square - Your payment information is encrypted and secure
+        <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+          <Shield className="h-3 w-3" />
+          Card details go straight to Square. We never see or store them.
+          {squareConfig.environment === 'sandbox' && <span className="font-semibold"> Test mode.</span>}
         </div>
       </CardContent>
     </Card>
