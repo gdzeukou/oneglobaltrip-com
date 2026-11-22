@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { afterAuth } from '@/utils/afterAuth';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -96,7 +97,7 @@ const AuthCallback = () => {
               // Increased delay to ensure all auth state is properly updated
               setTimeout(() => {
                 console.log('AuthCallback: Redirecting to dashboard');
-                navigate('/dashboard', { replace: true });
+                navigate(afterAuth(), { replace: true });
               }, 500);
               return;
             } else {
@@ -125,7 +126,7 @@ const AuthCallback = () => {
         if (data.session?.user?.id) {
           console.log('AuthCallback: Existing session found, redirecting to dashboard');
           setTimeout(() => {
-            navigate('/dashboard', { replace: true });
+            navigate(afterAuth(), { replace: true });
           }, 500);
         } else {
           console.log('AuthCallback: No session found, redirecting to auth');

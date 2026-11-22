@@ -44,7 +44,6 @@ const Account = lazy(() => import("./pages/site/Account"));
 const Profile = lazy(() => import("./pages/Profile"));
 const TestEmailDelivery = lazy(() => import("./pages/TestEmailDelivery"));
 const Admin = lazy(() => import("./pages/Admin"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const Concierge = lazy(() => import("./pages/Concierge"));
 const Booking = lazy(() => import("./pages/Booking"));
 const Bookings = lazy(() => import("./pages/Bookings"));
@@ -215,16 +214,10 @@ function App() {
                        {/* Agent Creator routes removed for MVP simplification */}
                       
                       {/* Admin routes */}
-                      <Route path="/admin" element={
-                        <ProtectedRoute>
-                          <Admin />
-                        </ProtectedRoute>
-                      } />
-                      <Route path="/admin-dashboard" element={
-                        <ProtectedRoute>
-                          <AdminDashboard />
-                        </ProtectedRoute>
-                      } />
+                      {/* The admin console checks the admin role itself, with no development bypass */}
+                      <Route path="/admin" element={<Admin />} />
+                      <Route path="/admin-dashboard" element={<Navigate replace to="/admin" />} />
+                      <Route path="/admin/*" element={<Navigate replace to="/admin" />} />
                       
                       {/* Test routes (development) */}
                       <Route path="/test-email" element={
