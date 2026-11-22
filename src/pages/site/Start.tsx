@@ -26,6 +26,9 @@ export default function Start() {
               passport: params.get('passport') ?? undefined,
               destination: params.get('to') ?? undefined,
               service: params.get('service') === 'appointment' ? 'appointment' : 'full',
+              date: params.get('date') ?? undefined,
+              travelers: params.get('travelers') ?? undefined,
+              notes: params.get('route') ?? undefined,
             }}
           />
         </div>

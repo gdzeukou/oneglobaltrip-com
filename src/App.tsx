@@ -30,6 +30,7 @@ import VisaDetail from "./pages/site/VisaDetail";
 import ScoutPass from "./pages/site/ScoutPass";
 import Pricing from "./pages/site/Pricing";
 import Start from "./pages/site/Start";
+import Plan from "./pages/site/Plan";
 import Packages from "./pages/Packages";
 import PackageDetails from "./pages/PackageDetails";
 import Contact from "./pages/Contact";
@@ -95,7 +96,8 @@ function App() {
                       {/* Public routes - Core MVP */}
                       <Route path="/" element={<Home />} />
                       <Route path="/home" element={<Navigate replace to="/" />} />
-                      <Route path="/plan" element={<SimplifiedHome />} />
+                      <Route path="/plan" element={<Plan />} />
+                      <Route path="/globe" element={<SimplifiedHome />} />
                       <Route path="/start" element={<Start />} />
                       <Route path="/scoutpass" element={<ScoutPass />} />
                       <Route path="/auth" element={<Auth />} />

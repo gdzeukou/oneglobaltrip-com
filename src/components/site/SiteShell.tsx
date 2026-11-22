@@ -113,7 +113,8 @@ export function SiteFooter() {
           <div>
             <h3>Trips</h3>
             <ul>
-              <li><Link to="/plan">Trip planner</Link></li>
+              <li><Link to="/plan">Route planner</Link></li>
+              <li><Link to="/globe">The globe</Link></li>
               <li><Link to="/packages">Packages</Link></li>
               <li><Link to="/trips">My trip</Link></li>
             </ul>

@@ -1208,3 +1208,258 @@
   color: var(--ink);
   text-align: right;
 }
+
+/* ---------- route planner ---------- */
+
+.ogt .ogt-rail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.ogt .ogt-rail::before {
+  content: '';
+  position: absolute;
+  left: 0.7rem;
+  top: 0.9rem;
+  bottom: 0.9rem;
+  width: 3px;
+  background: var(--ink);
+}
+
+.ogt .ogt-rail > li {
+  position: relative;
+  padding-left: 2.75rem;
+}
+
+.ogt .ogt-stop {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.4rem 1rem;
+  align-items: center;
+  padding: 0.9rem 0;
+}
+
+.ogt .ogt-stop::before {
+  content: '';
+  position: absolute;
+  left: -2.65rem;
+  top: 1.15rem;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 3px solid var(--ink);
+}
+
+.ogt .ogt-stop-end::before {
+  background: var(--ink);
+}
+
+.ogt .ogt-stop-city {
+  font-size: 1.3rem;
+  font-weight: 750;
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+.ogt .ogt-stop-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ogt .ogt-step-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.ogt .ogt-step-btn:hover {
+  background: rgba(34, 28, 122, 0.08);
+}
+
+.ogt .ogt-step-btn[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ogt .ogt-nights {
+  min-width: 5.2rem;
+  text-align: center;
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A border crossing on the rail: the line is cut and stamped. */
+.ogt .ogt-crossing {
+  --tone: var(--ink);
+  position: relative;
+  margin: 0.35rem 0;
+  padding: 0.6rem 0.9rem;
+  border: 1.5px dashed var(--tone);
+  border-radius: 6px;
+  background: var(--sheet);
+  color: var(--tone);
+  font-size: 0.95rem;
+  font-weight: 650;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.2rem 1rem;
+}
+
+.ogt .ogt-crossing::before {
+  content: '';
+  position: absolute;
+  left: -2.75rem;
+  top: 50%;
+  width: 1.55rem;
+  height: 0.9rem;
+  margin-top: -0.45rem;
+  background: var(--paper);
+  border-block: 3px solid var(--tone);
+}
+
+.ogt .ogt-crossing[data-need='visa'] {
+  --tone: var(--red);
+}
+
+.ogt .ogt-crossing[data-need='none'] {
+  --tone: var(--green);
+}
+
+.ogt .ogt-crossing span:last-child {
+  font-stretch: 68%;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ogt .ogt-add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.ogt .ogt-report {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 60rem) {
+  .ogt .ogt-report {
+    position: sticky;
+    top: 5.5rem;
+  }
+}
+
+.ogt .ogt-report-block + .ogt-report-block {
+  border-top: 1px solid var(--line);
+  padding-top: 1.5rem;
+}
+
+.ogt .ogt-cal {
+  position: relative;
+  margin: 2.6rem 0 2.4rem;
+  height: 1.1rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  background: #fff;
+}
+
+.ogt .ogt-cal-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.ogt .ogt-cal-good {
+  background: var(--green);
+}
+
+.ogt .ogt-cal-tight {
+  background: repeating-linear-gradient(135deg, var(--red) 0 2px, transparent 2px 7px);
+}
+
+.ogt .ogt-cal-closed {
+  background: var(--red);
+}
+
+.ogt .ogt-cal-mark {
+  position: absolute;
+  top: -0.5rem;
+  bottom: -0.5rem;
+  width: 0;
+  border-left: 2px solid var(--ink);
+}
+
+.ogt .ogt-cal-mark span {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.74rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.ogt .ogt-cal-mark[data-side='top'] span {
+  bottom: calc(100% + 0.15rem);
+}
+
+.ogt .ogt-cal-mark[data-side='bottom'] span {
+  top: calc(100% + 0.15rem);
+}
+
+.ogt .ogt-cal-mark[data-edge='start'] span {
+  left: 0;
+  transform: none;
+}
+
+.ogt .ogt-cal-mark[data-edge='end'] span {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+.ogt .ogt-cal-today {
+  border-left: 3px solid var(--ink);
+  top: -0.85rem;
+  bottom: -0.85rem;
+}
+
+.ogt .ogt-tag {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-stretch: 68%;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.ogt .ogt-tag[data-tone='red'] {
+  color: var(--red);
+}
+
+.ogt .ogt-tag[data-tone='green'] {
+  color: var(--green);
+}
+
+.ogt .ogt-tag[data-tone='ink'] {
+  color: var(--ink);
+}

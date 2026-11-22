@@ -114,12 +114,13 @@ export default function Home() {
           <div>
             <h2 className="ogt-h2">Visa sorted. Now the trip.</h2>
             <p className="ogt-lede" style={{ marginTop: '1.25rem' }}>
-              Spin the globe, pick a city and ask the planner for a draft of the trip. Flights and stays are estimates
-              until we confirm the live price with you.
+              Build the route and see every border on it: which visas it needs, which consulate takes the file and the
+              dates the paperwork has to hit.
             </p>
           </div>
           <ul className="ogt-rows">
-            <li><Link to="/plan" className="ogt-row"><span className="ogt-row-name">Trip planner</span><span className="ogt-row-meta">The globe, with an AI planner that answers in plain words</span></Link></li>
+            <li><Link to="/plan" className="ogt-row"><span className="ogt-row-name">Route planner</span><span className="ogt-row-meta">Every border on your route, with the dates to hit</span></Link></li>
+            <li><Link to="/globe" className="ogt-row"><span className="ogt-row-name">The globe</span><span className="ogt-row-meta">Spin it, pick a city, ask the AI planner</span></Link></li>
             <li><Link to="/packages" className="ogt-row"><span className="ogt-row-name">Packages</span><span className="ogt-row-meta">Ready-made trips you can change</span></Link></li>
             <li><Link to="/trips" className="ogt-row"><span className="ogt-row-name">My trip</span><span className="ogt-row-meta">Everything you have added, with one total</span></Link></li>
           </ul>

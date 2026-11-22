@@ -18,6 +18,9 @@ export interface RequestDefaults {
   passport?: string;
   destination?: string;
   service?: Service;
+  date?: string;
+  travelers?: string;
+  notes?: string;
 }
 
 export default function RequestForm({ defaults = {} }: { defaults?: RequestDefaults }) {
@@ -25,7 +28,12 @@ export default function RequestForm({ defaults = {} }: { defaults?: RequestDefau
   const [visa, setVisa] = useState(visaBySlug(defaults.visa)?.slug ?? 'schengen');
   const [service, setService] = useState<Service>(defaults.service ?? 'full');
   const [passport, setPassport] = useState(defaults.passport && PASSPORT_COUNTRIES.includes(defaults.passport) ? defaults.passport : '');
-  const [form, setForm] = useState({ name: '', email: '', phone: '', city: '', date: '', travelers: '1', notes: '' });
+  const [form, setForm] = useState({
+    name: '', email: '', phone: '', city: '',
+    date: defaults.date ?? '',
+    travelers: ['1', '2', '3', '4', '5'].includes(defaults.travelers ?? '') ? defaults.travelers! : defaults.travelers ? '6+' : '1',
+    notes: defaults.notes ?? '',
+  });
   const [state, setState] = useState<'idle' | 'sending' | 'sent'>('idle');
   const [error, setError] = useState('');
 
