@@ -72,7 +72,7 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
   const fetchSearchResults = useCallback(async () => {
     setLoading(true);
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🔍 Fetching search results for conversation:', conversationId);
       }
       
@@ -91,7 +91,7 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         return;
       }
 
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('📊 Found search result messages:', messages?.length || 0);
         console.log('📝 Messages details:', messages);
       }
@@ -105,17 +105,17 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
 
       // Process and transform the search results
       messages?.forEach((message: SearchResultMessage) => {
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log('🔍 Processing message:', message.content, message.metadata);
         }
         const metadata = message.metadata;
         
         if (message.content.includes('FLIGHT_SEARCH_RESULTS') && metadata?.searchResults) {
-          if (process.env.NODE_ENV === 'development') {
+          if (import.meta.env.DEV) {
             console.log('✈️ Processing flight results:', metadata.searchResults);
           }
           const transformedFlights = transformFlightsForDisplay(metadata.searchResults as AmadeusFlightData[]);
-          if (process.env.NODE_ENV === 'development') {
+          if (import.meta.env.DEV) {
             console.log('✅ Transformed flights:', transformedFlights);
           }
           setFlights(transformedFlights);
@@ -124,11 +124,11 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         }
         
         if (message.content.includes('HOTEL_SEARCH_RESULTS') && metadata?.searchResults) {
-          if (process.env.NODE_ENV === 'development') {
+          if (import.meta.env.DEV) {
             console.log('🏨 Processing hotel results:', metadata.searchResults);
           }
           const transformedHotels = transformHotelsForDisplay(metadata.searchResults);
-          if (process.env.NODE_ENV === 'development') {
+          if (import.meta.env.DEV) {
             console.log('✅ Transformed hotels:', transformedHotels);
           }
           setHotels(transformedHotels);
@@ -137,11 +137,11 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         }
         
         if (message.content.includes('CAR_SEARCH_RESULTS') && metadata?.searchResults) {
-          if (process.env.NODE_ENV === 'development') {
+          if (import.meta.env.DEV) {
             console.log('🚗 Processing car results:', metadata.searchResults);
           }
           const transformedCars = transformCarsForDisplay(metadata.searchResults);
-          if (process.env.NODE_ENV === 'development') {
+          if (import.meta.env.DEV) {
             console.log('✅ Transformed cars:', transformedCars);
           }
           setCarRentals(transformedCars);
@@ -167,7 +167,7 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         );
 
         if (hasFlightSearchAttempt) {
-          if (process.env.NODE_ENV === 'development') {
+          if (import.meta.env.DEV) {
             console.log('🎯 No real flights found, showing sample data for demonstration');
           }
           setFlights(generateSampleFlights);
@@ -175,7 +175,7 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         }
       }
 
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🎯 Final results - Flights:', flights.length, 'Hotels:', hotels.length, 'Cars:', carRentals.length);
       }
 
@@ -193,12 +193,12 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
   }, [conversationId, fetchSearchResults]);
 
   const transformFlightsForDisplay = useCallback((flights: any[]): FlightResult[] => {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log('🔄 Transforming flights for display:', flights);
     }
     
     return flights.map((flight, index) => {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('🔄 Processing flight:', flight);
       }
       
@@ -234,7 +234,7 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
         availability: flight.availability || 9
       };
       
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.DEV) {
         console.log('✅ Transformed flight:', transformedFlight);
       }
       return transformedFlight;
@@ -348,7 +348,7 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
   }, []);
 
   const generateSampleFlights = useMemo((): FlightResult[] => {
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.log('🎨 Generating sample flights for demonstration');
     }
     return [
@@ -445,7 +445,7 @@ const AIResultsDisplay: React.FC<AIResultsDisplayProps> = ({
     ];
   }, []);
 
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     console.log('🎯 Render check - Flights:', flights.length, 'Hotels:', hotels.length, 'Cars:', carRentals.length, 'Loading:', loading);
   }
 

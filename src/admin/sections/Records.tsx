@@ -99,7 +99,7 @@ export function Leads() {
       <div className="ogc-toolbar">
         <Chips
           value={view}
-          onChange={setView}
+          onChange={(v) => setView(v as 'all' | 'converted' | 'open')}
           options={[
             { value: 'open', label: 'Not bought yet', count: data.filter((l) => !l.converted_to_order_id).length },
             { value: 'converted', label: 'Bought', count: data.filter((l) => !!l.converted_to_order_id).length },
@@ -268,7 +268,7 @@ export function Applications() {
       <div className="ogc-toolbar">
         <Chips
           value={view}
-          onChange={setView}
+          onChange={(v) => setView(v as 'all' | 'draft' | 'submitted')}
           options={[
             { value: 'submitted', label: 'Submitted', count: data.filter((a) => !isDraft(a)).length },
             { value: 'draft', label: 'Drafts', count: data.filter(isDraft).length },

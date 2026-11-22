@@ -61,6 +61,22 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
 
   const { saves, visited, recent, isSaved, isVisited, savePlace, unsavePlace, markVisited, unmarkVisited, trackRecent } =
     useUserGlobeData();
+
+  // Map a SelectedDestination (camelCase) to the snake_case shape trackRecent expects
+  const trackDestination = useCallback(
+    (dest: SelectedDestination) =>
+      trackRecent({
+        type: dest.type,
+        name: dest.name,
+        country: dest.country,
+        country_slug: dest.countrySlug,
+        city_slug: dest.citySlug ?? null,
+        lat: dest.lat,
+        lng: dest.lng,
+        emoji: dest.emoji ?? null,
+      }),
+    [trackRecent]
+  );
   const { stops, addStop, isInTrip } = useTrip();
   const { profile, updateProfile } = useUserProfile();
 
@@ -128,7 +144,8 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
       if (zoom >= REGION_ZOOM_THRESHOLD && (activeCountrySlug === 'usa' || activeCountrySlug === 'canada')) {
         const admin1 = map.queryRenderedFeatures(e.point, { layers: ['admin-1-label'] });
         if (admin1.length > 0) {
-          const stateName = admin1[0].properties?.name_en as string | undefined;
+          const stateName = (admin1[0] as unknown as { properties?: Record<string, unknown> }).properties
+            ?.name_en as string | undefined;
           const stateEntry = stateName
             ? (COUNTRY_REGIONS[activeCountrySlug] ?? []).find(
                 (r) => r.name.toLowerCase() === stateName.toLowerCase()
@@ -157,7 +174,8 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
       });
 
       if (features.length > 0) {
-        const countryName = features[0].properties?.name_en as string | undefined;
+        const countryName = (features[0] as unknown as { properties?: Record<string, unknown> }).properties
+          ?.name_en as string | undefined;
         if (countryName) {
           const slug = toSlug(countryName);
           const continent = getContinentByCountry(slug) ?? activeContinent;
@@ -212,7 +230,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
       };
       setSelected(sel);
       setSelectedRegion(null);
-      trackRecent(sel);
+      trackDestination(sel);
 
       // Update breadcrumb to reflect this city's country
       if (!activeCountrySlug || activeCountrySlug !== countrySlug) {
@@ -224,7 +242,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
 
       flyTo(dest.lng, dest.lat, Math.max(zoom, 8), 1200);
     },
-    [zoom, flyTo, trackRecent, activeCountrySlug]
+    [zoom, flyTo, trackDestination, activeCountrySlug]
   );
 
   // External city select (from GlobeSearchBar)
@@ -232,7 +250,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
     (dest: SelectedDestination) => {
       setSelected(dest);
       setSelectedRegion(null);
-      trackRecent(dest);
+      trackDestination(dest);
       const continent = getContinentByCountry(dest.countrySlug);
       setActiveContinent(continent ?? null);
       setActiveCountryName(dest.country);
@@ -240,7 +258,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
       setActiveRegionName(null);
       flyTo(dest.lng, dest.lat, Math.max(zoom, 8), 1200);
     },
-    [zoom, flyTo, trackRecent]
+    [zoom, flyTo, trackDestination]
   );
 
   useEffect(() => {
@@ -551,7 +569,7 @@ const MapboxGlobe = ({ onRegisterCityTrigger }: MapboxGlobeProps = {}) => {
         onSelectCity={(dest) => {
           setSelected(dest);
           setSelectedRegion(null);
-          trackRecent(dest);
+          trackDestination(dest);
           flyTo(dest.lng, dest.lat, Math.max(zoom, 8), 1200);
         }}
         onDrillDown={(item) => {

@@ -53,7 +53,7 @@ export default function People({ adminsOnly = false }: { adminsOnly?: boolean })
       <div className="ogc-toolbar">
         <Chips
           value={view}
-          onChange={setView}
+          onChange={(v) => setView(v as 'all' | 'customers' | 'admins')}
           options={[
             { value: 'all', label: 'Everyone', count: data.length },
             { value: 'customers', label: 'Travelers', count: data.filter((a) => !isAdmin(a)).length },

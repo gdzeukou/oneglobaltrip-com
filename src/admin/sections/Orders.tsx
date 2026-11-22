@@ -46,7 +46,7 @@ export default function Orders({ openId, onOpen }: { openId: string | null; onOp
       <div className="ogc-toolbar">
         <Chips
           value={view}
-          onChange={setView}
+          onChange={(v) => setView(v as View)}
           options={[
             { value: 'active', label: 'In progress', count: counts.active },
             { value: 'unpaid', label: 'Not paid', count: counts.unpaid },

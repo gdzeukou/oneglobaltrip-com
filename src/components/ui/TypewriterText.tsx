@@ -18,7 +18,7 @@ const TypewriterText = ({
 }: TypewriterTextProps) => {
   const [displayText, setDisplayText] = useState('');
   const [isComplete, setIsComplete] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const indexRef = useRef(0);
 
   useEffect(() => {

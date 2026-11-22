@@ -46,7 +46,7 @@ export const setupRoutePreloading = () => {
     const links = document.querySelectorAll('a[href^="/"]');
     
     links.forEach(link => {
-      let timeoutId: NodeJS.Timeout;
+      let timeoutId: ReturnType<typeof setTimeout>;
       
       link.addEventListener('mouseenter', () => {
         const href = link.getAttribute('href');

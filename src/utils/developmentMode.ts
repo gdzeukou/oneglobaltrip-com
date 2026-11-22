@@ -9,7 +9,7 @@ export const isDevelopmentMode = (): boolean => {
                        window.location.hostname === '127.0.0.1';
   
   // Check if we're in development based on various indicators
-  const isDev = process.env.NODE_ENV === 'development' || 
+  const isDev = import.meta.env.DEV || 
                 isLovableDev ||
                 window.location.port === '5173' || // Vite default port
                 window.location.port === '3000';   // Common dev port
