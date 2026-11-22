@@ -1,10 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { SitePage } from '@/components/site/SiteShell';
 import RequestForm from '@/components/site/RequestForm';
 import { SCOUTPASS } from '@/data/visaCatalog';
 
 export default function ScoutPass() {
+  const cancelled = useSearchParams()[0].get('payment') === 'cancelled';
   return (
     <SitePage title="ScoutPass appointment hunt">
       <section className="ogt-hero">
@@ -28,6 +29,7 @@ export default function ScoutPass() {
             </p>
           </div>
           <div id="start">
+            {cancelled && <p className="ogt-alert" role="status" style={{ marginBottom: '1rem' }}>Payment cancelled. Nothing was charged. Your request is saved, and you can pay again below.</p>}
             <RequestForm defaults={{ service: 'appointment' }} />
           </div>
         </div>
@@ -37,8 +39,8 @@ export default function ScoutPass() {
         <div className="ogt-wrap">
           <h2 className="ogt-h2">How the hunt runs</h2>
           <ol className="ogt-steps ogt-steps-4" style={{ marginTop: '2.5rem' }}>
-            <li><h3 className="ogt-h3">You send the request</h3><p className="ogt-muted">Your passport, the visa, the city you apply from and the dates that work for you.</p></li>
-            <li><h3 className="ogt-h3">We confirm and you pay</h3><p className="ogt-muted">We check that the visa and the center are right for your case, then you pay the hunt.</p></li>
+            <li><h3 className="ogt-h3">You tell us the trip</h3><p className="ogt-muted">Your passport, the visa, the city you apply from and the dates that work for you.</p></li>
+            <li><h3 className="ogt-h3">You pay the hunt</h3><p className="ogt-muted">By card, on Stripe. You get a receipt and a tracking number by email.</p></li>
             <li><h3 className="ogt-h3">We watch for a slot</h3><p className="ogt-muted">When an appointment opens in your window, we secure it and send you the confirmation.</p></li>
             <li><h3 className="ogt-h3">You go once</h3><p className="ogt-muted">You attend with your file. If we cannot secure an appointment, the hunt is refunded.</p></li>
           </ol>
