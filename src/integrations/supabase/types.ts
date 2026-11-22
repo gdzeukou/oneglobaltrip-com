@@ -10,10 +10,307 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "12.2.3"
   }
   public: {
     Tables: {
+      agent_avatar_presets: {
+        Row: {
+          category: string | null
+          display_name: string
+          emoji: string | null
+          id: string
+          is_active: boolean | null
+          preset_key: string
+          sort_order: number | null
+          svg_url: string | null
+        }
+        Insert: {
+          category?: string | null
+          display_name: string
+          emoji?: string | null
+          id?: string
+          is_active?: boolean | null
+          preset_key: string
+          sort_order?: number | null
+          svg_url?: string | null
+        }
+        Update: {
+          category?: string | null
+          display_name?: string
+          emoji?: string | null
+          id?: string
+          is_active?: boolean | null
+          preset_key?: string
+          sort_order?: number | null
+          svg_url?: string | null
+        }
+        Relationships: []
+      }
+      agent_conversations: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          id: string
+          title: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          id?: string
+          title?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          id?: string
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_conversations_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "travel_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          role: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          role: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          role?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "agent_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_offer_cards: {
+        Row: {
+          affiliate_source: string | null
+          badge: string | null
+          booked_at: string | null
+          clicked_at: string | null
+          commission_amount: number | null
+          commission_rate: number | null
+          created_at: string | null
+          cta_action: string | null
+          cta_label: string | null
+          cta_url: string | null
+          currency: string | null
+          expires_at: string | null
+          id: string
+          image_url: string | null
+          offer_data: Json | null
+          offer_type: string
+          price: number | null
+          session_id: string | null
+          subtitle: string | null
+          title: string
+          user_id: string | null
+          was_booked: boolean | null
+          was_clicked: boolean | null
+        }
+        Insert: {
+          affiliate_source?: string | null
+          badge?: string | null
+          booked_at?: string | null
+          clicked_at?: string | null
+          commission_amount?: number | null
+          commission_rate?: number | null
+          created_at?: string | null
+          cta_action?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          currency?: string | null
+          expires_at?: string | null
+          id?: string
+          image_url?: string | null
+          offer_data?: Json | null
+          offer_type: string
+          price?: number | null
+          session_id?: string | null
+          subtitle?: string | null
+          title: string
+          user_id?: string | null
+          was_booked?: boolean | null
+          was_clicked?: boolean | null
+        }
+        Update: {
+          affiliate_source?: string | null
+          badge?: string | null
+          booked_at?: string | null
+          clicked_at?: string | null
+          commission_amount?: number | null
+          commission_rate?: number | null
+          created_at?: string | null
+          cta_action?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          currency?: string | null
+          expires_at?: string | null
+          id?: string
+          image_url?: string | null
+          offer_data?: Json | null
+          offer_type?: string
+          price?: number | null
+          session_id?: string | null
+          subtitle?: string | null
+          title?: string
+          user_id?: string | null
+          was_booked?: boolean | null
+          was_clicked?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_offer_cards_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "agent_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_onboarding_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          skipped_steps: string[] | null
+          step_1_name_done: boolean | null
+          step_2_personality_done: boolean | null
+          step_3_avatar_done: boolean | null
+          step_4_travel_profile_done: boolean | null
+          step_5_loyalty_done: boolean | null
+          step_6_companions_done: boolean | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          skipped_steps?: string[] | null
+          step_1_name_done?: boolean | null
+          step_2_personality_done?: boolean | null
+          step_3_avatar_done?: boolean | null
+          step_4_travel_profile_done?: boolean | null
+          step_5_loyalty_done?: boolean | null
+          step_6_companions_done?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          skipped_steps?: string[] | null
+          step_1_name_done?: boolean | null
+          step_2_personality_done?: boolean | null
+          step_3_avatar_done?: boolean | null
+          step_4_travel_profile_done?: boolean | null
+          step_5_loyalty_done?: boolean | null
+          step_6_companions_done?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      agent_sessions: {
+        Row: {
+          created_at: string | null
+          current_page: string | null
+          detected_budget: string | null
+          detected_dates: Json | null
+          detected_destination: string | null
+          detected_intent: string | null
+          detected_mood: string | null
+          detected_origin: string | null
+          detected_travelers: number | null
+          id: string
+          is_active: boolean | null
+          messages: Json | null
+          offers_booked: Json | null
+          offers_clicked: Json | null
+          offers_shown: Json | null
+          session_token: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_page?: string | null
+          detected_budget?: string | null
+          detected_dates?: Json | null
+          detected_destination?: string | null
+          detected_intent?: string | null
+          detected_mood?: string | null
+          detected_origin?: string | null
+          detected_travelers?: number | null
+          id?: string
+          is_active?: boolean | null
+          messages?: Json | null
+          offers_booked?: Json | null
+          offers_clicked?: Json | null
+          offers_shown?: Json | null
+          session_token?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_page?: string | null
+          detected_budget?: string | null
+          detected_dates?: Json | null
+          detected_destination?: string | null
+          detected_intent?: string | null
+          detected_mood?: string | null
+          detected_origin?: string | null
+          detected_travelers?: number | null
+          id?: string
+          is_active?: boolean | null
+          messages?: Json | null
+          offers_booked?: Json | null
+          offers_clicked?: Json | null
+          offers_shown?: Json | null
+          session_token?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       application_travelers: {
         Row: {
           application_id: string
@@ -286,6 +583,8 @@ export type Database = {
           square_location_id: string | null
           square_order_id: string | null
           square_payment_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
           updated_at: string
         }
         Insert: {
@@ -303,6 +602,8 @@ export type Database = {
           square_location_id?: string | null
           square_order_id?: string | null
           square_payment_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -320,6 +621,8 @@ export type Database = {
           square_location_id?: string | null
           square_order_id?: string | null
           square_payment_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -509,6 +812,214 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      commission_tracking: {
+        Row: {
+          affiliate_source: string | null
+          booked_at: string | null
+          booking_reference: string | null
+          booking_type: string
+          commission_amount: number | null
+          commission_paid_at: string | null
+          commission_rate: number | null
+          commission_status: string | null
+          created_at: string | null
+          gross_amount: number | null
+          id: string
+          offer_card_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          affiliate_source?: string | null
+          booked_at?: string | null
+          booking_reference?: string | null
+          booking_type: string
+          commission_amount?: number | null
+          commission_paid_at?: string | null
+          commission_rate?: number | null
+          commission_status?: string | null
+          created_at?: string | null
+          gross_amount?: number | null
+          id?: string
+          offer_card_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          affiliate_source?: string | null
+          booked_at?: string | null
+          booking_reference?: string | null
+          booking_type?: string
+          commission_amount?: number | null
+          commission_paid_at?: string | null
+          commission_rate?: number | null
+          commission_status?: string | null
+          created_at?: string | null
+          gross_amount?: number | null
+          id?: string
+          offer_card_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_tracking_offer_card_id_fkey"
+            columns: ["offer_card_id"]
+            isOneToOne: false
+            referencedRelation: "agent_offer_cards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_bookings: {
+        Row: {
+          agent_notes: string | null
+          assigned_agent_id: string | null
+          booking_reference: string | null
+          calendly_event_uri: string | null
+          created_at: string | null
+          destination_code: string
+          document_checklist: Json | null
+          documents_ready: boolean | null
+          duration_minutes: number | null
+          follow_up_required: boolean | null
+          id: string
+          meeting_link: string | null
+          original_scheduled_at: string | null
+          outcome: string | null
+          package_type: string
+          payment_status: string | null
+          price_paid: number | null
+          reschedule_reason: string | null
+          rescheduled: boolean | null
+          rescheduled_at: string | null
+          scheduled_at: string | null
+          screening_session_id: string | null
+          status: string | null
+          stripe_payment_intent_id: string | null
+          timezone: string | null
+          updated_at: string | null
+          user_id: string | null
+          visa_type: string | null
+        }
+        Insert: {
+          agent_notes?: string | null
+          assigned_agent_id?: string | null
+          booking_reference?: string | null
+          calendly_event_uri?: string | null
+          created_at?: string | null
+          destination_code: string
+          document_checklist?: Json | null
+          documents_ready?: boolean | null
+          duration_minutes?: number | null
+          follow_up_required?: boolean | null
+          id?: string
+          meeting_link?: string | null
+          original_scheduled_at?: string | null
+          outcome?: string | null
+          package_type: string
+          payment_status?: string | null
+          price_paid?: number | null
+          reschedule_reason?: string | null
+          rescheduled?: boolean | null
+          rescheduled_at?: string | null
+          scheduled_at?: string | null
+          screening_session_id?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visa_type?: string | null
+        }
+        Update: {
+          agent_notes?: string | null
+          assigned_agent_id?: string | null
+          booking_reference?: string | null
+          calendly_event_uri?: string | null
+          created_at?: string | null
+          destination_code?: string
+          document_checklist?: Json | null
+          documents_ready?: boolean | null
+          duration_minutes?: number | null
+          follow_up_required?: boolean | null
+          id?: string
+          meeting_link?: string | null
+          original_scheduled_at?: string | null
+          outcome?: string | null
+          package_type?: string
+          payment_status?: string | null
+          price_paid?: number | null
+          reschedule_reason?: string | null
+          rescheduled?: boolean | null
+          rescheduled_at?: string | null
+          scheduled_at?: string | null
+          screening_session_id?: string | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visa_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_bookings_screening_session_id_fkey"
+            columns: ["screening_session_id"]
+            isOneToOne: false
+            referencedRelation: "visa_screening_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultation_packages: {
+        Row: {
+          consultation_count: number | null
+          features: Json | null
+          id: string
+          includes_doc_review: boolean | null
+          includes_followup: boolean | null
+          includes_mock_interview: boolean | null
+          is_active: boolean | null
+          name: string
+          package_key: string
+          price_usd: number
+          sort_order: number | null
+          stripe_price_id: string | null
+          tagline: string | null
+          validity_days: number | null
+        }
+        Insert: {
+          consultation_count?: number | null
+          features?: Json | null
+          id?: string
+          includes_doc_review?: boolean | null
+          includes_followup?: boolean | null
+          includes_mock_interview?: boolean | null
+          is_active?: boolean | null
+          name: string
+          package_key: string
+          price_usd: number
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          tagline?: string | null
+          validity_days?: number | null
+        }
+        Update: {
+          consultation_count?: number | null
+          features?: Json | null
+          id?: string
+          includes_doc_review?: boolean | null
+          includes_followup?: boolean | null
+          includes_mock_interview?: boolean | null
+          is_active?: boolean | null
+          name?: string
+          package_key?: string
+          price_usd?: number
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          tagline?: string | null
+          validity_days?: number | null
+        }
+        Relationships: []
       }
       consultation_requests: {
         Row: {
@@ -929,6 +1440,122 @@ export type Database = {
         }
         Relationships: []
       }
+      globe_trip_stops: {
+        Row: {
+          arrive_date: string | null
+          city_slug: string
+          country: string
+          country_slug: string
+          created_at: string | null
+          depart_date: string | null
+          emoji: string | null
+          id: string
+          lat: number
+          lng: number
+          name: string
+          position: number
+          trip_id: string
+          user_id: string
+        }
+        Insert: {
+          arrive_date?: string | null
+          city_slug: string
+          country: string
+          country_slug: string
+          created_at?: string | null
+          depart_date?: string | null
+          emoji?: string | null
+          id?: string
+          lat: number
+          lng: number
+          name: string
+          position?: number
+          trip_id: string
+          user_id: string
+        }
+        Update: {
+          arrive_date?: string | null
+          city_slug?: string
+          country?: string
+          country_slug?: string
+          created_at?: string | null
+          depart_date?: string | null
+          emoji?: string | null
+          id?: string
+          lat?: number
+          lng?: number
+          name?: string
+          position?: number
+          trip_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "globe_trip_stops_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "globe_trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      globe_trips: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      globe_user_profile: {
+        Row: {
+          home_city: string | null
+          home_city_slug: string | null
+          home_lat: number | null
+          home_lng: number | null
+          nationality: string | null
+          passport_countries: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          home_city?: string | null
+          home_city_slug?: string | null
+          home_lat?: number | null
+          home_lng?: number | null
+          nationality?: string | null
+          passport_countries?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          home_city?: string | null
+          home_city_slug?: string | null
+          home_lat?: number | null
+          home_lng?: number | null
+          nationality?: string | null
+          passport_countries?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       long_visas_leads: {
         Row: {
           created_at: string
@@ -962,6 +1589,36 @@ export type Database = {
           nationality?: string
           phone?: string
           visa_category?: string
+        }
+        Relationships: []
+      }
+      loyalty_program_catalog: {
+        Row: {
+          category: string
+          company_name: string
+          id: string
+          is_active: boolean | null
+          logo_url: string | null
+          program_name: string
+          sort_order: number | null
+        }
+        Insert: {
+          category: string
+          company_name: string
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          program_name: string
+          sort_order?: number | null
+        }
+        Update: {
+          category?: string
+          company_name?: string
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          program_name?: string
+          sort_order?: number | null
         }
         Relationships: []
       }
@@ -1084,9 +1741,16 @@ export type Database = {
           plan_type: string
           square_order_id: string | null
           square_payment_id: string | null
+          stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          stripe_subscription_id: string | null
           total_amount: number
           trip_meta: Json
           updated_at: string
+          upsell_converted: boolean | null
+          upsell_from: string | null
+          upsell_offered_at: string | null
           user_id: string | null
           webhook_sent: boolean
         }
@@ -1107,9 +1771,16 @@ export type Database = {
           plan_type: string
           square_order_id?: string | null
           square_payment_id?: string | null
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
           total_amount: number
           trip_meta?: Json
           updated_at?: string
+          upsell_converted?: boolean | null
+          upsell_from?: string | null
+          upsell_offered_at?: string | null
           user_id?: string | null
           webhook_sent?: boolean
         }
@@ -1130,9 +1801,16 @@ export type Database = {
           plan_type?: string
           square_order_id?: string | null
           square_payment_id?: string | null
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
           total_amount?: number
           trip_meta?: Json
           updated_at?: string
+          upsell_converted?: boolean | null
+          upsell_from?: string | null
+          upsell_offered_at?: string | null
           user_id?: string | null
           webhook_sent?: boolean
         }
@@ -1183,6 +1861,171 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_agents: {
+        Row: {
+          agent_name: string
+          agent_personality: string | null
+          avatar_color: string | null
+          avatar_preset: string | null
+          avatar_type: string | null
+          avatar_url: string | null
+          car_loyalty: Json | null
+          companions: Json | null
+          created_at: string | null
+          currency_preference: string | null
+          dream_destinations: string[] | null
+          home_airport: string | null
+          home_city: string | null
+          home_country: string | null
+          hotel_loyalty: Json | null
+          id: string
+          language: string | null
+          last_interaction_at: string | null
+          loyalty_programs: Json | null
+          meal_preference: string | null
+          nationality: string | null
+          onboarding_completed: boolean | null
+          onboarding_step: number | null
+          passport_country: string | null
+          passport_expiry: string | null
+          passport_number: string | null
+          preferred_airlines: string[] | null
+          preferred_hotel_chains: string[] | null
+          proactive_suggestions: boolean | null
+          seat_preference: string | null
+          total_interactions: number | null
+          travel_style: string | null
+          updated_at: string | null
+          user_id: string | null
+          visa_history: Json | null
+          visited_countries: string[] | null
+          voice_enabled: boolean | null
+        }
+        Insert: {
+          agent_name?: string
+          agent_personality?: string | null
+          avatar_color?: string | null
+          avatar_preset?: string | null
+          avatar_type?: string | null
+          avatar_url?: string | null
+          car_loyalty?: Json | null
+          companions?: Json | null
+          created_at?: string | null
+          currency_preference?: string | null
+          dream_destinations?: string[] | null
+          home_airport?: string | null
+          home_city?: string | null
+          home_country?: string | null
+          hotel_loyalty?: Json | null
+          id?: string
+          language?: string | null
+          last_interaction_at?: string | null
+          loyalty_programs?: Json | null
+          meal_preference?: string | null
+          nationality?: string | null
+          onboarding_completed?: boolean | null
+          onboarding_step?: number | null
+          passport_country?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          preferred_airlines?: string[] | null
+          preferred_hotel_chains?: string[] | null
+          proactive_suggestions?: boolean | null
+          seat_preference?: string | null
+          total_interactions?: number | null
+          travel_style?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visa_history?: Json | null
+          visited_countries?: string[] | null
+          voice_enabled?: boolean | null
+        }
+        Update: {
+          agent_name?: string
+          agent_personality?: string | null
+          avatar_color?: string | null
+          avatar_preset?: string | null
+          avatar_type?: string | null
+          avatar_url?: string | null
+          car_loyalty?: Json | null
+          companions?: Json | null
+          created_at?: string | null
+          currency_preference?: string | null
+          dream_destinations?: string[] | null
+          home_airport?: string | null
+          home_city?: string | null
+          home_country?: string | null
+          hotel_loyalty?: Json | null
+          id?: string
+          language?: string | null
+          last_interaction_at?: string | null
+          loyalty_programs?: Json | null
+          meal_preference?: string | null
+          nationality?: string | null
+          onboarding_completed?: boolean | null
+          onboarding_step?: number | null
+          passport_country?: string | null
+          passport_expiry?: string | null
+          passport_number?: string | null
+          preferred_airlines?: string[] | null
+          preferred_hotel_chains?: string[] | null
+          proactive_suggestions?: boolean | null
+          seat_preference?: string | null
+          total_interactions?: number | null
+          travel_style?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visa_history?: Json | null
+          visited_countries?: string[] | null
+          voice_enabled?: boolean | null
+        }
+        Relationships: []
+      }
+      pricing_plans: {
+        Row: {
+          billing_cycle: string | null
+          created_at: string | null
+          features: Json | null
+          id: string
+          is_active: boolean | null
+          is_hero: boolean | null
+          name: string
+          plan_key: string
+          price_usd: number
+          sort_order: number | null
+          stripe_price_id: string | null
+          tagline: string | null
+        }
+        Insert: {
+          billing_cycle?: string | null
+          created_at?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          is_hero?: boolean | null
+          name: string
+          plan_key: string
+          price_usd: number
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          tagline?: string | null
+        }
+        Update: {
+          billing_cycle?: string | null
+          created_at?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean | null
+          is_hero?: boolean | null
+          name?: string
+          plan_key?: string
+          price_usd?: number
+          sort_order?: number | null
+          stripe_price_id?: string | null
+          tagline?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -1224,6 +2067,397 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      scoutpass_applications: {
+        Row: {
+          application_number: number
+          appointment_center: string | null
+          appointment_city: string | null
+          appointment_date: string | null
+          appointment_reference: string | null
+          created_at: string | null
+          decision: string | null
+          decision_date: string | null
+          documents_verified: boolean | null
+          eligibility_confirmed: boolean | null
+          forms_completed: boolean | null
+          id: string
+          notes: string | null
+          order_id: string
+          updated_at: string | null
+          visa_validity_end: string | null
+          visa_validity_start: string | null
+        }
+        Insert: {
+          application_number?: number
+          appointment_center?: string | null
+          appointment_city?: string | null
+          appointment_date?: string | null
+          appointment_reference?: string | null
+          created_at?: string | null
+          decision?: string | null
+          decision_date?: string | null
+          documents_verified?: boolean | null
+          eligibility_confirmed?: boolean | null
+          forms_completed?: boolean | null
+          id?: string
+          notes?: string | null
+          order_id: string
+          updated_at?: string | null
+          visa_validity_end?: string | null
+          visa_validity_start?: string | null
+        }
+        Update: {
+          application_number?: number
+          appointment_center?: string | null
+          appointment_city?: string | null
+          appointment_date?: string | null
+          appointment_reference?: string | null
+          created_at?: string | null
+          decision?: string | null
+          decision_date?: string | null
+          documents_verified?: boolean | null
+          eligibility_confirmed?: boolean | null
+          forms_completed?: boolean | null
+          id?: string
+          notes?: string | null
+          order_id?: string
+          updated_at?: string | null
+          visa_validity_end?: string | null
+          visa_validity_start?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scoutpass_applications_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "scoutpass_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scoutpass_comms_log: {
+        Row: {
+          channel: string
+          error_message: string | null
+          id: string
+          order_id: string | null
+          provider_message_id: string | null
+          recipient: string
+          sent_at: string | null
+          status: string
+          type: string
+        }
+        Insert: {
+          channel: string
+          error_message?: string | null
+          id?: string
+          order_id?: string | null
+          provider_message_id?: string | null
+          recipient: string
+          sent_at?: string | null
+          status?: string
+          type: string
+        }
+        Update: {
+          channel?: string
+          error_message?: string | null
+          id?: string
+          order_id?: string | null
+          provider_message_id?: string | null
+          recipient?: string
+          sent_at?: string | null
+          status?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scoutpass_comms_log_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "scoutpass_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scoutpass_group_members: {
+        Row: {
+          created_at: string | null
+          date_of_birth: string | null
+          email: string | null
+          first_name: string
+          id: string
+          last_name: string
+          nationality: string | null
+          order_id: string
+          passport_expiry: string | null
+          passport_number: string | null
+          phone: string | null
+          relationship: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          nationality?: string | null
+          order_id: string
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          relationship?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date_of_birth?: string | null
+          email?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          nationality?: string | null
+          order_id?: string
+          passport_expiry?: string | null
+          passport_number?: string | null
+          phone?: string | null
+          relationship?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scoutpass_group_members_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "scoutpass_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scoutpass_leads: {
+        Row: {
+          converted_to_order_id: string | null
+          country_of_origin: string | null
+          created_at: string | null
+          destination_country: string | null
+          eligibility_result: Json | null
+          email: string
+          id: string
+          source: string | null
+          travel_date: string | null
+          visa_type: string | null
+        }
+        Insert: {
+          converted_to_order_id?: string | null
+          country_of_origin?: string | null
+          created_at?: string | null
+          destination_country?: string | null
+          eligibility_result?: Json | null
+          email: string
+          id?: string
+          source?: string | null
+          travel_date?: string | null
+          visa_type?: string | null
+        }
+        Update: {
+          converted_to_order_id?: string | null
+          country_of_origin?: string | null
+          created_at?: string | null
+          destination_country?: string | null
+          eligibility_result?: Json | null
+          email?: string
+          id?: string
+          source?: string | null
+          travel_date?: string | null
+          visa_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scoutpass_leads_converted_to_order_id_fkey"
+            columns: ["converted_to_order_id"]
+            isOneToOne: false
+            referencedRelation: "scoutpass_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scoutpass_orders: {
+        Row: {
+          agent_assigned: string | null
+          agent_notes: string | null
+          application_prepared_at: string | null
+          appointment_attended_at: string | null
+          appointment_secured_at: string | null
+          awaiting_decision_at: string | null
+          closed_at: string | null
+          created_at: string | null
+          date_of_birth: string | null
+          decision_received_at: string | null
+          destination_country: string
+          documents_metadata: Json | null
+          email: string
+          first_name: string
+          id: string
+          info_received_at: string | null
+          is_group: boolean | null
+          last_name: string
+          locale: string
+          nationality: string | null
+          paid_at: string | null
+          passport_expiry: string | null
+          passport_issuing_country: string | null
+          passport_number: string | null
+          passport_returned_at: string | null
+          phone: string | null
+          preferred_cities: string[] | null
+          status: Database["public"]["Enums"]["order_status"]
+          stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          tracking_number: string | null
+          travel_date_from: string | null
+          travel_date_to: string | null
+          travel_purpose: string | null
+          updated_at: string | null
+          visa_type: string
+          whatsapp: string | null
+        }
+        Insert: {
+          agent_assigned?: string | null
+          agent_notes?: string | null
+          application_prepared_at?: string | null
+          appointment_attended_at?: string | null
+          appointment_secured_at?: string | null
+          awaiting_decision_at?: string | null
+          closed_at?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          decision_received_at?: string | null
+          destination_country: string
+          documents_metadata?: Json | null
+          email: string
+          first_name: string
+          id?: string
+          info_received_at?: string | null
+          is_group?: boolean | null
+          last_name: string
+          locale?: string
+          nationality?: string | null
+          paid_at?: string | null
+          passport_expiry?: string | null
+          passport_issuing_country?: string | null
+          passport_number?: string | null
+          passport_returned_at?: string | null
+          phone?: string | null
+          preferred_cities?: string[] | null
+          status?: Database["public"]["Enums"]["order_status"]
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tracking_number?: string | null
+          travel_date_from?: string | null
+          travel_date_to?: string | null
+          travel_purpose?: string | null
+          updated_at?: string | null
+          visa_type: string
+          whatsapp?: string | null
+        }
+        Update: {
+          agent_assigned?: string | null
+          agent_notes?: string | null
+          application_prepared_at?: string | null
+          appointment_attended_at?: string | null
+          appointment_secured_at?: string | null
+          awaiting_decision_at?: string | null
+          closed_at?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          decision_received_at?: string | null
+          destination_country?: string
+          documents_metadata?: Json | null
+          email?: string
+          first_name?: string
+          id?: string
+          info_received_at?: string | null
+          is_group?: boolean | null
+          last_name?: string
+          locale?: string
+          nationality?: string | null
+          paid_at?: string | null
+          passport_expiry?: string | null
+          passport_issuing_country?: string | null
+          passport_number?: string | null
+          passport_returned_at?: string | null
+          phone?: string | null
+          preferred_cities?: string[] | null
+          status?: Database["public"]["Enums"]["order_status"]
+          stripe_customer_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tracking_number?: string | null
+          travel_date_from?: string | null
+          travel_date_to?: string | null
+          travel_purpose?: string | null
+          updated_at?: string | null
+          visa_type?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      scoutpass_refund_requests: {
+        Row: {
+          cities_expanded: boolean | null
+          created_at: string | null
+          expanded_cities: string[] | null
+          id: string
+          order_id: string
+          reason: string | null
+          requested_at: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          stripe_refund_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          cities_expanded?: boolean | null
+          created_at?: string | null
+          expanded_cities?: string[] | null
+          id?: string
+          order_id: string
+          reason?: string | null
+          requested_at?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          stripe_refund_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          cities_expanded?: boolean | null
+          created_at?: string | null
+          expanded_cities?: string[] | null
+          id?: string
+          order_id?: string
+          reason?: string | null
+          requested_at?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          stripe_refund_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scoutpass_refund_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "scoutpass_orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       short_visas_leads: {
         Row: {
@@ -1288,6 +2522,180 @@ export type Database = {
           processed?: boolean | null
           processed_at?: string | null
           webhook_id?: string
+        }
+        Relationships: []
+      }
+      staff_agents: {
+        Row: {
+          calendly_link: string | null
+          created_at: string | null
+          email: string
+          full_name: string
+          hired_at: string | null
+          id: string
+          is_active: boolean | null
+          languages: string[] | null
+          max_daily_consultations: number | null
+          phone: string | null
+          role: string | null
+          specializations: string[] | null
+          user_id: string | null
+          zoom_personal_link: string | null
+        }
+        Insert: {
+          calendly_link?: string | null
+          created_at?: string | null
+          email: string
+          full_name: string
+          hired_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          max_daily_consultations?: number | null
+          phone?: string | null
+          role?: string | null
+          specializations?: string[] | null
+          user_id?: string | null
+          zoom_personal_link?: string | null
+        }
+        Update: {
+          calendly_link?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string
+          hired_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          max_daily_consultations?: number | null
+          phone?: string | null
+          role?: string | null
+          specializations?: string[] | null
+          user_id?: string | null
+          zoom_personal_link?: string | null
+        }
+        Relationships: []
+      }
+      stripe_customers: {
+        Row: {
+          created_at: string | null
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          plan_type: string | null
+          stripe_customer_id: string
+          stripe_subscription_id: string | null
+          subscription_status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_type?: string | null
+          stripe_customer_id: string
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          plan_type?: string | null
+          stripe_customer_id?: string
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      stripe_webhooks: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_data: Json
+          event_type: string
+          id: string
+          processed: boolean | null
+          processed_at: string | null
+          stripe_event_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_data: Json
+          event_type: string
+          id?: string
+          processed?: boolean | null
+          processed_at?: string | null
+          stripe_event_id: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_data?: Json
+          event_type?: string
+          id?: string
+          processed?: boolean | null
+          processed_at?: string | null
+          stripe_event_id?: string
+        }
+        Relationships: []
+      }
+      travel_agents: {
+        Row: {
+          avatar_url: string | null
+          budget_preference: string | null
+          created_at: string | null
+          custom_instructions: string | null
+          favorite_destinations: string[] | null
+          id: string
+          is_active: boolean | null
+          languages: string[] | null
+          name: string
+          personality: string
+          specialties: string[] | null
+          travel_style: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          budget_preference?: string | null
+          created_at?: string | null
+          custom_instructions?: string | null
+          favorite_destinations?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          name: string
+          personality?: string
+          specialties?: string[] | null
+          travel_style?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          budget_preference?: string | null
+          created_at?: string | null
+          custom_instructions?: string | null
+          favorite_destinations?: string[] | null
+          id?: string
+          is_active?: boolean | null
+          languages?: string[] | null
+          name?: string
+          personality?: string
+          specialties?: string[] | null
+          travel_style?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -2006,6 +3414,105 @@ export type Database = {
         }
         Relationships: []
       }
+      user_travel_memory: {
+        Row: {
+          agent_name: string | null
+          agent_personality: string | null
+          budget_range: string | null
+          created_at: string | null
+          dream_destinations: string[] | null
+          home_airport: string | null
+          home_city: string | null
+          id: string
+          known_visa_needs: string[] | null
+          languages: string[] | null
+          last_active_at: string | null
+          lifetime_value: number | null
+          loyalty_programs: Json | null
+          meal_preference: string | null
+          nationality: string | null
+          passport_country: string | null
+          passport_expiry: string | null
+          preferred_airlines: string[] | null
+          preferred_hotel_chains: string[] | null
+          prefers_voice: boolean | null
+          seat_preference: string | null
+          total_bookings: number | null
+          total_conversations: number | null
+          travel_companions: Json | null
+          travel_style: string | null
+          upcoming_trips: Json | null
+          updated_at: string | null
+          user_id: string | null
+          visa_history: Json | null
+          visited_countries: string[] | null
+        }
+        Insert: {
+          agent_name?: string | null
+          agent_personality?: string | null
+          budget_range?: string | null
+          created_at?: string | null
+          dream_destinations?: string[] | null
+          home_airport?: string | null
+          home_city?: string | null
+          id?: string
+          known_visa_needs?: string[] | null
+          languages?: string[] | null
+          last_active_at?: string | null
+          lifetime_value?: number | null
+          loyalty_programs?: Json | null
+          meal_preference?: string | null
+          nationality?: string | null
+          passport_country?: string | null
+          passport_expiry?: string | null
+          preferred_airlines?: string[] | null
+          preferred_hotel_chains?: string[] | null
+          prefers_voice?: boolean | null
+          seat_preference?: string | null
+          total_bookings?: number | null
+          total_conversations?: number | null
+          travel_companions?: Json | null
+          travel_style?: string | null
+          upcoming_trips?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+          visa_history?: Json | null
+          visited_countries?: string[] | null
+        }
+        Update: {
+          agent_name?: string | null
+          agent_personality?: string | null
+          budget_range?: string | null
+          created_at?: string | null
+          dream_destinations?: string[] | null
+          home_airport?: string | null
+          home_city?: string | null
+          id?: string
+          known_visa_needs?: string[] | null
+          languages?: string[] | null
+          last_active_at?: string | null
+          lifetime_value?: number | null
+          loyalty_programs?: Json | null
+          meal_preference?: string | null
+          nationality?: string | null
+          passport_country?: string | null
+          passport_expiry?: string | null
+          preferred_airlines?: string[] | null
+          preferred_hotel_chains?: string[] | null
+          prefers_voice?: boolean | null
+          seat_preference?: string | null
+          total_bookings?: number | null
+          total_conversations?: number | null
+          travel_companions?: Json | null
+          travel_style?: string | null
+          upcoming_trips?: Json | null
+          updated_at?: string | null
+          user_id?: string | null
+          visa_history?: Json | null
+          visited_countries?: string[] | null
+        }
+        Relationships: []
+      }
       visa_applications: {
         Row: {
           application_data: Json | null
@@ -2084,6 +3591,138 @@ export type Database = {
         }
         Relationships: []
       }
+      visa_destinations: {
+        Row: {
+          biometrics_required: boolean | null
+          bls_available: boolean | null
+          country_code: string
+          country_name: string
+          created_at: string | null
+          flag_emoji: string | null
+          govt_portal_url: string | null
+          id: string
+          interview_required: boolean | null
+          is_active: boolean | null
+          key_requirements: Json | null
+          processing_times: Json | null
+          sort_order: number | null
+          vfs_available: boolean | null
+          visa_types: Json | null
+        }
+        Insert: {
+          biometrics_required?: boolean | null
+          bls_available?: boolean | null
+          country_code: string
+          country_name: string
+          created_at?: string | null
+          flag_emoji?: string | null
+          govt_portal_url?: string | null
+          id?: string
+          interview_required?: boolean | null
+          is_active?: boolean | null
+          key_requirements?: Json | null
+          processing_times?: Json | null
+          sort_order?: number | null
+          vfs_available?: boolean | null
+          visa_types?: Json | null
+        }
+        Update: {
+          biometrics_required?: boolean | null
+          bls_available?: boolean | null
+          country_code?: string
+          country_name?: string
+          created_at?: string | null
+          flag_emoji?: string | null
+          govt_portal_url?: string | null
+          id?: string
+          interview_required?: boolean | null
+          is_active?: boolean | null
+          key_requirements?: Json | null
+          processing_times?: Json | null
+          sort_order?: number | null
+          vfs_available?: boolean | null
+          visa_types?: Json | null
+        }
+        Relationships: []
+      }
+      visa_screening_sessions: {
+        Row: {
+          ai_assessment: Json | null
+          ai_chat_history: Json | null
+          ai_recommendation: string | null
+          completed_at: string | null
+          created_at: string | null
+          current_country: string | null
+          destination_code: string
+          documents_missing: Json | null
+          documents_ready: Json | null
+          id: string
+          intended_return_date: string | null
+          intended_travel_date: string | null
+          nationality: string | null
+          previous_refusals: boolean | null
+          previous_travel_history: Json | null
+          readiness_score: number | null
+          refusal_details: string | null
+          session_token: string | null
+          status: string | null
+          travel_purpose: string | null
+          updated_at: string | null
+          user_id: string | null
+          visa_type: string | null
+        }
+        Insert: {
+          ai_assessment?: Json | null
+          ai_chat_history?: Json | null
+          ai_recommendation?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_country?: string | null
+          destination_code: string
+          documents_missing?: Json | null
+          documents_ready?: Json | null
+          id?: string
+          intended_return_date?: string | null
+          intended_travel_date?: string | null
+          nationality?: string | null
+          previous_refusals?: boolean | null
+          previous_travel_history?: Json | null
+          readiness_score?: number | null
+          refusal_details?: string | null
+          session_token?: string | null
+          status?: string | null
+          travel_purpose?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visa_type?: string | null
+        }
+        Update: {
+          ai_assessment?: Json | null
+          ai_chat_history?: Json | null
+          ai_recommendation?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          current_country?: string | null
+          destination_code?: string
+          documents_missing?: Json | null
+          documents_ready?: Json | null
+          id?: string
+          intended_return_date?: string | null
+          intended_travel_date?: string | null
+          nationality?: string | null
+          previous_refusals?: boolean | null
+          previous_travel_history?: Json | null
+          readiness_score?: number | null
+          refusal_details?: string | null
+          session_token?: string | null
+          status?: string | null
+          travel_purpose?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          visa_type?: string | null
+        }
+        Relationships: []
+      }
       voice_transcripts: {
         Row: {
           call_id: string
@@ -2128,6 +3767,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_users: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          email_confirmed: boolean
+          first_name: string
+          id: string
+          last_name: string
+          last_sign_in_at: string
+          nationality: string
+          order_count: number
+          phone: string
+          providers: string[]
+          request_count: number
+          roles: string[]
+        }[]
+      }
       check_form_submission_rate_limit: {
         Args: {
           _email: string
@@ -2188,12 +3845,63 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_passport_club_member: { Args: { user_id: string }; Returns: boolean }
+      my_scoutpass_orders: {
+        Args: never
+        Returns: {
+          appointment_secured_at: string
+          created_at: string
+          decision_received_at: string
+          destination_country: string
+          id: string
+          paid_at: string
+          status: string
+          tracking_number: string
+          visa_type: string
+        }[]
+      }
+      scoutpass_is_admin: { Args: never; Returns: boolean }
+      scoutpass_my_email: { Args: never; Returns: string }
+      scoutpass_order_for_session: {
+        Args: { p_session_id: string }
+        Returns: string
+      }
+      scoutpass_request_refund: {
+        Args: { p_reason: string; p_tracking: string }
+        Returns: string
+      }
+      scoutpass_track: {
+        Args: { p_tracking: string }
+        Returns: {
+          created_at: string
+          destination_country: string
+          first_name: string
+          last_name: string
+          status: string
+          tracking_number: string
+          travel_date_from: string
+          travel_date_to: string
+          visa_type: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
       connection_status: "pending" | "accepted" | "blocked"
       connection_type: "friend" | "follow" | "travel_buddy"
       invitation_status: "pending" | "accepted" | "declined"
+      order_status:
+        | "pending_payment"
+        | "paid"
+        | "info_received"
+        | "application_prepared"
+        | "appointment_secured"
+        | "appointment_attended"
+        | "awaiting_decision"
+        | "passport_returned"
+        | "decision_received"
+        | "closed"
+        | "refund_requested"
+        | "refunded"
       trip_collab_role: "owner" | "editor" | "viewer"
     }
     CompositeTypes: {
@@ -2210,12 +3918,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2239,11 +3947,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2264,11 +3972,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2289,11 +3997,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2306,11 +4014,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2326,6 +4034,20 @@ export const Constants = {
       connection_status: ["pending", "accepted", "blocked"],
       connection_type: ["friend", "follow", "travel_buddy"],
       invitation_status: ["pending", "accepted", "declined"],
+      order_status: [
+        "pending_payment",
+        "paid",
+        "info_received",
+        "application_prepared",
+        "appointment_secured",
+        "appointment_attended",
+        "awaiting_decision",
+        "passport_returned",
+        "decision_received",
+        "closed",
+        "refund_requested",
+        "refunded",
+      ],
       trip_collab_role: ["owner", "editor", "viewer"],
     },
   },
