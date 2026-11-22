@@ -1463,3 +1463,108 @@
 .ogt .ogt-tag[data-tone='ink'] {
   color: var(--ink);
 }
+
+/* ---------- visa file: printable sheets ---------- */
+
+.ogt .ogt-sheet {
+  background: #fff;
+  color: #111;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  box-shadow: 8px 8px 0 rgba(34, 28, 122, 0.12);
+  padding: clamp(1.25rem, 4vw, 3rem);
+  font-size: 0.98rem;
+  line-height: 1.6;
+}
+
+.ogt .ogt-sheet + .ogt-sheet-title {
+  margin-top: 2.5rem;
+}
+
+.ogt .ogt-sheet-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.ogt .ogt-sheet p {
+  margin: 0 0 0.9rem;
+}
+
+.ogt .ogt-sheet h3 {
+  color: #111;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.9rem;
+}
+
+.ogt .ogt-sheet .ogt-blank {
+  background: #fff3c4;
+  padding: 0 0.25rem;
+  border-radius: 2px;
+}
+
+.ogt .ogt-sheet table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ogt .ogt-sheet th,
+.ogt .ogt-sheet td {
+  border: 1px solid #999;
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.ogt .ogt-sheet th {
+  background: #f1f1f1;
+  font-weight: 700;
+}
+
+.ogt .ogt-sheet-scroll {
+  overflow-x: auto;
+}
+
+.ogt .ogt-sheet-scroll table {
+  min-width: 26rem;
+}
+
+@media print {
+  .ogt .ogt-header,
+  .ogt .ogt-footer,
+  .ogt .ogt-no-print {
+    display: none !important;
+  }
+
+  .ogt {
+    background: #fff;
+  }
+
+  .ogt .ogt-print-root {
+    display: block;
+    padding: 0;
+    max-width: none;
+  }
+
+  .ogt .ogt-sheet {
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    break-after: page;
+    font-size: 11pt;
+  }
+
+  .ogt .ogt-sheet .ogt-blank {
+    background: none;
+    padding: 0;
+  }
+
+  .ogt .ogt-sheet-scroll table {
+    min-width: 0;
+  }
+}

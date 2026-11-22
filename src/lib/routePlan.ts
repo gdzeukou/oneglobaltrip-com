@@ -140,3 +140,58 @@ export function routeText(stops: Stop[], departure: Date | null): string {
   const line = stops.map((s) => `${s.city}, ${s.country} (${s.nights} night${s.nights === 1 ? '' : 's'})`).join(' > ');
   return `${departure ? `Departure ${departure.toISOString().slice(0, 10)}. ` : ''}Route: ${line}`;
 }
+
+/* ---------- dates along the route ---------- */
+
+export interface Leg {
+  stop: Stop;
+  arrive: Date;
+  leave: Date;
+}
+
+/** Each stop with the day you arrive and the day you leave. */
+export function legsOf(stops: Stop[], departure: Date): Leg[] {
+  let cursor = startOfDay(departure);
+  return stops.map((s) => {
+    const arrive = cursor;
+    cursor = addDays(cursor, s.nights);
+    return { stop: s, arrive, leave: cursor };
+  });
+}
+
+export interface Stay {
+  countries: string[];
+  entry: Date;
+  exit: Date;
+  /** Days counted the Schengen way: the day you enter and the day you leave both count. */
+  days: number;
+  firstCountry: string;
+}
+
+/**
+ * Each unbroken stay inside the Schengen area. A route that leaves the area
+ * and comes back has two stays, which means two entries on the visa.
+ */
+export function schengenStays(stops: Stop[], departure: Date): Stay[] {
+  const stays: Stay[] = [];
+  let open: Leg[] = [];
+  const close = () => {
+    if (!open.length) return;
+    const entry = open[0].arrive;
+    const exit = open[open.length - 1].leave;
+    stays.push({
+      countries: Array.from(new Set(open.map((l) => l.stop.country))),
+      entry,
+      exit,
+      days: Math.round((exit.getTime() - entry.getTime()) / DAY) + 1,
+      firstCountry: open[0].stop.country,
+    });
+    open = [];
+  };
+  for (const leg of legsOf(stops, departure)) {
+    if (SCHENGEN.has(leg.stop.country)) open.push(leg);
+    else close();
+  }
+  close();
+  return stays;
+}

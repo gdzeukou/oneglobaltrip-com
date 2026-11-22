@@ -7,18 +7,17 @@
  * is computed in `routePlan.ts` from published rules.
  */
 
-import React, { useId, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Minus, Plus, X } from 'lucide-react';
 import { SitePage } from '@/components/site/SiteShell';
 import { globeDestinations } from '@/data/globeDestinations';
 import { PASSPORT_COUNTRIES, SCHENGEN, findDestination } from '@/lib/travelResolve';
 import { SCOUTPASS, priceOf } from '@/data/visaCatalog';
+import { fromIso, loadRoute, saveRoute, toIso as iso } from '@/lib/routeStore';
 import { addDays, bordersOf, calendarFor, routeText, type Border, type Calendar, type Stop } from '@/lib/routePlan';
 
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-const fromIso = (s: string) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
 const nightsLabel = (n: number) => `${n} night${n === 1 ? '' : 's'}`;
 
 const PLACES = Array.from(new Map(globeDestinations.map((d) => [`${d.name}, ${d.country}`, d])).entries())
@@ -84,13 +83,22 @@ function CalendarBlock({ border, departure, onMove }: { border: Border; departur
 export default function Plan() {
   const id = useId();
   const [params] = useSearchParams();
+  const saved = useMemo(() => loadRoute(), []);
   const [passport, setPassport] = useState(() => {
-    const p = params.get('passport');
+    const p = params.get('passport') ?? saved?.passport;
     return p && PASSPORT_COUNTRIES.includes(p) ? p : 'Cameroon';
   });
-  const [departure, setDeparture] = useState(() => addDays(new Date(), 75));
-  const [travelers, setTravelers] = useState(1);
-  const [stops, setStops] = useState<Stop[]>(() => [stop('Paris', 'France', 4), stop('Rome', 'Italy', 3), stop('London', 'United Kingdom', 3)]);
+  const [departure, setDeparture] = useState(() => {
+    const d = saved ? fromIso(saved.departure) : null;
+    return d && d.getTime() > Date.now() ? d : addDays(new Date(), 75);
+  });
+  const [travelers, setTravelers] = useState(saved?.travelers ?? 1);
+  const [stops, setStops] = useState<Stop[]>(() => saved?.stops ?? [stop('Paris', 'France', 4), stop('Rome', 'Italy', 3), stop('London', 'United Kingdom', 3)]);
+
+  useEffect(() => {
+    saveRoute({ passport, departure: iso(departure), travelers, stops });
+  }, [passport, departure, travelers, stops]);
+
   const [query, setQuery] = useState('');
   const [addError, setAddError] = useState('');
 
@@ -259,9 +267,13 @@ export default function Plan() {
             <div className="ogt-report-block">
               {first?.service ? (
                 <>
-                  <Link to={startHref} className="ogt-btn" style={{ width: '100%' }}>Send this route with my visa request</Link>
+                  <Link to="/file" className="ogt-btn" style={{ width: '100%' }}>Build my visa file from this route</Link>
+                  <p className="ogt-small ogt-muted" style={{ margin: '0.7rem 0 1rem' }}>
+                    A cover letter, a day-by-day plan and the answers for the application form, written from this route.
+                  </p>
+                  <Link to={startHref} className="ogt-btn ogt-btn-ghost" style={{ width: '100%' }}>Send this route with my visa request</Link>
                   <p className="ogt-small ogt-muted" style={{ margin: '0.7rem 0 0' }}>
-                    We receive the route, the dates and your passport. No payment to send it. The appointment alone is {SCOUTPASS.price} {SCOUTPASS.unit}.
+                    No payment to send it. The appointment alone is {SCOUTPASS.price} {SCOUTPASS.unit}.
                   </p>
                 </>
               ) : (
