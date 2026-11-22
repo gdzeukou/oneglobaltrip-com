@@ -3,6 +3,34 @@ import { corsHeaders } from '../_shared/cors.ts'
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!
+
+const json = (body: unknown, status: number) =>
+  new Response(JSON.stringify(body), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    status,
+  })
+
+/**
+ * True only when the request carries a signed-in user's token and that user
+ * holds the admin role. The anon key is a valid JWT too, so passing the
+ * gateway's verify_jwt check proves nothing: is_admin() runs as the caller
+ * and returns false for the anon role and for ordinary users.
+ */
+async function callerIsAdmin(req: Request): Promise<boolean> {
+  const authorization = req.headers.get('Authorization')
+  if (!authorization?.startsWith('Bearer ')) return false
+  const asCaller = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authorization } },
+    auth: { persistSession: false },
+  })
+  const { data, error } = await asCaller.rpc('is_admin')
+  if (error) {
+    console.error('admin check failed:', error.message)
+    return false
+  }
+  return data === true
+}
 
 interface UserWithDetails {
   user_id: string;
@@ -21,6 +49,10 @@ interface UserWithDetails {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
+  }
+
+  if (!(await callerIsAdmin(req))) {
+    return json({ error: 'Admins only' }, 403)
   }
 
   try {

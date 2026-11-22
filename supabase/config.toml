@@ -78,6 +78,11 @@ max_frequency = "5s"
 [functions.square-create-payment]
 verify_jwt = true
 
+# Service-role function listing every account. It also checks is_admin() itself,
+# because the public anon key passes verify_jwt.
+[functions.admin-users]
+verify_jwt = true
+
 [functions.square-webhook]
 verify_jwt = false
 
