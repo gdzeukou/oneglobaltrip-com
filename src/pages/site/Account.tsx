@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { SitePage } from '@/components/site/SiteShell';
 import { loadTrip } from '@/data/travelCatalog';
-import { visaBySlug, type VisaService } from '@/data/visaCatalog';
+import { serviceFor, visaBySlug, type VisaService } from '@/data/visaCatalog';
 import { ALLOWED_DOCUMENT_TYPES, MAX_FILE_SIZE } from '@/utils/validation';
 
 interface Request {
@@ -26,6 +26,19 @@ interface Request {
   lead_status: string | null;
   contacted_at: string | null;
   appointment_booked: boolean | null;
+}
+
+/** A paid appointment hunt, as `my_scoutpass_orders` returns it. */
+interface Order {
+  id: string;
+  tracking_number: string | null;
+  status: string;
+  destination_country: string;
+  visa_type: string;
+  created_at: string;
+  paid_at: string | null;
+  appointment_secured_at: string | null;
+  decision_received_at: string | null;
 }
 
 interface Doc {
@@ -47,13 +60,49 @@ const day = (iso: string | null) =>
 /** Requests the team has not opened yet carry one of these statuses. */
 const UNTOUCHED = new Set(['new', 'not_contacted', '', null]);
 
-function stagesOf(r: Request) {
+function stagesOf(r: Request, order?: Order) {
+  if (order) {
+    const paid = Boolean(order.paid_at);
+    return [
+      { label: paid ? 'Paid' : 'Payment', done: paid, note: paid ? day(order.paid_at) : order.status === 'refunded' ? 'Refunded' : 'Not confirmed yet' },
+      { label: 'Appointment secured', done: Boolean(order.appointment_secured_at), note: order.appointment_secured_at ? day(order.appointment_secured_at) : 'We are hunting' },
+      { label: 'Decision received', done: Boolean(order.decision_received_at), note: order.decision_received_at ? day(order.decision_received_at) : 'Not yet' },
+    ];
+  }
   const confirmed = Boolean(r.contacted_at) || !UNTOUCHED.has(r.lead_status);
   return [
     { label: 'Request received', done: true, note: day(r.created_at) },
     { label: 'Case confirmed', done: confirmed, note: confirmed ? day(r.contacted_at) : 'We are reading it' },
     { label: 'Appointment secured', done: Boolean(r.appointment_booked), note: r.appointment_booked ? '' : 'Not yet' },
   ];
+}
+
+/**
+ * Pairs each appointment-hunt request with the order paid for it. The form
+ * saves the request and opens checkout seconds later, so an order belongs to
+ * the request sent just before it. An order with no request (paid without
+ * signing in) gets a file of its own.
+ */
+function pair(requests: Request[], orders: Order[]): { request: Request; order?: Order }[] {
+  const left = [...orders];
+  const files = requests.map((request) => {
+    const sent = new Date(request.created_at ?? 0).getTime();
+    const i = request.form_type === 'visa-appointment-hunt'
+      ? left.findIndex((o) => Math.abs(new Date(o.created_at).getTime() - sent) < 10 * 60_000)
+      : -1;
+    return { request, order: i >= 0 ? left.splice(i, 1)[0] : undefined };
+  });
+  const alone = left
+    .filter((o) => o.status !== 'pending_payment')
+    .map((order) => ({
+      order,
+      request: {
+        id: order.id, form_type: 'visa-appointment-hunt', visa_type: serviceFor(order.destination_country)?.slug ?? null,
+        destination: order.destination_country, travel_date: null, created_at: order.created_at,
+        lead_status: null, contacted_at: null, appointment_booked: null,
+      } as Request,
+    }));
+  return [...files, ...alone].sort((a, b) => (b.request.created_at ?? '').localeCompare(a.request.created_at ?? ''));
 }
 
 /** Months between today and a date, rounded down. */
@@ -131,8 +180,8 @@ function DocumentRow({ label, docKey, doc, userId, onChange }: { label: string; 
   );
 }
 
-function RequestFile({ request, visa, docs, userId, onChange }: { request: Request; visa: VisaService; docs: Doc[]; userId: string; onChange: () => void }) {
-  const stages = stagesOf(request);
+function RequestFile({ request, order, visa, docs, userId, onChange }: { request: Request; order?: Order; visa: VisaService; docs: Doc[]; userId: string; onChange: () => void }) {
+  const stages = stagesOf(request, order);
   const appointmentOnly = request.form_type === 'visa-appointment-hunt';
   const keyOf = (i: number) => `${visa.slug}-${i}`;
   const ready = visa.documents.filter((_, i) => docs.some((d) => d.document_type === keyOf(i))).length;
@@ -144,6 +193,7 @@ function RequestFile({ request, visa, docs, userId, onChange }: { request: Reque
         <p className="ogt-small ogt-muted" style={{ margin: 0 }}>
           {appointmentOnly ? 'Appointment only' : 'Full service'}
           {request.travel_date ? `, travelling ${day(request.travel_date)}` : ''}
+          {order?.tracking_number ? <><br />Tracking number {order.tracking_number}</> : null}
         </p>
       </header>
       <div className="ogt-file-body">
@@ -181,6 +231,7 @@ function RequestFile({ request, visa, docs, userId, onChange }: { request: Reque
 export default function Account() {
   const { user, signOut } = useAuth();
   const [requests, setRequests] = useState<Request[] | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [docs, setDocs] = useState<Doc[]>([]);
   const [passport, setPassport] = useState<Passport | null>(null);
   const [failed, setFailed] = useState(false);
@@ -195,23 +246,26 @@ export default function Account() {
   useEffect(() => {
     if (!user) return;
     void (async () => {
-      const [req, prof] = await Promise.all([
+      const [req, prof, ord] = await Promise.all([
         supabase.from('form_submissions')
           .select('id, form_type, visa_type, destination, travel_date, created_at, lead_status, contacted_at, appointment_booked')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false }),
         supabase.from('profiles').select('first_name, nationality, passport_expiry').eq('id', user.id).maybeSingle(),
+        // Not in the generated types yet: added by the my_scoutpass_orders migration.
+        (supabase.rpc as unknown as (fn: string) => Promise<{ data: Order[] | null; error: unknown }>)('my_scoutpass_orders'),
       ]);
       if (req.error) setFailed(true);
       setRequests((req.data as Request[] | null) ?? []);
+      setOrders(ord.data ?? []);
       setPassport((prof.data as Passport | null) ?? null);
     })();
     void loadDocs();
   }, [user, loadDocs]);
 
-  const files = (requests ?? [])
-    .map((r) => ({ request: r, visa: visaBySlug(r.visa_type ?? undefined) }))
-    .filter((f): f is { request: Request; visa: VisaService } => Boolean(f.visa));
+  const files = pair(requests ?? [], orders)
+    .map((f) => ({ ...f, visa: visaBySlug(f.request.visa_type ?? undefined) }))
+    .filter((f): f is { request: Request; order?: Order; visa: VisaService } => Boolean(f.visa));
   const name = passport?.first_name || (user?.user_metadata?.first_name as string | undefined);
   const months = passport?.passport_expiry ? monthsUntil(passport.passport_expiry) : null;
 
@@ -240,8 +294,8 @@ export default function Account() {
                 </div>
               </div>
             )}
-            {user && files.map(({ request, visa }) => (
-              <RequestFile key={request.id} request={request} visa={visa} docs={docs} userId={user.id} onChange={loadDocs} />
+            {user && files.map(({ request, order, visa }) => (
+              <RequestFile key={request.id} request={request} order={order} visa={visa} docs={docs} userId={user.id} onChange={loadDocs} />
             ))}
           </div>
 
