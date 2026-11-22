@@ -1,6 +1,6 @@
 // Run with: deno test --allow-read supabase/functions/
 import { assert, assertEquals, assertNotEquals } from 'jsr:@std/assert@1';
-import { Deps, FlightBookingRow, handleCreatePayment, OgtOrderRow, PaymentRecord } from './handler.ts';
+import { Deps, FlightBookingRow, handleCreatePayment, OgtOrderRow, PaymentRecord, squareEnvironment } from './handler.ts';
 
 const USER = '11111111-1111-4111-8111-111111111111';
 const OTHER_USER = '22222222-2222-4222-8222-222222222222';
@@ -66,7 +66,7 @@ function setup(opts: {
         : { payment: { id: 'sq-pay-1', status: 'COMPLETED', amount_money: body.amount_money } };
       return Promise.resolve(new Response(JSON.stringify(payload), { status: 200 }));
     }) as typeof fetch,
-    square: { accessToken: 'test', locationId: 'LOC', baseUrl: 'https://square.test' },
+    square: { accessToken: 'test', locationId: 'LOC', baseUrl: 'https://square.test', environment: 'sandbox' },
   };
 
   const call = (body: Record<string, unknown>, auth: string | null = 'Bearer good-token') =>
@@ -99,6 +99,30 @@ Deno.test('normal checkout charges the catalogue price and records the payment',
   assertEquals(recorded.length, 1);
   assertEquals(recorded[0].table, 'ogt_orders');
   assertEquals(recorded[0].payment.amountCents, ORDER_TOTAL_CENTS);
+  assertEquals(recorded[0].payment.lineItems.map((item) => item.unitCents * item.quantity), [18900, 2000]);
+});
+
+Deno.test('a browser on the other Square environment is refused before any charge', async () => {
+  const { call, squareCalls } = setup();
+  const wrong = await call({ bookingId: ORDER_ID, amount: 209, environment: 'production' });
+  assertEquals(wrong.status, 400);
+  assertEquals(squareCalls.length, 0);
+
+  const right = await call({ bookingId: ORDER_ID, amount: 209, environment: 'sandbox' });
+  assertEquals(right.status, 200);
+});
+
+Deno.test('SQUARE_ENVIRONMENT picks the API host and rejects typos', () => {
+  assertEquals(squareEnvironment(undefined).baseUrl, 'https://connect.squareup.com');
+  assertEquals(squareEnvironment('production').environment, 'production');
+  assertEquals(squareEnvironment(' Sandbox ').baseUrl, 'https://connect.squareupsandbox.com');
+  let threw = false;
+  try {
+    squareEnvironment('prod');
+  } catch {
+    threw = true;
+  }
+  assert(threw);
 });
 
 Deno.test('a tampered amount is refused and Square is never called', async () => {

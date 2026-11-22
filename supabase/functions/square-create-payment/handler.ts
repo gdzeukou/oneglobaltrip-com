@@ -32,6 +32,8 @@ export interface PaymentRecord {
   status: string;
   amountCents: number;
   currency: string;
+  /** What was charged, line by line. For ogt orders the plan is always first. */
+  lineItems: LineItem[];
 }
 
 /** Database access. Implemented with the service-role client in index.ts. */
@@ -48,7 +50,27 @@ export interface Deps {
   getUserId(token: string): Promise<string | null>;
   store: Store;
   fetch: typeof fetch;
-  square: { accessToken: string; locationId: string; baseUrl: string };
+  square: { accessToken: string; locationId: string; baseUrl: string; environment: SquareEnvironment };
+}
+
+export type SquareEnvironment = 'production' | 'sandbox';
+
+const SQUARE_BASE_URLS: Record<SquareEnvironment, string> = {
+  production: 'https://connect.squareup.com',
+  sandbox: 'https://connect.squareupsandbox.com',
+};
+
+/**
+ * Reads the SQUARE_ENVIRONMENT secret. Unset means production, which is what
+ * the function always used. Anything else is a typo and must not silently
+ * pick an API host.
+ */
+export function squareEnvironment(value: string | undefined): { environment: SquareEnvironment; baseUrl: string } {
+  const environment = (value ?? '').trim().toLowerCase() || 'production';
+  if (environment !== 'production' && environment !== 'sandbox') {
+    throw new Error(`SQUARE_ENVIRONMENT must be "production" or "sandbox", got "${value}"`);
+  }
+  return { environment, baseUrl: SQUARE_BASE_URLS[environment] };
 }
 
 export interface HandlerResult {
@@ -162,6 +184,14 @@ export async function handleCreatePayment(
       throw new HttpError(400, 'idempotencyKey is invalid');
     }
 
+    // A card token from one Square environment is useless in the other. The
+    // browser says which SDK it loaded so a misconfigured deploy fails with a
+    // clear message instead of a confusing decline.
+    if (body.environment !== undefined && body.environment !== null && body.environment !== deps.square.environment) {
+      console.error(`Square environment mismatch: browser=${String(body.environment)} server=${deps.square.environment}`);
+      throw new HttpError(400, 'Payments are misconfigured. You have not been charged. Please contact support.');
+    }
+
     const charge = await resolveCharge(deps.store, userId, bookingId);
 
     // The client still sends the amount it showed the customer. It is never
@@ -215,6 +245,7 @@ export async function handleCreatePayment(
       status: payment.status,
       amountCents: charge.totalCents,
       currency: charge.currency,
+      lineItems: charge.lineItems,
     };
     try {
       if (charge.kind === 'ogt_order') {

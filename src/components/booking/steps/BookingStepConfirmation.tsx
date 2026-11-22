@@ -6,14 +6,12 @@ import { CheckCircle, Calendar, Mail, Phone, Download } from 'lucide-react';
 import { BookingFormData } from '@/types/booking';
 
 interface BookingStepConfirmationProps {
-  orderId: string | null;
+  orderReference: string | null;
   formData: BookingFormData;
   onClose: () => void;
 }
 
-const BookingStepConfirmation = ({ orderId, formData, onClose }: BookingStepConfirmationProps) => {
-  const orderReference = orderId ? `OGT-${orderId.slice(-8).toUpperCase()}` : 'OGT-DEMO123';
-
+const BookingStepConfirmation = ({ orderReference, formData, onClose }: BookingStepConfirmationProps) => {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <div className="text-center mb-8">

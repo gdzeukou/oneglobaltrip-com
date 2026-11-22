@@ -1,7 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.0';
-import { handleCreatePayment, PaymentRecord, Store } from './handler.ts';
+import { handleCreatePayment, PaymentRecord, squareEnvironment, Store } from './handler.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -54,11 +54,17 @@ const handler = async (req: Request): Promise<Response> => {
 
     async recordOgtPayment(orderId, payment: PaymentRecord) {
       const completed = payment.status === 'COMPLETED';
+      // The browser cannot write money columns on ogt_orders, so the
+      // breakdown is filled in here from what was actually charged.
+      const [plan, ...addons] = payment.lineItems;
+      const addonsCents = addons.reduce((sum, item) => sum + item.unitCents * item.quantity, 0);
       const { error } = await supabase
         .from('ogt_orders')
         .update({
           square_payment_id: payment.squarePaymentId,
           square_order_id: payment.squareOrderId,
+          plan_price: plan.unitCents / 100,
+          addons_total: addonsCents / 100,
           total_amount: payment.amountCents / 100,
           currency: payment.currency,
           ...(completed
@@ -105,6 +111,17 @@ const handler = async (req: Request): Promise<Response> => {
     },
   };
 
+  let square: ReturnType<typeof squareEnvironment>;
+  try {
+    square = squareEnvironment(Deno.env.get('SQUARE_ENVIRONMENT'));
+  } catch (error) {
+    console.error(error);
+    return new Response(JSON.stringify({ success: false, error: 'Payments are not configured' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   let body: unknown = null;
   try {
     body = await req.json();
@@ -122,7 +139,8 @@ const handler = async (req: Request): Promise<Response> => {
     square: {
       accessToken: Deno.env.get('SQUARE_ACCESS_TOKEN') ?? '',
       locationId: Deno.env.get('SQUARE_LOCATION_ID') ?? '',
-      baseUrl: 'https://connect.squareup.com',
+      baseUrl: square.baseUrl,
+      environment: square.environment,
     },
   });
 
