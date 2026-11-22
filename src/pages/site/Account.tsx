@@ -267,6 +267,7 @@ export default function Account() {
                 {tripCount > 0 ? `${tripCount} item${tripCount === 1 ? '' : 's'} saved in your trip.` : 'Nothing saved yet. Build the route while the visa is in progress.'}
               </p>
               <Link to={tripCount > 0 ? '/trips' : '/plan'} className="ogt-btn ogt-btn-ghost">{tripCount > 0 ? 'Open my trip' : 'Plan the trip'}</Link>
+              <p style={{ margin: '1rem 0 0' }}><Link to="/file" className="ogt-link">Write my cover letter and travel plan</Link></p>
             </div>
 
             <div>
