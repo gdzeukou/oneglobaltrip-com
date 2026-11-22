@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-
 /** Old long-stay country links land on the long-stay page with the country picked. */
 const LongStayCountryRedirect = () => {
   const { country = "" } = useParams();
-  return <Navigate replace to={`/visas/long-stay?country=${encodeURIComponent(country)}`} />;
+  return <Navigate replace to={`/visas/${country.toLowerCase()}-long-stay`} />;
 };
 import { AuthProvider } from '@/contexts/AuthContext';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -24,26 +24,29 @@ import NotFound from "./pages/NotFound";
 import ErrorPage from "./pages/ErrorPage";
 
 // Load critical pages immediately to fix "pages down" issue
-import Visas from "./pages/Visas";
+import Home from "./pages/site/Home";
+import Visas from "./pages/site/Visas";
+import VisaDetail from "./pages/site/VisaDetail";
+import ScoutPass from "./pages/site/ScoutPass";
+import Pricing from "./pages/site/Pricing";
+import Start from "./pages/site/Start";
+import Plan from "./pages/site/Plan";
 import Packages from "./pages/Packages";
 import PackageDetails from "./pages/PackageDetails";
 import Contact from "./pages/Contact";
-import ShortStayVisas from "./pages/ShortStayVisas";
 
 // Lazy load other components to improve initial load time
 import { lazy, Suspense } from 'react';
 
-const SimplifiedDashboard = lazy(() => import("./pages/SimplifiedDashboard"));
+const Account = lazy(() => import("./pages/site/Account"));
 const Profile = lazy(() => import("./pages/Profile"));
 const TestEmailDelivery = lazy(() => import("./pages/TestEmailDelivery"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
-const Pricing = lazy(() => import("./pages/Pricing"));
 const Concierge = lazy(() => import("./pages/Concierge"));
 const Booking = lazy(() => import("./pages/Booking"));
 const Bookings = lazy(() => import("./pages/Bookings"));
 const AIChat = lazy(() => import("./pages/AIChat"));
-const LongStayVisas = lazy(() => import("./pages/LongStayVisas"));
 const IntelligentApplication = lazy(() => import("./pages/IntelligentApplication"));
 const StartMyTrip = lazy(() => import("./pages/StartMyTrip"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -51,21 +54,14 @@ const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
 const DataDeletion = lazy(() => import("./pages/DataDeletion"));
 
 // Keep only essential visa pages for MVP
-const SchengenShortStayLanding = lazy(() => import("./pages/visa-countries/SchengenShortStayLanding"));
-const GermanyShortStay = lazy(() => import("./pages/visa-countries/GermanyShortStay"));
-const DenmarkShortStay = lazy(() => import("./pages/visa-countries/DenmarkShortStay"));
-const SwedenShortStay = lazy(() => import("./pages/visa-countries/SwedenShortStay"));
-const UKShortStay = lazy(() => import("./pages/visa-countries/UKShortStay"));
 
 // Lazy load remaining pages
 const ParisExplorePackage = lazy(() => import("./pages/packages/ParisExplorePackage"));
-const VisaPricingPage = lazy(() => import("./pages/visas/VisaPricingPage"));
 const TravelModule = lazy(() => import("./pages/ogt/TravelModule"));
 const MyTrip = lazy(() => import("./pages/ogt/MyTrip"));
 // Removed AIAgentCreatorGate and AgentCreator - simplified for MVP
 const About = lazy(() => import("./pages/About"));
 const Blog = lazy(() => import("./pages/Blog"));
-const Services = lazy(() => import("./pages/Services"));
 const Testimonials = lazy(() => import("./pages/Testimonials"));
 const Settings = lazy(() => import("./pages/Settings"));
 const DiscoverGlobal = lazy(() => import("./pages/discover/DiscoverGlobal"));
@@ -98,8 +94,12 @@ function App() {
                   }>
                     <Routes>
                       {/* Public routes - Core MVP */}
-                      <Route path="/" element={<SimplifiedHome />} />
-                      <Route path="/home" element={<SimplifiedHome />} />
+                      <Route path="/" element={<Home />} />
+                      <Route path="/home" element={<Navigate replace to="/" />} />
+                      <Route path="/plan" element={<Plan />} />
+                      <Route path="/globe" element={<SimplifiedHome />} />
+                      <Route path="/start" element={<Start />} />
+                      <Route path="/scoutpass" element={<ScoutPass />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/auth/callback" element={<AuthCallback />} />
                       <Route path="/startmytrip" element={<StartMyTrip />} />
@@ -108,7 +108,7 @@ function App() {
                       <Route path="/contact" element={<Contact />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/blog" element={<Blog />} />
-                      <Route path="/services" element={<Services />} />
+                      <Route path="/services" element={<Navigate replace to="/visas" />} />
                       <Route path="/testimonials" element={<Testimonials />} />
                       <Route path="/pricing" element={<Pricing />} />
                       
@@ -126,22 +126,18 @@ function App() {
                       <Route path="/activities" element={<TravelModule kind="activities" />} />
                       <Route path="/trips" element={<MyTrip />} />
                       
-                      {/* Visa Category Pages */}
-                      <Route path="/visas/short-stay" element={<ShortStayVisas />} />
-                      <Route path="/visas/long-stay" element={<LongStayVisas />} />
+                      {/* Visas: one catalogue, one page per visa */}
+                      <Route path="/visas/:slug" element={<VisaDetail />} />
+
+                      {/* Old visa addresses, kept alive so existing links and search results still land somewhere */}
+                      <Route path="/visas/short-stay" element={<Navigate replace to="/visas#short-stay" />} />
+                      <Route path="/visas/long-stay" element={<Navigate replace to="/visas#long-stay" />} />
                       <Route path="/visas/long-stay/:country" element={<LongStayCountryRedirect />} />
-                      <Route path="/visas/pricing" element={<VisaPricingPage />} />
-                      
-                       {/* Essential Visa Pages for MVP */}
-                       <Route path="/schengen-visa" element={<SchengenShortStayLanding />} />
-                       <Route path="/visas/short-stay/germany" element={<GermanyShortStay />} />
-                       <Route path="/visas/short-stay/denmark" element={<DenmarkShortStay />} />
-                       <Route path="/visas/short-stay/sweden" element={<SwedenShortStay />} />
-                       <Route path="/visas/short-stay/uk" element={<UKShortStay />} />
-                       
-                       {/* Dynamic visa route - Future implementation */}
-                       {/* <Route path="/visa/:country" element={<DynamicVisaPage />} /> */}
-                      
+                      <Route path="/visas/pricing" element={<Navigate replace to="/pricing" />} />
+                      <Route path="/schengen-visa" element={<Navigate replace to="/visas/schengen" />} />
+                      <Route path="/visas/short-stay/uk" element={<Navigate replace to="/visas/uk" />} />
+                      <Route path="/visas/short-stay/:country" element={<Navigate replace to="/visas/schengen" />} />
+
                       {/* Legal Pages */}
                       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                       <Route path="/terms-conditions" element={<TermsAndConditions />} />
@@ -150,7 +146,7 @@ function App() {
                       {/* Protected routes */}
                       <Route path="/dashboard" element={
                         <ProtectedRoute requireEmailVerification={false}>
-                          <SimplifiedDashboard />
+                          <Account />
                         </ProtectedRoute>
                       } />
                       <Route path="/profile" element={

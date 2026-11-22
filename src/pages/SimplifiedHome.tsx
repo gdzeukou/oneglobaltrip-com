@@ -66,6 +66,8 @@ const EXAMPLES = [
 // Linear-light dot colours: big hubs bright gold, smaller places a soft warm white.
 const HUB_DOT: RGB = [1.0, 0.7, 0.24];
 const TOWN_DOT: RGB = [0.5, 0.42, 0.3];
+const VISA_DOT: RGB = [1.0, 0.26, 0.2];
+const OPEN_DOT: RGB = [0.25, 0.95, 0.55];
 
 function formatLatLng(at: LatLng): string {
   const ns = at.lat >= 0 ? 'N' : 'S';
@@ -317,8 +319,15 @@ const HomeApp = () => {
 
   const pickable = useMemo(() => globeDestinations.filter((d) => d.tier <= 2), []);
   const dots: GlobeDot[] = useMemo(
-    () => pickable.map((d) => ({ lat: d.lat, lng: d.lng, color: d.tier === 1 ? HUB_DOT : TOWN_DOT })),
-    [pickable],
+    () => pickable.map((d) => {
+      // The globe shows the world as this passport sees it: red where a visa
+      // stands in the way, green where there is none, gold where we check.
+      const v = visaVerdict(d.country, passport);
+      const dim = d.tier === 1 ? 1 : 0.55;
+      const base: RGB = v.hunt ? VISA_DOT : v.badge === 'We check it for you' ? (d.tier === 1 ? HUB_DOT : TOWN_DOT) : OPEN_DOT;
+      return { lat: d.lat, lng: d.lng, color: v.badge === 'We check it for you' ? base : [base[0] * dim, base[1] * dim, base[2] * dim] as RGB };
+    }),
+    [pickable, passport],
   );
   // The deep zoom is for cities worth a trip, not for every field on Earth —
   // but every country gets at least one, so nowhere is a dead end.
@@ -514,7 +523,7 @@ const HomeApp = () => {
             <Hand size={13} />
             {close
               ? 'Drag to pan. Scroll or pinch to go closer. Tap a city to open it.'
-              : 'Drag to spin. Scroll to dive into a city. Tap a gold dot to fly there.'}
+              : 'Drag to spin. Tap a dot to fly there. Red: visa needed on your passport. Green: no visa.'}
           </p>
           {close && view && (
             <p className="text-[11px] font-mono text-amber-300/70 whitespace-nowrap">
