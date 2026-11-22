@@ -1,0 +1,1045 @@
+/*
+ * One Global Trip — site design system.
+ *
+ * The look comes from the visa sticker itself: indigo stamp ink on pale
+ * security paper, one typeface (Archivo) whose width does the hierarchy, and
+ * a machine-readable strip set in B612 Mono. Everything is scoped under
+ * `.ogt` so the older pages keep their own styles until they are moved over.
+ */
+
+@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource/b612-mono/400.css';
+
+.ogt {
+  --paper: #edf2ec;
+  --sheet: #ffffff;
+  --ink: #221c7a;
+  --ink-deep: #17125a;
+  --text: #1a1840;
+  --muted: #55577a;
+  --line: #c7d2c9;
+  --red: #c9332a;
+  --green: #0b7a53;
+  --on-ink: #e9e8fb;
+  --on-ink-muted: #b4b1e6;
+
+  --wrap: 72rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--text);
+  font-family: 'Archivo Variable', 'Archivo', system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  font-stretch: 100%;
+  text-align: left;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * The older stylesheet styles bare p, li, span and headings (Inter, grey,
+ * bright blue). Inside the new shell, text follows this system instead.
+ * Elements that carry the older pages' own utility classes are left alone.
+ */
+.ogt :is(p, li, span, h1, h2, h3, h4) {
+  font-family: inherit;
+  letter-spacing: inherit;
+}
+
+.ogt :is(p, li, span):where(:not([class]), [class*='ogt-']) {
+  color: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.ogt :is(h1, h2, h3):where(:not([class]), [class*='ogt-']) {
+  color: var(--ink);
+}
+
+.ogt *,
+.ogt *::before,
+.ogt *::after {
+  box-sizing: border-box;
+}
+
+.ogt :focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.ogt .ogt-band-ink :focus-visible {
+  outline-color: #fff;
+}
+
+.ogt a {
+  color: inherit;
+}
+
+.ogt .ogt-wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- type ---------- */
+
+:where(.ogt) :is(h1, h2, h3) {
+  font-family: inherit;
+  color: var(--ink);
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* The header and footer on pages that have not moved to SitePage yet. */
+.ogt.ogt-chrome {
+  display: contents;
+}
+
+.ogt .ogt-h1 {
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 800;
+  font-stretch: 112%;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+}
+
+.ogt .ogt-h2 {
+  font-size: clamp(1.9rem, 3.8vw, 3rem);
+  font-weight: 780;
+  font-stretch: 108%;
+  line-height: 1;
+  letter-spacing: -0.028em;
+}
+
+.ogt .ogt-h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.ogt .ogt-lede {
+  font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+  line-height: 1.45;
+  color: var(--muted);
+  max-width: 36rem;
+}
+
+.ogt .ogt-muted {
+  color: var(--muted);
+}
+
+.ogt .ogt-small {
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+/* Narrow, heavy, tracked: the voice of a rubber stamp. Used for short facts only. */
+.ogt .ogt-stampface {
+  font-stretch: 68%;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ogt .ogt-mrz {
+  font-family: 'B612 Mono', ui-monospace, monospace;
+  font-size: clamp(0.62rem, 1.45vw, 0.82rem);
+  letter-spacing: 0.14em;
+  white-space: nowrap;
+  overflow: hidden;
+  color: var(--ink);
+  opacity: 0.75;
+}
+
+/* ---------- buttons and links ---------- */
+
+.ogt .ogt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.7rem 1.35rem;
+  border-radius: 6px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: #fff !important;
+  font: inherit;
+  font-weight: 650;
+  font-stretch: 104%;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.ogt .ogt-btn:hover {
+  background: var(--ink-deep);
+}
+
+.ogt .ogt-btn:active {
+  transform: translateY(1px);
+}
+
+.ogt .ogt-btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ogt .ogt-btn-ghost {
+  background: transparent;
+  color: var(--ink) !important;
+}
+
+.ogt .ogt-btn-ghost:hover {
+  background: rgba(34, 28, 122, 0.08);
+}
+
+.ogt .ogt-btn-paper {
+  background: #fff;
+  border-color: #fff;
+  color: var(--ink) !important;
+}
+
+.ogt .ogt-btn-paper:hover {
+  background: var(--on-ink);
+}
+
+.ogt .ogt-link {
+  color: var(--ink) !important;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+.ogt .ogt-link:hover {
+  text-decoration-color: var(--red);
+}
+
+/* ---------- header ---------- */
+
+.ogt .ogt-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(237, 242, 236, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.ogt .ogt-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 4.25rem;
+}
+
+.ogt .ogt-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: var(--ink) !important;
+  font-weight: 800;
+  font-stretch: 110%;
+  letter-spacing: -0.02em;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+.ogt .ogt-logo-mark {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2.5px solid var(--ink);
+  display: grid;
+  place-items: center;
+  font-size: 0.62rem;
+  font-stretch: 68%;
+  letter-spacing: 0.04em;
+  transform: rotate(-10deg);
+}
+
+.ogt .ogt-nav {
+  display: none;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+.ogt .ogt-nav a {
+  text-decoration: none;
+  font-weight: 560;
+  font-size: 0.98rem;
+  padding: 0.4rem 0;
+  border-bottom: 2px solid transparent;
+}
+
+.ogt .ogt-nav a:hover,
+.ogt .ogt-nav a[aria-current='page'] {
+  border-bottom-color: var(--ink);
+  color: var(--ink);
+}
+
+.ogt .ogt-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ogt .ogt-header-actions .ogt-btn {
+  min-height: 2.5rem;
+  padding: 0.4rem 1rem;
+  font-size: 0.95rem;
+}
+
+.ogt .ogt-header-actions .ogt-btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 30rem) {
+  .ogt .ogt-header-actions .ogt-btn {
+    display: none;
+  }
+}
+
+.ogt .ogt-signin {
+  display: none;
+  text-decoration: none;
+  font-weight: 560;
+  font-size: 0.98rem;
+}
+
+.ogt .ogt-menu-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.ogt .ogt-drawer {
+  border-top: 1px solid var(--line);
+  padding: 0.5rem 0 1.25rem;
+}
+
+.ogt .ogt-drawer a {
+  display: block;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  font-weight: 650;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+@media (min-width: 60rem) {
+  .ogt .ogt-nav {
+    display: flex;
+  }
+  .ogt .ogt-signin {
+    display: inline;
+  }
+  .ogt .ogt-menu-btn,
+  .ogt .ogt-drawer {
+    display: none;
+  }
+}
+
+/* ---------- sections ---------- */
+
+.ogt .ogt-section {
+  padding-block: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.ogt .ogt-section-tight {
+  padding-block: clamp(2rem, 5vw, 3.5rem);
+}
+
+.ogt .ogt-band-ink {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+
+.ogt .ogt-band-ink h2,
+.ogt .ogt-band-ink h3 {
+  color: #fff;
+}
+
+.ogt .ogt-band-ink .ogt-lede,
+.ogt .ogt-band-ink .ogt-muted {
+  color: var(--on-ink-muted);
+}
+
+.ogt .ogt-band-sheet {
+  background: var(--sheet);
+  border-block: 1px solid var(--line);
+}
+
+.ogt .ogt-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .ogt .ogt-split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .ogt .ogt-split-wide-right {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+  .ogt .ogt-split-wide-left {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+}
+
+/* ---------- hero ---------- */
+
+.ogt .ogt-hero {
+  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 5.5rem);
+}
+
+.ogt .ogt-hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 3.5rem);
+  align-items: center;
+}
+
+@media (min-width: 64rem) {
+  .ogt .ogt-hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* ---------- the visa sticker ---------- */
+
+.ogt .ogt-sticker {
+  position: relative;
+  background: var(--sheet);
+  border: 1.5px solid var(--ink);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 10px 10px 0 rgba(34, 28, 122, 0.14);
+}
+
+.ogt .ogt-sticker-pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.ogt .ogt-sticker-body {
+  position: relative;
+  padding: clamp(1.1rem, 3vw, 1.9rem);
+}
+
+.ogt .ogt-sticker-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  padding-bottom: 0.9rem;
+  margin-bottom: 1.1rem;
+  border-bottom: 1.5px solid var(--ink);
+  color: var(--ink);
+}
+
+.ogt .ogt-sticker-top strong {
+  font-size: 1.05rem;
+}
+
+.ogt .ogt-fields {
+  display: grid;
+  gap: 0.9rem;
+}
+
+@media (min-width: 36rem) {
+  .ogt .ogt-fields-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ogt .ogt-field label,
+.ogt .ogt-field .ogt-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.ogt .ogt-input,
+.ogt .ogt-select,
+.ogt .ogt-textarea {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+}
+
+.ogt .ogt-textarea {
+  min-height: 6rem;
+  font-weight: 400;
+  resize: vertical;
+}
+
+.ogt .ogt-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1l6 6 6-6' fill='none' stroke='%23221c7a' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2.4rem;
+}
+
+.ogt .ogt-verdict {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem 1.25rem;
+  align-items: center;
+  margin-top: 1.4rem;
+  min-height: 8.5rem;
+}
+
+.ogt .ogt-verdict p {
+  margin: 0;
+}
+
+.ogt .ogt-verdict-title {
+  font-size: 1.25rem;
+  font-weight: 750;
+  line-height: 1.2;
+  color: var(--ink);
+}
+
+.ogt .ogt-stamp {
+  --tone: var(--ink);
+  justify-self: end;
+  width: clamp(6.6rem, 22vw, 9rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 4px solid var(--tone);
+  outline: 1.5px solid var(--tone);
+  outline-offset: -9px;
+  color: var(--tone);
+  display: grid;
+  place-content: center;
+  text-align: center;
+  line-height: 1;
+  transform: rotate(-11deg);
+  filter: url(#ogt-ink);
+  mix-blend-mode: multiply;
+}
+
+.ogt .ogt-stamp[data-tone='red'] {
+  --tone: var(--red);
+}
+
+.ogt .ogt-stamp[data-tone='green'] {
+  --tone: var(--green);
+}
+
+.ogt .ogt-stamp-big {
+  font-size: clamp(1.15rem, 4vw, 1.6rem);
+}
+
+.ogt .ogt-stamp-small {
+  font-size: 0.66rem;
+  margin-top: 0.35rem;
+  letter-spacing: 0.1em;
+}
+
+@keyframes ogt-thunk {
+  0% {
+    transform: rotate(-4deg) scale(1.9);
+    opacity: 0;
+  }
+  55% {
+    transform: rotate(-12deg) scale(0.94);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(-11deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.ogt .ogt-stamp-in {
+  animation: ogt-thunk 0.34s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ogt .ogt-stamp-in {
+    animation: none;
+  }
+  .ogt .ogt-btn {
+    transition: none;
+  }
+}
+
+.ogt .ogt-sticker-foot {
+  position: relative;
+  border-top: 1.5px solid var(--ink);
+  padding: 0.7rem clamp(1.1rem, 3vw, 1.9rem);
+  background: rgba(237, 242, 236, 0.75);
+}
+
+.ogt .ogt-next {
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px dashed var(--ink);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem 1.5rem;
+}
+
+.ogt .ogt-next p {
+  margin: 0;
+}
+
+.ogt .ogt-price {
+  font-size: 1.9rem;
+  font-weight: 800;
+  font-stretch: 108%;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  line-height: 1;
+}
+
+/* ---------- fee bar ---------- */
+
+.ogt .ogt-feebar {
+  display: flex;
+  height: 1.1rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.ogt .ogt-feebar span {
+  display: block;
+  height: 100%;
+}
+
+.ogt .ogt-feebar span + span {
+  border-left: 1.5px solid var(--ink);
+}
+
+.ogt .ogt-fee-a {
+  background: var(--ink);
+}
+
+.ogt .ogt-fee-b {
+  background: repeating-linear-gradient(135deg, var(--ink) 0 2px, transparent 2px 7px);
+}
+
+.ogt .ogt-fee-c {
+  background: var(--red);
+}
+
+.ogt .ogt-feelist {
+  list-style: none;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.ogt .ogt-feelist li {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.ogt .ogt-feelist i {
+  width: 1rem;
+  height: 1rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 2px;
+}
+
+.ogt .ogt-feelist b {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- rows, lists, tables ---------- */
+
+.ogt .ogt-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1.5px solid var(--ink);
+}
+
+.ogt .ogt-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.35rem 1.5rem;
+  align-items: center;
+  padding: 1.15rem 0.25rem;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  color: inherit;
+}
+
+.ogt a.ogt-row:hover {
+  background: rgba(34, 28, 122, 0.05);
+}
+
+.ogt a.ogt-row:hover .ogt-row-name {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+
+.ogt .ogt-row-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+.ogt .ogt-row-meta {
+  grid-column: 1;
+  font-size: 0.93rem;
+  color: var(--muted);
+}
+
+.ogt .ogt-row-price {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  text-align: right;
+  font-size: 1.35rem;
+  font-weight: 780;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ogt .ogt-row-price small {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.ogt .ogt-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: step;
+  display: grid;
+  gap: 1.75rem;
+}
+
+@media (min-width: 48rem) {
+  .ogt .ogt-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 72rem) {
+  .ogt .ogt-steps-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.ogt .ogt-steps li {
+  counter-increment: step;
+  border-top: 1.5px solid currentColor;
+  padding-top: 0.9rem;
+}
+
+.ogt .ogt-steps li::before {
+  content: counter(step);
+  display: block;
+  font-size: 2.6rem;
+  font-weight: 800;
+  font-stretch: 68%;
+  line-height: 1;
+  margin-bottom: 0.6rem;
+}
+
+.ogt .ogt-steps p {
+  margin: 0.35rem 0 0;
+}
+
+.ogt .ogt-checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.ogt .ogt-checks li {
+  position: relative;
+  padding-left: 1.75rem;
+}
+
+.ogt .ogt-checks li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.38em;
+  width: 0.95rem;
+  height: 0.5rem;
+  border-left: 2.5px solid var(--green);
+  border-bottom: 2.5px solid var(--green);
+  transform: rotate(-45deg);
+}
+
+.ogt .ogt-band-ink .ogt-checks li::before {
+  border-color: #fff;
+}
+
+.ogt .ogt-table-scroll {
+  overflow-x: auto;
+  border: 1.5px solid var(--ink);
+  border-radius: 10px;
+  background: var(--sheet);
+}
+
+.ogt .ogt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.97rem;
+  min-width: 40rem;
+}
+
+.ogt .ogt-table th,
+.ogt .ogt-table td {
+  padding: 0.85rem 1rem;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ogt .ogt-table th:first-child,
+.ogt .ogt-table td:first-child {
+  text-align: left;
+  white-space: normal;
+}
+
+.ogt .ogt-table thead th {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.ogt .ogt-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.ogt .ogt-table td:last-child {
+  font-weight: 780;
+  color: var(--ink);
+}
+
+.ogt .ogt-table a {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.ogt .ogt-faq details {
+  border-bottom: 1px solid var(--line);
+  padding: 1.1rem 0;
+}
+
+.ogt .ogt-faq details:first-child {
+  border-top: 1.5px solid var(--ink);
+}
+
+.ogt .ogt-faq summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 680;
+  color: var(--ink);
+}
+
+.ogt .ogt-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.ogt .ogt-faq summary::after {
+  content: '+';
+  font-weight: 400;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.ogt .ogt-faq details[open] summary::after {
+  content: '–';
+}
+
+.ogt .ogt-faq details p {
+  margin: 0.7rem 0 0;
+  max-width: 44rem;
+  color: var(--muted);
+}
+
+.ogt .ogt-panel {
+  background: var(--sheet);
+  border: 1.5px solid var(--ink);
+  border-radius: 14px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.ogt .ogt-band-ink .ogt-panel {
+  color: var(--text);
+}
+
+.ogt .ogt-band-ink .ogt-panel .ogt-muted {
+  color: var(--muted);
+}
+
+.ogt .ogt-band-ink .ogt-panel h3 {
+  color: var(--ink);
+}
+
+.ogt .ogt-note {
+  border-left: 4px solid var(--ink);
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 44rem;
+}
+
+.ogt .ogt-alert {
+  border: 1.5px solid var(--red);
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
+  color: var(--red);
+  font-weight: 600;
+  background: #fff;
+}
+
+.ogt .ogt-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.ogt .ogt-crumbs a {
+  color: var(--muted);
+}
+
+.ogt .ogt-tabs {
+  display: inline-flex;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ogt .ogt-tabs button {
+  font: inherit;
+  font-weight: 650;
+  padding: 0.55rem 1.1rem;
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  cursor: pointer;
+}
+
+.ogt .ogt-tabs button + button {
+  border-left: 1.5px solid var(--ink);
+}
+
+.ogt .ogt-tabs button[aria-pressed='true'] {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* ---------- footer ---------- */
+
+.ogt .ogt-footer {
+  background: var(--ink-deep);
+  color: var(--on-ink-muted);
+  padding-block: 3.5rem 2rem;
+  font-size: 0.95rem;
+}
+
+.ogt .ogt-footer-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (min-width: 56rem) {
+  .ogt .ogt-footer-grid {
+    grid-template-columns: 2fr repeat(4, minmax(0, 1fr));
+  }
+  .ogt .ogt-footer-brand {
+    grid-column: auto !important;
+  }
+}
+
+.ogt .ogt-footer-brand {
+  grid-column: 1 / -1;
+}
+
+.ogt .ogt-footer h3 {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.ogt .ogt-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.ogt .ogt-footer a {
+  text-decoration: none;
+  color: var(--on-ink-muted);
+}
+
+.ogt .ogt-footer a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.ogt .ogt-footer-legal {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.85rem;
+  max-width: 50rem;
+}

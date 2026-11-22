@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plane, ShoppingBag, X } from 'lucide-react';
+import { SitePage } from '@/components/site/SiteShell';
 import { loadTrip, removeFromTrip, type TripItem } from '@/data/travelCatalog';
 
 export const MODULES = [
@@ -105,10 +106,8 @@ export function OgtFooter() {
 
 export function OgtPage({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-white text-zinc-900 font-sans antialiased">
-      <OgtHeader />
-      <main className="max-w-6xl mx-auto px-4 pb-8">{children}</main>
-      <OgtFooter />
-    </div>
+    <SitePage>
+      <div className="ogt-wrap" style={{ paddingBottom: '4rem' }}>{children}</div>
+    </SitePage>
   );
 }
