@@ -44,7 +44,7 @@ export default function Orders({ openId, onOpen }: { openId: string | null; onOp
   return (
     <>
       <div className="ogc-toolbar">
-        <Chips<View>
+        <Chips
           value={view}
           onChange={setView}
           options={[

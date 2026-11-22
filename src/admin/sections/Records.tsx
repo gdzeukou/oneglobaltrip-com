@@ -97,7 +97,7 @@ export function Leads() {
   return (
     <>
       <div className="ogc-toolbar">
-        <Chips<'open' | 'converted' | 'all'>
+        <Chips
           value={view}
           onChange={setView}
           options={[
@@ -266,7 +266,7 @@ export function Applications() {
   return (
     <>
       <div className="ogc-toolbar">
-        <Chips<'submitted' | 'draft' | 'all'>
+        <Chips
           value={view}
           onChange={setView}
           options={[

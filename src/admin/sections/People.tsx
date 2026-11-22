@@ -51,7 +51,7 @@ export default function People({ adminsOnly = false }: { adminsOnly?: boolean })
   return (
     <>
       <div className="ogc-toolbar">
-        <Chips<'all' | 'customers' | 'admins'>
+        <Chips
           value={view}
           onChange={setView}
           options={[
