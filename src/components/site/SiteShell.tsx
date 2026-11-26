@@ -16,8 +16,19 @@ import { useReveal } from '@/components/site/fx';
 export const NAV = [
   { to: '/visas', label: 'Visas' },
   { to: '/scoutpass', label: 'Appointments' },
+  { to: '/flights', label: 'Flights' },
+  { to: '/stays', label: 'Stays' },
+  { to: '/cars', label: 'Cars' },
   { to: '/pricing', label: 'Pricing' },
-  { to: '/plan', label: 'Plan a trip' },
+];
+
+/** The rest of the trip, shown in the phone menu and the footer. */
+const MORE = [
+  { to: '/cruises', label: 'Cruises' },
+  { to: '/activities', label: 'Activities' },
+  { to: '/packages', label: 'Packages' },
+  { to: '/plan', label: 'Route planner' },
+  { to: '/trips', label: 'My trip' },
 ];
 
 /** Rough, uneven ink for the stamps. Referenced from CSS as url(#ogt-ink). */
@@ -72,7 +83,7 @@ export function SiteHeader() {
         </div>
         {open && (
           <nav id="ogt-drawer" className="ogt-drawer" aria-label="Main, mobile">
-            {NAV.map((n) => (
+            {[...NAV, ...MORE].map((n) => (
               <Link key={n.to} to={n.to}>{n.label}</Link>
             ))}
             <Link to="/start">Start my visa</Link>
@@ -92,7 +103,8 @@ export function SiteFooter() {
           <div className="ogt-footer-brand">
             <p style={{ color: '#fff', fontWeight: 800, fontSize: '1.15rem', margin: 0 }}>One Global Trip</p>
             <p style={{ margin: '0.5rem 0 0', maxWidth: '22rem' }}>
-              Visa files and visa appointments, then the trip. Based in Houston, Texas.
+              Visas, appointments, flights, stays and cars. Any passport, any destination, one trip.
+              Based in Houston, Texas, working with travelers everywhere.
             </p>
           </div>
           <div>
@@ -113,11 +125,21 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h3>Trips</h3>
+            <h3>Travel</h3>
+            <ul>
+              <li><Link to="/flights">Flights</Link></li>
+              <li><Link to="/stays">Stays</Link></li>
+              <li><Link to="/cars">Cars</Link></li>
+              <li><Link to="/cruises">Cruises</Link></li>
+              <li><Link to="/activities">Activities</Link></li>
+              <li><Link to="/packages">Packages</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Plan</h3>
             <ul>
               <li><Link to="/plan">Route planner</Link></li>
               <li><Link to="/globe">The globe</Link></li>
-              <li><Link to="/packages">Packages</Link></li>
               <li><Link to="/trips">My trip</Link></li>
             </ul>
           </div>

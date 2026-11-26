@@ -1,32 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { SitePage } from '@/components/site/SiteShell';
 import GlobeHero from '@/components/site/GlobeHero';
 import FeeBreakdown from '@/components/site/FeeBreakdown';
 import SlotRadar from '@/components/site/SlotRadar';
+import TravelDeck from '@/components/site/TravelDeck';
+import { coarseFix } from '@/lib/geolocate';
 import { HotLink, StickyCta, Ticker } from '@/components/site/fx';
 import type { VisaCheckValue } from '@/components/site/VisaCheck';
 import { LONG_STAY, SCOUTPASS, SHORT_STAY, VISA_SERVICES, priceOf } from '@/data/visaCatalog';
-import { originFor, visaVerdict } from '@/lib/travelResolve';
+import { PASSPORT_COUNTRIES, nearestCity, originFor, visaVerdict } from '@/lib/travelResolve';
 
 export const FAQ: [string, string][] = [
   ['Do you guarantee a visa?', 'No. No agency can guarantee a consulate decision. We guarantee the work: a complete file, the appointment hunt, and a refund of the hunt if no appointment can be secured.'],
   ['What does the appointment hunt cover?', `Finding and securing your appointment at the visa center, at ${SCOUTPASS.price} ${SCOUTPASS.unit}. Fees charged by the consulate or the center are separate when you take the hunt alone.`],
-  ['Which countries do you cover?', 'All 29 Schengen countries, the United Kingdom, Canada, the UAE, India, Brazil and Nigeria for short stays, and long-stay visas for seven European countries.'],
-  ['Where can I apply from?', 'We secure appointments in US cities. If you apply from somewhere else, say where in your request and we will tell you whether we can help.'],
+  ['Which countries do you cover?', 'All 29 Schengen countries, the United Kingdom, Canada, the UAE, India, Brazil and Nigeria for short stays, and long-stay visas for seven European countries. Going somewhere else? Ask, and we tell you if we can take it.'],
+  ['Where can I apply from?', 'Anywhere. Tell us your passport and the city you apply from, and we work with the consulate or visa center that serves it.'],
+  ['Is it only visas?', 'No. The same place books the flight, the stay, the car, cruises and activities, and keeps them in one trip with one total.'],
   ['When do I pay?', 'After we have confirmed the visa you need, the document list and the price. Sending a request costs nothing.'],
 ];
 
 
 /** Passports that meet the most visa desks. Picking one redraws the globe. */
-const PASSPORTS = ['Nigeria', 'India', 'Cameroon', 'Ghana', 'Kenya', 'Philippines', 'Pakistan', 'Egypt', 'Morocco', 'Senegal', 'China', 'Vietnam', 'South Africa', 'Turkey'];
+const PASSPORTS = ['Nigeria', 'India', 'Cameroon', 'Ghana', 'Kenya', 'Philippines', 'Pakistan', 'Egypt', 'Morocco', 'Senegal', 'China', 'Vietnam', 'South Africa', 'Turkey', 'Brazil', 'Mexico', 'Colombia', 'Indonesia', 'United States', 'United Kingdom'].filter((p) => PASSPORT_COUNTRIES.includes(p));
 
 /** Routes for the ticker. The verdict on each is computed, never typed in. */
 const ROUTES: [string, string][] = [
   ['Nigeria', 'France'], ['India', 'United Kingdom'], ['Cameroon', 'Germany'], ['United States', 'Italy'],
   ['Ghana', 'Spain'], ['Philippines', 'Netherlands'], ['Kenya', 'United Kingdom'], ['Brazil', 'Portugal'],
   ['Pakistan', 'Switzerland'], ['Egypt', 'Greece'], ['Morocco', 'France'], ['Canada', 'United Kingdom'],
+  ['China', 'Italy'], ['Mexico', 'Spain'], ['South Africa', 'Germany'], ['Vietnam', 'France'],
 ];
 
 function routeLine([passport, destination]: [string, string]) {
@@ -44,28 +48,55 @@ export default function Home() {
   const schengen = priceOf('schengenShortStay');
   const longStay = priceOf(LONG_STAY[0].pricing);
   const [check, setCheck] = useState<VisaCheckValue>({ passport: 'Cameroon', destination: 'France' });
+  const touched = useRef(false);
+  const change = (next: VisaCheckValue) => {
+    touched.current = true;
+    setCheck(next);
+  };
+
+  // Open on the visitor's own country, from the coarse location the edge
+  // already has. No prompt. If they picked something first, leave it alone.
+  useEffect(() => {
+    let live = true;
+    void coarseFix().then((fix) => {
+      const country = fix ? nearestCity(fix)?.country : null;
+      if (!live || touched.current || !country || !PASSPORT_COUNTRIES.includes(country)) return;
+      setCheck((c) => ({ passport: country, destination: c.destination === country ? 'United Kingdom' : c.destination }));
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
 
   const pickPassport = (passport: string) => {
-    setCheck((c) => ({ ...c, passport }));
+    touched.current = true;
+    setCheck((c) => ({ passport, destination: c.destination === passport ? 'United Kingdom' : c.destination }));
     window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
 
   return (
-    <SitePage title="Visas, appointments and global mobility" tone="night">
-      <GlobeHero value={check} onChange={setCheck}>
-        <p className="ogt-eyebrow">Global mobility, done for you</p>
-        <h1 className="ogt-h1">Borders are paperwork. <em>We do the paperwork.</em></h1>
+    <SitePage title="Visas, flights, stays and cars, from anywhere to anywhere" tone="night">
+      <GlobeHero value={check} onChange={change}>
+        <p className="ogt-eyebrow">Any passport. Any destination. One trip.</p>
+        <h1 className="ogt-h1">From anywhere, to anywhere. <em>We clear the way.</em></h1>
         <p className="ogt-lede" style={{ marginTop: '1.25rem' }}>
-          Pick your passport and where you are going. The globe shows every border in your way. We prepare the file
-          and hunt the appointment.
+          The visa, the appointment, the flight, the stay and the car, in one place. Start with your passport: the
+          globe shows every border between you and the trip.
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1.75rem' }}>
           <HotLink to="/start" className="ogt-btn-big">Start my visa</HotLink>
-          <Link to="/scoutpass" className="ogt-btn ogt-btn-glass ogt-btn-big">Appointment only, {SCOUTPASS.price}</Link>
+          <Link to="/flights" className="ogt-btn ogt-btn-glass ogt-btn-big">Book the trip</Link>
         </div>
       </GlobeHero>
 
       <Ticker label="Sample routes and whether they need a visa" items={ROUTES.map(routeLine)} />
+
+      <section className="ogt-section-tight ogt-night ogt-deck-band">
+        <div className="ogt-wrap">
+          <h2 className="sr-only">Everything for the trip</h2>
+          <TravelDeck />
+        </div>
+      </section>
 
       <section className="ogt-section-tight ogt-band-sheet">
         <div className="ogt-wrap">
@@ -145,7 +176,7 @@ export default function Home() {
               Slots at visa centers open without warning and fill fast. We watch for one in your city and secure it for you.
             </p>
             <ul className="ogt-checks" style={{ marginTop: '1.75rem', maxWidth: '34rem' }}>
-              <li>Appointments at {SCOUTPASS.centers.join(', ')} across US cities</li>
+              <li>Appointments at {SCOUTPASS.centers.join(', ')}, in the city you apply from</li>
               <li>You keep your own file, or we prepare it with the full service</li>
               <li>{SCOUTPASS.refund}</li>
             </ul>
@@ -176,9 +207,10 @@ export default function Home() {
       <section className="ogt-section ogt-band-ink">
         <div className="ogt-wrap">
           <p className="ogt-eyebrow" data-reveal>Your passport, your map</p>
-          <h2 className="ogt-h2" style={{ maxWidth: '46rem' }} data-reveal>Some passports get asked for more. Those are the ones we work for.</h2>
+          <h2 className="ogt-h2" style={{ maxWidth: '46rem' }} data-reveal>Every passport sees a different world. Pick yours.</h2>
           <p className="ogt-lede" style={{ marginTop: '1.25rem' }} data-reveal>
-            Pick yours. The globe redraws the world as your passport sees it: red where a visa comes first.
+            The globe redraws the map as your passport sees it: red where a visa comes first, green where you just go.
+            Not in the list? Every passport is in the visa check.
           </p>
           <ul className="ogt-chips" style={{ marginTop: '2rem' }} data-reveal>
             {PASSPORTS.map((p) => (
@@ -228,17 +260,24 @@ export default function Home() {
       <section className="ogt-section">
         <div className="ogt-wrap ogt-split">
           <div data-reveal>
-            <h2 className="ogt-h2">Visa sorted. Now the trip.</h2>
+            <p className="ogt-eyebrow">Not only visas</p>
+            <h2 className="ogt-h2">Visa sorted. Now book the rest here.</h2>
             <p className="ogt-lede" style={{ marginTop: '1.25rem' }}>
-              Build the route and see every border on it: which visas it needs, which consulate takes the file and the
-              dates the paperwork has to hit.
+              Flights, stays, cars, cruises and activities go into one trip with one total. We confirm every live
+              price before you pay.
+            </p>
+            <p style={{ marginTop: '1.75rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <Link to="/flights" className="ogt-btn ogt-btn-shine">Find a flight</Link>
+              <Link to="/trips" className="ogt-btn ogt-btn-ghost">See my trip</Link>
             </p>
           </div>
           <ul className="ogt-rows" data-reveal>
+            <li><Link to="/flights" className="ogt-row"><span className="ogt-row-name">Flights</span><span className="ogt-row-meta">Search from your own airport</span></Link></li>
+            <li><Link to="/stays" className="ogt-row"><span className="ogt-row-name">Stays</span><span className="ogt-row-meta">Hotels for short trips, apartments for long ones</span></Link></li>
+            <li><Link to="/cars" className="ogt-row"><span className="ogt-row-name">Cars</span><span className="ogt-row-meta">Pick up where you land</span></Link></li>
             <li><Link to="/plan" className="ogt-row"><span className="ogt-row-name">Route planner</span><span className="ogt-row-meta">Every border on your route, with the dates to hit</span></Link></li>
             <li><Link to="/globe" className="ogt-row"><span className="ogt-row-name">The globe</span><span className="ogt-row-meta">Spin it, pick a city, ask the AI planner</span></Link></li>
             <li><Link to="/packages" className="ogt-row"><span className="ogt-row-name">Packages</span><span className="ogt-row-meta">Ready-made trips you can change</span></Link></li>
-            <li><Link to="/trips" className="ogt-row"><span className="ogt-row-name">My trip</span><span className="ogt-row-meta">Everything you have added, with one total</span></Link></li>
           </ul>
         </div>
       </section>

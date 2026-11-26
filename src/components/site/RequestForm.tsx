@@ -188,7 +188,7 @@ export default function RequestForm({ defaults = {} }: { defaults?: RequestDefau
           </div>
           <div className="ogt-field">
             <label htmlFor={`${id}-city`}>City you apply from</label>
-            <input id={`${id}-city`} className="ogt-input" value={form.city} onChange={set('city')} placeholder="Houston, TX" autoComplete="address-level2" />
+            <input id={`${id}-city`} className="ogt-input" value={form.city} onChange={set('city')} placeholder="Lagos, Douala, Houston…" autoComplete="address-level2" />
           </div>
           <div className="ogt-field">
             <label htmlFor={`${id}-date`}>Travel date, if you have one</label>

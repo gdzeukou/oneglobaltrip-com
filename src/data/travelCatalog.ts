@@ -33,7 +33,7 @@ function stayPrice(region: string, kind: string) {
 export const CATALOG: CatalogItem[] = TOP.flatMap((d) => {
   const region = d.region.split('/')[0].trim();
   return [
-    { id: `flight-${d.id}`, kind: 'flights', title: `Houston → ${d.name}`, city: d.name, country: d.country, region, detail: `Round trip to ${d.name}, ${d.country}. Typical route, final live fare confirmed before you pay.`, tag: 'Flight', fromPrice: flightPrice(region), priceLabel: 'from, round trip' },
+    { id: `flight-${d.id}`, kind: 'flights', title: `Flights to ${d.name}`, city: d.name, country: d.country, region, detail: `Round trip to ${d.name}, ${d.country}. The fare depends on where you fly from; we confirm the live one before you pay.`, tag: 'Flight', fromPrice: flightPrice(region), priceLabel: 'estimate, round trip' },
     { id: `stay-hotel-${d.id}`, kind: 'stays', title: `Hotel in ${d.name}`, city: d.name, country: d.country, region, detail: `Central hotel in ${d.name}. Free cancellation options shown at confirmation.`, tag: 'Hotel', fromPrice: stayPrice(region, 'Hotel'), priceLabel: 'from, per night' },
     { id: `stay-bnb-${d.id}`, kind: 'stays', title: `BnB / apartment in ${d.name}`, city: d.name, country: d.country, region, detail: `Apartment-style stay in ${d.name}, kitchen and local host. Good for longer trips and families.`, tag: 'BnB', fromPrice: stayPrice(region, 'BnB'), priceLabel: 'from, per night' },
     { id: `car-${d.id}`, kind: 'cars', title: `Rental car in ${d.name}`, city: d.name, country: d.country, region, detail: `Economy to SUV, pickup in ${d.name}. Insurance and mileage confirmed before you pay.`, tag: 'Rental', fromPrice: 48, priceLabel: 'from, per day' },
