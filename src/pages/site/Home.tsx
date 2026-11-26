@@ -1,95 +1,86 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { SitePage } from '@/components/site/SiteShell';
 import GlobeHero from '@/components/site/GlobeHero';
-import FeeBreakdown from '@/components/site/FeeBreakdown';
-import SlotRadar from '@/components/site/SlotRadar';
+import TripBar, { emptyTrip, tripUrl, type TripQuery } from '@/components/site/TripBar';
 import TravelDeck from '@/components/site/TravelDeck';
-import { coarseFix } from '@/lib/geolocate';
+import VisaCheck from '@/components/site/VisaCheck';
 import { HotLink, StickyCta, Ticker } from '@/components/site/fx';
-import type { VisaCheckValue } from '@/components/site/VisaCheck';
-import { LONG_STAY, SCOUTPASS, SHORT_STAY, VISA_SERVICES, priceOf } from '@/data/visaCatalog';
-import { PASSPORT_COUNTRIES, nearestCity, originFor, visaVerdict } from '@/lib/travelResolve';
+import { globeDestinations } from '@/data/globeDestinations';
+import { SCOUTPASS } from '@/data/visaCatalog';
+import { coarseFix } from '@/lib/geolocate';
+import { placeLabel, resolvePlace } from '@/lib/places.trip';
+import { nearestCity } from '@/lib/travelResolve';
 
 export const FAQ: [string, string][] = [
-  ['Do you guarantee a visa?', 'No. No agency can guarantee a consulate decision. We guarantee the work: a complete file, the appointment hunt, and a refund of the hunt if no appointment can be secured.'],
-  ['What does the appointment hunt cover?', `Finding and securing your appointment at the visa center, at ${SCOUTPASS.price} ${SCOUTPASS.unit}. Fees charged by the consulate or the center are separate when you take the hunt alone.`],
-  ['Which countries do you cover?', 'All 29 Schengen countries, the United Kingdom, Canada, the UAE, India, Brazil and Nigeria for short stays, and long-stay visas for seven European countries. Going somewhere else? Ask, and we tell you if we can take it.'],
-  ['Where can I apply from?', 'Anywhere. Tell us your passport and the city you apply from, and we work with the consulate or visa center that serves it.'],
-  ['Is it only visas?', 'No. The same place books the flight, the stay, the car, cruises and activities, and keeps them in one trip with one total.'],
-  ['When do I pay?', 'After we have confirmed the visa you need, the document list and the price. Sending a request costs nothing.'],
+  ['What can I book here?', 'The whole trip: flights, stays, rental cars, activities, cruises and ready-made packages. Everything goes into one trip with one total.'],
+  ['Where can I travel from, and to?', 'From anywhere to anywhere. Tell us the city you leave from and where you want to go.'],
+  ['When do I pay?', 'After a person has confirmed the prices and what is included. Sending a trip costs nothing.'],
+  ['What if my trip needs a visa?', `We handle that too. We prepare the file, or hunt the appointment alone for ${SCOUTPASS.price} ${SCOUTPASS.unit}. If your passport needs nothing, you never hear about it.`],
+  ['Do you guarantee a visa?', 'No. No company can guarantee a consulate decision. We guarantee the work: a complete file, the appointment hunt, and a refund of the hunt if no appointment can be secured.'],
+  ['Can I talk to a person?', 'Yes. Every trip is confirmed by a person before you pay, and you can write to us at any step.'],
 ];
 
-
-/** Passports that meet the most visa desks. Picking one redraws the globe. */
-const PASSPORTS = ['Nigeria', 'India', 'Cameroon', 'Ghana', 'Kenya', 'Philippines', 'Pakistan', 'Egypt', 'Morocco', 'Senegal', 'China', 'Vietnam', 'South Africa', 'Turkey', 'Brazil', 'Mexico', 'Colombia', 'Indonesia', 'United States', 'United Kingdom'].filter((p) => PASSPORT_COUNTRIES.includes(p));
-
-/** Routes for the ticker. The verdict on each is computed, never typed in. */
-const ROUTES: [string, string][] = [
-  ['Nigeria', 'France'], ['India', 'United Kingdom'], ['Cameroon', 'Germany'], ['United States', 'Italy'],
-  ['Ghana', 'Spain'], ['Philippines', 'Netherlands'], ['Kenya', 'United Kingdom'], ['Brazil', 'Portugal'],
-  ['Pakistan', 'Switzerland'], ['Egypt', 'Greece'], ['Morocco', 'France'], ['Canada', 'United Kingdom'],
-  ['China', 'Italy'], ['Mexico', 'Spain'], ['South Africa', 'Germany'], ['Vietnam', 'France'],
-];
-
-function routeLine([passport, destination]: [string, string]) {
-  const verdict = visaVerdict(destination, passport);
-  const to = originFor(destination);
-  return (
-    <>
-      {originFor(passport).label} <span aria-hidden="true">→</span> {to.country === destination ? to.label : destination}
-      <b data-tone={verdict.hunt ? 'red' : 'green'}>{verdict.hunt ? 'Visa first' : 'No visa'}</b>
-    </>
-  );
-}
+/** Places shown as ideas. All are cities the globe knows, in several regions. */
+const IDEAS = ['Paris', 'Tokyo', 'Dubai', 'New York', 'Cape Town', 'Rio de Janeiro', 'Bali', 'Rome', 'Bangkok', 'Marrakech', 'Sydney', 'Istanbul'];
 
 export default function Home() {
-  const schengen = priceOf('schengenShortStay');
-  const longStay = priceOf(LONG_STAY[0].pricing);
-  const [check, setCheck] = useState<VisaCheckValue>({ passport: 'Cameroon', destination: 'France' });
+  const [trip, setTrip] = useState<TripQuery>(emptyTrip);
   const touched = useRef(false);
-  const change = (next: VisaCheckValue) => {
+  const change = (next: TripQuery) => {
     touched.current = true;
-    setCheck(next);
+    setTrip(next);
   };
 
-  // Open on the visitor's own country, from the coarse location the edge
-  // already has. No prompt. If they picked something first, leave it alone.
+  // Open on the visitor's own city, from the coarse location the edge already
+  // has. No prompt. If they typed something first, leave it alone.
   useEffect(() => {
     let live = true;
     void coarseFix().then((fix) => {
-      const country = fix ? nearestCity(fix)?.country : null;
-      if (!live || touched.current || !country || !PASSPORT_COUNTRIES.includes(country)) return;
-      setCheck((c) => ({ passport: country, destination: c.destination === country ? 'United Kingdom' : c.destination }));
+      const city = fix ? nearestCity(fix) : null;
+      if (!live || touched.current || !city) return;
+      setTrip((t) => (t.from ? t : { ...t, from: placeLabel(city) }));
     });
     return () => {
       live = false;
     };
   }, []);
 
-  const pickPassport = (passport: string) => {
+  const from = useMemo(() => resolvePlace(trip.from), [trip.from]);
+  const to = useMemo(() => resolvePlace(trip.to), [trip.to]);
+
+  const ideas = useMemo(
+    () => IDEAS.map((name) => globeDestinations.find((d) => d.name === name)).filter((d): d is NonNullable<typeof d> => !!d).slice(0, 8),
+    [],
+  );
+  const pick = (label: string) => {
     touched.current = true;
-    setCheck((c) => ({ passport, destination: c.destination === passport ? 'United Kingdom' : c.destination }));
+    setTrip((t) => ({ ...t, to: label }));
     window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
 
   return (
-    <SitePage title="Visas, flights, stays and cars, from anywhere to anywhere" tone="night">
-      <GlobeHero value={check} onChange={change}>
-        <p className="ogt-eyebrow">Any passport. Any destination. One trip.</p>
-        <h1 className="ogt-h1">From anywhere, to anywhere. <em>We clear the way.</em></h1>
+    <SitePage title="Flights, stays, cars, activities and cruises, from anywhere to anywhere" tone="night">
+      <GlobeHero from={from} to={to}>
+        <p className="ogt-eyebrow">One trip. Everything in it.</p>
+        <h1 className="ogt-h1">Where to next? <em>We take you there.</em></h1>
         <p className="ogt-lede" style={{ marginTop: '1.25rem' }}>
-          The visa, the appointment, the flight, the stay and the car, in one place. Start with your passport: the
-          globe shows every border between you and the trip.
+          Tell us where you are and where you want to go. Flights, stays, cars, activities and cruises, put together
+          into one trip and confirmed by a person.
         </p>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1.75rem' }}>
-          <HotLink to="/start" className="ogt-btn-big">Start my visa</HotLink>
-          <Link to="/flights" className="ogt-btn ogt-btn-glass ogt-btn-big">Book the trip</Link>
+        <div className="ogt-globehero-check">
+          <TripBar value={trip} onChange={change} />
         </div>
+        <p className="ogt-small ogt-hero-aside">
+          Need a visa for it? <Link to="/visas">We handle that too.</Link>
+        </p>
       </GlobeHero>
 
-      <Ticker label="Sample routes and whether they need a visa" items={ROUTES.map(routeLine)} />
+      <Ticker
+        label="Places you can go"
+        items={globeDestinations.filter((d) => d.tier === 1).map((d) => <>{d.name} <b>{d.country}</b></>)}
+      />
 
       <section className="ogt-section-tight ogt-night ogt-deck-band">
         <div className="ogt-wrap">
@@ -98,187 +89,89 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="ogt-section-tight ogt-band-sheet">
-        <div className="ogt-wrap">
-          <ul className="ogt-figures" data-reveal data-reveal-group>
-            <li><b>29</b><span>Schengen countries on one visa</span></li>
-            <li><b>{VISA_SERVICES.length}</b><span>visas we file, short stay and long stay</span></li>
-            <li><b>{SCOUTPASS.price}</b><span>for the appointment hunt, {SCOUTPASS.unit}</span></li>
-            <li><b>100%</b><span>of the hunt refunded if we find no slot</span></li>
-          </ul>
-        </div>
-      </section>
-
       <section className="ogt-section">
         <div className="ogt-wrap">
-          <p className="ogt-eyebrow" data-reveal>What we do</p>
-          <h2 className="ogt-h2" style={{ maxWidth: '44rem' }} data-reveal>One desk for every way of crossing a border.</h2>
-          <ul className="ogt-cards ogt-cards-3" style={{ marginTop: '2.5rem' }} data-reveal data-reveal-group>
-            <li>
-              <Link to="/start" className="ogt-card ogt-card-feature">
-                <p className="ogt-card-tag">Most chosen</p>
-                <h3 className="ogt-h3">Full visa service</h3>
-                <p>The forms, a review of every document, the appointment, and the consulate and center fees, in one price.</p>
-                <div className="ogt-card-foot"><span>From {schengen.totalPrice}</span><span>Start <ArrowRight size={16} className="ogt-btn-arrow" aria-hidden="true" /></span></div>
-              </Link>
-            </li>
-            <li>
-              <Link to="/scoutpass" className="ogt-card">
-                <p className="ogt-card-tag">ScoutPass</p>
-                <h3 className="ogt-h3">Appointment hunt</h3>
-                <p>Your file is ready and the calendar is full. We watch {SCOUTPASS.centers.join(', ')} and secure the slot.</p>
-                <div className="ogt-card-foot"><span>{SCOUTPASS.price} {SCOUTPASS.unit}</span><span>Hunt <ArrowRight size={16} className="ogt-btn-arrow" aria-hidden="true" /></span></div>
-              </Link>
-            </li>
-            <li>
-              <Link to="/visas#long-stay" className="ogt-card">
-                <p className="ogt-card-tag">Relocation</p>
-                <h3 className="ogt-h3">Long-stay visas</h3>
-                <p>Work, study, family or retirement in {LONG_STAY.length} European countries, for more than 90 days.</p>
-                <div className="ogt-card-foot"><span>From {longStay.totalPrice}</span><span>See <ArrowRight size={16} className="ogt-btn-arrow" aria-hidden="true" /></span></div>
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact?topic=refusal" className="ogt-card">
-                <p className="ogt-card-tag">On request</p>
-                <h3 className="ogt-h3">After a refusal</h3>
-                <p>Send us the refusal letter. We read what the consulate objected to and rebuild the file around it before you apply again.</p>
-                <div className="ogt-card-foot"><span>Quoted before you pay</span><span>Ask <ArrowRight size={16} className="ogt-btn-arrow" aria-hidden="true" /></span></div>
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact?topic=family" className="ogt-card">
-                <p className="ogt-card-tag">On request</p>
-                <h3 className="ogt-h3">Families and groups</h3>
-                <p>One contact for every traveler, files that match each other, and appointments hunted for the same day.</p>
-                <div className="ogt-card-foot"><span>Quoted before you pay</span><span>Ask <ArrowRight size={16} className="ogt-btn-arrow" aria-hidden="true" /></span></div>
-              </Link>
-            </li>
-            <li>
-              <Link to="/contact?topic=business" className="ogt-card">
-                <p className="ogt-card-tag">On request</p>
-                <h3 className="ogt-h3">Teams and employers</h3>
-                <p>Staff who travel on passports that need visas. We keep the calendar of who needs what, and when to file.</p>
-                <div className="ogt-card-foot"><span>Quoted before you pay</span><span>Ask <ArrowRight size={16} className="ogt-btn-arrow" aria-hidden="true" /></span></div>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <section className="ogt-section ogt-night">
-        <div className="ogt-night-sky" aria-hidden="true" />
-        <div className="ogt-wrap ogt-split" style={{ alignItems: 'center' }}>
-          <div data-reveal>
-            <p className="ogt-eyebrow">ScoutPass</p>
-            <h2 className="ogt-h2">The appointment is the hard part. We hunt it.</h2>
-            <p className="ogt-lede" style={{ marginTop: '1.25rem' }}>
-              Slots at visa centers open without warning and fill fast. We watch for one in your city and secure it for you.
-            </p>
-            <ul className="ogt-checks" style={{ marginTop: '1.75rem', maxWidth: '34rem' }}>
-              <li>Appointments at {SCOUTPASS.centers.join(', ')}, in the city you apply from</li>
-              <li>You keep your own file, or we prepare it with the full service</li>
-              <li>{SCOUTPASS.refund}</li>
-            </ul>
-            <p style={{ margin: '2rem 0 0', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1rem 1.5rem' }}>
-              <span><span className="ogt-price" style={{ fontSize: '3.25rem', color: '#fff' }}>{SCOUTPASS.price}</span>{' '}<span className="ogt-muted">{SCOUTPASS.unit}</span></span>
-              <HotLink to="/start?service=appointment">Hunt my appointment</HotLink>
-              <Link to="/scoutpass" className="ogt-btn ogt-btn-glass">How it works</Link>
-            </p>
-            <p className="ogt-small ogt-muted" style={{ margin: '1rem 0 0' }}>Consulate and center fees are not part of this price.</p>
-          </div>
-          <div data-reveal><SlotRadar /></div>
-        </div>
-      </section>
-
-      <section className="ogt-section">
-        <div className="ogt-wrap">
-          <p className="ogt-eyebrow" data-reveal>How it runs</p>
-          <h2 className="ogt-h2" style={{ maxWidth: '40rem' }} data-reveal>From the first question to the border.</h2>
+          <p className="ogt-eyebrow" data-reveal>How we take you there</p>
+          <h2 className="ogt-h2" style={{ maxWidth: '42rem' }} data-reveal>You say where. We do the rest.</h2>
           <ol className="ogt-route" style={{ marginTop: '2.5rem' }} data-reveal data-reveal-group>
-            <li><h3 className="ogt-h3">Check</h3><p>Tell us your passport, your destination and your dates. We confirm which visa you need, or that you need none.</p></li>
-            <li><h3 className="ogt-h3">File</h3><p>You get the exact document list. We complete the forms with you and review every document before it is submitted.</p></li>
-            <li><h3 className="ogt-h3">Appointment</h3><p>We hunt the slot at the visa center and book it. You go once, with a file that is ready.</p></li>
-            <li><h3 className="ogt-h3">Travel</h3><p>We track the application until the passport is back, then help you plan the trip itself.</p></li>
+            <li><h3 className="ogt-h3">Tell us the trip</h3><p>Where you are, where you want to go, when, and who is coming. One sentence is enough.</p></li>
+            <li><h3 className="ogt-h3">Pick what you like</h3><p>Flights, a place to sleep, a car, things to do. Add them to one trip and watch the total.</p></li>
+            <li><h3 className="ogt-h3">A person confirms it</h3><p>We check every price and what is included, and clear the border if your passport needs it.</p></li>
+            <li><h3 className="ogt-h3">You pay, and go</h3><p>One total, after you have seen it. We stay with you until you are home.</p></li>
           </ol>
         </div>
       </section>
 
-      <section className="ogt-section ogt-band-ink">
+      <section className="ogt-section ogt-band-sheet">
         <div className="ogt-wrap">
-          <p className="ogt-eyebrow" data-reveal>Your passport, your map</p>
-          <h2 className="ogt-h2" style={{ maxWidth: '46rem' }} data-reveal>Every passport sees a different world. Pick yours.</h2>
-          <p className="ogt-lede" style={{ marginTop: '1.25rem' }} data-reveal>
-            The globe redraws the map as your passport sees it: red where a visa comes first, green where you just go.
-            Not in the list? Every passport is in the visa check.
-          </p>
-          <ul className="ogt-chips" style={{ marginTop: '2rem' }} data-reveal>
-            {PASSPORTS.map((p) => (
-              <li key={p}>
-                <button type="button" className="ogt-chip" aria-pressed={check.passport === p} onClick={() => pickPassport(p)}>
-                  {p}
+          <p className="ogt-eyebrow" data-reveal>Need an idea?</p>
+          <h2 className="ogt-h2" style={{ maxWidth: '40rem' }} data-reveal>Pick a place. The globe turns to it.</h2>
+          <ul className="ogt-cards ogt-cards-4" style={{ marginTop: '2.25rem' }} data-reveal data-reveal-group>
+            {ideas.map((d) => (
+              <li key={d.id}>
+                <button type="button" className="ogt-card ogt-idea" onClick={() => pick(placeLabel(d))}>
+                  <span className="ogt-card-tag">{d.region.split('/')[0].trim()}</span>
+                  <span className="ogt-h3">{d.name}</span>
+                  <span className="ogt-idea-line">{d.description}</span>
+                  <span className="ogt-card-foot"><span>{d.country}</span><span>Go <ArrowRight size={16} className="ogt-btn-arrow" aria-hidden="true" /></span></span>
                 </button>
               </li>
             ))}
           </ul>
-        </div>
-      </section>
-
-      <section className="ogt-section ogt-band-sheet">
-        <div className="ogt-wrap ogt-split ogt-split-wide-left">
-          <div data-reveal>
-            <h2 className="ogt-h2">Visas we handle</h2>
-            <p className="ogt-muted" style={{ margin: '0.9rem 0 1.75rem', maxWidth: '34rem' }}>Prices are totals. Consulate and center fees are already inside.</p>
-            <ul className="ogt-rows">
-              {SHORT_STAY.map((v) => (
-                <li key={v.slug}>
-                  <Link to={`/visas/${v.slug}`} className="ogt-row">
-                    <span className="ogt-row-name">{v.name}</span>
-                    <span className="ogt-row-meta">{v.stay}</span>
-                    <span className="ogt-row-price">{priceOf(v.pricing).totalPrice}</span>
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <Link to="/visas#long-stay" className="ogt-row">
-                  <span className="ogt-row-name">Long-stay visas for Europe</span>
-                  <span className="ogt-row-meta">{LONG_STAY.map((v) => v.name.replace(' long-stay visa', '')).join(', ')}</span>
-                  <span className="ogt-row-price">{longStay.totalPrice}</span>
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div data-reveal>
-            <h3 className="ogt-h3">What a Schengen visa costs, line by line</h3>
-            <p className="ogt-muted" style={{ margin: '0.6rem 0 1.25rem' }}>You see what goes to the consulate, what goes to the visa center, and what goes to us.</p>
-            <FeeBreakdown price={schengen} />
-            <p style={{ marginTop: '1.5rem' }}><Link to="/pricing" className="ogt-link">See every price</Link></p>
-          </div>
+          <p style={{ marginTop: '2rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <Link to="/packages" className="ogt-btn ogt-btn-shine">See ready-made trips</Link>
+            <Link to="/globe" className="ogt-btn ogt-btn-ghost">Explore the globe</Link>
+          </p>
         </div>
       </section>
 
       <section className="ogt-section">
         <div className="ogt-wrap ogt-split">
           <div data-reveal>
-            <p className="ogt-eyebrow">Not only visas</p>
-            <h2 className="ogt-h2">Visa sorted. Now book the rest here.</h2>
+            <p className="ogt-eyebrow">Not sure yet?</p>
+            <h2 className="ogt-h2">Say it in one sentence. We draft the trip.</h2>
             <p className="ogt-lede" style={{ marginTop: '1.25rem' }}>
-              Flights, stays, cars, cruises and activities go into one trip with one total. We confirm every live
-              price before you pay.
+              "Ten days in Japan in April, two of us, food and temples." That is enough to start. We come back with a
+              route, prices and a total.
             </p>
             <p style={{ marginTop: '1.75rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-              <Link to="/flights" className="ogt-btn ogt-btn-shine">Find a flight</Link>
-              <Link to="/trips" className="ogt-btn ogt-btn-ghost">See my trip</Link>
+              <HotLink to="/startmytrip">Start my trip</HotLink>
+              <Link to="/contact?topic=trip" className="ogt-btn ogt-btn-ghost">Ask a person</Link>
             </p>
           </div>
           <ul className="ogt-rows" data-reveal>
-            <li><Link to="/flights" className="ogt-row"><span className="ogt-row-name">Flights</span><span className="ogt-row-meta">Search from your own airport</span></Link></li>
+            <li><Link to="/flights" className="ogt-row"><span className="ogt-row-name">Flights</span><span className="ogt-row-meta">From your own airport, to anywhere</span></Link></li>
             <li><Link to="/stays" className="ogt-row"><span className="ogt-row-name">Stays</span><span className="ogt-row-meta">Hotels for short trips, apartments for long ones</span></Link></li>
             <li><Link to="/cars" className="ogt-row"><span className="ogt-row-name">Cars</span><span className="ogt-row-meta">Pick up where you land</span></Link></li>
-            <li><Link to="/plan" className="ogt-row"><span className="ogt-row-name">Route planner</span><span className="ogt-row-meta">Every border on your route, with the dates to hit</span></Link></li>
-            <li><Link to="/globe" className="ogt-row"><span className="ogt-row-name">The globe</span><span className="ogt-row-meta">Spin it, pick a city, ask the AI planner</span></Link></li>
-            <li><Link to="/packages" className="ogt-row"><span className="ogt-row-name">Packages</span><span className="ogt-row-meta">Ready-made trips you can change</span></Link></li>
+            <li><Link to="/activities" className="ogt-row"><span className="ogt-row-name">Activities</span><span className="ogt-row-meta">Tours and day trips, in any country</span></Link></li>
+            <li><Link to="/cruises" className="ogt-row"><span className="ogt-row-name">Cruises</span><span className="ogt-row-meta">Sea days and river days</span></Link></li>
+            <li><Link to="/plan" className="ogt-row"><span className="ogt-row-name">Route planner</span><span className="ogt-row-meta">Several countries in one trip</span></Link></li>
           </ul>
+        </div>
+      </section>
+
+      <section className="ogt-section ogt-band-ink">
+        <div className="ogt-wrap ogt-split" style={{ alignItems: 'center' }}>
+          <div data-reveal>
+            <p className="ogt-eyebrow">And if there is a border in the way</p>
+            <h2 className="ogt-h2">Need a visa? That is our other job.</h2>
+            <p className="ogt-lede" style={{ marginTop: '1.25rem' }}>
+              Most travel sites stop at the booking. We also prepare visa files and hunt consulate appointments, so the
+              trip you booked is a trip you can take.
+            </p>
+            <ul className="ogt-checks" style={{ marginTop: '1.75rem', maxWidth: '34rem' }}>
+              <li>Check your passport against your destination, free</li>
+              <li>Full visa service with every fee shown</li>
+              <li>Appointment hunt alone, {SCOUTPASS.price} {SCOUTPASS.unit}, refunded if we find no slot</li>
+            </ul>
+            <p style={{ margin: '2rem 0 0', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <Link to="/visas" className="ogt-btn ogt-btn-paper">See the visas</Link>
+              <Link to="/scoutpass" className="ogt-btn ogt-btn-glass">The appointment hunt</Link>
+            </p>
+          </div>
+          <div data-reveal>
+            <VisaCheck initialPassport={from?.country ?? 'Cameroon'} initialDestination="France" key={from?.country ?? 'default'} footnote={false} />
+          </div>
         </div>
       </section>
 
@@ -297,16 +190,16 @@ export default function Home() {
         <div className="ogt-night-sky" aria-hidden="true" />
         <div className="ogt-wrap" data-reveal>
           <p className="ogt-eyebrow">Two minutes to start</p>
-          <h2 className="ogt-h1">Tell us where. <em>We clear the way.</em></h2>
-          <p className="ogt-lede">Sending a request costs nothing. You see the visa, the document list and the price before you pay.</p>
+          <h2 className="ogt-h1">Tell us where. <em>We take you there.</em></h2>
+          <p className="ogt-lede">Sending a trip costs nothing. You see every price before you pay.</p>
           <div className="ogt-finale-actions">
-            <HotLink to="/start" className="ogt-btn-big">Start my visa</HotLink>
-            <Link to="/pricing" className="ogt-btn ogt-btn-glass ogt-btn-big">See every price</Link>
+            <HotLink to="/startmytrip" className="ogt-btn-big">Start my trip</HotLink>
+            <Link to={trip.to ? tripUrl(trip) : '/flights'} className="ogt-btn ogt-btn-glass ogt-btn-big">{trip.to ? 'See my trip board' : 'Find a flight'}</Link>
           </div>
         </div>
       </section>
 
-      <StickyCta to="/start" label="Start my visa" note="Free to ask. Pay after the quote." />
+      <StickyCta to="/startmytrip" label="Start my trip" note="Free to send. Pay after the quote." />
     </SitePage>
   );
 }

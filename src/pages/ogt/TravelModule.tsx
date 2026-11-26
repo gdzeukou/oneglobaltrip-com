@@ -1,13 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { ArrowRight, Check, Loader2, MapPin, Plus } from 'lucide-react';
+import { ArrowRight, Check, MapPin, Plus } from 'lucide-react';
 import { SitePage } from '@/components/site/SiteShell';
 import { HotLink } from '@/components/site/fx';
+import TripBar, { emptyTrip, type TripQuery } from '@/components/site/TripBar';
 import { ALL_ITEMS, addToTrip, type TravelKind } from '@/data/travelCatalog';
-import { supabase } from '@/integrations/supabase/client';
 
 const META: Record<TravelKind, { title: string; lead: string; sub: string; cta: string }> = {
-  flights: { title: 'Flights', lead: 'Fly from your airport. To anywhere.', sub: 'Search live fares, or start from an estimate. We confirm the final fare before you pay.', cta: 'Add flight to my trip' },
+  flights: { title: 'Flights', lead: 'Fly from your airport. To anywhere.', sub: 'Tell us the two cities and the dates. We confirm the final fare before you pay.', cta: 'Add flight to my trip' },
   stays: { title: 'Stays', lead: 'A bed for every night of the trip.', sub: 'Hotels for short stays, apartments and BnBs for longer ones. Starting prices, confirmed before you pay.', cta: 'Add stay to my trip' },
   cars: { title: 'Cars', lead: 'Pick up the car where you land.', sub: 'Economy to SUV. We confirm the price, the insurance and the mileage before you pay.', cta: 'Add car to my trip' },
   cruises: { title: 'Cruises', lead: 'Sea days and river days.', sub: 'Mediterranean, Caribbean, Nile, Alaska. We confirm the cabin and the sailing dates before you pay.', cta: 'Add cruise to my trip' },
@@ -24,42 +24,11 @@ const TABS: { to: string; label: string }[] = [
   { to: '/visas', label: 'Visas' },
 ];
 
-/** A week out and two weeks out, so the dates in the form are never in the past. */
-function daysFromNow(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
-const IATA: Record<string, string> = {
-  Paris: 'CDG', London: 'LHR', Rome: 'FCO', Barcelona: 'BCN', Amsterdam: 'AMS', Madrid: 'MAD', Berlin: 'BER',
-  Tokyo: 'HND', Dubai: 'DXB', Bangkok: 'BKK', Singapore: 'SIN', Mumbai: 'BOM', 'New Delhi': 'DEL',
-  Cairo: 'CAI', 'Cape Town': 'CPT', Toronto: 'YYZ', 'New York': 'JFK', 'Los Angeles': 'LAX', Miami: 'MIA',
-};
-
-interface LiveFlight {
-  itineraryId: string;
-  carrierCodes: string[];
-  flightNumbers: string[];
-  depart?: string;
-  arrive?: string;
-  duration?: string;
-  stops: number;
-  total?: number;
-  currency?: string;
-}
-
 export default function TravelModule({ kind }: { kind: TravelKind }) {
   const meta = META[kind];
   const [query, setQuery] = useState('');
   const [added, setAdded] = useState<string | null>(null);
-  const [origin, setOrigin] = useState('');
-  const [destCity, setDestCity] = useState('Paris');
-  const [departDate, setDepartDate] = useState(() => daysFromNow(30));
-  const [returnDate, setReturnDate] = useState(() => daysFromNow(37));
-  const [liveFlights, setLiveFlights] = useState<LiveFlight[] | null>(null);
-  const [liveError, setLiveError] = useState<string | null>(null);
-  const [searching, setSearching] = useState(false);
+  const [trip, setTrip] = useState<TripQuery>(emptyTrip);
 
   const items = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -68,26 +37,6 @@ export default function TravelModule({ kind }: { kind: TravelKind }) {
     return base.filter((i) => i.city.toLowerCase().includes(q) || i.country.toLowerCase().includes(q) || i.title.toLowerCase().includes(q));
   }, [kind, query]);
 
-  const searchLiveFlights = async () => {
-    const destCode = IATA[destCity] || destCity;
-    setSearching(true);
-    setLiveError(null);
-    setLiveFlights(null);
-    try {
-      const { data, error } = await supabase.functions.invoke('agent-search-flights', {
-        body: { origin, destination: destCode, departDate, returnDate, pax: 1 },
-      });
-      if (error) throw new Error(error.message);
-      if (data?.error) throw new Error(String(data.error));
-      setLiveFlights((data?.options || []) as LiveFlight[]);
-    } catch (e) {
-      setLiveError(e instanceof Error ? e.message : 'Live flight search failed');
-    } finally {
-      setSearching(false);
-    }
-  };
-
-  const canSearch = origin.trim().length === 3 && !searching;
 
   return (
     <SitePage title={meta.title} tone="night">
@@ -101,45 +50,9 @@ export default function TravelModule({ kind }: { kind: TravelKind }) {
           <h1 className="ogt-h1" style={{ maxWidth: '48rem' }}>{meta.lead}</h1>
           <p className="ogt-lede" style={{ marginTop: '1.25rem' }}>{meta.sub}</p>
 
-          {kind === 'flights' && (
-            <div className="ogt-panel" style={{ marginTop: '2rem' }}>
-              <div className="ogt-book-search">
-                <div className="ogt-field">
-                  <label htmlFor="fl-from">From, airport code</label>
-                  <input id="fl-from" className="ogt-input" value={origin} maxLength={3} placeholder="LOS, DLA, IAH…" onChange={(e) => setOrigin(e.target.value.toUpperCase().replace(/[^A-Z]/g, ''))} />
-                </div>
-                <div className="ogt-field">
-                  <label htmlFor="fl-to">To</label>
-                  <select id="fl-to" className="ogt-select" value={destCity} onChange={(e) => setDestCity(e.target.value)}>{Object.keys(IATA).map((c) => <option key={c}>{c}</option>)}</select>
-                </div>
-                <div className="ogt-field"><label htmlFor="fl-out">Depart</label><input id="fl-out" type="date" className="ogt-input" value={departDate} onChange={(e) => setDepartDate(e.target.value)} /></div>
-                <div className="ogt-field"><label htmlFor="fl-back">Return</label><input id="fl-back" type="date" className="ogt-input" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} /></div>
-                <button type="button" onClick={searchLiveFlights} disabled={!canSearch} className="ogt-btn ogt-btn-shine">
-                  {searching && <Loader2 size={16} className="animate-spin" aria-hidden="true" />} Search fares
-                </button>
-              </div>
-              <div aria-live="polite">
-                {liveError && <p className="ogt-alert" style={{ marginTop: '1rem' }}>Live fares are not available right now. Add an estimate below and we confirm the real fare before you pay.</p>}
-                {liveFlights && liveFlights.length === 0 && <p className="ogt-small ogt-muted" style={{ margin: '1rem 0 0' }}>No fares for that route and those dates. Try other dates.</p>}
-                {liveFlights && liveFlights.length > 0 && (
-                  <ul className="ogt-rows" style={{ marginTop: '1.25rem' }}>
-                    {liveFlights.slice(0, 6).map((f) => (
-                      <li key={f.itineraryId} className="ogt-row" style={{ alignItems: 'center' }}>
-                        <span className="ogt-row-name">{f.carrierCodes.join(', ')} · {f.flightNumbers.join(', ')}</span>
-                        <span className="ogt-row-meta">{f.depart || ''} → {f.arrive || ''} · {f.stops} stop{f.stops === 1 ? '' : 's'} · {f.duration || ''}</span>
-                        <span className="ogt-row-price">
-                          {f.total != null ? `${f.currency || 'USD'} ${f.total.toLocaleString()}` : ''}
-                          <button type="button" className="ogt-btn ogt-btn-small" style={{ marginLeft: '0.75rem' }} onClick={() => { addToTrip({ id: `live-${f.itineraryId}`, kind: 'Flight', title: `${origin} → ${IATA[destCity] || destCity} · ${f.carrierCodes.join(', ')}`, detail: `${f.flightNumbers.join(', ')} · ${f.depart || ''} → ${f.arrive || ''}`, price: Math.round(f.total || 0) }); setAdded(f.itineraryId); }}>
-                            {added === f.itineraryId ? 'Added' : 'Add'}
-                          </button>
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-          )}
+          <div style={{ marginTop: '2rem', maxWidth: '46rem' }}>
+            <TripBar value={trip} onChange={setTrip} submitLabel={kind === 'flights' ? 'Search flights' : 'See prices'} />
+          </div>
         </div>
       </section>
 

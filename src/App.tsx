@@ -31,6 +31,7 @@ import ScoutPass from "./pages/site/ScoutPass";
 import Pricing from "./pages/site/Pricing";
 import Start from "./pages/site/Start";
 import Plan from "./pages/site/Plan";
+import Trip from "./pages/site/Trip";
 import VisaFile from "./pages/site/File";
 import ThankYou from "./pages/site/ThankYou";
 import Packages from "./pages/Packages";
@@ -98,6 +99,7 @@ function App() {
                       <Route path="/" element={<Home />} />
                       <Route path="/home" element={<Navigate replace to="/" />} />
                       <Route path="/plan" element={<Plan />} />
+                      <Route path="/trip" element={<Trip />} />
                       <Route path="/globe" element={<SimplifiedHome />} />
                       <Route path="/file" element={<VisaFile />} />
                       {/* Stripe returns here: paid, or cancelled before paying */}

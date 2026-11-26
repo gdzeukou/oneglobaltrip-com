@@ -14,19 +14,19 @@ import '@/styles/site-fx.css';
 import { useReveal } from '@/components/site/fx';
 
 export const NAV = [
-  { to: '/visas', label: 'Visas' },
-  { to: '/scoutpass', label: 'Appointments' },
   { to: '/flights', label: 'Flights' },
   { to: '/stays', label: 'Stays' },
   { to: '/cars', label: 'Cars' },
-  { to: '/pricing', label: 'Pricing' },
-];
-
-/** The rest of the trip, shown in the phone menu and the footer. */
-const MORE = [
-  { to: '/cruises', label: 'Cruises' },
   { to: '/activities', label: 'Activities' },
   { to: '/packages', label: 'Packages' },
+  { to: '/visas', label: 'Visas' },
+];
+
+/** The rest, shown in the phone menu and the footer. */
+const MORE = [
+  { to: '/cruises', label: 'Cruises' },
+  { to: '/scoutpass', label: 'Visa appointments' },
+  { to: '/pricing', label: 'Visa pricing' },
   { to: '/plan', label: 'Route planner' },
   { to: '/trips', label: 'My trip' },
 ];
@@ -68,7 +68,7 @@ export function SiteHeader() {
           </nav>
           <div className="ogt-header-actions">
             <Link to={user ? '/dashboard' : '/auth'} className="ogt-signin">{user ? 'My account' : 'Sign in'}</Link>
-            <Link to="/start" className="ogt-btn">Start my visa</Link>
+            <Link to="/startmytrip" className="ogt-btn">Start my trip</Link>
             <button
               type="button"
               className="ogt-menu-btn"
@@ -86,7 +86,7 @@ export function SiteHeader() {
             {[...NAV, ...MORE].map((n) => (
               <Link key={n.to} to={n.to}>{n.label}</Link>
             ))}
-            <Link to="/start">Start my visa</Link>
+            <Link to="/startmytrip">Start my trip</Link>
             <Link to={user ? '/dashboard' : '/auth'}>{user ? 'My account' : 'Sign in'}</Link>
           </nav>
         )}
@@ -103,9 +103,20 @@ export function SiteFooter() {
           <div className="ogt-footer-brand">
             <p style={{ color: '#fff', fontWeight: 800, fontSize: '1.15rem', margin: 0 }}>One Global Trip</p>
             <p style={{ margin: '0.5rem 0 0', maxWidth: '22rem' }}>
-              Visas, appointments, flights, stays and cars. Any passport, any destination, one trip.
-              Based in Houston, Texas, working with travelers everywhere.
+              Flights, stays, cars, activities and cruises, from anywhere to anywhere. And the visa, when the
+              trip needs one. Based in Houston, Texas.
             </p>
+          </div>
+          <div>
+            <h3>Travel</h3>
+            <ul>
+              <li><Link to="/flights">Flights</Link></li>
+              <li><Link to="/stays">Stays</Link></li>
+              <li><Link to="/cars">Cars</Link></li>
+              <li><Link to="/cruises">Cruises</Link></li>
+              <li><Link to="/activities">Activities</Link></li>
+              <li><Link to="/packages">Packages</Link></li>
+            </ul>
           </div>
           <div>
             <h3>Visas</h3>
@@ -122,17 +133,6 @@ export function SiteFooter() {
               <li><Link to="/scoutpass">Appointment hunt</Link></li>
               <li><Link to="/pricing">Pricing</Link></li>
               <li><Link to="/start">Start my visa</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h3>Travel</h3>
-            <ul>
-              <li><Link to="/flights">Flights</Link></li>
-              <li><Link to="/stays">Stays</Link></li>
-              <li><Link to="/cars">Cars</Link></li>
-              <li><Link to="/cruises">Cruises</Link></li>
-              <li><Link to="/activities">Activities</Link></li>
-              <li><Link to="/packages">Packages</Link></li>
             </ul>
           </div>
           <div>
@@ -154,7 +154,7 @@ export function SiteFooter() {
           </div>
         </div>
         <p className="ogt-footer-legal">
-          One Global Trip is a private visa assistance company, not a government agency. Consulates alone decide whether a visa is
+          One Global Trip is a private travel and visa assistance company, not a government agency. Consulates alone decide whether a visa is
           granted. Entry rules change, so confirm them with the official consulate before you travel.
         </p>
       </div>

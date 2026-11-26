@@ -1,54 +1,37 @@
 /**
- * The homepage hero: the Earth as your passport sees it.
+ * The homepage hero: the Earth, and the line from where you are to where
+ * you want to go.
  *
- * The visa check on the left drives the globe on the right. Change the
- * passport and the departure point moves; change the destination and an arc
- * flies there, red where a visa stands in the way and gold where none does.
- * Every dot is a major city, coloured by the same rule.
+ * The trip bar drives the globe. Type a city to leave from and the home dot
+ * moves there; type a destination and the arc flies to it.
  */
 
 import React, { Suspense, lazy, useEffect, useMemo, useRef } from 'react';
 import type { GlobeDot, RGB } from '@/components/earth/globe';
-import { globeDestinations } from '@/data/globeDestinations';
-import { originFor, visaVerdict } from '@/lib/travelResolve';
-import VisaCheck, { type VisaCheckValue } from '@/components/site/VisaCheck';
+import { globeDestinations, type GlobeDestination } from '@/data/globeDestinations';
 
 const WorldGlobe = lazy(() => import('@/components/earth/WorldGlobe'));
 
-const HUB_DOT: RGB = [1.0, 0.7, 0.24];
-const VISA_DOT: RGB = [1.0, 0.26, 0.2];
-const OPEN_DOT: RGB = [0.25, 0.95, 0.55];
+const CITY_DOT: RGB = [1.0, 0.7, 0.24];
+/** Houston, where One Global Trip is: the view before we know where you are. */
+const HOME = { lat: 29.7604, lng: -95.3698, label: 'Houston' };
 
 export default function GlobeHero({
-  value,
-  onChange,
+  from,
+  to,
   children,
 }: {
-  value: VisaCheckValue;
-  onChange: (next: VisaCheckValue) => void;
-  /** Headline, lede and actions. */
+  from: GlobeDestination | null;
+  to: GlobeDestination | null;
   children: React.ReactNode;
 }) {
-  const { passport, destination } = value;
   const stage = useRef<HTMLDivElement>(null);
 
-  const origin = useMemo(() => originFor(passport), [passport]);
-  const target = useMemo(() => {
-    const city = originFor(destination);
-    return city.country === destination ? { lat: city.lat, lng: city.lng, label: city.label } : null;
-  }, [destination]);
-  const verdict = visaVerdict(destination, passport);
-
+  const origin = useMemo(() => (from ? { lat: from.lat, lng: from.lng, label: from.name } : HOME), [from]);
+  const destination = useMemo(() => (to ? { lat: to.lat, lng: to.lng, label: to.name } : null), [to]);
   const dots: GlobeDot[] = useMemo(
-    () =>
-      globeDestinations
-        .filter((d) => d.tier === 1)
-        .map((d) => {
-          const v = visaVerdict(d.country, passport);
-          const color = v.hunt ? VISA_DOT : v.badge === 'We check it for you' ? HUB_DOT : OPEN_DOT;
-          return { lat: d.lat, lng: d.lng, color };
-        }),
-    [passport],
+    () => globeDestinations.filter((d) => d.tier === 1).map((d) => ({ lat: d.lat, lng: d.lng, color: CITY_DOT })),
+    [],
   );
 
   // The globe zooms on the wheel. On a page that scrolls, the wheel belongs
@@ -69,30 +52,11 @@ export default function GlobeHero({
       <div className="ogt-globehero-stage" ref={stage}>
         <div className="ogt-globehero-halo" aria-hidden="true" />
         <Suspense fallback={<div className="aspect-square w-full" />}>
-          <WorldGlobe
-            origin={origin}
-            destination={target}
-            tone={verdict.hunt ? 'visa' : 'clear'}
-            dots={dots}
-            idleScale={0.82}
-          />
+          <WorldGlobe origin={origin} destination={destination} tone="clear" dots={dots} idleScale={0.82} />
         </Suspense>
       </div>
-
       <div className="ogt-wrap ogt-globehero-grid">
-        <div className="ogt-globehero-copy">
-          {children}
-          <div className="ogt-globehero-check">
-            <VisaCheck value={value} onChange={onChange} footnote={false} />
-          </div>
-        </div>
-        <div className="ogt-globehero-side">
-          <ul className="ogt-legend" aria-label="What the dots on the globe mean">
-            <li><i data-tone="visa" />Visa first on a {passport} passport</li>
-            <li><i data-tone="open" />No visa for a short stay</li>
-            <li><i data-tone="check" />We confirm the rule</li>
-          </ul>
-        </div>
+        <div className="ogt-globehero-copy">{children}</div>
       </div>
     </section>
   );

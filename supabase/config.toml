@@ -133,3 +133,8 @@ verify_jwt = false
 
 [functions.ogt-activities-search]
 verify_jwt = false
+
+# Public travel search: flights and stays through Duffel, activities through
+# Viator. The provider keys stay in Supabase secrets.
+[functions.ogt-search]
+verify_jwt = false
