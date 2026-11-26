@@ -739,7 +739,7 @@ const HomeApp = () => {
                 {[
                   ['Do you guarantee a visa?', 'No agency can guarantee a consulate decision. We guarantee the work: a clean file, the right appointment hunt, and a refund if no appointment can be secured.'],
                   ['What does the $67 cover?', 'The appointment hunt, per applicant. Visa fees charged by the consulate or center are separate.'],
-                  ['Which countries do you cover?', 'All 27 Schengen countries, plus the UK, US and Canada, with appointments across US cities.'],
+                  ['Which countries do you cover?', 'All 29 Schengen countries, the UK, Canada and more, from the city you apply from.'],
                 ].map(([q, a]) => (
                   <details key={q} className="py-3 group">
                     <summary className="text-sm font-semibold cursor-pointer list-none flex justify-between gap-4">{q}<span className="text-white/40 group-open:rotate-45 transition">+</span></summary>
