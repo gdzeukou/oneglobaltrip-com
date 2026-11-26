@@ -10,6 +10,8 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import '@/styles/site.css';
+import '@/styles/site-fx.css';
+import { useReveal } from '@/components/site/fx';
 
 export const NAV = [
   { to: '/visas', label: 'Visas' },
@@ -138,8 +140,9 @@ export function SiteFooter() {
   );
 }
 
-export function SitePage({ children, title }: { children: React.ReactNode; title?: string }) {
+export function SitePage({ children, title, tone }: { children: React.ReactNode; title?: string; /** "night": the page opens on a night band, so the header goes dark with it. */ tone?: 'night' }) {
   const { pathname, hash } = useLocation();
+  useReveal(pathname);
 
   useEffect(() => {
     if (title) document.title = `${title} | One Global Trip`;
@@ -153,7 +156,7 @@ export function SitePage({ children, title }: { children: React.ReactNode; title
   }, [pathname, hash]);
 
   return (
-    <div className="ogt">
+    <div className="ogt" data-tone={tone}>
       <InkFilter />
       <SiteHeader />
       <main>{children}</main>
