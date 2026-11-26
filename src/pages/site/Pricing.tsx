@@ -36,6 +36,7 @@ export default function Pricing() {
     <SitePage title="Pricing">
       <section className="ogt-hero">
         <div className="ogt-wrap">
+          <p className="ogt-eyebrow">No hidden fee, no surprise at the counter</p>
           <h1 className="ogt-h1" style={{ maxWidth: '56rem' }}>One price per visa. Every fee shown.</h1>
           <p className="ogt-lede" style={{ marginTop: '1.5rem' }}>
             Each total covers the consulate fee, the visa center fee and our service. The price is per applicant.
@@ -56,7 +57,7 @@ export default function Pricing() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
               <p style={{ margin: 0 }}><span className="ogt-price">{SCOUTPASS.price}</span> <span className="ogt-small ogt-muted">{SCOUTPASS.unit}</span></p>
-              <Link to="/start?service=appointment" className="ogt-btn">Hunt my appointment</Link>
+              <Link to="/start?service=appointment" className="ogt-btn ogt-btn-shine">Hunt my appointment</Link>
             </div>
           </div>
         </div>

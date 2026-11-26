@@ -10,6 +10,7 @@ import React, { useId, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PASSPORT_COUNTRIES, visaVerdict } from '@/lib/travelResolve';
 import { CHECK_DESTINATIONS, SCOUTPASS, priceOf, serviceFor } from '@/data/visaCatalog';
+import { useFoil } from '@/components/site/fx';
 
 /** Overlapping sine waves, the fine-line pattern printed on security paper. */
 function Guilloche() {
@@ -49,10 +50,32 @@ function mrz(passport: string, destination: string, visa: string): string {
 
 type Tone = 'red' | 'green' | 'ink';
 
-export default function VisaCheck({ initialPassport = 'Cameroon', initialDestination = 'France' }: { initialPassport?: string; initialDestination?: string }) {
+export type VisaCheckValue = { passport: string; destination: string };
+
+export default function VisaCheck({
+  initialPassport = 'Cameroon',
+  initialDestination = 'France',
+  value,
+  onChange,
+  footnote = true,
+}: {
+  initialPassport?: string;
+  initialDestination?: string;
+  /** Pass both to drive the check from the page, for the globe hero. */
+  value?: VisaCheckValue;
+  onChange?: (next: VisaCheckValue) => void;
+  footnote?: boolean;
+}) {
   const id = useId();
-  const [passport, setPassport] = useState(initialPassport);
-  const [destination, setDestination] = useState(initialDestination);
+  const foil = useFoil<HTMLDivElement>();
+  const [own, setOwn] = useState<VisaCheckValue>({ passport: initialPassport, destination: initialDestination });
+  const { passport, destination } = value ?? own;
+  const set = (next: VisaCheckValue) => {
+    setOwn(next);
+    onChange?.(next);
+  };
+  const setPassport = (p: string) => set({ passport: p, destination });
+  const setDestination = (d: string) => set({ passport, destination: d });
 
   const verdict = visaVerdict(destination, passport);
   const service = serviceFor(destination);
@@ -64,8 +87,9 @@ export default function VisaCheck({ initialPassport = 'Cameroon', initialDestina
 
   return (
     <div>
-      <div className="ogt-sticker">
+      <div className="ogt-sticker" ref={foil}>
         <Guilloche />
+        <span className="ogt-sticker-foil" aria-hidden="true" />
         <div className="ogt-sticker-body">
           <div className="ogt-sticker-top">
             <strong className="ogt-stampface">Visa check</strong>
@@ -108,7 +132,7 @@ export default function VisaCheck({ initialPassport = 'Cameroon', initialDestina
                     <p className="ogt-small ogt-muted">Full service, consulate and center fees included</p>
                     <p><span className="ogt-price">{price.totalPrice}</span> <span className="ogt-small ogt-muted">or the appointment alone, {SCOUTPASS.price}</span></p>
                   </div>
-                  <Link to={`/start?visa=${service.slug}&passport=${encodeURIComponent(passport)}&to=${encodeURIComponent(destination)}`} className="ogt-btn">Start my visa</Link>
+                  <Link to={`/start?visa=${service.slug}&passport=${encodeURIComponent(passport)}&to=${encodeURIComponent(destination)}`} className="ogt-btn ogt-btn-shine">Start my visa</Link>
                 </>
               ) : (
                 <>
@@ -127,9 +151,11 @@ export default function VisaCheck({ initialPassport = 'Cameroon', initialDestina
           <div className="ogt-mrz" aria-hidden="true">{mrz(passport, destination, service?.slug ?? 'visa')}</div>
         </div>
       </div>
-      <p className="ogt-small ogt-muted" style={{ marginTop: '1.4rem', maxWidth: '34rem' }}>
-        A first answer, not a consulate decision. We confirm the rule for your exact dates before you pay anything.
-      </p>
+      {footnote && (
+        <p className="ogt-small ogt-muted ogt-sticker-note" style={{ marginTop: '1.4rem', maxWidth: '34rem' }}>
+          A first answer, not a consulate decision. We confirm the rule for your exact dates before you pay anything.
+        </p>
+      )}
     </div>
   );
 }

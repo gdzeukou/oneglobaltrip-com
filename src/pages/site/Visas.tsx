@@ -26,6 +26,7 @@ export default function Visas() {
       <section className="ogt-hero">
         <div className="ogt-wrap ogt-hero-grid">
           <div>
+            <p className="ogt-eyebrow">{SHORT_STAY.length + LONG_STAY.length} visas, prices shown</p>
             <h1 className="ogt-h1">Every visa we handle, with its real price.</h1>
             <p className="ogt-lede" style={{ marginTop: '1.5rem' }}>
               Not sure which one applies to you? Run the check. It takes your passport and your destination and tells you
@@ -67,7 +68,7 @@ export default function Visas() {
             <h2 className="ogt-h2">A visa that is not on this list?</h2>
             <p className="ogt-lede" style={{ marginTop: '0.9rem' }}>Tell us the country and your passport. We will say whether we can take it.</p>
           </div>
-          <Link to="/contact" className="ogt-btn ogt-btn-paper">Ask us</Link>
+          <Link to="/contact" className="ogt-btn ogt-btn-hot ogt-btn-big">Ask us</Link>
         </div>
       </section>
     </SitePage>
