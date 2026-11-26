@@ -11,14 +11,14 @@ import { ArrowRight, BedDouble, CalendarClock, Car, Compass, Luggage, Plane, Shi
 import { SCOUTPASS } from '@/data/visaCatalog';
 
 export const DOORS = [
-  { to: '/visas', label: 'Visas', note: 'File, fees and follow-up', Icon: Stamp },
-  { to: '/scoutpass', label: 'Appointments', note: `The hunt, ${SCOUTPASS.price}`, Icon: CalendarClock },
   { to: '/flights', label: 'Flights', note: 'From your airport', Icon: Plane },
   { to: '/stays', label: 'Stays', note: 'Hotels and apartments', Icon: BedDouble },
   { to: '/cars', label: 'Cars', note: 'Pick up where you land', Icon: Car },
-  { to: '/cruises', label: 'Cruises', note: 'Sea and river', Icon: Ship },
   { to: '/activities', label: 'Activities', note: 'Tours and day trips', Icon: Compass },
+  { to: '/cruises', label: 'Cruises', note: 'Sea and river', Icon: Ship },
   { to: '/packages', label: 'Packages', note: 'Ready-made trips', Icon: Luggage },
+  { to: '/visas', label: 'Visas', note: 'If the trip needs one', Icon: Stamp },
+  { to: '/scoutpass', label: 'Appointments', note: `Visa slots, ${SCOUTPASS.price}`, Icon: CalendarClock },
 ];
 
 export default function TravelDeck({ skip = [] }: { skip?: string[] }) {
