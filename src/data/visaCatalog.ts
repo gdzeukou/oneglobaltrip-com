@@ -72,7 +72,7 @@ export const VISA_SERVICES: VisaService[] = [
       'Round-trip flight itinerary',
       'Proof of accommodation for every night',
       'Bank statements for the last 3 months',
-      'Proof of legal residence where you apply, such as a green card or a valid US visa',
+      'Proof of legal residence in the country you apply from, if it is not your own',
       'Letter from your employer or school',
     ],
     covers: [...SCHENGEN],

@@ -1,17 +1,35 @@
 import React, { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Loader2, MapPin, Plus, Search } from 'lucide-react';
-import { OgtPage } from '@/components/ogt/OgtShell';
+import { Link, NavLink } from 'react-router-dom';
+import { ArrowRight, Check, Loader2, MapPin, Plus } from 'lucide-react';
+import { SitePage } from '@/components/site/SiteShell';
+import { HotLink } from '@/components/site/fx';
 import { ALL_ITEMS, addToTrip, type TravelKind } from '@/data/travelCatalog';
 import { supabase } from '@/integrations/supabase/client';
 
-const META: Record<TravelKind, { title: string; sub: string; cta: string }> = {
-  flights: { title: 'Flights', sub: 'Live search via the existing Supabase function agent-search-flights (Amadeus test API). If that function is not deployed or its keys are missing, you see estimates below instead, clearly labelled.', cta: 'Add flight to my trip' },
-  stays: { title: 'Stays: hotels and BnBs', sub: 'Hotels for short stays, apartments and BnBs for longer ones. Live hotel search via the new ogt-hotel-search function (Amadeus), once deployed with the same Amadeus keys.', cta: 'Add stay to my trip' },
-  cars: { title: 'Rental cars', sub: 'Pick up where you land. No rental API is connected in the repo yet, so these are estimates. A concierge confirms the live price before you pay.', cta: 'Add car to my trip' },
-  cruises: { title: 'Cruises', sub: 'Mediterranean, Caribbean, Nile, Alaska. No cruise API is connected in the repo yet, so these are estimates. A concierge confirms cabin and sailing dates before you pay.', cta: 'Add cruise to my trip' },
-  activities: { title: 'Activities', sub: 'City experiences, tours and day trips. Live search via the new ogt-activities-search function (Amadeus, by coordinates), once deployed.', cta: 'Add activity to my trip' },
+const META: Record<TravelKind, { title: string; lead: string; sub: string; cta: string }> = {
+  flights: { title: 'Flights', lead: 'Fly from your airport. To anywhere.', sub: 'Search live fares, or start from an estimate. We confirm the final fare before you pay.', cta: 'Add flight to my trip' },
+  stays: { title: 'Stays', lead: 'A bed for every night of the trip.', sub: 'Hotels for short stays, apartments and BnBs for longer ones. Starting prices, confirmed before you pay.', cta: 'Add stay to my trip' },
+  cars: { title: 'Cars', lead: 'Pick up the car where you land.', sub: 'Economy to SUV. We confirm the price, the insurance and the mileage before you pay.', cta: 'Add car to my trip' },
+  cruises: { title: 'Cruises', lead: 'Sea days and river days.', sub: 'Mediterranean, Caribbean, Nile, Alaska. We confirm the cabin and the sailing dates before you pay.', cta: 'Add cruise to my trip' },
+  activities: { title: 'Activities', lead: 'What you do once you are there.', sub: 'City experiences, tours and day trips. Starting prices, confirmed before you pay.', cta: 'Add activity to my trip' },
 };
+
+const TABS: { to: string; label: string }[] = [
+  { to: '/flights', label: 'Flights' },
+  { to: '/stays', label: 'Stays' },
+  { to: '/cars', label: 'Cars' },
+  { to: '/cruises', label: 'Cruises' },
+  { to: '/activities', label: 'Activities' },
+  { to: '/packages', label: 'Packages' },
+  { to: '/visas', label: 'Visas' },
+];
+
+/** A week out and two weeks out, so the dates in the form are never in the past. */
+function daysFromNow(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
 
 const IATA: Record<string, string> = {
   Paris: 'CDG', London: 'LHR', Rome: 'FCO', Barcelona: 'BCN', Amsterdam: 'AMS', Madrid: 'MAD', Berlin: 'BER',
@@ -35,10 +53,10 @@ export default function TravelModule({ kind }: { kind: TravelKind }) {
   const meta = META[kind];
   const [query, setQuery] = useState('');
   const [added, setAdded] = useState<string | null>(null);
-  const [origin, setOrigin] = useState('IAH');
+  const [origin, setOrigin] = useState('');
   const [destCity, setDestCity] = useState('Paris');
-  const [departDate, setDepartDate] = useState('2026-11-20');
-  const [returnDate, setReturnDate] = useState('2026-11-27');
+  const [departDate, setDepartDate] = useState(() => daysFromNow(30));
+  const [returnDate, setReturnDate] = useState(() => daysFromNow(37));
   const [liveFlights, setLiveFlights] = useState<LiveFlight[] | null>(null);
   const [liveError, setLiveError] = useState<string | null>(null);
   const [searching, setSearching] = useState(false);
@@ -69,84 +87,117 @@ export default function TravelModule({ kind }: { kind: TravelKind }) {
     }
   };
 
+  const canSearch = origin.trim().length === 3 && !searching;
+
   return (
-    <OgtPage>
-      <section className="pt-10">
-        <p className="text-xs font-semibold tracking-[0.18em] uppercase text-zinc-500">One Global Trip — {meta.title}</p>
-        <h1 className="mt-3 font-display font-black text-4xl md:text-5xl text-[#001a41] leading-tight">{meta.title}</h1>
-        <p className="mt-3 max-w-xl text-zinc-600 leading-relaxed">{meta.sub}</p>
+    <SitePage title={meta.title} tone="night">
+      <section className="ogt-night ogt-book-hero">
+        <div className="ogt-night-sky" aria-hidden="true" />
+        <div className="ogt-wrap">
+          <ul className="ogt-booktabs" aria-label="What to book">
+            {TABS.map((t) => <li key={t.to}><NavLink to={t.to}>{t.label}</NavLink></li>)}
+          </ul>
+          <p className="ogt-eyebrow">{meta.title}</p>
+          <h1 className="ogt-h1" style={{ maxWidth: '48rem' }}>{meta.lead}</h1>
+          <p className="ogt-lede" style={{ marginTop: '1.25rem' }}>{meta.sub}</p>
 
-        {kind === 'flights' && (
-          <div className="mt-6 border border-zinc-200 rounded-2xl p-5 bg-zinc-50">
-            <p className="font-bold text-sm">Live flight search — Amadeus via Supabase</p>
-            <div className="mt-3 grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
-              <label className="text-xs font-semibold">From (IATA)<input value={origin} onChange={(e) => setOrigin(e.target.value.toUpperCase())} className="mt-1 w-full border border-zinc-300 rounded-md px-3 py-2 text-sm" /></label>
-              <label className="text-xs font-semibold">To<select value={destCity} onChange={(e) => setDestCity(e.target.value)} className="mt-1 w-full border border-zinc-300 rounded-md px-3 py-2 text-sm">{Object.keys(IATA).map((c) => <option key={c}>{c}</option>)}</select></label>
-              <label className="text-xs font-semibold">Depart<input type="date" value={departDate} onChange={(e) => setDepartDate(e.target.value)} className="mt-1 w-full border border-zinc-300 rounded-md px-3 py-2 text-sm" /></label>
-              <label className="text-xs font-semibold">Return<input type="date" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} className="mt-1 w-full border border-zinc-300 rounded-md px-3 py-2 text-sm" /></label>
-              <button onClick={searchLiveFlights} disabled={searching} className="self-end bg-zinc-900 text-white font-semibold py-2.5 rounded-md text-sm flex items-center justify-center gap-2 disabled:opacity-50">
-                {searching && <Loader2 size={16} className="animate-spin" />} Search live
-              </button>
-            </div>
-            {liveError && <p className="mt-3 text-sm text-red-700">Live search unavailable: {liveError}. Estimates below still work, and a concierge can confirm the live fare.</p>}
-            {liveFlights && liveFlights.length === 0 && <p className="mt-3 text-sm text-zinc-600">No live offers for that route and dates. Try other dates.</p>}
-            {liveFlights && liveFlights.length > 0 && (
-              <div className="mt-4 space-y-3">
-                <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Live offers — Amadeus test API, prices in {liveFlights[0].currency || 'USD'}</p>
-                {liveFlights.slice(0, 6).map((f) => (
-                  <div key={f.itineraryId} className="bg-white border border-zinc-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-                    <div className="flex-1">
-                      <p className="font-bold">{f.carrierCodes.join(', ')} · {f.flightNumbers.join(', ')}</p>
-                      <p className="text-sm text-zinc-500">{f.depart || ''} → {f.arrive || ''} · {f.stops} stop{f.stops === 1 ? '' : 's'} · {f.duration || ''}</p>
-                    </div>
-                    <p className="font-black text-lg">${f.total?.toLocaleString()}</p>
-                    <button onClick={() => { addToTrip({ id: `live-${f.itineraryId}`, kind: 'Flight', title: `${origin} → ${IATA[destCity] || destCity} · ${f.carrierCodes.join(', ')}`, detail: `${f.flightNumbers.join(', ')} · ${f.depart || ''} → ${f.arrive || ''}`, price: Math.round(f.total || 0) }); setAdded(f.itineraryId); }} className="bg-zinc-900 text-white text-sm font-semibold px-4 py-2 rounded-md">
-                      {added === f.itineraryId ? 'Added' : 'Add to trip'}
-                    </button>
-                  </div>
-                ))}
+          {kind === 'flights' && (
+            <div className="ogt-panel" style={{ marginTop: '2rem' }}>
+              <div className="ogt-book-search">
+                <div className="ogt-field">
+                  <label htmlFor="fl-from">From, airport code</label>
+                  <input id="fl-from" className="ogt-input" value={origin} maxLength={3} placeholder="LOS, DLA, IAH…" onChange={(e) => setOrigin(e.target.value.toUpperCase().replace(/[^A-Z]/g, ''))} />
+                </div>
+                <div className="ogt-field">
+                  <label htmlFor="fl-to">To</label>
+                  <select id="fl-to" className="ogt-select" value={destCity} onChange={(e) => setDestCity(e.target.value)}>{Object.keys(IATA).map((c) => <option key={c}>{c}</option>)}</select>
+                </div>
+                <div className="ogt-field"><label htmlFor="fl-out">Depart</label><input id="fl-out" type="date" className="ogt-input" value={departDate} onChange={(e) => setDepartDate(e.target.value)} /></div>
+                <div className="ogt-field"><label htmlFor="fl-back">Return</label><input id="fl-back" type="date" className="ogt-input" value={returnDate} onChange={(e) => setReturnDate(e.target.value)} /></div>
+                <button type="button" onClick={searchLiveFlights} disabled={!canSearch} className="ogt-btn ogt-btn-shine">
+                  {searching && <Loader2 size={16} className="animate-spin" aria-hidden="true" />} Search fares
+                </button>
               </div>
-            )}
+              <div aria-live="polite">
+                {liveError && <p className="ogt-alert" style={{ marginTop: '1rem' }}>Live fares are not available right now. Add an estimate below and we confirm the real fare before you pay.</p>}
+                {liveFlights && liveFlights.length === 0 && <p className="ogt-small ogt-muted" style={{ margin: '1rem 0 0' }}>No fares for that route and those dates. Try other dates.</p>}
+                {liveFlights && liveFlights.length > 0 && (
+                  <ul className="ogt-rows" style={{ marginTop: '1.25rem' }}>
+                    {liveFlights.slice(0, 6).map((f) => (
+                      <li key={f.itineraryId} className="ogt-row" style={{ alignItems: 'center' }}>
+                        <span className="ogt-row-name">{f.carrierCodes.join(', ')} · {f.flightNumbers.join(', ')}</span>
+                        <span className="ogt-row-meta">{f.depart || ''} → {f.arrive || ''} · {f.stops} stop{f.stops === 1 ? '' : 's'} · {f.duration || ''}</span>
+                        <span className="ogt-row-price">
+                          {f.total != null ? `${f.currency || 'USD'} ${f.total.toLocaleString()}` : ''}
+                          <button type="button" className="ogt-btn ogt-btn-small" style={{ marginLeft: '0.75rem' }} onClick={() => { addToTrip({ id: `live-${f.itineraryId}`, kind: 'Flight', title: `${origin} → ${IATA[destCity] || destCity} · ${f.carrierCodes.join(', ')}`, detail: `${f.flightNumbers.join(', ')} · ${f.depart || ''} → ${f.arrive || ''}`, price: Math.round(f.total || 0) }); setAdded(f.itineraryId); }}>
+                            {added === f.itineraryId ? 'Added' : 'Add'}
+                          </button>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="ogt-section">
+        <div className="ogt-wrap">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem 2rem', alignItems: 'end', justifyContent: 'space-between' }}>
+            <div>
+              <h2 className="ogt-h2">Where to?</h2>
+              <p className="ogt-muted" style={{ margin: '0.6rem 0 0' }}>Starting estimates, not live prices. We confirm the real one before you pay.</p>
+            </div>
+            <div className="ogt-field" style={{ width: 'min(100%, 22rem)' }}>
+              <label htmlFor="book-q">Search a city or a country</label>
+              <input id="book-q" className="ogt-input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Paris, Tokyo, Dubai…" />
+            </div>
           </div>
-        )}
 
-        <div className="mt-6 relative max-w-xl">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search the estimate catalog by city or country..." className="w-full pl-9 pr-3 py-3 rounded-md border border-zinc-300 outline-none focus:ring-2 focus:ring-zinc-900 text-sm" />
+          {items.length === 0 ? (
+            <p className="ogt-note" style={{ marginTop: '2rem' }}>No match for that search. Try Paris, Tokyo, Dubai, Rome or London, or <Link to="/contact" className="ogt-link">tell us where you want to go</Link>.</p>
+          ) : (
+            <ul className="ogt-cards ogt-cards-3" style={{ marginTop: '2rem' }}>
+              {items.map((item) => (
+                <li key={item.id}>
+                  <article className="ogt-card">
+                    <p className="ogt-card-tag">{item.tag} · {item.region}</p>
+                    <h3 className="ogt-h3">{item.title}</h3>
+                    <p className="ogt-small" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><MapPin size={14} aria-hidden="true" /> {item.city}, {item.country}</p>
+                    <p>{item.detail}</p>
+                    <div className="ogt-card-foot">
+                      <span><span className="ogt-price" style={{ fontSize: '1.6rem' }}>${item.fromPrice.toLocaleString()}</span> <small className="ogt-muted">{item.priceLabel}</small></span>
+                    </div>
+                    <button
+                      type="button"
+                      className={`ogt-btn ${added === item.id ? 'ogt-btn-ghost' : 'ogt-btn-shine'}`}
+                      style={{ marginTop: '1rem', width: '100%' }}
+                      onClick={() => { addToTrip({ id: item.id, kind: item.tag, title: item.title, detail: item.detail, price: item.fromPrice }); setAdded(item.id); }}
+                    >
+                      {added === item.id ? <><Check size={16} aria-hidden="true" /> Added to my trip</> : <><Plus size={16} aria-hidden="true" /> {meta.cta}</>}
+                    </button>
+                  </article>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
 
-      <p className="mt-6 text-xs font-semibold uppercase tracking-wider text-zinc-500">Estimate catalog — not live fares</p>
-      {items.length === 0 ? (
-        <p className="mt-4 text-zinc-500">No match for that search. Try Paris, Tokyo, Dubai, Rome or London.</p>
-      ) : (
-        <section className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {items.map((item) => (
-            <article key={item.id} className="border border-zinc-200 rounded-2xl p-5 bg-white hover:shadow-md transition">
-              <p className="text-xs font-semibold uppercase tracking-wider text-zinc-500">{item.tag} · {item.region}</p>
-              <h2 className="mt-2 font-bold text-lg text-[#001a41] leading-snug">{item.title}</h2>
-              <p className="mt-1 text-sm text-zinc-500 flex items-center gap-1"><MapPin size={13} /> {item.city}, {item.country}</p>
-              <p className="mt-2 text-sm text-zinc-600 leading-relaxed">{item.detail}</p>
-              <p className="mt-4 font-black text-lg">${item.fromPrice.toLocaleString()} <span className="text-sm font-medium text-zinc-500">{item.priceLabel}</span></p>
-              <button
-                onClick={() => { addToTrip({ id: item.id, kind: item.tag, title: item.title, detail: item.detail, price: item.fromPrice }); setAdded(item.id); }}
-                className="mt-4 w-full bg-zinc-900 text-white font-semibold py-2.5 rounded-md text-sm flex items-center justify-center gap-2 hover:bg-zinc-800"
-              >
-                <Plus size={16} /> {added === item.id ? 'Added to my trip' : meta.cta}
-              </button>
-            </article>
-          ))}
-        </section>
-      )}
-
-      <section className="mt-10 border border-zinc-200 rounded-2xl p-6 flex flex-col md:flex-row md:items-center gap-4">
-        <div className="flex-1">
-          <h2 className="font-bold text-lg">Want a human to lock it in?</h2>
-          <p className="mt-1 text-sm text-zinc-600">Your trip drawer holds everything you added. A concierge confirms the live price, then you pay. Nothing is charged from this page alone.</p>
+      <section className="ogt-section ogt-band-ink">
+        <div className="ogt-wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem 3rem', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h2 className="ogt-h2">Need a visa for this trip?</h2>
+            <p className="ogt-lede" style={{ marginTop: '0.9rem' }}>Check it in ten seconds. Everything you add lands in one trip with one total; nothing is charged from this page.</p>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <HotLink to="/trips">Review my trip</HotLink>
+            <Link to="/visas" className="ogt-btn ogt-btn-glass">Check my visa <ArrowRight size={16} className="ogt-btn-arrow" aria-hidden="true" /></Link>
+          </div>
         </div>
-        <Link to="/trips" className="shrink-0 bg-amber-300 text-zinc-900 font-bold px-5 py-2.5 rounded-md text-sm flex items-center gap-2">Review my trip <ArrowRight size={16} /></Link>
       </section>
-      <p className="mt-4 text-xs text-zinc-500">Prices in the estimate catalog are starting estimates, not live fares. Final price, availability and cancellation terms are confirmed before payment.</p>
-    </OgtPage>
+    </SitePage>
   );
 }

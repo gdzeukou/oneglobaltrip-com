@@ -10,7 +10,7 @@ const HUNT_FAQ: [string, string][] = [
   ['What exactly do I pay for?', `The hunt: finding and securing your appointment at the visa center. It is ${SCOUTPASS.price} ${SCOUTPASS.unit}. Consulate and visa center fees are separate and paid when you apply.`],
   ['What if you find no appointment?', SCOUTPASS.refund],
   ['Do you guarantee the visa?', 'No. The consulate alone decides. We guarantee the hunt, and the refund if it fails.'],
-  ['Which centers do you watch?', `${SCOUTPASS.centers.join(', ')}, in US cities. If you apply from somewhere else, say where in your request and we will tell you whether we can help.`],
+  ['Which centers do you watch?', `${SCOUTPASS.centers.join(', ')}, in the city you apply from, wherever that is. Tell us the city in your request.`],
   ['Can you prepare my file too?', 'Yes. The full service adds the forms, a review of every document and the consulate and center fees, in one price.'],
 ];
 
